@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+
+    <script th:inline="javascript" src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap" async defer></script>
+
+    <script th:inline="javascript">
+        var map;
+        var marker;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: { lat: 25.043561, lng: 121.556668 }
+            });
+        }
+
+        function page(page) {
+
+            var searchArrival = $("#cityTypeArriveCity").val();
+            var searchDepartDate = $("#cityTypeDepartDate").val();
+            var searchArrivalDate =$("#cityTypeArriveDate").val();
+
+            // page 필요시
+            // location.href = "/explore/" + page + "?searchDeparture=" + searchDeparture
+            location.href = "/explore/"+ page + "?searchArrival=" + searchArrival
+                + "&searchDepartDate=" + searchDepartDate
+                + "&searchArrivalDate=" + searchArrivalDate;
+        }
+
+    </script>
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        select{
+            margin-right:10px;
+        }
+        .left-half {
+            float: left;
+            width: 50%;
+        }
+
+        /* 오른쪽 절반 스타일 */
+        .right-half {
+            float: right;
+            width: 50%;
+        }
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+
+    <input type="hidden" id="cityTypeArriveCity" th:value="${searchByCityDto.getArriveCity()}"/>
+    <input type="date" id="cityTypeDepartDate" th:value="${searchByCityDto.getDepartDate()}"/>
+    <input type="date" id="cityTypeArriveDate" th:value="${searchByCityDto.getArriveDate()}"/>
+
+    <div class="left-half">
+        <form role="form" method="get" th:object="${locationList}">
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>위치</td>
+                    <td>이름</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="location, status: ${locationList.getContent()}">
+                    <td th:text="${location.attractionId}"></td>
+                    <td th:text="${location.postalAddressCity}"></td>
+                    <td th:text="${location.AttractionName}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div th:with="start=${(locationList.number/maxPage)*maxPage + 1}, end=(${(locationList.totalPages == 0) ? 1 : (start + (maxPage - 1) < locationList.totalPages ? start + (maxPage - 1) : locationList.totalPages)})" >
+                <ul class="pagination justify-content-center">
+
+                    <li class="page-item" th:classappend="${locationList.first}?'disabled'">
+                        <a th:onclick="'javascript:page(' + ${locationList.number - 1} + ')'" aria-label='Previous' class="page-link">
+                            <span aria-hidden='true'>Previous</span>
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${locationList.number eq page-1}?'active':''">
+                        <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${locationList.last}?'disabled'">
+                        <a th:onclick="'javascript:page(' + ${locationList.number + 1} + ')'" aria-label='Next' class="page-link">
+                            <span aria-hidden='true'>Next</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </div>
+
+    <div class="right-half">
+        <div id="map" style="width: 100%; height: 800px;"></div>
+    </div>
+</div>
+
+</html>
