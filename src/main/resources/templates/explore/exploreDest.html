@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+
+    <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${googleMapsApiKey} + '&libraries=places&callback=initMap'" async defer></script>
+
+    <script th:inline="javascript">
+
+        $(document).ready(function() {
+            $(".callRouteBtn").on("click", function () {
+                findRoute();
+            });
+        });
+
+        var map;
+        var marker;
+        var directionsService;
+        var directionsRenderer;
+
+        function initMap() {
+
+            console.log("initMap 호출됨");
+
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: { lat: 25.043561, lng: 121.556668 }
+            });
+            directionsService = new google.maps.DirectionsService();
+
+            directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map
+            });
+
+
+            var inputDepart = document.getElementById('origin');
+            var autoDepart = new google.maps.places.Autocomplete(inputDepart);
+            // 선택된 장소가 변경될 때 이벤트 리스너 추가
+            autoDepart.addListener('place_changed', function () {
+                const place = autoDepart.getPlace();
+
+                // 선택된 장소의 위치를 가져옴
+                const location = place.geometry.location;
+
+                // 마커 생성
+                const marker = new google.maps.Marker({
+                    position: location,
+                    map: map, // 위에서 생성한 지도 객체
+                    title: place.name, // 마커에 표시할 제목
+                });
+                // 선택된 장소의 위치로 지도 중심 이동
+                map.setCenter(location);
+            });
+
+            var inputArrive = document.getElementById('destination');
+            var autoArrive = new google.maps.places.Autocomplete(inputArrive);
+
+            autoArrive.addListener('place_changed', function () {
+                const place = autoArrive.getPlace();
+
+                // 선택된 장소 정보를 사용자에게 표시하거나 다른 작업 수행
+                console.log('선택된 장소:', place);
+
+                // 선택된 장소의 위치를 가져옴
+                const location = place.geometry.location;
+
+                // 마커 생성
+                const marker = new google.maps.Marker({
+                    position: location,
+                    map: map, // 위에서 생성한 지도 객체
+                    title: place.name, // 마커에 표시할 제목
+                });
+
+                // 선택된 장소의 위치로 지도 중심 이동
+                map.setCenter(location);
+            });
+
+        }
+
+        function findRoute(){
+
+            var origin = document.getElementById('origin').value;
+            var destination  = document.getElementById('destination').value;
+
+            console.log(origin);
+            console.log(destination);
+
+            var request = {
+                origin: origin,
+                destination: destination,
+                travelMode: 'WALKING'
+            };
+
+            directionsService.route(request,
+                function(result, status) {
+                if (status == 'OK') {
+                    directionsRenderer.setDirections(result);
+
+                    console.log("pass1");
+
+                    // 2. place 서비스 호출 (장소 서비스)
+                    // 별 4개 이상의 레스토랑 검색
+                    var service = new google.maps.places.PlacesService(map);
+
+                    console.log("pass2");
+
+
+                    // 3. 장소 서비스의 nearbySearch 호출
+                    service.nearbySearch({
+                        location: new google.maps.LatLng(25.043561,121.556668),       //이 오리진을 latLng 로 변경해ㅑㅇ하나 ? -> ㅐ
+                        radius: '5000', // 5km 반경 내에서 검색
+                        type: ['restaurant']
+                        // minPriceLevel: 4 // 별 4개 이상
+                    }, function(results, status) {
+                        if (status === google.maps.places.PlacesServiceStatus.OK) {
+                            // 결과를 처리하고 지도에 표시
+
+                            console.log("pass3")
+
+                            for (var i = 0; i < results.length; i++) {
+                                var place = results[i];
+                                var marker = new google.maps.Marker({
+                                    map: map,
+                                    position: place.geometry.location,
+                                    title: place.name
+                                });
+                            }
+                        } else{
+                            console.log("nearbySearch 실패 ");
+                            console.log(status);
+
+                        }
+                    });
+                } else {
+                    alert('경로를 찾을 수 없습니다.');
+
+                }
+            });
+
+
+        }
+
+        window.onload = function () {
+            initMap();
+        };
+
+    </script>
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        select{
+            margin-right:10px;
+        }
+
+        .left-half {
+            float: left;
+            width: 20%;
+        }
+
+        /* 오른쪽 절반 스타일 */
+        .right-half {
+            float: right;
+            width: 80%;
+        }
+
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+
+    <div class="left-half">
+        <h1>경로 설정 창</h1>
+            <input id="origin" placeholder="출발지를 입력하세요" type="text">
+            <input id="destination" placeholder="도착지를 입력하세요" type="text">
+
+        <button type="button" class="btn btn-primary w-100 callRouteBtn"></button>
+    <!--        선택하여 중간에 경로 설정 가능-->
+    <!--        비동기로 장소를 찍어서 -->
+    </div>
+
+    <div class="right-half">
+        <div id="map" style="width: 100%; height: 800px;"></div>
+    </div>
+</div>
+
+</html>

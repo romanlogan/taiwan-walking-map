@@ -19,6 +19,10 @@ public class SearchByCityDto {
     public SearchByCityDto() {
     }
 
+    public SearchByCityDto(String arriveCity) {
+        this.arriveCity = arriveCity;
+    }
+
     public SearchByCityDto(String arriveCity, LocalDate departDate, LocalDate arriveDate) {
         this.arriveCity = arriveCity;
         this.departDate = departDate;

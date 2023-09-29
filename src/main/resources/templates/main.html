@@ -57,6 +57,27 @@
             /* 투명도 */
             background-color: rgba(0,0,0,0.3);
         }
+
+        #second{
+            background-image: url('/img/mainImg2.jpg');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size:cover;
+            height: 95vh;
+            position:relative;
+        }
+
+        #second .overlay{
+            /* overlay 와 top section 의 크기,위치를 같게 만들기 */
+            /* 위의 top의 position : relative 와 관련 */
+            position:absolute;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            /* 투명도 */
+            background-color: rgba(0,0,0,0.3);
+        }
     </style>
 </th:block>
 
@@ -66,6 +87,10 @@
 
             $(".SearchBtnByCityType").on("click",function (){
                 onewayPage(0)
+            });
+
+            $(".SearchBtnByDestType").on("click",function (){
+                searchByDest()
             });
 
         });
@@ -82,6 +107,17 @@
             location.href = "/explore/"+ page + "?searchArrival=" + searchArrival
                 + "&searchDepartDate=" + searchDepartDate
                 + "&searchArrivalDate=" + searchArrivalDate;
+        }
+
+        function searchByDest(){
+
+            // var searchDepart = $("#destTypeDepartCity").val();
+            // var searchArrival = $("#destTypeArriveCity").val();
+
+            // location.href = "/exploreByDest" + "?searchDepart=" + searchDepart
+            // + "&searchArrival=" + searchArrival;
+
+            location.href = "/exploreByDest";
         }
     </script>
 </th:block>
@@ -100,21 +136,22 @@
                         <!-- 카드 -->
                         <div class="card card-body letsgo-card" style="width: 30rem">
                             <div class="letsgo my-3">
-                                <h4 class="letsgo-title card-title text-dark mb-3">목적지로 검색</h4>
+                                <h4 class="letsgo-title card-title text-dark mb-3">도시이름으로 검색</h4>
                                 <!--                <p class="card-text text-secondary">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aliquid, maiores!</p>-->
                             </div>
 
-                            <label for="searchType">검색 유형:</label>
-                            <select id="searchType" name="searchType">
-                                <option value="searchByCity">시 로 검색</option>
-                                <option value="">출발지 목적지로 검색</option>
-                            </select>
+<!--                            <label for="searchType">검색 유형:</label>-->
+<!--                            <select id="searchType" name="searchType">-->
+<!--                                <option value="searchByCity">시 로 검색</option>-->
+<!--                                <option value="">출발지 목적지로 검색</option>-->
+<!--                            </select>-->
 
 
                             <div class="letsgo-card-form">
                                 <form id="searchByCityForm" role="form"  enctype="multipart/form-data">
                                     <div class="mb-3">
                                         <select id="cityTypeArriveCity" name="cityTypeArriveCity">
+                                            <option value="臺北市">臺北市</option>
                                             <option value="桃園市">桃園市</option>
                                             <option value="金門縣">金門縣</option>
                                             <option value="連江縣">連江縣</option>
@@ -127,16 +164,51 @@
 <!--                                        <input type="text" id="cityTypeArriveCity" class="form-control" placeholder="도착지">-->
                                     </div>
 
-                                    <div class="mb-3">
-                                        <input type="date" id="cityTypeDepartDate" class="form-control" placeholder="출발 날짜">
-                                    </div>
+<!--                                    <div class="mb-3">-->
+<!--                                        <input type="date" id="cityTypeDepartDate" class="form-control" placeholder="출발 날짜">-->
+<!--                                    </div>-->
 
-                                    <div class="mb-3">
-                                        <input type="date" id="cityTypeArriveDate" class="form-control" placeholder="도착 날짜">
-                                    </div>
+<!--                                    <div class="mb-3">-->
+<!--                                        <input type="date" id="cityTypeArriveDate" class="form-control" placeholder="도착 날짜">-->
+<!--                                    </div>-->
 
                                     <p class="mb-3">
                                         <button type="button" class="btn btn-primary w-100 SearchBtnByCityType" >살펴보기</button>
+                                    </p>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="second">
+        <!--justify-content-center : 플렉스박스 안에 컬럼들을 가로로 가운데 정렬-->
+        <!--align-items-center : 플렉스박스 안에 컬럼들을 세로로 가운데 정렬-->
+        <div class="section-content overlay d-flex justify-content-center align-items-center">
+            <div class="container-xxl">
+                <div class="row align-items-center">
+                    <div class="col-md-4 offset-md-7 d-none d-md-block letsgo">
+                        <!-- 카드 -->
+                        <div class="card card-body letsgo-card" style="width: 30rem">
+                            <div class="letsgo my-3">
+                                <h4 class="letsgo-title card-title text-dark mb-3">목적지로 검색</h4>
+                                <!--                <p class="card-text text-secondary">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aliquid, maiores!</p>-->
+                            </div>
+
+
+                            <div class="letsgo-card-form">
+                                <form id="searchByDest" role="form"  enctype="multipart/form-data">
+<!--                                    <div class="mb-3">-->
+<!--                                        <input type="text" id="destTypeDepartCity" class="form-control" placeholder="출발지">-->
+<!--                                        <input type="text" id="destTypeArriveCity" class="form-control" placeholder="도착지">-->
+<!--                                    </div>-->
+                                    <p class="mb-3">
+                                        <button type="button" class="btn btn-primary w-100 SearchBtnByDestType" >살펴보기</button>
                                     </p>
                                 </form>
                             </div>
