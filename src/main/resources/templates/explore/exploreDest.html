@@ -10,36 +10,47 @@
 
     <script th:inline="javascript">
 
-        $(document).ready(function() {
-            $(".callRouteBtn").on("click", function () {
-                findRoute();
-            });
-        });
-
         var map;
-        var mark
+        var mark;
         var geocoder;
         var directionsService;
         var directionsRenderer;
         var startLocation;
         var endLocation;
 
+        var startLatLng;
+        var endLatLng;
+        var midLat;
+        var midLng;
+
+        $(document).ready(function() {
+            $(".callGeoBtn").on("click", function () {
+                findGeo();
+            });
+
+            $(".callRouteBtn").on("click", function () {
+                findRoute();
+            });
+
+        });
+
         function initMap() {
 
             console.log("initMap 호출됨");
+
 
             map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 15,
                 center: { lat: 25.043561, lng: 121.556668 }
             });
 
-            geocoder = new google.maps.Geocoder();
-
-            directionsService = new google.maps.DirectionsService();
-
-            directionsRenderer = new google.maps.DirectionsRenderer({
-                map: map
-            });
+            // geocoder = new google.maps.Geocoder();
+            //
+            // directionsService = new google.maps.DirectionsService();
+            //
+            // directionsRenderer = new google.maps.DirectionsRenderer({
+            //     map: map
+            // });
 
 
             var inputDepart = document.getElementById('origin');
@@ -86,25 +97,42 @@
 
         }
 
-        function findRoute(){
+        function findGeo(){
 
-            var origin = document.getElementById('origin').value;
-            var destination  = document.getElementById('destination').value;
+            var geoOrigin = document.getElementById('origin').value;
+            var geoDestination  = document.getElementById('destination').value;
 
-            console.log(origin);
-            console.log(destination);
+            console.log("geo.origin : "+geoOrigin);
+            console.log("geo.destination : "+geoDestination);
 
-            geocoder.geocode({ 'address': origin }, function (startResults, startStatus) {
+
+            geocoder = new google.maps.Geocoder();
+
+            geocoder.geocode({ 'address': geoOrigin }, function (startResults, startStatus) {
                 if (startStatus === 'OK') {
                     // 목적지 주소를 지오코딩하여 위치 정보 가져오기
-                    geocoder.geocode({ 'address': destination }, function (endResults, endStatus) {
+                    geocoder.geocode({ 'address': geoDestination }, function (endResults, endStatus) {
                         if (endStatus === 'OK') {
                             console.log("geocode 호출");
                             // 출발지와 목적지의 위도와 경도 가져오기
                             startLocation = startResults[0].geometry.location;
                             endLocation = endResults[0].geometry.location;
                             console.log("startLocaiton 대입 완료")
-                            console.log("startLocation : " + startLocation  );
+                            console.log("startLocation.lat : " + startLocation.lat());
+                            console.log("startLocation.lng : " + startLocation.lng());
+
+                            // startLatLng = new google.maps.LatLng(startLocation);
+                            // endLatLng = new google.maps.LatLng(startLocation);
+
+                            // midLat = (startLatLng.lat + endLatLng.lat)/2;
+                            // midLng = (startLatLng.lng + endLatLng.lng)/2;
+
+                            midLat = (startLocation.lat() + endLocation.lat())/2;
+                            midLng = (startLocation.lng() + endLocation.lng())/2;
+
+                            console.log("midLat : " + midLat);
+                            console.log("midLng : " + midLng);
+
                         } else {
                             alert('목적지 주소의 지오코딩에 실패했습니다. 상태: ' + endStatus);
                         }
@@ -113,12 +141,28 @@
                     alert('출발지 주소의 지오코딩에 실패했습니다. 상태: ' + startStatus);
                 }
             });
+        }
+
+        function findRoute(){
+
+            var origin = document.getElementById('origin').value;
+            var destination  = document.getElementById('destination').value;
+
+            console.log("route.origin : "+origin);
+            console.log("route.destination : "+destination);
+
 
             var request = {
                 origin: origin,
                 destination: destination,
                 travelMode: 'WALKING'
             };
+
+            directionsService = new google.maps.DirectionsService();
+
+            directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map
+            });
 
             directionsService.route(request,
                 function(result, status) {
@@ -132,9 +176,11 @@
 
                     var service = new google.maps.places.PlacesService(map);
 
+                    var currentInfoWindow = null;
+
                     // 3. 장소 서비스의 nearbySearch 호출
                     service.nearbySearch({
-                        location: new google.maps.LatLng(startLocation),       //이 오리진을 latLng 로 변경해ㅑㅇ하나 ? -> ㅐ
+                        location: new google.maps.LatLng(midLat,midLng),       //이 오리진을 latLng 로 변경해ㅑㅇ하나 ? -> ㅐ
                         radius: '5000', // 5km 반경 내에서 검색
                         type: ['restaurant']
                         // minPriceLevel: 4 // 별 4개 이상
@@ -145,11 +191,34 @@
 
                             for (var i = 0; i < results.length; i++) {
                                 var place = results[i];
-                                var marker = new google.maps.Marker({
-                                    map: map,
-                                    position: place.geometry.location,
-                                    title: place.name
-                                });
+
+                                if (place.rating >= 4 && place.user_ratings_total >= 100) {
+                                    var marker = new google.maps.Marker({
+                                        map: map,
+                                        position: place.geometry.location,
+                                        title: place.name
+                                    });
+
+                                    marker.addListener('click', () => {
+
+                                        console.log(currentInfoWindow);
+
+                                        if (currentInfoWindow) {
+                                            currentInfoWindow.close();
+                                        }
+
+                                        console.log(currentInfoWindow);
+
+
+                                        const infowindow = new google.maps.InfoWindow({
+                                            content: place.name // 레스토랑 이름을 알림창에 표시
+                                        });
+
+                                        infowindow.open(map, marker);
+
+                                        currentInfoWindow = infowindow;
+                                    });
+                                }
                             }
                         } else{
                             console.log("nearbySearch 실패 ");
@@ -163,72 +232,11 @@
 
                 }
             });
-
-
         }
 
         window.onload = function () {
             initMap();
         };
-
-        // function search(origin,destination){
-        //
-        //
-        //     var request = {
-        //         origin: origin,
-        //         destination: destination,
-        //         travelMode: 'WALKING'
-        //     };
-        //
-        //     console.log("search.origin : "+ origin);
-        //     console.log("search.destination : " + destination);
-        //
-        //     directionsService.route(request,
-        //         function(result, status) {
-        //             if (status == 'OK') {
-        //                 directionsRenderer.setDirections(result);
-        //
-        //                 console.log("pass1");
-        //
-        //                 // 2. place 서비스 호출 (장소 서비스)
-        //                 // 별 4개 이상의 레스토랑 검색
-        //                 console.log("pass2");
-        //
-        //                 var service = new google.maps.places.PlacesService(map);
-        //
-        //                 // 3. 장소 서비스의 nearbySearch 호출
-        //                 service.nearbySearch({
-        //                     location: new google.maps.LatLng(startLocation),       //이 오리진을 latLng 로 변경해ㅑㅇ하나 ? -> ㅐ
-        //                     radius: '5000', // 5km 반경 내에서 검색
-        //                     type: ['restaurant']
-        //                     // minPriceLevel: 4 // 별 4개 이상
-        //                 }, function(results, status) {
-        //                     if (status === google.maps.places.PlacesServiceStatus.OK) {
-        //                         // 결과를 처리하고 지도에 표시
-        //
-        //                         console.log("pass3")
-        //
-        //                         for (var i = 0; i < results.length; i++) {
-        //                             var place = results[i];
-        //                             var marker = new google.maps.Marker({
-        //                                 map: map,
-        //                                 position: place.geometry.location,
-        //                                 title: place.name
-        //                             });
-        //                         }
-        //                     } else{
-        //                         console.log("nearbySearch 실패 ");
-        //                         console.log(status);
-        //                         console.log("nearbySearch 내의 startLocation : " + startLocation  );
-        //
-        //                     }
-        //                 });
-        //             } else {
-        //                 alert('경로를 찾을 수 없습니다.');
-        //
-        //             }
-        //         });
-        // }
 
     </script>
 </th:block>
@@ -261,7 +269,8 @@
             <input id="origin" placeholder="출발지를 입력하세요" type="text">
             <input id="destination" placeholder="도착지를 입력하세요" type="text">
 
-        <button type="button" class="btn btn-primary w-100 callRouteBtn">찾기</button>
+        <button type="button" class="btn btn-primary w-100 callGeoBtn">1.확인</button>
+        <button type="button" class="btn btn-primary w-100 callRouteBtn">2.찾기</button>
     <!--        선택하여 중간에 경로 설정 가능-->
     <!--        비동기로 장소를 찍어서 -->
     </div>
