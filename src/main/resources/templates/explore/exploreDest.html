@@ -11,7 +11,6 @@
     <script th:inline="javascript">
 
         var map;
-        var mark;
         var geocoder;
         var directionsService;
         var directionsRenderer;
@@ -35,23 +34,12 @@
         });
 
         function initMap() {
-
             console.log("initMap 호출됨");
-
 
             map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 15,
                 center: { lat: 25.043561, lng: 121.556668 }
             });
-
-            // geocoder = new google.maps.Geocoder();
-            //
-            // directionsService = new google.maps.DirectionsService();
-            //
-            // directionsRenderer = new google.maps.DirectionsRenderer({
-            //     map: map
-            // });
-
 
             var inputDepart = document.getElementById('origin');
             var autoDepart = new google.maps.places.Autocomplete(inputDepart);
@@ -102,10 +90,6 @@
             var geoOrigin = document.getElementById('origin').value;
             var geoDestination  = document.getElementById('destination').value;
 
-            console.log("geo.origin : "+geoOrigin);
-            console.log("geo.destination : "+geoDestination);
-
-
             geocoder = new google.maps.Geocoder();
 
             geocoder.geocode({ 'address': geoOrigin }, function (startResults, startStatus) {
@@ -113,25 +97,11 @@
                     // 목적지 주소를 지오코딩하여 위치 정보 가져오기
                     geocoder.geocode({ 'address': geoDestination }, function (endResults, endStatus) {
                         if (endStatus === 'OK') {
-                            console.log("geocode 호출");
-                            // 출발지와 목적지의 위도와 경도 가져오기
                             startLocation = startResults[0].geometry.location;
                             endLocation = endResults[0].geometry.location;
-                            console.log("startLocaiton 대입 완료")
-                            console.log("startLocation.lat : " + startLocation.lat());
-                            console.log("startLocation.lng : " + startLocation.lng());
-
-                            // startLatLng = new google.maps.LatLng(startLocation);
-                            // endLatLng = new google.maps.LatLng(startLocation);
-
-                            // midLat = (startLatLng.lat + endLatLng.lat)/2;
-                            // midLng = (startLatLng.lng + endLatLng.lng)/2;
 
                             midLat = (startLocation.lat() + endLocation.lat())/2;
                             midLng = (startLocation.lng() + endLocation.lng())/2;
-
-                            console.log("midLat : " + midLat);
-                            console.log("midLng : " + midLng);
 
                         } else {
                             alert('목적지 주소의 지오코딩에 실패했습니다. 상태: ' + endStatus);
@@ -175,51 +145,55 @@
                     // 별 4개 이상의 레스토랑 검색
 
                     var service = new google.maps.places.PlacesService(map);
-
-                    var currentInfoWindow = null;
+                    var infowindow;
 
                     // 3. 장소 서비스의 nearbySearch 호출
                     service.nearbySearch({
                         location: new google.maps.LatLng(midLat,midLng),       //이 오리진을 latLng 로 변경해ㅑㅇ하나 ? -> ㅐ
-                        radius: '5000', // 5km 반경 내에서 검색
+                        radius: '500', // 5km 반경 내에서 검색 (5000)
                         type: ['restaurant']
                         // minPriceLevel: 4 // 별 4개 이상
                     }, function(results, status) {
                         if (status === google.maps.places.PlacesServiceStatus.OK) {
-                            // 결과를 처리하고 지도에 표시
-                            console.log("nearbySearch 호출");
 
+                            infowindow = new google.maps.InfoWindow();
+
+                            // 결과를 처리하고 지도에 표시
                             for (var i = 0; i < results.length; i++) {
-                                var place = results[i];
+                                const place = results[i];
 
                                 if (place.rating >= 4 && place.user_ratings_total >= 100) {
-                                    var marker = new google.maps.Marker({
+
+                                    const marker = new google.maps.Marker({
                                         map: map,
                                         position: place.geometry.location,
                                         title: place.name
                                     });
 
+                                    const markerInfowindow = new google.maps.InfoWindow();
+
                                     marker.addListener('click', () => {
+                                        const contentString = '<div><strong>' + place.name + '</strong><br>' +
+                                            '평점: ' + place.rating + '<br>' +
+                                            '댓글 수: ' + place.user_ratings_total + '</div>';
 
-                                        console.log(currentInfoWindow);
+                                        markerInfowindow.setContent(contentString);
+                                        markerInfowindow.open(map, marker);
 
-                                        if (currentInfoWindow) {
-                                            currentInfoWindow.close();
-                                        }
+                                        // infowindow = new google.maps.InfoWindow({
+                                        //     content: place.name // 레스토랑 이름을 알림창에 표시
+                                        // });
 
-                                        console.log(currentInfoWindow);
-
-
-                                        const infowindow = new google.maps.InfoWindow({
-                                            content: place.name // 레스토랑 이름을 알림창에 표시
-                                        });
-
-                                        infowindow.open(map, marker);
-
-                                        currentInfoWindow = infowindow;
                                     });
+
                                 }
+
                             }
+
+                            // map.addListener('click', function() {
+                            //     markerInfowindow.close();
+                            // });
+
                         } else{
                             console.log("nearbySearch 실패 ");
                             console.log(status);
@@ -237,6 +211,8 @@
         window.onload = function () {
             initMap();
         };
+
+
 
     </script>
 </th:block>
