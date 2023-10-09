@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+
+    <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${googleMapsApiKey} + '&libraries=places&callback=initMap'" async defer></script>
+
+    <script th:inline="javascript">
+        // 출발지, 경유지, 목적지 좌표를 설정합니다.
+
+
+
+        function initMap() {
+            var start = new google.maps.LatLng(25.043741,121.508067)
+            var waypoint = new google.maps.LatLng(25.042319,121.522573)
+            var end = new google.maps.LatLng(25.081724,121.554971)
+
+            var directionsService = new google.maps.DirectionsService();
+            var directionsDisplay = new google.maps.DirectionsRenderer();
+            var map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 10,
+                center: { lat: 25.043561, lng: 121.556668 }
+            });
+
+            directionsDisplay.setMap(map);
+
+
+            //이런 함수를 버튼 클릭시 호출하게 만들기 ?
+            var request = {
+                origin: start,
+                destination: end,
+                waypoints: [{ location: waypoint, stopover: true }], // 경유지 설정
+                travelMode: google.maps.TravelMode.WALKING, // 운전 모드 설정
+            };
+
+            directionsService.route(request, function (result, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(result);
+                }
+            });
+        }
+
+        // 페이지가 로드될 때 initMap 함수 호출
+        // google.maps.event.addDomListener(window, "load", initMap);
+    </script>
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+
+
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+
+    <div id="map" style="height: 400px; width: 100%;"></div>
+
+    <!-- 경로를 표시할 요소를 만듭니다. -->
+    <div id="directionsPanel"></div>
+</div>
+
+</html>

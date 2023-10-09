@@ -22,6 +22,9 @@
         var midLat;
         var midLng;
 
+        var waypointLat;
+        var waypointLng;
+
         $(document).ready(function() {
             $(".callGeoBtn").on("click", function () {
                 findGeo();
@@ -31,6 +34,17 @@
                 findRoute();
             });
 
+            // $("#addMiddleRouteBtn").on("click", function () {
+            //     findMiddleRoute();
+            // });
+
+
+            // $("#addMiddleRouteBtn").on("click", function () {
+            //     addMiddleRoute();
+            // });
+
+
+
         });
 
         function initMap() {
@@ -38,7 +52,97 @@
 
             map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 15,
-                center: { lat: 25.043561, lng: 121.556668 }
+                center: { lat: 25.043561, lng: 121.556668 },
+                styles : [
+                    {
+                        "featureType": "administrative",
+                        "elementType": "labels.text.fill",
+                        "stylers": [
+                            {
+                                "color": "#444444"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "administrative.country",
+                        "elementType": "geometry.fill",
+                        "stylers": [
+                            {
+                                "visibility": "on"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "landscape",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "color": "#f2f2f2"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "poi",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "saturation": -100
+                            },
+                            {
+                                "lightness": 45
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road.highway",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "visibility": "simplified"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road.arterial",
+                        "elementType": "labels.icon",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "transit",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "water",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "color": "#375868"
+                            },
+                            {
+                                "visibility": "on"
+                            }
+                        ]
+                    }
+                ]
+
             });
 
             var inputDepart = document.getElementById('origin');
@@ -97,6 +201,7 @@
                     // 목적지 주소를 지오코딩하여 위치 정보 가져오기
                     geocoder.geocode({ 'address': geoDestination }, function (endResults, endStatus) {
                         if (endStatus === 'OK') {
+                            console.log("지오코딩 호출됨")
                             startLocation = startResults[0].geometry.location;
                             endLocation = endResults[0].geometry.location;
 
@@ -150,7 +255,7 @@
                     // 3. 장소 서비스의 nearbySearch 호출
                     service.nearbySearch({
                         location: new google.maps.LatLng(midLat,midLng),       //이 오리진을 latLng 로 변경해ㅑㅇ하나 ? -> ㅐ
-                        radius: '500', // 5km 반경 내에서 검색 (5000)
+                        radius: '50000', // 5km 반경 내에서 검색 (5000)
                         type: ['restaurant']
                         // minPriceLevel: 4 // 별 4개 이상
                     }, function(results, status) {
@@ -175,7 +280,9 @@
                                     marker.addListener('click', () => {
                                         const contentString = '<div><strong>' + place.name + '</strong><br>' +
                                             '평점: ' + place.rating + '<br>' +
-                                            '댓글 수: ' + place.user_ratings_total + '</div>';
+                                            '댓글 수: ' + place.user_ratings_total + '<br>' +
+                                            '<button onclick="findMiddleRoute(' + marker.getPosition().lat() + ', ' + marker.getPosition().lng() + ')" type="button"> '+ '추가' + '</button> '+
+                                            '</div>';
 
                                         markerInfowindow.setContent(contentString);
                                         markerInfowindow.open(map, marker);
@@ -184,10 +291,14 @@
                                         //     content: place.name // 레스토랑 이름을 알림창에 표시
                                         // });
 
+
+
+
                                     });
 
                                 }
 
+                                displayRestaurantList(results);
                             }
 
                             // map.addListener('click', function() {
@@ -208,6 +319,97 @@
             });
         }
 
+        function findMiddleRoute(stopoverLat,stopoverLng) {
+
+            const start = document.getElementById('origin').value;
+            const end = document.getElementById('destination').value;
+            const waypoint = new google.maps.LatLng(stopoverLat,stopoverLng);
+
+            console.log("stopoverLat  : " + stopoverLat);
+            console.log("stopoverLng  : " + stopoverLng);
+
+            // displayRouteDetail();
+
+            geocoder = new google.maps.Geocoder();
+
+            geocoder.geocode({ location: new google.maps.LatLng(stopoverLat,stopoverLng) })
+                .then((response) => {
+                    if (response.results[0]) {
+
+                        // infowindow.setContent(response.results[0].formatted_address);
+                        const stopoverRoute = document.getElementById('withStopoverRouteDetail');
+                        stopoverRoute.innerHTML = `
+                        <strong>출발지 : ${start}</strong><br>
+                        <strong>경유지 : ${response.results[0].formatted_address}</strong><br>
+                        <strong>도착지 : ${end}</strong>`;
+
+                    } else {
+                        window.alert("findMiddleRoute No results found");
+                    }
+                })
+                .catch((e) => window.alert("Geocoder failed due to: " + e));
+
+
+            // var origin = document.getElementById('origin').value;
+            // var destination  = document.getElementById('destination').value;
+            // console.log("middle route.origin : "+origin);
+            // console.log("middle route.destination : "+destination);
+
+
+
+
+            var request = {
+                origin: start,
+                destination: end,
+                waypoints: [{ location: waypoint, stopover: true }], // 경유지 설정
+                travelMode: google.maps.TravelMode.WALKING,
+            };
+
+            directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map
+            });
+
+            directionsService.route(request, function (result, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsRenderer.setDirections(result);
+                }
+            });
+
+        }
+
+        function displayRestaurantList(results) {
+
+            console.log("displayRestaurantList 호출됨")
+            const restaurantList = document.getElementById('restaurant-list');
+            // restaurantList.innerHTML = '<h2>레스토랑 리스트</h2>';
+            //이거 없으면 누적되서 restaurant 가 점점 늘어남
+            restaurantList.innerHTML = '';
+
+            for (var i = 0; i < results.length; i++) {
+                const place = results[i];
+                if (place.rating >= 4 && place.user_ratings_total >= 100) {
+                    const listItem = document.createElement('div');
+                    listItem.className = 'restaurant-item';
+                    listItem.innerHTML = `
+                          <strong>${place.name}</strong>
+                          <p>평점: ${place.rating}</p>
+                          <p>댓글 수: ${place.user_ratings_total}</p> `;
+
+
+                    // listItem.addEventListener('click', () => {
+                    //     showRestaurantInfo(place);
+                    // });
+                    //
+                    // '평점: ' + place.rating + '<br>' +
+                    // '댓글 수: ' + place.user_ratings_total + '<br>' +
+
+                    restaurantList.appendChild(listItem);
+                }
+            }
+        };
+
+
+
         window.onload = function () {
             initMap();
         };
@@ -226,13 +428,13 @@
 
         .left-half {
             float: left;
-            width: 20%;
+            width: 50%;
         }
 
         /* 오른쪽 절반 스타일 */
         .right-half {
             float: right;
-            width: 80%;
+            width: 50%;
         }
 
     </style>
@@ -241,14 +443,24 @@
 <div layout:fragment="content">
 
     <div class="left-half">
-        <h1>경로 설정 창</h1>
-            <input id="origin" placeholder="출발지를 입력하세요" type="text">
-            <input id="destination" placeholder="도착지를 입력하세요" type="text">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h1>경로 설정 창</h1>
+                        <input id="origin" placeholder="출발지를 입력하세요" type="text">
+                        <input id="destination" placeholder="도착지를 입력하세요" type="text">
 
-        <button type="button" class="btn btn-primary w-100 callGeoBtn">1.확인</button>
-        <button type="button" class="btn btn-primary w-100 callRouteBtn">2.찾기</button>
-    <!--        선택하여 중간에 경로 설정 가능-->
-    <!--        비동기로 장소를 찍어서 -->
+                    <button type="button" class="btn btn-primary w-100 mb-2 mt-3 callGeoBtn">1.확인</button>
+                    <button type="button" class="btn btn-primary w-100 callRouteBtn">2.찾기</button>
+
+                    <div id="withStopoverRouteDetail"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <div id="restaurant-list"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="right-half">

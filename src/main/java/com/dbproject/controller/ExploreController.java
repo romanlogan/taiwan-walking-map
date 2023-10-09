@@ -31,7 +31,7 @@ public class ExploreController {
     private final ExploreService exploreService;
 
     @GetMapping(value = {"/explore","/explore/{page}"})
-    private String explore(@RequestParam("searchArrival") String searchArrival,
+    public String explore(@RequestParam("searchArrival") String searchArrival,
 //                            @RequestParam("searchDepartDate") String searchDepartDate,
 //                           @RequestParam("searchArrivalDate") String searchArrivalDate,
                            @PathVariable("page") Optional<Integer> page,
@@ -54,7 +54,7 @@ public class ExploreController {
     }
 
     @GetMapping(value = "/exploreByDest")
-    private String exploreByDest(
+    public String exploreByDest(
 //            @RequestParam("searchDepart") String origin,
 //                                 @RequestParam("searchArrival") String destination,
                                  Model model){
@@ -67,5 +67,12 @@ public class ExploreController {
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
         return "/explore/exploreDest";
+    }
+
+    @GetMapping("/waypointTest")
+    public String waypointTest(Model model){
+        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
+
+        return "/explore/waypointTest";
     }
 }
