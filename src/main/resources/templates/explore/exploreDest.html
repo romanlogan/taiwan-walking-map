@@ -24,6 +24,7 @@
 
         var waypointLat;
         var waypointLng;
+        var waypointName;
 
         $(document).ready(function() {
             $(".callGeoBtn").on("click", function () {
@@ -243,11 +244,29 @@
                 function(result, status) {
                 if (status == 'OK') {
                     directionsRenderer.setDirections(result);
-
                     console.log("route 호출");
 
-                    // 2. place 서비스 호출 (장소 서비스)
-                    // 별 4개 이상의 레스토랑 검색
+                    const moveTimeMarker = new google.maps.Marker({
+                        map: map,
+                        position: startLocation,
+                    });
+
+                    var route = result.routes[0];
+                    // 이동 시간 정보를 추출
+                    var duration = route.legs[0].duration.text;
+                    var mode = route.legs[0].steps[0].travel_mode;
+                    console.log(duration);
+                    console.log(mode);
+
+                    // 이동 시간을 지도에 표시
+                    var infowindow1 = new google.maps.InfoWindow({
+                        content: '예상 이동 시간: ' + duration
+                    });
+
+                    infowindow1.open(map, moveTimeMarker);
+
+
+
 
                     var service = new google.maps.places.PlacesService(map);
                     var infowindow;
@@ -278,6 +297,8 @@
                                     const markerInfowindow = new google.maps.InfoWindow();
 
                                     marker.addListener('click', () => {
+                                        waypointName = place.name;
+
                                         const contentString = '<div><strong>' + place.name + '</strong><br>' +
                                             '평점: ' + place.rating + '<br>' +
                                             '댓글 수: ' + place.user_ratings_total + '<br>' +
@@ -340,7 +361,8 @@
                         const stopoverRoute = document.getElementById('withStopoverRouteDetail');
                         stopoverRoute.innerHTML = `
                         <strong>출발지 : ${start}</strong><br>
-                        <strong>경유지 : ${response.results[0].formatted_address}</strong><br>
+<!--                        <strong>경유지 : ${response.results[0].formatted_address}</strong><br>-->
+                        <strong>경유지 : ${waypointName}</strong><br>
                         <strong>도착지 : ${end}</strong>`;
 
                     } else {
@@ -362,7 +384,8 @@
                 origin: start,
                 destination: end,
                 waypoints: [{ location: waypoint, stopover: true }], // 경유지 설정
-                travelMode: google.maps.TravelMode.WALKING,
+                // travelMode: google.maps.TravelMode.WALKING,
+                travelMode: 'WALKING'
             };
 
             directionsRenderer = new google.maps.DirectionsRenderer({
@@ -372,6 +395,50 @@
             directionsService.route(request, function (result, status) {
                 if (status == google.maps.DirectionsStatus.OK) {
                     directionsRenderer.setDirections(result);
+
+                    const moveTimeMarker = new google.maps.Marker({
+                        map: map,
+                        position: waypoint,
+                    });
+
+                    var route = result.routes[0];
+                    var totalDuration = 0;
+
+                    for (var i = 0; i < route.legs.length; i++) {
+                        totalDuration += route.legs[i].duration.value;
+                    }
+                    // 이동 시간을 초로 반환하므로 분으로 변환
+                    var totalMinutes = Math.round(totalDuration / 60);
+
+                    console.log('총 이동 시간 (분): ' + totalMinutes);
+
+                    var hours = 0;
+                    var minutes = totalMinutes;
+                    var timeContent;
+                    if (totalMinutes >= 60) {
+                        hours = Math.floor(totalMinutes / 60);
+                        minutes = totalMinutes % 60;
+                        timeContent = '예상 이동 시간: ' + hours +'시간 ' + minutes + '분'
+                    }else{
+                        timeContent = minutes + '분'
+                    }
+
+
+
+                    var mode = route.legs[0].steps[0].travel_mode;
+                    console.log(mode);
+
+                    var infowindow1 = new google.maps.InfoWindow({
+                        content: timeContent
+                    });
+                    infowindow1.open(map, moveTimeMarker);
+
+
+                    // var route = result.routes[0];
+                    // // 이동 시간 정보를 추출
+                    // var duration = route.legs[0].duration.text;
+                    // // 이동 시간을 지도에 표시
+
                 }
             });
 

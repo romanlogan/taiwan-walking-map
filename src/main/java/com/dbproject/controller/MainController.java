@@ -16,6 +16,12 @@ public class MainController {
     @GetMapping("/")
     public String main(Model model) {
 
+        return "main";
+    }
+
+    @GetMapping("/main2")
+    public String main2(Model model) {
+
         locationService.locationInfo();
         model.addAttribute("searchByCityDto", new SearchByCityDto());
 
