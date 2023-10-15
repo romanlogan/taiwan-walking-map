@@ -30,7 +30,7 @@ public class TripCard {
                 ", serviceCenter='" + serviceCenter + '\'' +
                 ", serviceTime='" + serviceTime + '\'' +
                 ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
+                ", address='" + address  + '\'' +
                 ", addressDetail='" + addressDetail + '\'' +
                 '}';
     }
