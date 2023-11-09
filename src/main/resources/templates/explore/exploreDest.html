@@ -1,15 +1,25 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/layout1}">
+<head lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 
-<!-- 사용자 스크립트 추가 -->
-<th:block layout:fragment="script">
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!--  <link th:href="@{/css/layout1.css}" rel="stylesheet">-->
 
-    <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${googleMapsApiKey} + '&libraries=places&callback=initMap'" async defer></script>
+    <!-- JS, Popper.js, and jQuery -->
+    <!--  모달창 사용시 순서 중요-->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 
-    <script th:inline="javascript">
 
+    <script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places&callback=initMap" async defer></script>
+
+    <script>
         var map;
         var geocoder;
         var directionsService;
@@ -28,21 +38,6 @@
             $(".callRouteBtn").on("click", function () {
                 findRoute();
             });
-
-
-
-
-            // $("#addMiddleRouteBtn").on("click", function () {
-            //     findMiddleRoute();
-            // });
-
-
-            // $("#addMiddleRouteBtn").on("click", function () {
-            //     addMiddleRoute();
-            // });
-
-
-
         });
 
         function initMap() {
@@ -315,32 +310,35 @@
         //---------------------- 경유지 경유하는 루트-------------------------
         function findMiddleRoute(stopoverLat,stopoverLng) {
 
-            const selectOriDest = document.getElementById('selectOriDest');
-            if (selectOriDest.style.display === 'none') {
-                selectOriDest.style.display = 'block';
-            } else {
-                selectOriDest.style.display = 'none';
-            }
+            // const selectOriDest = document.getElementById('selectOriDest');
+            // if (selectOriDest.style.display === 'none') {
+            //     selectOriDest.style.display = 'block';
+            // } else {
+            //     selectOriDest.style.display = 'none';
+            // }
 
-            const setAgainBtn = document.getElementById('setAgainBtn');
-            if (setAgainBtn.style.display === 'block') {
-                setAgainBtn.style.display = 'none';
-            } else {
-                setAgainBtn.style.display = 'block';
-            }
+            // //
+            // const setAgainBtn = document.getElementById('setAgainBtn');
+            // if (setAgainBtn.style.display === 'block') {
+            //     setAgainBtn.style.display = 'none';
+            //     console.log(setAgainBtn.style.display);
+            // } else {
+            //     setAgainBtn.style.display = 'block';
+            //     console.log(setAgainBtn.style.display);
+            // }
 
-            const leftOfLeft = document.getElementById('leftOfLeft');
-            if (leftOfLeft.style.display === 'none') {
-                leftOfLeft.style.display = 'block';
-            } else {
-                leftOfLeft.style.display = 'none';
-            }
-
-            const rightHalf = document.getElementById('right-half');
-            rightHalf.style.width = '75%';
-
-            const leftHalf = document.getElementById('left-half');
-            leftHalf.style.width = '25%';
+            // const leftOfLeft = document.getElementById('leftOfLeft');
+            // if (leftOfLeft.style.display === 'none') {
+            //     leftOfLeft.style.display = 'block';
+            // } else {
+            //     leftOfLeft.style.display = 'none';
+            // }
+            //
+            // const rightHalf = document.getElementById('right-half');
+            // rightHalf.style.width = '75%';
+            //
+            // const leftHalf = document.getElementById('left-half');
+            // leftHalf.style.width = '25%';
 
 
 
@@ -473,10 +471,7 @@
 
 
     </script>
-</th:block>
 
-<!-- 사용자 CSS 추가 -->
-<th:block layout:fragment="css">
     <style>
         select{
             margin-right:10px;
@@ -497,19 +492,18 @@
             display: block;
         }
 
-        #setAgainBtn {
-            display: none;
-        }
+        /*#setAgainBtn {*/
+        /*    display: none;*/
+        /*}*/
 
-        #leftOfLeft {
-            display: block;
-        }
+        /*#leftOfLeft {*/
+        /*    display: block;*/
+        /*}*/
 
     </style>
-</th:block>
+</head>
 
-<div layout:fragment="content">
-
+<body>
     <div id="left-half" class="left-half">
         <div class="container">
             <div class="row">
@@ -524,7 +518,8 @@
                     </div>
                     <div id="withStopoverRouteDetail"></div>
 
-                    <button type="button" id="setAgainBtn" class="btn btn-primary mt-3 " onclick="setAgain()">다시검색하기</button>
+<!--                    <button type="button" id="setAgainBtn" class="btn btn-primary mt-3 " onclick="setAgain()">다시검색하기</button>-->
+
                 </div>
 
                 <div class="col-md-6">
@@ -537,6 +532,4 @@
     <div id="right-half" class="right-half">
         <div id="map" style="width: 100%; height: 800px;"></div>
     </div>
-</div>
-
-</html>
+</body>

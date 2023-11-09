@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequiredArgsConstructor
 public class TestController {
 
+    @GetMapping("/sample")
+    public String sample() {
+
+        return "test/sample";
+    }
 
     @GetMapping("/test1")
     public String test() {
