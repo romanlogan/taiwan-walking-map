@@ -92,7 +92,7 @@
         $(document).ready(function () {
 
             $(".SearchBtnByCityType").on("click",function (){
-                onewayPage(0)
+                searchByCityPage(0)
             });
 
             $(".SearchBtnByDestType").on("click",function (){
@@ -102,17 +102,21 @@
         });
 
 
-        function onewayPage(page) {
+        function searchByCityPage(page) {
 
             var searchArrival = $("#cityTypeArriveCity").val();
-            var searchDepartDate = $("#cityTypeDepartDate").val();
-            var searchArrivalDate =$("#cityTypeArriveDate").val();
 
+            location.href = "/explore/"+ page + "?searchArrival=" + searchArrival;
+
+
+
+            // var searchDepartDate = $("#cityTypeDepartDate").val();
+
+            // var searchArrivalDate =$("#cityTypeArriveDate").val();
             // page 필요시
             // location.href = "/explore/" + page + "?searchDeparture=" + searchDeparture
-            location.href = "/explore/"+ page + "?searchArrival=" + searchArrival
-                + "&searchDepartDate=" + searchDepartDate
-                + "&searchArrivalDate=" + searchArrivalDate;
+                // + "&searchDepartDate=" + searchDepartDate
+                // + "&searchArrivalDate=" + searchArrivalDate;
         }
 
         function searchByDest(){

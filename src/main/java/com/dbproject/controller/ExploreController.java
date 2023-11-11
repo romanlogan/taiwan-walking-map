@@ -44,7 +44,7 @@ public class ExploreController {
 //        SearchByCityDto searchByCityDto = new SearchByCityDto(searchArrival, departDate, arrivalDate);
         SearchByCityDto searchByCityDto = new SearchByCityDto(searchArrival);
 
-        Page<Location> locationList = exploreService.getLocationPageByCity(searchByCityDto,pageable);
+        Page<Location> locationList = exploreService.getLocationPageByCity(searchByCityDto, pageable);
         model.addAttribute("locationList", locationList);
         model.addAttribute("maxPage", 5);
         model.addAttribute("searchByCityDto", searchByCityDto);

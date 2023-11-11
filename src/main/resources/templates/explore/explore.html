@@ -18,19 +18,28 @@
                 zoom: 15,
                 center: { lat: 25.043561, lng: 121.556668 }
             });
+
+            var locations = [[${locationList.content}]];
+            console.log(locations);
+
+            locations.forEach(location => {
+
+                // console.log(location.PositionLat)
+                var marker = new google.maps.Marker({
+                    position: {lat: location.positionLat, lng: location.positionLon},
+                    map: map,
+                    title: 'Marker Title' // 마커에 표시될 제목
+                });
+            });
+
         }
+
 
         function page(page) {
 
             var searchArrival = $("#cityTypeArriveCity").val();
-            var searchDepartDate = $("#cityTypeDepartDate").val();
-            var searchArrivalDate =$("#cityTypeArriveDate").val();
 
-            // page 필요시
-            // location.href = "/explore/" + page + "?searchDeparture=" + searchDeparture
-            location.href = "/explore/"+ page + "?searchArrival=" + searchArrival
-                + "&searchDepartDate=" + searchDepartDate
-                + "&searchArrivalDate=" + searchArrivalDate;
+            location.href = "/explore/"+ page + "?searchArrival=" + searchArrival;
         }
 
     </script>
@@ -66,16 +75,18 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <td>ID</td>
                     <td>위치</td>
                     <td>이름</td>
+                    <td>위도 Lat</td>
+                    <td>경도 Lon</td>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="location, status: ${locationList.getContent()}">
-                    <td th:text="${location.attractionId}"></td>
                     <td th:text="${location.postalAddressCity}"></td>
                     <td th:text="${location.AttractionName}"></td>
+                    <td th:text="${location.PositionLat}"></td>
+                    <td th:text="${location.PositionLon}"></td>
                 </tr>
                 </tbody>
             </table>
