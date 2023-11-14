@@ -86,6 +86,30 @@
             /* 투명도 */
             background-color: rgba(0,0,0,0.3);
         }
+
+        .inline {
+            display: inline-block;
+            vertical-align: baseline; /* 요소들을 수직 정렬합니다. 필요에 따라 조정할 수 있습니다. */
+        }
+
+        .large-input {
+            font-size: 30px; /* 원하는 크기로 설정할 수 있습니다. */
+        }
+
+        .button {
+            background-color: #04AA6D;
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            vertical-align: baseline;
+            font-size: 16px;
+            width: 60px; /* 버튼의 너비 */
+            height:60px; /* 버튼의 높이 */
+        }
+
+        .button5 {border-radius: 50%;}
     </style>
 
     <script>
@@ -159,9 +183,12 @@
     </nav>
     </div>
 
-    <h1>test</h1>
+<!--    <a href="sample">go to sample</a>-->
 
-    <a href="sample">go to sample</a>
+    <h1 class="inline">where is </h1>
+    <input class="inline large-input" type="text">
+    <button class="button button5"><h1>?</h1></button>
+
     <!-- section -> div(section-content) -> container 순서 -->
     <section id="top">
         <!--justify-content-center : 플렉스박스 안에 컬럼들을 가로로 가운데 정렬-->
@@ -174,15 +201,7 @@
                         <div class="card card-body letsgo-card" style="width: 30rem">
                             <div class="letsgo my-3">
                                 <h4 class="letsgo-title card-title text-dark mb-3">도시이름으로 검색</h4>
-                                <!--                <p class="card-text text-secondary">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aliquid, maiores!</p>-->
                             </div>
-
-<!--                            <label for="searchType">검색 유형:</label>-->
-<!--                            <select id="searchType" name="searchType">-->
-<!--                                <option value="searchByCity">시 로 검색</option>-->
-<!--                                <option value="">출발지 목적지로 검색</option>-->
-<!--                            </select>-->
-
 
                             <div class="letsgo-card-form">
                                 <form id="searchByCityForm" role="form"  enctype="multipart/form-data">
