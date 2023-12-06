@@ -13,5 +13,18 @@ public interface LocationRepository extends JpaRepository<Location, String>, Loc
     @Query("select l from Location l " +
             "where l.PostalAddressCity = :PostalAddressCity " +
             "order by l.attractionId desc")
-    public List<Location> findByPostalAddressCity(@Param("PostalAddressCity") String postalAddressCity);
+    List<Location> findByPostalAddressCity(@Param("PostalAddressCity") String postalAddressCity);
+
+    Location findByAttractionId(String attractionId);
+
+    @Query("select l from Location l "+
+            "where l.AttractionName = :AttractionName")
+    Location findByAttractionName(@Param("AttractionName") String AttractionName);
+
+
+    @Query("select l from Location l " +
+            "where l.AttractionName like :searchQuery and l.PostalAddressCity = :searchCity")
+    List<Location> findBySearchQuery(@Param("searchQuery") String searchQuery,
+                                     @Param("searchCity") String searchCity);
+
 }

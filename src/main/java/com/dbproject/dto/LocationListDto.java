@@ -13,4 +13,6 @@ public class LocationListDto {
 
     List<Location> locationList = new ArrayList<>();
 
+    String errorMessage;
+
 }

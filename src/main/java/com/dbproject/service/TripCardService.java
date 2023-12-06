@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -15,10 +16,20 @@ public class TripCardService {
 
     private final TripCardRepository tripCardRepository;
 
-    public void test() {
+    public List<TripCard> getTripCardAddress(String city) {
 
-        TripCard tripCard = tripCardRepository.findById(1).orElseThrow(EntityNotFoundException::new);
+        List<TripCard> tripCardList = tripCardRepository.findTripCardByCity(city);
 
-        System.out.println(tripCard.toString());
+//        List<String> tripCardAddressList = new ArrayList<>();
+//
+//
+//        for (TripCard tripcard : tripCardList
+//        ) {
+//            tripCardAddressList.add(tripcard.getAddress());
+//        }
+//
+//        System.out.println(tripCardList.size());
+
+        return tripCardList;
     }
 }

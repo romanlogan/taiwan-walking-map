@@ -19,13 +19,5 @@ public class MainController {
         return "main";
     }
 
-    @GetMapping("/main2")
-    public String main2(Model model) {
-
-        locationService.locationInfo();
-        model.addAttribute("searchByCityDto", new SearchByCityDto());
-
-        return "main";
-    }
 
 }

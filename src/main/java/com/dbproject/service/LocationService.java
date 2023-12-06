@@ -1,6 +1,5 @@
 package com.dbproject.service;
 
-import com.dbproject.dto.LocationDto;
 import com.dbproject.entity.Location;
 import com.dbproject.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +15,10 @@ public class LocationService {
 
     private final LocationRepository locationRepository;
 
-    public void locationInfo() {
+    public Location getLocationDtl(String attractionId) {
 
-        Location location = locationRepository.findById("Attraction_371020000A_000386").orElseThrow(EntityNotFoundException::new);
-        System.out.println(location.toString());
+        Location location = locationRepository.findByAttractionId(attractionId);
 
-        LocationDto locationDto = LocationDto.of(location);
-
-        System.out.println(locationDto.toString());
+        return location;
     }
 }

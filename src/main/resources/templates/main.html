@@ -6,8 +6,14 @@
     <title>Document</title>
 
     <!-- CSS only -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!--  <link th:href="@{/css/layout1.css}" rel="stylesheet">-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
     <!-- JS, Popper.js, and jQuery -->
     <!--  모달창 사용시 순서 중요-->
@@ -16,264 +22,838 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 
-
-
-    <style>
-        .carousel-inner > .item {
-            height: 350px;
-        }
-        .margin{
-            margin-bottom:30px;
-        }
-        .banner{
-            height: 300px;
-            position: absolute; top:0; left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        .card-text{
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        a{
-            text-decoration:none;
-        }
-
-        .center{
-            text-align:center;
-        }
-
-        #top{
-            background-image: url('/img/mainImg.jpg');
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size:cover;
-            height: 95vh;
-            position:relative;
-        }
-
-        #top .overlay{
-            /* overlay 와 top section 의 크기,위치를 같게 만들기 */
-            /* 위의 top의 position : relative 와 관련 */
-            position:absolute;
-            height: 100%;
-            width: 100%;
-            left: 0;
-            top: 0;
-            /* 투명도 */
-            background-color: rgba(0,0,0,0.3);
-        }
-
-        #second{
-            background-image: url('/img/mainImg2.jpg');
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size:cover;
-            height: 95vh;
-            position:relative;
-        }
-
-        #second .overlay{
-            /* overlay 와 top section 의 크기,위치를 같게 만들기 */
-            /* 위의 top의 position : relative 와 관련 */
-            position:absolute;
-            height: 100%;
-            width: 100%;
-            left: 0;
-            top: 0;
-            /* 투명도 */
-            background-color: rgba(0,0,0,0.3);
-        }
-
-        .inline {
-            display: inline-block;
-            vertical-align: baseline; /* 요소들을 수직 정렬합니다. 필요에 따라 조정할 수 있습니다. */
-        }
-
-        .large-input {
-            font-size: 30px; /* 원하는 크기로 설정할 수 있습니다. */
-        }
-
-        .button {
-            background-color: #04AA6D;
-            border: none;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            vertical-align: baseline;
-            font-size: 16px;
-            width: 60px; /* 버튼의 너비 */
-            height:60px; /* 버튼의 높이 */
-        }
-
-        .button5 {border-radius: 50%;}
-    </style>
-
     <script>
+
+
         $(document).ready(function () {
 
+            const navbar = document.getElementById('navbar');
+
+            // 스크롤 이벤트 리스너 등록
+            window.addEventListener('scroll', function() {
+                console.log(window.scrollY);
+
+                // 스크롤 위치 확인
+                if (window.scrollY > 745) { // 스크롤이 100px 이상 됐을 때
+                    navbar.classList.add('scrolled'); // 스크롤된 상태 클래스 추가
+                } else {
+                    navbar.classList.remove('scrolled'); // 스크롤이 100px 미만이면 클래스 제거
+                }
+            });
+
             $(".SearchBtnByCityType").on("click",function (){
-                searchByCityPage(0)
+                searchByCityPage()
             });
 
             $(".SearchBtnByDestType").on("click",function (){
                 searchByDest()
             });
 
+            $(".searchTripCard").on("click",function (){
+                searchTripCard()
+            });
+
+            $(".searchByMap").on("click",function (){
+                searchByMap()
+            });
+
+            $("#fastSearchInputBtn").on("click",function (){
+                fastSearchByInput();
+            });
+
+            $("#taibeiCard").on("click",function (){
+                location.href = "/exploreCity?searchArrival=臺北市";
+            });
+
+            $("#xinbeiCard").on("click",function (){
+                location.href = "/exploreCity?searchArrival=新北市";
+            });
+
+            $("#taizhongCard").on("click",function (){
+                location.href = "/exploreCity?searchArrival=臺中市";
+            });
+
+            $("#tainanCard").on("click",function (){
+                location.href = "/exploreCity?searchArrival=臺南市";
+            });
+
+            $("#gaoxiongCard").on("click",function (){
+                location.href = "/exploreCity?searchArrival=高雄市";
+            });
+
+            $("#hualianCard").on("click",function (){
+                location.href = "/exploreCity?searchArrival=花蓮縣";
+            });
+
+            $("#taidongCard").on("click",function (){
+                location.href = "/exploreCity?searchArrival=臺東縣";
+            });
+
+            $("#taoyuanCard").on("click",function (){
+                location.href = "/exploreCity?searchArrival=桃園市";
+            });
+
+
+
+            $("#museumBtn").on("click",function (){
+                var searchQuery = "博物館"
+                var searchCity = document.getElementById('fastSearchCity').value;
+
+                location.href = "/exploreByQuery/0?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+            });
+
+            $("#artMuseumBtn").on("click",function (){
+                var searchQuery = "美術館"
+                var searchCity = document.getElementById('fastSearchCity').value;
+
+                location.href = "/exploreByQuery/0?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+
+            });
+
+            $("#parkBtn").on("click",function (){
+                var searchQuery = "公園"
+                var searchCity = document.getElementById('fastSearchCity').value;
+
+            location.href = "/exploreByQuery/0?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+
+            });
+
+            $("#marketBtn").on("click",function (){
+                var searchQuery = "市場"
+                var searchCity = document.getElementById('fastSearchCity').value;
+
+            location.href = "/exploreByQuery/0?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+
+            });
+
+            $("#templeBtn").on("click",function (){
+                var searchQuery = "宮"
+                var searchCity = document.getElementById('fastSearchCity').value;
+
+            location.href = "/exploreByQuery/0?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+
+            });
+
+            $("#nightMarketBtn").on("click",function (){
+                var searchQuery = "夜市"
+                var searchCity = document.getElementById('fastSearchCity').value;
+
+            location.href = "/exploreByQuery/0?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+
+            });
+
+            $("#playGroundBtn").on("click",function (){
+                var searchQuery = "樂園"
+                var searchCity = document.getElementById('fastSearchCity').value;
+
+            location.href = "/exploreByQuery/0?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+
+            });
+
         });
 
+        function searchTripCard() {
 
-        function searchByCityPage(page) {
+            var searchCity = document.getElementById('tripCardCity').value;
 
-            var searchArrival = $("#cityTypeArriveCity").val();
-
-            location.href = "/explore/"+ page + "?searchArrival=" + searchArrival;
-
-
-
-            // var searchDepartDate = $("#cityTypeDepartDate").val();
-
-            // var searchArrivalDate =$("#cityTypeArriveDate").val();
-            // page 필요시
-            // location.href = "/explore/" + page + "?searchDeparture=" + searchDeparture
-                // + "&searchDepartDate=" + searchDepartDate
-                // + "&searchArrivalDate=" + searchArrivalDate;
+            location.href = "/exploreTripCard?tripCardCity=" + searchCity;
         }
 
-        function searchByDest(){
-
-            // var searchDepart = $("#destTypeDepartCity").val();
-            // var searchArrival = $("#destTypeArriveCity").val();
-
-            // location.href = "/exploreByDest" + "?searchDepart=" + searchDepart
-            // + "&searchArrival=" + searchArrival;
+        function searchByMap() {
 
             location.href = "/exploreByDest";
         }
+
+        // function searchByCityPage(page) {
+        //
+        //     var searchArrival = $("#cityTypeArriveCity").val();
+        //
+        //     location.href = "/explore/"+ page + "?searchArrival=" + searchArrival;
+        // }
+
+        function searchByCityPage() {
+
+            var searchArrival = $("#cityTypeArriveCity").val();
+
+            location.href = "/exploreCity" + "?searchArrival=" + searchArrival;
+        }
+
+        function fastSearchByInput() {
+
+            //var geoOrigin = document.getElementById('origin').value;
+
+            var searchQuery = document.getElementById('fastSearchInput').value;
+            var searchCity = document.getElementById('fastSearchCity').value;
+
+            location.href = "/exploreByQuery/0?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+
+        }
+
     </script>
+
+    <style>
+
+        #navbar{
+            background-color: white;
+        }
+
+        #navbar.scrolled{
+            background-color: #6495ED;
+        }
+
+        #navbar.scrolled a{
+            color: white;
+        }
+
+        #navbar.scrolled .dropbtn{
+            color: white;
+        }
+
+        /*Links inside the navbar *!*/
+        #navbar a {
+            float: left;
+            font-size: 16px;
+            color: black;
+            text-align: center;
+            padding: 16px;
+            text-decoration: none;
+        }
+
+        .dropbtn {
+            background-color: inherit;
+            color: inherit;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+        }
+
+        /* The container <div> - needed to position the dropdown content */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Dropdown Content (Hidden by Default) */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        /* Links inside the dropdown */
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {background-color: #ddd;}
+
+        /* Show the dropdown menu on hover */
+        .dropdown:hover .dropdown-content {display: block;}
+
+        /*!* Change the background color of the dropdown button when the dropdown content is shown *!*/
+        /*.dropdown:hover .dropbtn {background-color: #3e8e41;}*/
+
+        #top{
+            padding-top: 100px;
+
+            background-color: #6495ED;
+            height: 100vh;
+            /*background-position: center;*/
+            /*background-repeat: no-repeat;*/
+            /*background-size:cover;*/
+            /*height: 95vh;*/
+            /*position:relative;*/
+        }
+
+        #top .overlay{
+            /*!* overlay 와 top section 의 크기,위치를 같게 만들기 *!*/
+            /*!* 위의 top의 position : relative 와 관련 *!*/
+            /*position:absolute;*/
+            /*height: 100%;*/
+            /*width: 100%;*/
+            /*left: 0;*/
+            /*top: 0;*/
+            /*!* 투명도 *!*/
+            /*background-color: rgba(0,0,0,0.3);*/
+        }
+
+
+        .left-half {
+            float: left;
+            width: 50%;
+        }
+
+        /* 오른쪽 절반 스타일 */
+        .right-half {
+            float: right;
+            width: 50%;
+            /*display: grid;*/
+        }
+
+        #second{
+            margin-top: 100px;
+            margin-bottom: 100px;
+        }
+
+        #quickSearchText{
+            margin-top: 150px;
+            margin-bottom: 50px;
+            display: flex;
+            justify-content: center; /* 가로 방향으로 가운데 정렬 */
+            align-items: center; /* 세로 방향으로 가운데 정렬 */
+        }
+
+
+        #fastSearchForm{
+            /*display: flex;*/
+            /*justify-content: center; !* 가로 방향으로 가운데 정렬 *!*/
+            /*align-items: center; !* 세로 방향으로 가운데 정렬 *!*/
+
+            margin-bottom: 50px;
+        }
+
+        #fastSearchCity{
+            margin-left: 230px;
+            margin-right: 30px;
+            width: 200px;
+            height: 50px;
+        }
+
+        #fastSearchInput {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            margin-right: 10px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            width: 500px;
+            border: none;
+            border-radius: 10px;
+            /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        }
+
+        #fastSearchInputBtn{
+            background-color: white;
+            border: 1px solid lightgray ;
+            border-radius: 50%;
+
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        }
+
+        #fastSearchBtns{
+            display: flex;
+            justify-content: center; /* 가로 방향으로 가운데 정렬 */
+            align-items: center;     /* 세로 방향으로 가운데 정렬 */
+        }
+
+        .fastSearchBtn {
+            width: 150px;
+            height: 100px;
+
+            padding-top: 25px;
+            padding-bottom: 5px;
+            padding-right: 10px;
+            padding-left: 10px;
+
+            margin-top: 5px;
+            margin-bottom: 5px;
+            margin-right: 10px;
+            margin-left: 10px;
+
+            transition-duration: 0.4s;
+            background-color: white;
+            color: black;
+            border: 1px solid #808080; /* Green */
+            border-radius: 10px;
+
+        }
+
+        .fastSearchByBtn:hover {
+            background-color: #008CBA; /* Green */
+            color: white;
+        }
+
+        .fastSearchBtnText{
+            margin-top :10px;
+        }
+
+        #third{
+            margin-bottom: 100px;
+        }
+
+        .cards {
+            /*display: flex;*/
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+            font-family: 'Roboto', sans-serif;
+
+
+        }
+
+        .card {
+            margin-left: 60px;
+            margin-right: 60px;
+            display: inline-block;
+            width: 13rem;
+            height: 13rem;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            color: white;
+            box-shadow: 0 10px 30px 5px rgba(0, 0, 0, 0.2);
+
+        }
+
+        /*이미지 약간 변경*/
+        .cardPic {
+            position: absolute;
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0.9;
+            transition: opacity .2s ease-out;
+        }
+
+        /*글씨 카드에 나오게*/
+        h2 {
+            position: absolute;
+            inset: auto auto 30px 30px;
+            margin: 0;
+            transition: inset .3s .3s ease-out;
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: normal;
+            text-transform: uppercase;
+        }
+
+        #coolContainer{
+            display: grid;
+            height: 100vh;
+            place-items: center;
+        }
+
+        .cool {
+            font: bold 3rem/1.2 sans-serif;
+            max-width: 20rem;
+        }
+
+        .cool > span{
+            color: white;
+            display: inline-block;
+            position: relative;
+        }
+
+
+
+        /*-------------taiwan Map---------------------------*/
+        ul{
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+
+        ul:hover .cute-bit {
+            opacity: 0.5;
+        }
+
+        ul:hover .cute-bit:hover {
+            opacity: 1;
+        }
+
+        .ancatomy {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            text-align: center;
+            font-size: 1vw;
+            color: #fff;
+        }
+
+        .ancatomy img {
+            display: block;
+            width: 30em;
+            margin-left: 200px;
+        }
+
+        .ancatomy .cute-bit {
+            position: absolute;
+            min-width: 15em;
+            transition: all 0.25s ease-out;
+        }
+
+        .ancatomy .cute-bit:hover {
+            min-width: 21em !important;
+        }
+
+        .ancatomy .cute-bit.grow-left {
+            text-align: left;
+        }
+
+        .ancatomy .cute-bit.grow-left h3 {
+            padding-right: 1em;
+        }
+
+        .ancatomy .cute-bit.grow-left h3:after {
+            right: 0;
+            transform: translate(50%, 50%);
+        }
+
+        .ancatomy .cute-bit.grow-right {
+            text-align: right;
+        }
+
+        .ancatomy .cute-bit.grow-right h3 {
+            padding-left: 1em;
+        }
+
+        .ancatomy .cute-bit.grow-right h3:after {
+            left: 0;
+            transform: translate(-50%, 50%);
+        }
+
+        .ancatomy .cute-bit h3 {
+            position: relative;
+            padding: 0 0 0.4em;
+            border-bottom: solid 0.2em;
+            margin: 0 0 0.4em;
+            text-shadow: 0 0 1em 1em rgba(0, 0, 0, 0.1);
+        }
+
+        .ancatomy .cute-bit h3:after {
+            position: absolute;
+            bottom: -0.1em;
+            content: "";
+            width: 1em;
+            height: 1em;
+            border-radius: 50%;
+            background: #fff;
+        }
+
+        .ancatomy .cute-bit p {
+            margin: 0;
+            padding: 0;
+            text-shadow: 0 0 1em 1em rgba(0, 0, 0, 0.1);
+        }
+
+        .ancatomy .cute-bit.cute-ears {
+            right: 30%;
+            top: 0.1%;
+            min-width: 12em;
+        }
+
+        .ancatomy .cute-bit.cute-eyes {
+            right: 50%;
+            top: 25%;
+        }
+
+        .ancatomy .cute-bit.cute-nose {
+            left: 35%;
+            top: 55%;
+            min-width: 16em;
+        }
+
+        .ancatomy .cute-bit.cute-paws {
+            left: 35%;
+            bottom: 20%;
+        }
+
+        .mapCityLink{
+            color:white;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+
+
+        /*----------------- Trip Card -------------------------------------*/
+        #tripCard {
+            background-image: url("/img/mainTripCard.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            position:relative;
+            height: 95vh;
+        }
+
+        #tripCard .overlay{
+            /* overlay 와 top section 의 크기,위치를 같게 만들기 */
+            /* 위의 top의 position : relative 와 관련 */
+            position:absolute;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            /* 투명도 */
+            background-color: rgba(0,0,0,0.3);
+        }
+
+        #tripCardInfo {
+            margin-left: 250px;
+            margin-top: 250px;
+            background-color: rgba(255, 255, 255, 0.85);
+            height: 350px;
+            width: 600px;
+            color: #000;
+            transition: all 0.4s ease;
+        }
+
+        #tripCardInfo:hover{
+            background-color: #fff;
+        }
+
+        #navbar{
+            width: 100%;
+            position : fixed;
+            z-index: 1;
+        }
+
+    </style>
 </head>
 
 <body>
 
-    <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-        <button class="navbar-toggler" type="button" data-toggle="collapse"
-                data-target="#navbarTogglerDemo03"
-                aria-controls="navbarTogglerDemo03"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <nav id="navbar" class="navbar navbar-expand-sm">
         <a class="navbar-brand" href="/">旅行</a>
 
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="/waypointTest">wayPointTest</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/main2">main2</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/tripCard">tripCard</a>
-                </li>
-            </ul>
+        <div>
+            <a class="nav-link" href="/exploreByDest">지도로 찾기</a>
+            <a class="nav-link" href="/exploreTripCard">여행카드 신청</a>
+            <div class="dropdown">
+                <button class="dropbtn">City</button>
+                <div class="dropdown-content">
+                    <a href="/exploreCity?searchArrival=臺北市">臺北市</a>
+                    <a href="/exploreCity?searchArrival=新北市">新北市</a>
+                    <a href="/exploreCity?searchArrival=臺中市">臺中市</a>
+                    <a href="/exploreCity?searchArrival=臺南市">臺南市</a>
+                    <a href="/exploreCity?searchArrival=高雄市">臺東縣</a>
+                    <a href="/exploreCity?searchArrival=花蓮縣">高雄市</a>
+                    <a href="/exploreCity?searchArrival=臺東縣">花蓮縣</a>
+                    <a href="/exploreCity?searchArrival=桃園市">桃園市</a>
+                </div>
+            </div>
         </div>
     </nav>
+
+
+
+
+<section id="top">
+    <div class="left-half">
+        <div class="ancatomy">
+            <img id="ancatomyPic" src="/img/map1.png" style="width : 400px; height: 650px" alt="Cute kitten." >
+
+            <h1 class="sr-only">Why cats are cute</h1>
+            <ul>
+                <li class="cute-bit cute-ears grow-left">
+                    <a class="mapCityLink" href="/exploreCity?searchArrival=臺北市">
+                        <h3>
+                            臺北市
+                        </h3>
+                    </a>
+                </li>
+
+                <li class="cute-bit cute-eyes grow-left">
+                    <a class="mapCityLink" href="/exploreCity?searchArrival=臺中市">
+                        <h3>
+                            臺中市
+                        </h3>
+                    </a>
+                </li>
+
+                <li class="cute-bit cute-nose grow-right">
+                    <a class="mapCityLink" href="/exploreCity?searchArrival=臺南市">
+                        <h3>
+                            臺南市
+                        </h3>
+                    </a>
+                </li>
+
+                <li class="cute-bit cute-paws grow-right">
+                    <a class="mapCityLink" href="/exploreCity?searchArrival=高雄市">
+                        <h3>
+                            高雄市
+                        </h3>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
     </div>
 
-<!--    <a href="sample">go to sample</a>-->
+    <div class="right-half">
+        <div id="coolContainer">
+            <p class="cool">
+                <span data-text="Hello,">Hello,</span>
+                <span data-text="I'm">I'm</span>
+                <span data-text="the">the</span>
+                <span data-text="text.">text.</span>
+                <span data-text="How">How</span>
+                <span data-text="are">are</span>
+                <span data-text="you,">you,</span>
+                <span data-text="pal?">pal?</span>
+            </p>
+        </div>
+    </div>
+</section>
 
-    <h1 class="inline">where is </h1>
-    <input class="inline large-input" type="text">
-    <button class="button button5"><h1>?</h1></button>
+<section id="second">
 
-    <!-- section -> div(section-content) -> container 순서 -->
-    <section id="top">
-        <!--justify-content-center : 플렉스박스 안에 컬럼들을 가로로 가운데 정렬-->
-        <!--align-items-center : 플렉스박스 안에 컬럼들을 세로로 가운데 정렬-->
-        <div class="section-content overlay d-flex justify-content-center align-items-center">
-            <div class="container-xxl">
-                <div class="row align-items-center">
-                    <div class="col-md-4 offset-md-7 d-none d-md-block letsgo">
-                        <!-- 카드 -->
-                        <div class="card card-body letsgo-card" style="width: 30rem">
-                            <div class="letsgo my-3">
-                                <h4 class="letsgo-title card-title text-dark mb-3">도시이름으로 검색</h4>
-                            </div>
+        <div id="quickSearchText">
+            <h1>Quick Search</h1>
+        </div>
 
-                            <div class="letsgo-card-form">
-                                <form id="searchByCityForm" role="form"  enctype="multipart/form-data">
-                                    <div class="mb-3">
-                                        <select id="cityTypeArriveCity" name="cityTypeArriveCity">
-                                            <option value="臺北市">臺北市</option>
-                                            <option value="桃園市">桃園市</option>
-                                            <option value="金門縣">金門縣</option>
-                                            <option value="連江縣">連江縣</option>
-                                            <option value="宜蘭縣">宜蘭縣</option>
-                                            <option value="新竹縣">新竹縣</option>
-                                            <option value="苗栗縣">苗栗縣</option>
-                                            <option value="彰化縣">彰化縣</option>
-                                        </select>
-<!--                                        나중에 드롭다운으로 변경 필요-->
-<!--                                        <input type="text" id="cityTypeArriveCity" class="form-control" placeholder="도착지">-->
-                                    </div>
+        <div id="fastSearchForm">
+            <select id="fastSearchCity" name="fastSearchCity">
+                <option value="臺北市">臺北市</option>
+                <option value="桃園市">新北市</option>
+                <option value="臺中市">臺中市</option>
+                <option value="臺南市">臺南市</option>
+                <option value="臺東縣">臺東縣</option>
+                <option value="高雄市">高雄市</option>
+                <option value="花蓮縣">花蓮縣</option>
+                <option value="桃園市">桃園市</option>
+            </select>
 
-<!--                                    <div class="mb-3">-->
-<!--                                        <input type="date" id="cityTypeDepartDate" class="form-control" placeholder="출발 날짜">-->
-<!--                                    </div>-->
+            <input id="fastSearchInput" type="search" name="search">
 
-<!--                                    <div class="mb-3">-->
-<!--                                        <input type="date" id="cityTypeArriveDate" class="form-control" placeholder="도착 날짜">-->
-<!--                                    </div>-->
+            <button id="fastSearchInputBtn" class="search-btn" type="submit">
+                <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #d9d9d9;"></i>
+            </button>
+        </div>
 
-                                    <p class="mb-3">
-                                        <button type="button" class="btn btn-primary w-100 SearchBtnByCityType" >살펴보기</button>
-                                    </p>
-                                </form>
-                            </div>
 
-                        </div>
-                    </div>
+    <div id="fastSearchBtns">
+        <button type="button" id ="museumBtn" class="fastSearchBtn" value="museum"><i class="fa-solid fa-building-columns fa-2xl" style="color: #528bff"></i><p class="fastSearchBtnText">博物館</p></button>
+        <button type="button" id ="artMuseumBtn" class="fastSearchBtn" value="artMuseum"><i class="fa-solid fa-palette fa-2xl" style="color: #ff5757"></i><p class="fastSearchBtnText">美術館</p></button>
+        <button type="button" id ="parkBtn" class="fastSearchBtn" value="park"><i class="fa-solid fa-tree fa-2xl" style="color: #00c230"></i><p class="fastSearchBtnText">公園</p></button>
+        <button type="button" id ="marketBtn" class="fastSearchBtn" value="market"><i class="fa-solid fa-store fa-2xl" style="color: #ffa200"></i><p class="fastSearchBtnText">市場</p></button>
+        <button type="button" id ="templeBtn" class="fastSearchBtn" value="temple"><i class="fa-solid fa-gopuram fa-2xl" style="color: #00c230"></i><p class="fastSearchBtnText">宮廟</p></button>
+        <button type="button" id ="nightMarketBtn" class="fastSearchBtn" value="nightMarket"><i class="fa-solid fa-moon fa-2xl" style="color: #ffa200"></i><p class="fastSearchBtnText">夜市</p></button>
+        <button type="button" id ="playGroundBtn" class="fastSearchBtn" value="playGround"><i class="fa-solid fa-parachute-box fa-2xl" style="color: #ff5757"></i><p class="fastSearchBtnText">樂園</p></button>
+    </div>
+<!--    <a class="fastSearchBy" href="/museum"><i class="fa-solid fa-building-columns fa-2xl" style="color: #828282;">美術館</i></a>-->
+</section>
 
+    <section id="third">
+        <div class="cards">
+            <div id="taibeiCard" class = "card">
+                <img class="cardPic" src="/img/taibei.jpg" alt="">
+                <div class="card-content">
+                    <h2>
+                        臺北市
+                    </h2>
+                </div>
+            </div>
+            <div id="xinbeiCard" class = "card">
+                <img class="cardPic" src="/img/xinbei.jpg" alt="">
+                <div class="card-content">
+                    <h2>
+                        新北市
+                    </h2>
+                </div>
+            </div>
+            <div id="taizhongCard" class = "card">
+                <img class="cardPic" src="/img/taizhong.jpg" alt="">
+                <div class="card-content">
+                    <h2>
+                        台中市
+                    </h2>
+                </div>
+            </div>
+            <div id="gaoxiongCard" class = "card">
+                <img class="cardPic" src="/img/gaoxiong.jpg" alt="">
+                <div class="card-content">
+                    <h2>
+                        高雄市
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="cards">
+            <div id="tainanCard" class = "card">
+                <img class="cardPic" src="/img/tainan2.jpg" alt="">
+                <div class="card-content">
+                    <h2>
+                        台南市
+                    </h2>
+                </div>
+            </div>
+            <div id="taidongCard" class = "card">
+                <img class="cardPic" src="/img/taidong.jpg" alt="">
+                <div class="card-content">
+                    <h2>
+                        台東縣
+                    </h2>
+                </div>
+            </div>
+            <div id="hualianCard" class = "card">
+                <img class="cardPic" src="/img/hualian.jpg" alt="">
+                <div class="card-content">
+                    <h2>
+                        花蓮縣
+                    </h2>
+                </div>
+            </div>
+            <div id="taoyuanCard" class = "card">
+                <img class="cardPic" src="/img/taoyuan.jpg" alt="">
+                <div class="card-content">
+                    <h2>
+                        桃園市
+                    </h2>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="second">
-        <!--justify-content-center : 플렉스박스 안에 컬럼들을 가로로 가운데 정렬-->
-        <!--align-items-center : 플렉스박스 안에 컬럼들을 세로로 가운데 정렬-->
-        <div class="section-content overlay d-flex justify-content-center align-items-center">
-            <div class="container-xxl">
-                <div class="row align-items-center">
-                    <div class="col-md-4 offset-md-7 d-none d-md-block letsgo">
-                        <!-- 카드 -->
-                        <div class="card card-body letsgo-card" style="width: 30rem">
-                            <div class="letsgo my-3">
-                                <h4 class="letsgo-title card-title text-dark mb-3">목적지로 검색</h4>
-                                <!--                <p class="card-text text-secondary">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aliquid, maiores!</p>-->
-                            </div>
+    <section id="tripCard">
+        <div class = "overlay">
+            <div id="tripCardInfo">
+                <h1 class="mb-3 mb-3">青年旅遊卡</h1>
+                <p class="lead">本資料集為教育部青年發展署針對15-30歲青年發行免費申辦的青年旅遊卡，持卡青年可享景點門票、住宿、交通、小吃購物、中文學習等優惠。為利青年申辦青年旅遊卡，結合交通部觀光局旅客服務中心、青年志工中心、華語文中心及部分縣市政府、民間團體等計119個服務據點，提供青年旅遊諮詢服務網絡及申辦青年旅遊卡。</p>
+                <select id="tripCardCity" name="tripCardCity">
+                    <option value="臺北市">臺北市</option>
+                    <option value="桃園市">新北市</option>
+                    <option value="臺中市">臺中市</option>
+                    <option value="臺南市">臺南市</option>
+                    <option value="臺東縣">臺東縣</option>
+                    <option value="高雄市">高雄市</option>
+                    <option value="花蓮縣">花蓮縣</option>
+                    <option value="桃園市">桃園市</option>
+                </select>
 
-
-                            <div class="letsgo-card-form">
-                                <form id="searchByDest" role="form"  enctype="multipart/form-data">
-<!--                                    <div class="mb-3">-->
-<!--                                        <input type="text" id="destTypeDepartCity" class="form-control" placeholder="출발지">-->
-<!--                                        <input type="text" id="destTypeArriveCity" class="form-control" placeholder="도착지">-->
-<!--                                    </div>-->
-                                    <p class="mb-3">
-                                        <button type="button" class="btn btn-primary w-100 SearchBtnByDestType" >살펴보기</button>
-                                    </p>
-                                </form>
-                            </div>
-
-                        </div>
-                    </div>
-
-                </div>
+                <button type="button" class="btn btn-primary searchTripCard" >여행카드 신청</button>
             </div>
         </div>
     </section>
+
+<button type="button" class="btn btn-primary w-100 searchByMap">지도에서 검색하기</button>
 </body>

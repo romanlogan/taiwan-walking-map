@@ -1,5 +1,7 @@
 package com.dbproject.controller;
 
+import com.dbproject.dto.CityDto;
+import com.dbproject.dto.FastSearchDto;
 import com.dbproject.dto.LocationListDto;
 import com.dbproject.dto.SearchByCityDto;
 import com.dbproject.entity.Location;
@@ -30,21 +32,38 @@ public class ExploreController {
 
     private final ExploreService exploreService;
 
+    @GetMapping("/exploreCity")
+    public String exploreCity(@RequestParam("searchArrival") String cityName,
+                            Model model) {
+
+        CityDto cityDto = exploreService.getLocationDtl(cityName);
+
+        model.addAttribute("cityDto", cityDto);
+        return "/explore/exploreCity";
+    }
+
+
+
+
+    @GetMapping(value = "/exploreByDest")
+    public String exploreByDest(Model model){
+
+        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
+
+        return "/explore/exploreDest";
+    }
+
     @GetMapping(value = {"/explore","/explore/{page}"})
     public String explore(@RequestParam("searchArrival") String searchArrival,
-//                            @RequestParam("searchDepartDate") String searchDepartDate,
-//                           @RequestParam("searchArrivalDate") String searchArrivalDate,
-                           @PathVariable("page") Optional<Integer> page,
-                           Model model) {
+                          @PathVariable("page") Optional<Integer> page,
+                          Model model) {
 
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 10);
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5 );
 
-//        LocalDate departDate = LocalDate.parse(searchDepartDate);
-//        LocalDate arrivalDate = LocalDate.parse(searchArrivalDate);
-//        SearchByCityDto searchByCityDto = new SearchByCityDto(searchArrival, departDate, arrivalDate);
         SearchByCityDto searchByCityDto = new SearchByCityDto(searchArrival);
 
         Page<Location> locationList = exploreService.getLocationPageByCity(searchByCityDto, pageable);
+
         model.addAttribute("locationList", locationList);
         model.addAttribute("maxPage", 5);
         model.addAttribute("searchByCityDto", searchByCityDto);
@@ -53,26 +72,37 @@ public class ExploreController {
         return "/explore/explore";
     }
 
-    @GetMapping(value = "/exploreByDest")
-    public String exploreByDest(
-//            @RequestParam("searchDepart") String origin,
-//                                 @RequestParam("searchArrival") String destination,
-                                 Model model){
+    @GetMapping(value = {"/exploreByQuery","/exploreByQuery/{page}"})
+    public String exploreByQuery(FastSearchDto fastSearchDto,
+                                 @PathVariable("page") Optional<Integer> page,
+                                 Model model) {
 
-//        System.out.println("origin = "+origin);
-//        System.out.println("destination = "+destination);
-//
-//        model.addAttribute("origin", origin);
-//        model.addAttribute("destination", destination);
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
+
+        Page<Location> locationList = exploreService.getLocationListBySearchQuery(fastSearchDto,pageable);
+
+//        if( dto = null){
+//            model.addAttribute("errorMessage", "");
+//            return "errorPage"
+//        }
+
+        if (locationList.getTotalElements() == 0) {
+
+        }
+        System.out.println("********************************************");
+        System.out.println(locationList.getTotalElements());
+        System.out.println("********************************************");
+
+
+
+
+        model.addAttribute("locationList", locationList);
+        model.addAttribute("maxPage", 5);
+        model.addAttribute("fastSearchDto", fastSearchDto);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
-        return "/explore/exploreDest";
+        return "/explore/exploreByQuery";
     }
 
-    @GetMapping("/waypointTest")
-    public String waypointTest(Model model){
-        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
-        return "/explore/waypointTest";
-    }
 }

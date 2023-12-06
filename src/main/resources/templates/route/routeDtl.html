@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<head lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!--  <link th:href="@{/css/layout1.css}" rel="stylesheet">-->
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
+    />
+
+    <!-- JS, Popper.js, and jQuery -->
+    <!--  모달창 사용시 순서 중요-->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuiZ9Ad8RJWA9bioHcKMncGvR4CCTJtCY&libraries=places&callback=initMap" async defer></script>
+
+    <script th:inline="javascript">
+      var map;
+      var geocoder;
+      var directionsService;
+      var directionsRenderer;
+      var startLocation;
+      var endLocation;
+      var midLat;
+      var midLng;
+      var waypointName;
+
+
+
+      $(document).ready(function() {
+
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+
+        for (i = 0; i < acc.length; i++) {
+          acc[i].addEventListener("click", function() {
+            /* Toggle between adding and removing the "active" class,
+            to highlight the button that controls the panel */
+            this.classList.toggle("active");
+
+            /* Toggle between hiding and showing the active panel */
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+              panel.style.display = "none";
+            } else {
+              panel.style.display = "block";
+            }
+          });
+        }
+
+
+
+
+
+
+
+      });
+
+      function initMap() {
+        console.log("initMap 호출됨");
+
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 15,
+          center: { lat: 25.043561, lng: 121.556668 },
+        });
+
+        const startPointLat = document.getElementById("startPointLat").value;
+        const startPointLon = document.getElementById("startPointLon").value;
+        const wayPoint1Lat = document.getElementById("wayPoint1Lat").value;
+        const wayPoint1Lon = document.getElementById("wayPoint1Lon").value;
+        const wayPoint2Lat = document.getElementById("wayPoint2Lat").value;
+        const wayPoint2Lon = document.getElementById("wayPoint2Lon").value;
+        const arrivePointLat = document.getElementById("arrivePointLat").value;
+        const arrivePointLng = document.getElementById("arrivePointLng").value;
+
+        const startPointLatLng = new google.maps.LatLng(startPointLat,startPointLon)
+        const wayPoint1LatLng = new google.maps.LatLng(wayPoint1Lat,wayPoint1Lon)
+        const wayPoint2LatLng = new google.maps.LatLng(wayPoint2Lat,wayPoint2Lon)
+        const arrivePointLatLng = new google.maps.LatLng(arrivePointLat,arrivePointLng)
+
+        const travelType = document.getElementById('travelMode').value;
+
+
+        var request = {
+          origin: startPointLatLng,
+          destination: arrivePointLatLng,
+          waypoints: [{ location: wayPoint2LatLng, stopover: true },
+                      { location: wayPoint1LatLng, stopover: true}], // 경유지 설정
+          // travelMode: google.maps.TravelMode.WALKING,
+          travelMode: travelType
+        };
+
+        var date = new Date();
+
+        if (travelType == 'TRANSIT') {
+          request = {
+            origin: startPointLatLng,
+            destination: arrivePointLatLng,
+            waypoints: [{ location: wayPoint2LatLng, stopover: true },
+              { location: wayPoint1LatLng, stopover: true}], // 경유지 설정
+            // travelMode: google.maps.TravelMode.WALKING,
+            travelMode: travelType,
+            transitOptions: {
+              departureTime: date,
+              modes: ['BUS'],
+              routingPreference: 'FEWER_TRANSFERS'
+            },
+          };
+        }
+
+        // directionsRenderer.setMap(null);
+
+        directionsService = new google.maps.DirectionsService();
+
+        directionsRenderer = new google.maps.DirectionsRenderer({
+          map: map
+        });
+
+        //---------------------- 경유지 경유 루트 부분 -------------------------
+
+        directionsService.route(request, function (result, status) {
+          if (status == google.maps.DirectionsStatus.OK) {
+
+            directionsRenderer.setDirections(result);
+
+            const moveTimeMarker = new google.maps.Marker({
+              map: map,
+              position: startPointLatLng,
+            });
+
+
+            var route = result.routes[0];
+            var totalDuration = 0;
+            for (var i = 0; i < route.legs.length; i++) {
+              totalDuration += route.legs[i].duration.value;
+            }
+            // 이동 시간을 초로 반환하므로 분으로 변환
+            var totalMinutes = Math.round(totalDuration / 60);
+
+            console.log('총 이동 시간 (분): ' + totalMinutes);
+
+            var hours = 0;
+            var minutes = totalMinutes;
+            var timeContent;
+            if (totalMinutes >= 60) {
+              hours = Math.floor(totalMinutes / 60);
+              minutes = totalMinutes % 60;
+              timeContent = '예상 이동 시간: ' + hours +'시간 ' + minutes + '분'
+            }else{
+              timeContent = minutes + '분'
+            }
+
+            var mode = route.legs[0].steps[0].travel_mode;
+            console.log(mode);
+
+            var infowindow1 = new google.maps.InfoWindow({
+              content: timeContent
+            });
+            infowindow1.open(map, moveTimeMarker);
+          }
+        });
+
+      }
+
+      function changeTravelMode(mode){
+
+        var travelMode = document.getElementById('travelMode');
+        travelMode.value = mode;
+
+        var travelMode2 = document.getElementById('travelMode');
+        console.log(travelMode2);
+        initMap();
+      }
+
+
+    </script>
+
+    <style>
+      select{
+        margin-right:10px;
+      }
+
+      .left-half {
+        float: left;
+        width: 50%;
+      }
+
+      /* 오른쪽 절반 스타일 */
+      .right-half {
+        float: right;
+        width: 50%;
+      }
+
+
+      .accordion {
+        background-color: #eee;
+        color: #444;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        text-align: left;
+        border: none;
+        outline: none;
+        transition: 0.4s;
+      }
+
+      /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+      .active, .accordion:hover {
+        background-color: #ccc;
+      }
+
+      /* Style the accordion panel. Note: hidden by default */
+      .panel {
+        padding: 0 18px;
+        background-color: white;
+        display: none;
+        overflow: hidden;
+      }
+
+
+
+      #content{
+        margin-left: 150px;
+        margin-right: 150px;
+      }
+    </style>
+  </head>
+
+<body>
+
+<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+  <button class="navbar-toggler" type="button" data-toggle="collapse"
+          data-target="#navbarTogglerDemo03"
+          aria-controls="navbarTogglerDemo03"
+          aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="/">旅行</a>
+
+  <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item">
+        <a class="nav-link" href="/waypointTest">wayPointTest</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/main2">main2</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/tripCard">tripCard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/uploadCityImg">uploadCityImg</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+<div id="content">
+  <div id="left-half" class="left-half">
+
+    <button class="accordion">[[${routeDtlDto.getStartPointDto().AttractionName}]]</button>
+    <div class="panel">
+      <input id="startPointLat" type="hidden" th:value="${routeDtlDto.getStartPointDto().getPositionLat()}">
+      <input id="startPointLon" type="hidden" th:value="${routeDtlDto.getStartPointDto().getPositionLon()}">
+
+      <img th:src="${routeDtlDto.getStartPointDto().getImagesUrl()}" class="card-img-top" height="200">
+      <p>[[${routeDtlDto.getStartPointDto().AttractionName}]]</p>
+      <p>[[${routeDtlDto.getStartPointDto().Description}]]</p>
+      <p>[[${routeDtlDto.getStartPointDto().PostalAddressStreetAddress}]]</p>
+      <p>[[${routeDtlDto.getStartPointDto().ServiceTimeInfo}]]</p>
+      <p>[[${routeDtlDto.getStartPointDto().TelephonesTel}]]</p>
+      <p>[[${routeDtlDto.getStartPointDto().FeeInfo}]]</p>
+      <p>[[${routeDtlDto.getStartPointDto().WebsiteUrl}]]</p>
+      <p>[[${routeDtlDto.getStartPointDto().Remarks}]]</p>
+    </div>
+
+    <button class="accordion">[[${routeDtlDto.getWayPoint1Dto().AttractionName}]]</button>
+    <div class="panel">
+      <input id="wayPoint1Lat" type="hidden" th:value="${routeDtlDto.getWayPoint1Dto().getPositionLat()}">
+      <input id="wayPoint1Lon" type="hidden" th:value="${routeDtlDto.getWayPoint1Dto().getPositionLon()}">
+      <img th:src="${routeDtlDto.getWayPoint1Dto().getImagesUrl()}" class="card-img-top" height="200">
+      <p>[[${routeDtlDto.getWayPoint1Dto().AttractionName}]]</p>
+      <p>[[${routeDtlDto.getWayPoint1Dto().Description}]]</p>
+      <p>[[${routeDtlDto.getWayPoint1Dto().PostalAddressStreetAddress}]]</p>
+      <p>[[${routeDtlDto.getWayPoint1Dto().ServiceTimeInfo}]]</p>
+      <p>[[${routeDtlDto.getWayPoint1Dto().TelephonesTel}]]</p>
+      <p>[[${routeDtlDto.getWayPoint1Dto().FeeInfo}]]</p>
+      <p>[[${routeDtlDto.getWayPoint1Dto().WebsiteUrl}]]</p>
+      <p>[[${routeDtlDto.getWayPoint1Dto().Remarks}]]</p>
+    </div>
+
+    <button class="accordion">[[${routeDtlDto.getWayPoint2Dto().AttractionName}]]</button>
+    <div class="panel">
+      <input id="wayPoint2Lat" type="hidden" th:value="${routeDtlDto.getWayPoint2Dto().getPositionLat()}">
+      <input id="wayPoint2Lon" type="hidden" th:value="${routeDtlDto.getWayPoint2Dto().getPositionLon()}">
+      <img th:src="${routeDtlDto.getWayPoint2Dto().getImagesUrl()}" class="card-img-top" height="200">
+      <p>[[${routeDtlDto.getWayPoint2Dto().AttractionName}]]</p>
+      <p>[[${routeDtlDto.getWayPoint2Dto().Description}]]</p>
+      <p>[[${routeDtlDto.getWayPoint2Dto().PostalAddressStreetAddress}]]</p>
+      <p>[[${routeDtlDto.getWayPoint2Dto().ServiceTimeInfo}]]</p>
+      <p>[[${routeDtlDto.getWayPoint2Dto().TelephonesTel}]]</p>
+      <p>[[${routeDtlDto.getWayPoint2Dto().FeeInfo}]]</p>
+      <p>[[${routeDtlDto.getWayPoint2Dto().WebsiteUrl}]]</p>
+      <p>[[${routeDtlDto.getWayPoint2Dto().Remarks}]]</p>
+    </div>
+
+    <button class="accordion">[[${routeDtlDto.getArrivePointDto().AttractionName}]]</button>
+    <div class="panel">
+      <input id="arrivePointLat" type="hidden" th:value="${routeDtlDto.getArrivePointDto().getPositionLat()}">
+      <input id="arrivePointLng" type="hidden" th:value="${routeDtlDto.getArrivePointDto().getPositionLon()}">
+      <img th:src="${routeDtlDto.getArrivePointDto().getImagesUrl()}" class="card-img-top" height="200">
+      <p>[[${routeDtlDto.getArrivePointDto().AttractionName}]]</p>
+      <p>[[${routeDtlDto.getArrivePointDto().Description}]]</p>
+      <p>[[${routeDtlDto.getArrivePointDto().PostalAddressStreetAddress}]]</p>
+      <p>[[${routeDtlDto.getArrivePointDto().ServiceTimeInfo}]]</p>
+      <p>[[${routeDtlDto.getArrivePointDto().TelephonesTel}]]</p>
+      <p>[[${routeDtlDto.getArrivePointDto().FeeInfo}]]</p>
+      <p>[[${routeDtlDto.getArrivePointDto().WebsiteUrl}]]</p>
+      <p>[[${routeDtlDto.getArrivePointDto().Remarks}]]</p>
+    </div>
+
+  </div>
+
+  <div id="right-half" class="right-half">
+
+    <input id="travelMode" type="hidden" value="DRIVING">
+    <i class="fa-solid fa-person-walking"></i>
+    <button onclick="changeTravelMode('DRIVING')">Driving</button>
+    <button onclick="changeTravelMode('WALKING')">Walking</button>
+    <button onclick="changeTravelMode('BICYCLING')">Bicycling</button>
+    <button onclick="changeTravelMode('TRANSIT')">Transit</button>
+
+    <div id="map" style="width: 100%; height: 800px;"></div>
+  </div>
+</div>
+
+</body>

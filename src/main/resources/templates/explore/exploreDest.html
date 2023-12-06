@@ -17,7 +17,7 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuiZ9Ad8RJWA9bioHcKMncGvR4CCTJtCY&libraries=places&callback=initMap" async defer></script>
 
     <script>
         var map;
@@ -30,8 +30,13 @@
         var midLng;
         var waypointName;
 
+
+        //
+
         $(document).ready(function() {
+
             $(".callGeoBtn").on("click", function () {
+
                 findGeo();
             });
 
@@ -39,6 +44,8 @@
                 findRoute();
             });
         });
+
+        //
 
         function initMap() {
             console.log("initMap 호출됨");
@@ -206,6 +213,7 @@
             var request = {
                 origin: origin,
                 destination: destination,
+                //
                 travelMode: 'WALKING'
             };
 
@@ -223,6 +231,7 @@
 
                     clearDirections();
                     directionsRenderer.setDirections(result);
+                    directionsRenderer.setOptions({ polylineOptions: { strokeColor: '#FF0000' } });
                     console.log("route 호출");
 
                     const moveTimeMarker = new google.maps.Marker({
@@ -246,9 +255,10 @@
 //---------------------- 레스토랑 검색 -------------------------
                     var service = new google.maps.places.PlacesService(map);
                     var infowindow;
+
                     service.nearbySearch({
                         location: new google.maps.LatLng(midLat,midLng),       //이 오리진을 latLng 로 변경해ㅑㅇ하나 ? -> ㅐ
-                        radius: '50000', // 5km 반경 내에서 검색 (5000)
+                        radius: '5000', // 5km 반경 내에서 검색 (5000)
                         type: ['restaurant']
                         // minPriceLevel: 4 // 별 4개 이상
                     }, function(results, status) {
@@ -354,13 +364,6 @@
                 .then((response) => {
                     if (response.results[0]) {
 
-
-                        const stopoverRoute = document.getElementById('withStopoverRouteDetail');
-                        stopoverRoute.innerHTML = `
-                        <strong>출발지 : ${start}</strong><br>
-                        <strong>경유지 : ${waypointName}</strong><br>
-                        <strong>도착지 : ${end}</strong>`;
-
                     } else {
                         window.alert("findMiddleRoute No results found");
                     }
@@ -417,15 +420,36 @@
                     }
 
                     var mode = route.legs[0].steps[0].travel_mode;
-                    console.log(mode);
+                        console.log(mode);
 
                     var infowindow1 = new google.maps.InfoWindow({
                         content: timeContent
                     });
                     infowindow1.open(map, moveTimeMarker);
+
+
+                    const stopoverRoute = document.getElementById('withStopoverRouteDetail');
+                    stopoverRoute.className = 'routeDetail';
+                    stopoverRoute.innerHTML = `
+                        <div>
+                            <strong>출발지 : ${start}</strong>
+                        </div>
+                        <div>
+                            <strong>경유지 : ${waypointName}</strong>
+                        </div>
+                        <div>
+                            <strong>도착지 : ${end}</strong>
+                        </div>
+                        <div>
+                           <strong>예상시간  : ${timeContent}</strong>
+                        </div>
+                        <div>
+                           <strong>이동 모드  : ${mode}</strong>
+                        </div>
+
+                        `;
                 }
             });
-
         }
 
         function displayRestaurantList(results) {
@@ -442,7 +466,7 @@
                     const listItem = document.createElement('div');
                     listItem.className = 'restaurant-item';
                     listItem.innerHTML = `
-                          <strong>${place.name}</strong>
+                          <strong class="restListPlaceName">${place.name}</strong>
                           <p>평점: ${place.rating}</p>
                           <p>댓글 수: ${place.user_ratings_total}</p> `;
 
@@ -473,6 +497,11 @@
     </script>
 
     <style>
+
+        body{
+            overflow: hidden;
+        }
+
         select{
             margin-right:10px;
         }
@@ -500,36 +529,108 @@
         /*    display: block;*/
         /*}*/
 
+        .restListBox{
+            height: 95vh;
+            overflow: auto;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        .restaurant-item{
+            margin-right: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            width: 300px; /* 예시로 너비를 지정 */
+            height: auto; /* 예시로 높이를 지정 */
+            background-color: #fff; /* 배경색 지정 */
+            border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 추가 */
+            overflow: hidden; /* 넘치는 부분은 숨김 처리합니다. */
+            text-overflow: ellipsis; /* 넘치는 텍스트에 '...'을 추가하여 표시합니다. */
+        }
+
+        .restListPlaceName{
+
+            white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 합니다. */
+            overflow: hidden; /* 넘치는 부분은 숨김 처리합니다. */
+            text-overflow: ellipsis; /* 넘치는 텍스트에 '...'을 추가하여 표시합니다. */
+        }
+
+        #withStopoverRouteDetail{
+
+            margin-top: 20px;
+            width: 350px; /* 예시로 너비를 지정 */
+            height: 500px; /* 예시로 높이를 지정 */
+            background-color: #fff; /* 배경색 지정 */
+            border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
+
+        }
+
+        .routeDetail{
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 추가 */
+        }
     </style>
 </head>
 
 <body>
-    <div id="left-half" class="left-half">
-        <div class="container">
-            <div class="row">
-                <div id="leftOfLeft" class="col-md-6">
-                    <div id="selectOriDest">
-                        <h1>경로 설정 창</h1>
-                            <input id="origin" placeholder="출발지를 입력하세요" type="text">
-                            <input id="destination" placeholder="도착지를 입력하세요" type="text">
 
-                        <button type="button" class="btn btn-primary w-100 mb-2 mt-3 callGeoBtn">1.확인</button>
-                        <button type="button" class="btn btn-primary w-100 callRouteBtn">2.찾기</button>
+<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarTogglerDemo03"
+            aria-controls="navbarTogglerDemo03"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="/">旅行</a>
+
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="/waypointTest">wayPointTest</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/main2">main2</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/tripCard">tripCard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/uploadCityImg">uploadCityImg</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+    <div id="content">
+        <div id="left-half" class="left-half">
+            <div class="container">
+                <div class="row">
+                    <div id="leftOfLeft" class="col-md-6">
+
+                        <div id="selectOriDest">
+                            <h1>경로 설정 창</h1>
+                                <input id="origin" placeholder="출발지를 입력하세요" type="text">
+                                <input id="destination" placeholder="도착지를 입력하세요" type="text">
+
+                            <button type="button" class="btn btn-primary w-100 mb-2 mt-3 callGeoBtn">1.확인</button>
+                            <button type="button" class="btn btn-primary w-100 callRouteBtn">2.찾기</button>
+                        </div>
+
+                        <div id="withStopoverRouteDetail"></div>
+
+    <!--                    <button type="button" id="setAgainBtn" class="btn btn-primary mt-3 " onclick="setAgain()">다시검색하기</button>-->
                     </div>
-                    <div id="withStopoverRouteDetail"></div>
 
-<!--                    <button type="button" id="setAgainBtn" class="btn btn-primary mt-3 " onclick="setAgain()">다시검색하기</button>-->
-
-                </div>
-
-                <div class="col-md-6">
-                    <div id="restaurant-list"></div>
+                    <div class="col-md-6 restListBox">
+                        <div id="restaurant-list"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div id="right-half" class="right-half">
-        <div id="map" style="width: 100%; height: 800px;"></div>
+        <div id="right-half" class="right-half">
+            <div id="map" style="width: 100%; height: 95vh;"></div>
+        </div>
     </div>
 </body>
