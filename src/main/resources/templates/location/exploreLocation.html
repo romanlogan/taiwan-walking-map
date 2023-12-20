@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+
+  <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${googleMapsApiKey} + '&callback=initMap'" async defer></script>
+
+  <script th:inline="javascript">
+    $(document).ready(function () {
+
+      $("#moreInfo").on("click",function (){
+        goToExplore(0)
+      });
+
+    });
+
+
+    function goToExplore(page) {
+
+      var searchArrival = $("#cityNameValue").val();
+
+      location.href = "/explore/" + page + "?searchArrival=" + searchArrival;
+    }
+
+  </script>
+</th:block>
+
+<th:block layout:fragment="css">
+  <style>
+
+    #navbar{
+      background-color:  #0d6efd;
+    }
+
+    /*Links inside the navbar *!*/
+    #navbar a {
+      float: left;
+      font-size: 16px;
+      color: white;
+      text-align: center;
+      padding: 16px;
+      text-decoration: none;
+    }
+
+    .dropbtn {
+      background-color: inherit;
+      color: white;
+      padding: 16px;
+      font-size: 16px;
+      border: none;
+    }
+
+    /* The container <div> - needed to position the dropdown content */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Dropdown Content (Hidden by Default) */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f1f1f1;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
+      color: white;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    /* Change color of dropdown links on hover */
+    .dropdown-content a:hover {background-color: #ddd;}
+
+    /* Show the dropdown menu on hover */
+    .dropdown:hover .dropdown-content {display: block;}
+
+
+    #content{
+      padding-left: 50px;
+      padding-right: 50px;
+    }
+
+    #locationName{
+      margin-top: 30px;
+      margin-bottom: 30px;
+    }
+
+    .left-half {
+      float: left;
+      width: 40%;
+    }
+
+    .right-half {
+      float: right;
+      width: 60%;
+
+    }
+
+    .clear{
+      clear: both;
+    }
+
+    #imgBox{
+      height: 500px;
+      width: 800px;
+      padding-left: 50px;
+      overflow: hidden;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    .locationImg{
+      /*object-fit: cover;*/
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+
+    }
+
+    #descBox{
+      padding : 10px;
+      height: 500px;
+      width: 500px;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+      overflow: auto;
+    }
+
+  </style>
+</th:block>
+
+<div layout:fragment="content">
+<!--  -->
+<!--<nav id="navbar" class="navbar navbar-expand-sm">-->
+<!--  <a class="navbar-brand" href="/static">Home</a>-->
+
+<!--  <div>-->
+<!--    <a class="nav-link" href="/exploreByDest">serach by map</a>-->
+<!--    <div class="dropdown">-->
+<!--      <button class="dropbtn">City</button>-->
+<!--      <div class="dropdown-content">-->
+<!--        <a href="/exploreCity?searchArrival=臺北市">臺北市</a>-->
+<!--        <a href="/exploreCity?searchArrival=新北市">新北市</a>-->
+<!--        <a href="/exploreCity?searchArrival=臺中市">臺中市</a>-->
+<!--        <a href="/exploreCity?searchArrival=臺南市">臺南市</a>-->
+<!--        <a href="/exploreCity?searchArrival=高雄市">臺東縣</a>-->
+<!--        <a href="/exploreCity?searchArrival=花蓮縣">高雄市</a>-->
+<!--        <a href="/exploreCity?searchArrival=臺東縣">花蓮縣</a>-->
+<!--        <a href="/exploreCity?searchArrival=桃園市">桃園市</a>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</nav>-->
+
+
+
+<!--  <input id="cityNameValue" type="hidden" th:value="${cityDto.getCityName()}">-->
+
+  <section id="content">
+    <h1 id="locationName">[[${location.name}]]</h1>
+
+
+    <div class="left-half">
+      <div id="descBox">
+        <h4>說明</h4>
+        <p>[[${location.tolDescribe}]]</p>
+
+        <div th:if="${location.address != null}">
+          <p class="locationText"> address : [[${location.address}]]</p>
+        </div>
+
+        <div th:if="${location.openTime != null}">
+          <p class="locationText"> open time : [[${location.openTime}]]</p>
+        </div>
+
+        <div th:if="${location.ticketInfo != null}">
+          <p class="locationText"> Fee Info : [[${location.ticketInfo}]]</p>
+        </div>
+
+        <div th:if="${location.website != null}">
+          <p class="locationText"> Website Url : [[${location.website}]]</p>
+        </div>
+
+        <div th:if="${location.tel != null}">
+          <p class="locationText"> Tel : [[${location.tel}]]</p>
+        </div>
+
+        <div th:if="${location.remarks != null}">
+          <p class="locationText"> remark : [[${location.remarks}]]</p>
+        </div>
+
+        <div th:if="${location.travellingInfo != null}">
+          <p class="locationText"> traffic_Info : [[${location.travellingInfo}]]</p>
+        </div>
+
+        <div th:if="${location.parkingInfo != null}">
+          <p class="locationText"> parking_info : [[${location.parkingInfo}]]</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-half">
+      <div id="imgBox">
+        <div th:if="${#strings.isEmpty(location.picture1)}">
+          <img class = "locationImg" src="/img/noImg.jpg">
+        </div>
+        <div th:unless="${#strings.isEmpty(location.picture1)}">
+          <img class = "locationImg" th:src="${location.picture1}">
+        </div>
+      </div>
+    </div>
+
+    <div class="clear"></div>
+
+  </section>
+</html>

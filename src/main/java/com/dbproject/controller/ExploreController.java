@@ -39,70 +39,9 @@ public class ExploreController {
         CityDto cityDto = exploreService.getLocationDtl(cityName);
 
         model.addAttribute("cityDto", cityDto);
+        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
+
         return "/explore/exploreCity";
     }
-
-
-
-
-    @GetMapping(value = "/exploreByDest")
-    public String exploreByDest(Model model){
-
-        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
-
-        return "/explore/exploreDest";
-    }
-
-    @GetMapping(value = {"/explore","/explore/{page}"})
-    public String explore(@RequestParam("searchArrival") String searchArrival,
-                          @PathVariable("page") Optional<Integer> page,
-                          Model model) {
-
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5 );
-
-        SearchByCityDto searchByCityDto = new SearchByCityDto(searchArrival);
-
-        Page<Location> locationList = exploreService.getLocationPageByCity(searchByCityDto, pageable);
-
-        model.addAttribute("locationList", locationList);
-        model.addAttribute("maxPage", 5);
-        model.addAttribute("searchByCityDto", searchByCityDto);
-        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
-
-        return "/explore/explore";
-    }
-
-    @GetMapping(value = {"/exploreByQuery","/exploreByQuery/{page}"})
-    public String exploreByQuery(FastSearchDto fastSearchDto,
-                                 @PathVariable("page") Optional<Integer> page,
-                                 Model model) {
-
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
-
-        Page<Location> locationList = exploreService.getLocationListBySearchQuery(fastSearchDto,pageable);
-
-//        if( dto = null){
-//            model.addAttribute("errorMessage", "");
-//            return "errorPage"
-//        }
-
-        if (locationList.getTotalElements() == 0) {
-
-        }
-        System.out.println("********************************************");
-        System.out.println(locationList.getTotalElements());
-        System.out.println("********************************************");
-
-
-
-
-        model.addAttribute("locationList", locationList);
-        model.addAttribute("maxPage", 5);
-        model.addAttribute("fastSearchDto", fastSearchDto);
-        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
-
-        return "/explore/exploreByQuery";
-    }
-
 
 }

@@ -28,14 +28,14 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
 
         List<Location> content = queryFactory
                 .selectFrom(QLocation.location)
-                .where(QLocation.location.PostalAddressCity.eq(arriveCity))
-                .orderBy(QLocation.location.attractionId.desc())
+                .where(QLocation.location.region.eq(arriveCity))
+                .orderBy(QLocation.location.locationId.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
         long total = queryFactory.select(Wildcard.count).from(QLocation.location)
-                .where(QLocation.location.PostalAddressCity.eq(arriveCity))
+                .where(QLocation.location.region.eq(arriveCity))
                 .fetchOne()
                 ;
 
@@ -45,7 +45,7 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
 
     private BooleanExpression searchByLike(String searchQuery) {
 
-        return QLocation.location.AttractionName.like("%" + searchQuery + "%");
+        return QLocation.location.name.like("%" + searchQuery + "%");
 
     }
 
@@ -54,15 +54,15 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
 
         List<Location> content = queryFactory
                 .selectFrom(QLocation.location)
-                .where(QLocation.location.PostalAddressCity.eq(fastSearchDto.getSearchCity()),
+                .where(QLocation.location.region.eq(fastSearchDto.getSearchCity()),
                         searchByLike(fastSearchDto.getSearchQuery()))
-                .orderBy(QLocation.location.attractionId.desc())
+                .orderBy(QLocation.location.longitude.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
         long total = queryFactory.select(Wildcard.count).from(QLocation.location)
-                .where(QLocation.location.PostalAddressCity.eq(fastSearchDto.getSearchCity()),
+                .where(QLocation.location.region.eq(fastSearchDto.getSearchCity()),
                         searchByLike(fastSearchDto.getSearchQuery()))
                 .fetchOne()
                 ;
@@ -76,7 +76,7 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
         List<Location> content = queryFactory
                 .selectFrom(QLocation.location)
                 .where(searchByLike(fastSearchDto.getSearchQuery()))
-                .orderBy(QLocation.location.attractionId.desc())
+                .orderBy(QLocation.location.locationId.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

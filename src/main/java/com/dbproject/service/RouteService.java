@@ -31,21 +31,21 @@ public class RouteService {
         Route route = routeRepository.findRouteById(routeNum);
 
         String startPointName = route.getStartPoint();
-        Location startPoint = locationRepository.findByAttractionName(startPointName);
+        Location startPoint = locationRepository.findByName(startPointName);
         StartPointDto startPointDto = StartPointDto.of(startPoint);
 
         System.out.println(startPointDto.toString());
 
         String wayPoint1Name = route.getWayPoint1();
-        Location wayPoint1 = locationRepository.findByAttractionName(wayPoint1Name);
+        Location wayPoint1 = locationRepository.findByName(wayPoint1Name);
         WayPoint1Dto wayPoint1Dto = WayPoint1Dto.of(wayPoint1);
 
         String wayPoint2Name = route.getWayPoint2();
-        Location wayPoint2 = locationRepository.findByAttractionName(wayPoint2Name);
+        Location wayPoint2 = locationRepository.findByName(wayPoint2Name);
         WayPoint2Dto wayPoint2Dto = WayPoint2Dto.of(wayPoint2);
 
         String arrivePointName = route.getArrivePoint();
-        Location arrivePoint = locationRepository.findByAttractionName(arrivePointName);
+        Location arrivePoint = locationRepository.findByName(arrivePointName);
         ArrivePointDto arrivePointDto = ArrivePointDto.of(arrivePoint);
 
         RouteDtlDto routeDtlDto = new RouteDtlDto();

@@ -6,25 +6,30 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LocationRepository extends JpaRepository<Location, String>, LocationRepositoryCustom {
 
 
     @Query("select l from Location l " +
-            "where l.PostalAddressCity = :PostalAddressCity " +
-            "order by l.attractionId desc")
-    List<Location> findByPostalAddressCity(@Param("PostalAddressCity") String postalAddressCity);
-
-    Location findByAttractionId(String attractionId);
-
-    @Query("select l from Location l "+
-            "where l.AttractionName = :AttractionName")
-    Location findByAttractionName(@Param("AttractionName") String AttractionName);
+            "where l.region = :region " +
+            "order by l.locationId desc")
+    List<Location> findByRegion(@Param("region") String region);
 
 
-    @Query("select l from Location l " +
-            "where l.AttractionName like :searchQuery and l.PostalAddressCity = :searchCity")
-    List<Location> findBySearchQuery(@Param("searchQuery") String searchQuery,
-                                     @Param("searchCity") String searchCity);
+    Location findByLocationId(String LocationId);
+
+//    Optional<Location> findById(@Param("id") String id);
+
+//    @Query("select l from Location l "+
+//            "where l.AttractionName = :AttractionName")
+
+    Location findByName(String name);
+
+
+//    @Query("select l from Location l " +
+//            "where l.AttractionName like :searchQuery and l.PostalAddressCity = :searchCity")
+//    List<Location> findBySearchQuery(@Param("searchQuery") String searchQuery,
+//                                     @Param("searchCity") String searchCity);
 
 }

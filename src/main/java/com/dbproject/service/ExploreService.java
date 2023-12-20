@@ -32,64 +32,59 @@ public class ExploreService {
     private final RouteService routeService;
 
 
+//    public RouteDto setRoutePoint(RouteDto routeDto, String point) {
+//
+//        String pointImgUrl = findRouteLocationUrl(point);
+//        String pointDesc = findRouteLocationDescribe(point);
+//
+//        //여기서 막힘
+//        routeDto.
+//
+//
+//
+////        String startPointImgUrl = findRouteLocationUrl(startPoint);
+////        String startPointDesc = findRouteLocationDescribe(startPoint);
+////        routeDto.setStartPointName(startPoint);
+////        routeDto.setStartPointImgUrl(startPointImgUrl);
+////        routeDto.setStartPointDescribe(startPointDesc);
+//
+//    }
 
-    public Page<Location> getLocationPageByCity(SearchByCityDto searchByCityDto, Pageable pageable) {
 
-        Page<Location> locationList = locationRepository.getLocationPageByCity(searchByCityDto.getArriveCity(), pageable);
-
-        return locationList;
-    }
-
-    public RouteLocationDto findRouteLocation(String routeLocationNm) {
-
-        Location routeLocation = locationRepository.findByAttractionName(routeLocationNm);
-        RouteLocationDto routeLocationDto = RouteLocationDto.of(routeLocation);
-
-        return routeLocationDto;
-    }
-
-    public String findRouteLocationUrl(String routeLocationName) {
-
-        Location routeLocation = locationRepository.findByAttractionName(routeLocationName);
-        return routeLocation.getImagesUrl();
-    }
-
-    public String findRouteLocationDescribe(String routeLocationName) {
-
-        Location routeLocation = locationRepository.findByAttractionName(routeLocationName);
-        return routeLocation.getDescription();
-    }
 
     public CityDto getLocationDtl(String postalAddressCity) {
 
         List<Route> routeList = routeService.getRouteList(postalAddressCity);
-
         City city = cityRepository.findBypostalAddressCity(postalAddressCity);
-        BigDecimal lat = city.getPositionLat();
-        BigDecimal lon = city.getPositionLon();
-        System.out.println("lat :" + lat + " ,lng :  " + lon);
+
+//        BigDecimal lat = city.getPositionLat();
+//        BigDecimal lon = city.getPositionLon();
+//        System.out.println("lat :" + lat + " ,lng :  " + lon);
+
         CityDto cityDto = getLocationListByCity(postalAddressCity);
-        cityDto.setPositionLat(lat);
-        cityDto.setPositionLon(lon);
+        cityDto.setPositionLat(city.getPositionLat());
+        cityDto.setPositionLon(city.getPositionLon());
 
         List<RouteDto> routeDtoList = cityDto.getRouteDtoList();
 
         for (Route route : routeList) {
-            int num = route.getId();
-
+//            int num = route.getId();
             RouteDto routeDto = new RouteDto();
-            routeDto.setRouteNum(num);
+            routeDto.setRouteNum(route.getId());
 
 //            List<RouteLocationDto> routeLocationDtoList = routeDto.getRouteLocationDtoList();
 
             String startPoint = route.getStartPoint();
+
             String startPointImgUrl = findRouteLocationUrl(startPoint);
             String startPointDesc = findRouteLocationDescribe(startPoint);
             routeDto.setStartPointName(startPoint);
             routeDto.setStartPointImgUrl(startPointImgUrl);
             routeDto.setStartPointDescribe(startPointDesc);
 
+
             String wayPoint1 = route.getWayPoint1();
+
             String wayPoint1ImgUrl = findRouteLocationUrl(wayPoint1);
             String wayPoint1Desc = findRouteLocationDescribe(wayPoint1);
             routeDto.setWayPoint1Name(wayPoint1);
@@ -97,6 +92,7 @@ public class ExploreService {
             routeDto.setWayPoint1Describe(wayPoint1Desc);
 
             String wayPoint2 = route.getWayPoint2();
+
             String wayPoint2ImgUrl = findRouteLocationUrl(wayPoint2);
             String wayPoint2Desc = findRouteLocationDescribe(wayPoint2);
             routeDto.setWayPoint2Name(wayPoint2);
@@ -104,6 +100,7 @@ public class ExploreService {
             routeDto.setWayPoint2Describe(wayPoint2Desc);
 
             String arrivePoint = route.getArrivePoint();
+
             String arrivePointImgUrl = findRouteLocationUrl(arrivePoint);
             String arrivePointDesc = findRouteLocationDescribe(arrivePoint);
             routeDto.setArrivePointName(arrivePoint);
@@ -114,19 +111,38 @@ public class ExploreService {
 
             routeDtoList.add(routeDto);
         }
-
         return cityDto;
+    }
+
+    public RouteLocationDto findRouteLocation(String routeLocationNm) {
+
+        Location routeLocation = locationRepository.findByName(routeLocationNm);
+        RouteLocationDto routeLocationDto = RouteLocationDto.of(routeLocation);
+
+        return routeLocationDto;
+    }
+
+    public String findRouteLocationUrl(String routeLocationName) {
+
+        Location routeLocation = locationRepository.findByName(routeLocationName);
+        return routeLocation.getPicture1();
+    }
+
+    public String findRouteLocationDescribe(String routeLocationName) {
+
+        Location routeLocation = locationRepository.findByName(routeLocationName);
+        return routeLocation.getDescription();
     }
 
     public CityDto getLocationListByCity(String cityName) {
 
-        List<Location> tempLocationList = locationRepository.findByPostalAddressCity(cityName);
+        List<Location> tempLocationList = locationRepository.findByRegion(cityName);
 
         List<Location> locationList = new ArrayList<>();
 
         for (int i = 0; i < tempLocationList.size(); i++) {
 
-            if (tempLocationList.get(i).getImagesUrl() == null) {
+            if (tempLocationList.get(i).getPicture1() == null) {
                 continue;
             }
 
@@ -137,33 +153,15 @@ public class ExploreService {
             locationList.add(tempLocationList.get(i));
         }
 
+
         List<CityImg> cityImgList = cityImgRepository.findByPostalAddressCity(cityName);
 
         City city = cityRepository.findBypostalAddressCity(cityName);
 
-        System.out.println("********************************************");
-        System.out.println(city.getPostalAddressCity());
-        System.out.println("********************************************");
-
         CityDto cityDto = new CityDto(city.getPostalAddressCity(), city.getCityDetail(), locationList, cityImgList);
-
-
 
         return cityDto;
     }
 
-    public Page<Location> getLocationListBySearchQuery(FastSearchDto fastSearchDto, Pageable pageable) {
-
-        Page<Location> locationPage;
-
-        if (fastSearchDto.getSearchCity() == null) {
-            locationPage = locationRepository.getLocationPageByBtn(fastSearchDto, pageable);
-        }else {
-            locationPage = locationRepository.getLocationPageBySearch(fastSearchDto, pageable);
-        }
-
-        return locationPage;
-
-    }
 
 }

@@ -10,4 +10,6 @@ public interface CityRepository extends JpaRepository<City, String> {
 
     //    select * from Location where Location.postalAdressCity = "台中市"
           City findBypostalAddressCity(String postalAddressCity);
+
+
 }

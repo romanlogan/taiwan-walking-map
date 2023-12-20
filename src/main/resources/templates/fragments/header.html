@@ -11,32 +11,27 @@
 <!--    <a href="/explore/exploreTripCard">TripCard</a>-->
 <!--  </div>-->
 
-  <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-    <button class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarTogglerDemo03"
-            aria-controls="navbarTogglerDemo03"
-            aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <a class="navbar-brand" href="/">旅行</a>
+  <nav id="navbar" class="navbar navbar-expand-sm">
+    <a class="navbar-brand" href="/">出企玩</a>
 
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
-      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" href="/waypointTest">wayPointTest</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/main2">main2</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/tripCard">tripCard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/uploadCityImg">uploadCityImg</a>
-        </li>
-      </ul>
+    <div>
+      <a class="nav-link" href="/mapSearch">search by map</a>
+      <div class="dropdown">
+        <button class="dropbtn">City</button>
+        <div class="dropdown-content">
+          <a href="/exploreCity?searchArrival=臺北市">臺北市</a>
+          <a href="/exploreCity?searchArrival=新北市">新北市</a>
+          <a href="/exploreCity?searchArrival=臺中市">臺中市</a>
+          <a href="/exploreCity?searchArrival=臺南市">臺南市</a>
+          <a href="/exploreCity?searchArrival=高雄市">臺東縣</a>
+          <a href="/exploreCity?searchArrival=花蓮縣">高雄市</a>
+          <a href="/exploreCity?searchArrival=臺東縣">花蓮縣</a>
+          <a href="/exploreCity?searchArrival=桃園市">桃園市</a>
+        </div>
+      </div>
     </div>
   </nav>
+
 </div>
 
 </html>

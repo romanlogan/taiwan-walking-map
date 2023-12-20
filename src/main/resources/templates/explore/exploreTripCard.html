@@ -16,7 +16,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuiZ9Ad8RJWA9bioHcKMncGvR4CCTJtCY&libraries=places&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places&callback=initMap" async defer></script>
 
     <script th:inline="javascript">
       var map;
@@ -26,7 +26,7 @@
 
       });
 
-      function initMap() {
+      window.onload = function initMap() {
         console.log("initMap 호출됨");
 
         map = new google.maps.Map(document.getElementById('map'), {
@@ -50,7 +50,7 @@
                       const markerInfowindow = new google.maps.InfoWindow();
 
                       marker.addListener('click', () => {
-                        const contentString = address.address;
+                        const contentString = '<div><strong>'+address.address+'</strong>';
                         markerInfowindow.setContent(contentString);
                         markerInfowindow.open(map, marker);
                       });
@@ -65,12 +65,72 @@
     </script>
 
     <style>
+
+
+
+
+      #navbar{
+        background-color:  #0d6efd;
+      }
+
+      /*Links inside the navbar *!*/
+      #navbar a {
+        float: left;
+        font-size: 16px;
+        color: white;
+        text-align: center;
+        padding: 16px;
+        text-decoration: none;
+      }
+
+      .dropbtn {
+        background-color: inherit;
+        color: white;
+        padding: 16px;
+        font-size: 16px;
+        border: none;
+      }
+
+      /* The container <div> - needed to position the dropdown content */
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      /* Dropdown Content (Hidden by Default) */
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+      }
+
+      /* Links inside the dropdown */
+      .dropdown-content a {
+        color: white;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+
+      /* Change color of dropdown links on hover */
+      .dropdown-content a:hover {background-color: #ddd;}
+
+      /* Show the dropdown menu on hover */
+      .dropdown:hover .dropdown-content {display: block;}
+
       select{
         margin-right:10px;
       }
 
     #mapBox{
       margin : 20px;
+    }
+
+    #map{
+      border-radius: 10px;
 
     }
 
@@ -79,34 +139,26 @@
   </head>
 
 <body>
+<nav id="navbar" class="navbar navbar-expand-sm">
+  <a class="navbar-brand" href="/">Home</a>
 
-<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-  <button class="navbar-toggler" type="button" data-toggle="collapse"
-          data-target="#navbarTogglerDemo03"
-          aria-controls="navbarTogglerDemo03"
-          aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <a class="navbar-brand" href="/">旅行</a>
-
-  <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
-    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-      <li class="nav-item">
-        <a class="nav-link" href="/waypointTest">wayPointTest</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/main2">main2</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/tripCard">tripCard</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/uploadCityImg">uploadCityImg</a>
-      </li>
-    </ul>
+  <div>
+    <a class="nav-link" href="/exploreByDest">serach by map</a>
+    <div class="dropdown">
+      <button class="dropbtn">City</button>
+      <div class="dropdown-content">
+        <a href="/exploreCity?searchArrival=臺北市">臺北市</a>
+        <a href="/exploreCity?searchArrival=新北市">新北市</a>
+        <a href="/exploreCity?searchArrival=臺中市">臺中市</a>
+        <a href="/exploreCity?searchArrival=臺南市">臺南市</a>
+        <a href="/exploreCity?searchArrival=高雄市">臺東縣</a>
+        <a href="/exploreCity?searchArrival=花蓮縣">高雄市</a>
+        <a href="/exploreCity?searchArrival=臺東縣">花蓮縣</a>
+        <a href="/exploreCity?searchArrival=桃園市">桃園市</a>
+      </div>
+    </div>
   </div>
 </nav>
-
 
   <div id="mapBox">
     <div id="map" style="width: 100%; height: 93vh;"></div>

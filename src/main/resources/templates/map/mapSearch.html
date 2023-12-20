@@ -6,6 +6,7 @@
     <title>Document</title>
 
     <!-- CSS only -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!--  <link th:href="@{/css/layout1.css}" rel="stylesheet">-->
 
@@ -17,7 +18,7 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuiZ9Ad8RJWA9bioHcKMncGvR4CCTJtCY&libraries=places&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBCCPvXaXw7_y-uS7det0UKmV6rAEi2tv4&libraries=places&callback=initMap" async defer></script>
 
     <script>
         var map;
@@ -29,9 +30,8 @@
         var midLat;
         var midLng;
         var waypointName;
-
-
-        //
+        var travelMode;
+        var markerList = [];
 
         $(document).ready(function() {
 
@@ -209,12 +209,14 @@
 
             var origin = document.getElementById('origin').value;
             var destination  = document.getElementById('destination').value;
+            travelMode = document.getElementById('travelMode').value;
+            const recommendMode = document.getElementById('recommendMode').value;
 
             var request = {
                 origin: origin,
                 destination: destination,
                 //
-                travelMode: 'WALKING'
+                travelMode: travelMode
             };
 
             directionsService = new google.maps.DirectionsService();
@@ -247,7 +249,7 @@
                     console.log(mode);
 
                     var travelTimeInfoWindow = new google.maps.InfoWindow({
-                        content: '예상 이동 시간: ' + duration
+                        content: duration + '(min)'
                     });
                     travelTimeInfoWindow.open(map, moveTimeMarker);
 
@@ -259,12 +261,14 @@
                     service.nearbySearch({
                         location: new google.maps.LatLng(midLat,midLng),       //이 오리진을 latLng 로 변경해ㅑㅇ하나 ? -> ㅐ
                         radius: '5000', // 5km 반경 내에서 검색 (5000)
-                        type: ['restaurant']
+                        type: [recommendMode]
                         // minPriceLevel: 4 // 별 4개 이상
                     }, function(results, status) {
                         if (status === google.maps.places.PlacesServiceStatus.OK) {
 
                             infowindow = new google.maps.InfoWindow();
+                            const restaurantList = document.getElementById('restaurant-list');
+                            restaurantList.innerHTML = '<button class="modeBtn" onclick="changeRecommendMode(\'restaurant\')"><i class="fa-solid fa-utensils fa-xl" style="color: #00c230;"></i></button>\n                    <button class="modeBtn" onclick="changeRecommendMode(\'museum\')"><i class="fa-solid fa-building-columns fa-xl" style="color: #528bff"></i></button>\n                    <button class="modeBtn" onclick="changeRecommendMode(\'bar\')"><i class="fa-solid fa-beer-mug-empty fa-xl" style="color: #f4ef62;"></i></i></button>\n                    <button class="modeBtn" onclick="changeRecommendMode(\'cafe\')"><i class="fa-solid fa-mug-hot fa-xl" style="color: #755800;"></i></button>\n                ';
 
                             // 결과를 처리하고 지도에 표시
                             for (var i = 0; i < results.length; i++) {
@@ -272,11 +276,34 @@
 
                                 if (place.rating >= 4 && place.user_ratings_total >= 1000) {
 
+                                    const listItem = document.createElement('div');
+                                    listItem.className = 'restaurant-item';
+                                    listItem.innerHTML = `
+                                        <strong class="restListPlaceName">${place.name}</strong>
+                                        <p>rating: ${place.rating}</p>
+                                        <p>comments: ${place.user_ratings_total}</p>
+                                        `;
+
+                                    restaurantList.appendChild(listItem);
+
+                                    listItem.addEventListener('mouseenter', () => {
+                                        highlightMarker(marker); // 마커 하이라이트 함수 호출
+                                    });
+
+                                    // 리스트 아이템에 마우스가 벗어났을 때 원래 색상으로 변경
+                                    listItem.addEventListener('mouseleave', () => {
+                                        resetMarkerColor(marker); // 마커 색상 초기화 함수 호출
+                                    });
+
                                     const marker = new google.maps.Marker({
                                         map: map,
                                         position: place.geometry.location,
-                                        title: place.name
+                                        title: place.name,
+                                        icon : 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
                                     });
+
+                                    markerList.push(marker);
+
 
                                     const markerInfowindow = new google.maps.InfoWindow();
 
@@ -284,9 +311,9 @@
                                         waypointName = place.name;
 
                                         const contentString = '<div><strong>' + place.name + '</strong><br>' +
-                                            '평점: ' + place.rating + '<br>' +
-                                            '댓글 수: ' + place.user_ratings_total + '<br>' +
-                                            '<button onclick="findMiddleRoute(' + marker.getPosition().lat() + ', ' + marker.getPosition().lng() + ')" type="button"> '+ '추가' + '</button> '+
+                                            'rating: ' + place.rating + '<br>' +
+                                            'comments: ' + place.user_ratings_total + '<br>' +
+                                            '<button onclick="findMiddleRoute(' + marker.getPosition().lat() + ', ' + marker.getPosition().lng() + ')" type="button"> '+ 'add' + '</button> '+
                                             '</div>';
 
                                         markerInfowindow.setContent(contentString);
@@ -295,7 +322,8 @@
 
                                 }
 
-                                displayRestaurantList(results);
+                                // displayRestaurantList(results);
+                                // console.log(markerList[0]);
                             }
 
                             // map.addListener('click', function() {
@@ -316,45 +344,41 @@
             });
         }
 
+        // 마커 하이라이트 함수
+        function highlightMarker(marker) {
+            // 선택된 마커 색상 변경
+            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+        }
+
+        // 마커 색상 초기화 함수
+        function resetMarkerColor(marker) {
+            // 마커의 제목을 확인하여 선택된 마커만 원래 색상으로 변경
+            markerList.forEach(m => {
+                if (m.getTitle() === marker.getTitle()) {
+                    m.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+                }
+            });
+        }
+
 
         //---------------------- 경유지 경유하는 루트-------------------------
         function findMiddleRoute(stopoverLat,stopoverLng) {
 
-            // const selectOriDest = document.getElementById('selectOriDest');
-            // if (selectOriDest.style.display === 'none') {
-            //     selectOriDest.style.display = 'block';
-            // } else {
-            //     selectOriDest.style.display = 'none';
-            // }
-
-            // //
-            // const setAgainBtn = document.getElementById('setAgainBtn');
-            // if (setAgainBtn.style.display === 'block') {
-            //     setAgainBtn.style.display = 'none';
-            //     console.log(setAgainBtn.style.display);
-            // } else {
-            //     setAgainBtn.style.display = 'block';
-            //     console.log(setAgainBtn.style.display);
-            // }
-
-            // const leftOfLeft = document.getElementById('leftOfLeft');
-            // if (leftOfLeft.style.display === 'none') {
-            //     leftOfLeft.style.display = 'block';
-            // } else {
-            //     leftOfLeft.style.display = 'none';
-            // }
-            //
-            // const rightHalf = document.getElementById('right-half');
-            // rightHalf.style.width = '75%';
-            //
-            // const leftHalf = document.getElementById('left-half');
-            // leftHalf.style.width = '25%';
-
-
+            console.log("called findMiddle Route")
 
             const start = document.getElementById('origin').value;
             const end = document.getElementById('destination').value;
-            const waypoint = new google.maps.LatLng(stopoverLat,stopoverLng);
+            const waypoint = new google.maps.LatLng(stopoverLat,stopoverLng)
+            travelMode = document.getElementById('travelMode').value;
+
+            console.log("middle Route travel Mode: " + travelMode);
+
+            const middleLat = document.getElementById('middleLat');
+            middleLat.value = stopoverLat;
+            console.log(middleLat);
+
+            const middleLng = document.getElementById('middleLng');
+            middleLng.value = stopoverLng;
 
 
             //---------------------- 경로 디테일 부분 -------------------------
@@ -375,7 +399,7 @@
                 destination: end,
                 waypoints: [{ location: waypoint, stopover: true }], // 경유지 설정
                 // travelMode: google.maps.TravelMode.WALKING,
-                travelMode: 'WALKING'
+                travelMode: travelMode
             };
 
             // directionsRenderer.setMap(null);
@@ -406,7 +430,7 @@
                     // 이동 시간을 초로 반환하므로 분으로 변환
                     var totalMinutes = Math.round(totalDuration / 60);
 
-                    console.log('총 이동 시간 (분): ' + totalMinutes);
+                    console.log('estimated time (min): ' + totalMinutes);
 
                     var hours = 0;
                     var minutes = totalMinutes;
@@ -414,9 +438,9 @@
                     if (totalMinutes >= 60) {
                         hours = Math.floor(totalMinutes / 60);
                         minutes = totalMinutes % 60;
-                        timeContent = '예상 이동 시간: ' + hours +'시간 ' + minutes + '분'
+                        timeContent = hours +'hour ' + minutes + 'min'
                     }else{
-                        timeContent = minutes + '분'
+                        timeContent = minutes + 'min'
                     }
 
                     var mode = route.legs[0].steps[0].travel_mode;
@@ -429,26 +453,35 @@
 
 
                     const stopoverRoute = document.getElementById('withStopoverRouteDetail');
+                    stopoverRoute.style.display = 'block';
                     stopoverRoute.className = 'routeDetail';
                     stopoverRoute.innerHTML = `
-                        <div>
-                            <strong>출발지 : ${start}</strong>
+                        <div class="routeDetailPlace">
+                            <strong>start : ${start}</strong>
+                        </div>
+                        <i class="fa-solid fa-arrow-down arrow"></i>
+                        <div class="routeDetailPlace">
+                            <strong>waypoint : ${waypointName}</strong>
+                        </div>
+                        <i class="fa-solid fa-arrow-down arrow"></i>
+                        <div class="routeDetailPlace">
+                            <strong>destination : ${end}</strong>
                         </div>
                         <div>
-                            <strong>경유지 : ${waypointName}</strong>
+                            <h3>waypoint transportation</h3>
+                            <button class="middleModeBtn" onclick="changeMiddleTravelMode('DRIVING')"><i class="fa-solid fa-car fa-xl" style="color: #528bff"></i></button>
+                            <button class="middleModeBtn" onclick="changeMiddleTravelMode('WALKING')"><i class="fa-solid fa-person-walking fa-2xl" style="color: #00c230;"></i></button>
+                            <button class="middleModeBtn" onclick="changeMiddleTravelMode('BICYCLING')"><i class="fa-solid fa-bicycle fa-xl" style="color: #ff5757"></i></button>
+                            <div>
+                               <strong>time spent  : ${timeContent}</strong>
+                            </div>
+                            <div>
+                               <strong>transportation  : ${mode}</strong>
+                            </div>
                         </div>
-                        <div>
-                            <strong>도착지 : ${end}</strong>
-                        </div>
-                        <div>
-                           <strong>예상시간  : ${timeContent}</strong>
-                        </div>
-                        <div>
-                           <strong>이동 모드  : ${mode}</strong>
-                        </div>
-
                         `;
                 }
+
             });
         }
 
@@ -458,7 +491,11 @@
             const restaurantList = document.getElementById('restaurant-list');
             // restaurantList.innerHTML = '<h2>레스토랑 리스트</h2>';
             //이거 없으면 누적되서 restaurant 가 점점 늘어남
-            restaurantList.innerHTML = '';
+            restaurantList.innerHTML = '<button class="modeBtn" onclick="changeRecommendMode(\'restaurant\')"><i class="fa-solid fa-utensils fa-xl" style="color: #00c230;"></i></button>\n' +
+                '                    <button class="modeBtn" onclick="changeRecommendMode(\'museum\')"><i class="fa-solid fa-building-columns fa-xl" style="color: #528bff"></i></button>\n' +
+                '                    <button class="modeBtn" onclick="changeRecommendMode(\'bar\')"><i class="fa-solid fa-beer-mug-empty fa-xl" style="color: #f4ef62;"></i></i></button>\n' +
+                '                    <button class="modeBtn" onclick="changeRecommendMode(\'cafe\')"><i class="fa-solid fa-mug-hot fa-xl" style="color: #755800;"></i></button>\n' +
+                '                    ';
 
             for (var i = 0; i < results.length; i++) {
                 const place = results[i];
@@ -467,8 +504,8 @@
                     listItem.className = 'restaurant-item';
                     listItem.innerHTML = `
                           <strong class="restListPlaceName">${place.name}</strong>
-                          <p>평점: ${place.rating}</p>
-                          <p>댓글 수: ${place.user_ratings_total}</p> `;
+                          <p>rating: ${place.rating}</p>
+                          <p>comments: ${place.user_ratings_total}</p>`;
 
                     restaurantList.appendChild(listItem);
                 }
@@ -489,11 +526,53 @@
         };
 
         function setAgain() {
-
             location.href = "/exploreByDest";
         }
 
+        function changeTravelMode(mode){
 
+            var travelMode = document.getElementById('travelMode');
+            travelMode.value = mode;
+
+            var travelMode2 = document.getElementById('travelMode');
+            console.log(travelMode2);
+
+            var withStopoverRouteDetail = document.getElementById('withStopoverRouteDetail');
+            withStopoverRouteDetail.style.display = 'none';
+
+            initMap();
+            findRoute();
+        }
+
+        function changeMiddleTravelMode(mode){
+
+            var travelMode = document.getElementById('travelMode');
+            const middleLat = document.getElementById('middleLat').value;
+            const middleLng = document.getElementById('middleLng').value;
+
+            travelMode.value = mode;
+
+            initMap();
+            // findRoute();
+
+            setTimeout(findMiddleRoute(middleLat,middleLng), 10000);
+            // findMiddleRoute(middleLat,middleLng);
+        }
+
+        function changeRecommendMode(mode){
+
+            var recommendMode = document.getElementById('recommendMode');
+            recommendMode.value = mode;
+
+            var recommendMode = document.getElementById('recommendMode');
+            console.log(recommendMode);
+            initMap();
+            findRoute();
+
+            var withStopoverRouteDetail = document.getElementById('withStopoverRouteDetail');
+            withStopoverRouteDetail.style.display = 'none';
+
+        }
     </script>
 
     <style>
@@ -501,6 +580,96 @@
         body{
             overflow: hidden;
         }
+
+        #middleModeCarBtn{
+            width: 100px;
+            height: 100px;
+            /* 버튼에 이미지 추가 */
+            background-image: url('/img/carImg.png');
+            /* 이미지 크기를 버튼에 맞게 조정 */
+            background-size: cover;
+            /* 필요에 따라 추가적인 스타일링 */
+            border: none; /* 테두리 제거 */
+            cursor: pointer; /* 마우스 커서를 포인터로 변경하여 클릭 가능한 상태로 표시 */
+        }
+
+        #middleModeWalkingBtn{
+            width: 100px;
+            height: 100px;
+            /* 버튼에 이미지 추가 */
+            background-image: url('/img/carImg.png');
+            /* 이미지 크기를 버튼에 맞게 조정 */
+            background-size: cover;
+            /* 필요에 따라 추가적인 스타일링 */
+            border: none; /* 테두리 제거 */
+            cursor: pointer; /* 마우스 커서를 포인터로 변경하여 클릭 가능한 상태로 표시 */
+        }
+
+        #middleModeBicyclingBtn{
+            width: 100px;
+            height: 100px;
+            /* 버튼에 이미지 추가 */
+            background-image: url('/img/carImg.png');
+            /* 이미지 크기를 버튼에 맞게 조정 */
+            background-size: cover;
+            /* 필요에 따라 추가적인 스타일링 */
+            border: none; /* 테두리 제거 */
+            cursor: pointer; /* 마우스 커서를 포인터로 변경하여 클릭 가능한 상태로 표시 */
+        }
+
+
+        #navbar{
+            background-color:  #0d6efd;
+        }
+
+        /*Links inside the navbar *!*/
+        #navbar a {
+            float: left;
+            font-size: 16px;
+            color: white;
+            text-align: center;
+            padding: 16px;
+            text-decoration: none;
+        }
+
+        .dropbtn {
+            background-color: inherit;
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+        }
+
+        /* The container <div> - needed to position the dropdown content */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Dropdown Content (Hidden by Default) */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        /* Links inside the dropdown */
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {background-color: #ddd;}
+
+        /* Show the dropdown menu on hover */
+        .dropdown:hover .dropdown-content {display: block;}
+
 
         select{
             margin-right:10px;
@@ -515,10 +684,67 @@
         .right-half {
             float: right;
             width: 50%;
+            padding: 10px;
+        }
+
+        #origin{
+
+            margin : 20px 10px 10px 10px;
+            border-radius: 50px;
+            border: 3px solid #0d6efd;
+        }
+
+        #destination{
+            margin : 10px;
+            border-radius: 50px;
+            border: 3px solid #0d6efd;
+
+        }
+
+        .btnBox{
+            margin-top: 5px;
+            margin-right: 50px;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+        }
+
+        .callGeoBtn{
+
+            margin : 10px;
+            background-color: #0d6efd; /* Green */
+            border-radius: 50%;
+            border: none;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+        }
+
+        .callRouteBtn{
+
+            margin : 10px;
+                background-color: #0d6efd; /* Green */
+            border-radius: 50%;
+            border: none;
+
+            color: white;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
         }
 
         #selectOriDest {
             display: block;
+        }
+
+        #map{
+            border-radius: 10px;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
         }
 
         /*#setAgainBtn {*/
@@ -558,66 +784,113 @@
         }
 
         #withStopoverRouteDetail{
-
             margin-top: 20px;
+            padding-bottom: 20px;
             width: 350px; /* 예시로 너비를 지정 */
             height: 500px; /* 예시로 높이를 지정 */
             background-color: #fff; /* 배경색 지정 */
             border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
 
+
         }
 
         .routeDetail{
+
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 추가 */
+        }
+
+        .routeDetailPlace{
+            margin : 10px;
+            padding: 10px;
+            border: 1px solid lightgray ;
+            border-radius: 10px;
+        }
+
+        .arrow{
+            margin-left : 150px;
+        }
+
+        .modeBtn{
+            width: 50px;
+            height: 50px;
+
+            margin-top: 5px;
+            margin-bottom: 5px;
+            margin-right: 10px;
+            margin-left: 10px;
+
+            padding: 10px;
+            text-align: center;
+
+            transition-duration: 0.4s;
+            background-color: white;
+            color: black;
+            border: none;
+        }
+
+        .middleModeBtn{
+            width: 50px;
+            height: 50px;
+
+            margin-top: 5px;
+            margin-bottom: 5px;
+            margin-right: 10px;
+            margin-left: 10px;
+
+            padding: 10px;
+            text-align: center;
+
+            transition-duration: 0.4s;
+            background-color: white;
+            color: black;
+            border: none;
         }
     </style>
 </head>
 
 <body>
+<nav id="navbar" class="navbar navbar-expand-sm">
+    <a class="navbar-brand" href="/">Home</a>
 
-<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-    <button class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarTogglerDemo03"
-            aria-controls="navbarTogglerDemo03"
-            aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <a class="navbar-brand" href="/">旅行</a>
-
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
-        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li class="nav-item">
-                <a class="nav-link" href="/waypointTest">wayPointTest</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/main2">main2</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/tripCard">tripCard</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/uploadCityImg">uploadCityImg</a>
-            </li>
-        </ul>
+    <div>
+        <a class="nav-link" href="/mapSearch">search by map</a>
+        <div class="dropdown">
+            <button class="dropbtn">City</button>
+            <div class="dropdown-content">
+                <a href="/exploreCity?searchArrival=臺北市">臺北市</a>
+                <a href="/exploreCity?searchArrival=新北市">新北市</a>
+                <a href="/exploreCity?searchArrival=臺中市">臺中市</a>
+                <a href="/exploreCity?searchArrival=臺南市">臺南市</a>
+                <a href="/exploreCity?searchArrival=高雄市">臺東縣</a>
+                <a href="/exploreCity?searchArrival=花蓮縣">高雄市</a>
+                <a href="/exploreCity?searchArrival=臺東縣">花蓮縣</a>
+                <a href="/exploreCity?searchArrival=桃園市">桃園市</a>
+            </div>
+        </div>
     </div>
 </nav>
 
-    <div id="content">
+
+
+<div id="content">
         <div id="left-half" class="left-half">
             <div class="container">
                 <div class="row">
                     <div id="leftOfLeft" class="col-md-6">
 
                         <div id="selectOriDest">
-                            <h1>경로 설정 창</h1>
-                                <input id="origin" placeholder="출발지를 입력하세요" type="text">
-                                <input id="destination" placeholder="도착지를 입력하세요" type="text">
+                                start ： <input id="origin" placeholder=" " type="text"><br>
+                                destination ： <input id="destination"  placeholder=" " type="text">
 
-                            <button type="button" class="btn btn-primary w-100 mb-2 mt-3 callGeoBtn">1.확인</button>
-                            <button type="button" class="btn btn-primary w-100 callRouteBtn">2.찾기</button>
+                            <div class="btnBox">
+                                <button type="button" class="callGeoBtn"><i class="fa-solid fa-check fa-xl"></i></button>
+                                <button type="button" class="callRouteBtn"><i class="fa-solid fa-magnifying-glass fa-xl"></i></button>
+                            </div>
                         </div>
 
                         <div id="withStopoverRouteDetail"></div>
+                        <input type="hidden" id="middleLat">
+                        <input type="hidden" id="middleLng">
 
     <!--                    <button type="button" id="setAgainBtn" class="btn btn-primary mt-3 " onclick="setAgain()">다시검색하기</button>-->
                     </div>
@@ -630,7 +903,27 @@
         </div>
 
         <div id="right-half" class="right-half">
-            <div id="map" style="width: 100%; height: 95vh;"></div>
+            <div>
+                <div>
+                    <h2>transportation</h2>
+                    <input id="travelMode" type="hidden" value="DRIVING">
+                    <input id="travelMiddleMode" type="hidden" value="DRIVING">
+                    <button class="modeBtn" onclick="changeTravelMode('DRIVING')"><i class="fa-solid fa-car fa-xl" style="color: #528bff"></i></button>
+                    <button class="modeBtn" onclick="changeTravelMode('WALKING')"><i class="fa-solid fa-person-walking fa-2xl" style="color: #00c230;"></i></button>
+                    <button class="modeBtn" onclick="changeTravelMode('BICYCLING')"><i class="fa-solid fa-bicycle fa-xl" style="color: #ff5757"></i></button>
+                </div>
+                <div>
+                    <input id="recommendMode" type="hidden" value="restaurant">
+                </div>
+<!--                <select id="recommendMode" name="moveType">-->
+<!--                    <option value="restaurant">restaurant</option>-->
+<!--                    <option value="museum">museum</option>-->
+<!--                    <option value="bar">bar</option>-->
+<!--                    <option value="cafe">cafe</option>-->
+<!--                </select>-->
+
+            </div>
+            <div id="map" style="width: 100%; height: 75vh;"></div>
         </div>
     </div>
 </body>

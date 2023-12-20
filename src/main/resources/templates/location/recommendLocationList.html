@@ -15,18 +15,21 @@
 
         window.onload = function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 15,
+                zoom: 10,
                 center: { lat: 25.043561, lng: 121.556668 }
             });
 
             var locations = [[${locationList.content}]];
-            console.log(locations);
+
 
             locations.forEach(location => {
 
+                const latPosition = Number(location.latitude);
+                const lngPosition = Number(location.longitude);
+
                 // console.log(location.PositionLat)
                 var marker = new google.maps.Marker({
-                    position: {lat: location.positionLat, lng: location.positionLon},
+                    position: {lat: latPosition, lng: lngPosition},
                     map: map,
                     title: 'Marker Title' // 마커에 표시될 제목
                 });
@@ -39,7 +42,7 @@
 
             var searchArrival = $("#cityTypeArriveCity").val();
 
-            location.href = "/explore/"+ page + "?searchArrival=" + searchArrival;
+            location.href = "/recommendLocationList/"+ page + "?searchArrival=" + searchArrival;
         }
 
     </script>
@@ -105,8 +108,8 @@
 <div layout:fragment="content">
 
     <input type="hidden" id="cityTypeArriveCity" th:value="${searchByCityDto.getArriveCity()}"/>
-    <input type="date" id="cityTypeDepartDate" th:value="${searchByCityDto.getDepartDate()}"/>
-    <input type="date" id="cityTypeArriveDate" th:value="${searchByCityDto.getArriveDate()}"/>
+<!--    <input type="date" id="cityTypeDepartDate" th:value="${searchByCityDto.getDepartDate()}"/>-->
+<!--    <input type="date" id="cityTypeArriveDate" th:value="${searchByCityDto.getArriveDate()}"/>-->
 
     <div class="left-half">
 
@@ -114,36 +117,36 @@
         <form role="form" method="get" th:object="${locationList}">
 
             <div class="locationBox" th:each="location, status: ${locationList.getContent()}">
-                <a th:href="'/location/' +${location.attractionId}" class="text-dark">
+                <a th:href="'/location/' +${location.locationId}" class="text-dark">
 
-                    <div th:if="${#strings.isEmpty(location.ImagesUrl)}">
+                    <div th:if="${#strings.isEmpty(location.picture1)}">
                         <img class = "locationBoxImg" src="/img/noImg.jpg">
                     </div>
-                    <div th:unless="${#strings.isEmpty(location.ImagesUrl)}">
-                        <img class = "locationBoxImg" th:src="${location.ImagesUrl}">
+                    <div th:unless="${#strings.isEmpty(location.picture1)}">
+                        <img class = "locationBoxImg" th:src="${location.picture1}">
                     </div>
 
                     <div class="locationTextBox">
-                        <p class="locationText">[[${location.AttractionName}]]</p>
+                        <p class="locationText">[[${location.name}]]</p>
 
-                        <div th:if="${location.PostalAddressStreetAddress != null}">
-                            <p class="locationText"> address : [[${location.PostalAddressStreetAddress}]]</p>
+                        <div th:if="${location.address != null}">
+                            <p class="locationText"> address : [[${location.address}]]</p>
                         </div>
 
-                        <div th:if="${location.ServiceTimeInfo != null}">
-                            <p class="locationText"> open time : [[${location.ServiceTimeInfo}]]</p>
+                        <div th:if="${location.openTime != null}">
+                            <p class="locationText"> open time : [[${location.openTime}]]</p>
                         </div>
 
-                        <div th:if="${location.FeeInfo != null}">
-                            <p class="locationText"> Fee Info : [[${location.FeeInfo}]]</p>
+                        <div th:if="${location.ticketInfo != null}">
+                            <p class="locationText"> Fee Info : [[${location.ticketInfo}]]</p>
                         </div>
 
-                        <div th:if="${location.WebsiteUrl != null}">
-                            <p class="locationText"> Website Url : [[${location.WebsiteUrl}]]</p>
+                        <div th:if="${location.website != null}">
+                            <p class="locationText"> Website Url : [[${location.website}]]</p>
                         </div>
 
-                        <div th:if="${location.TelephonesTel != null}">
-                            <p class="locationText"> Tel : [[${location.TelephonesTel}]]</p>
+                        <div th:if="${location.tel != null}">
+                            <p class="locationText"> Tel : [[${location.tel}]]</p>
                         </div>
                     </div>
                 </a>
