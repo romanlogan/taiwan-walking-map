@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 
 @Controller
@@ -44,7 +45,7 @@ public class LocationController {
 
 
     @GetMapping(value = {"/recommendLocationList","/recommendLocationList/{page}"})
-    public String explore(@RequestParam("searchArrival") String searchArrival,
+    public String explore(@RequestParam("searchArrival") @NotBlank(message = "도착지는 필수 값 입니다.") String searchArrival,
                           @PathVariable("page") Optional<Integer> page,
                           Model model) {
 

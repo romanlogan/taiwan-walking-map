@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 
 <div th:fragment="header">
@@ -29,7 +30,17 @@
           <a href="/exploreCity?searchArrival=桃園市">桃園市</a>
         </div>
       </div>
-      <a class="nav-link" href="/members/registration">sign up</a>
+
+      <span sec:authorize="isAnonymous()">
+        <a href="/members/login" class="nav-link">
+          로그인
+        </a>
+      </span>
+      <span sec:authorize="isAuthenticated()">
+        <a href="/members/logout" class="nav-link">
+          로그아웃
+        </a>
+      </span>
     </div>
   </nav>
 

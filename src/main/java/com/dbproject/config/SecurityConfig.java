@@ -1,13 +1,18 @@
 package com.dbproject.config;
 
+import com.dbproject.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -16,24 +21,28 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Bean
-    public UserDetailsService userDetailsService() {
+    @Autowired
+    private MemberService memberService;
 
-        InMemoryUserDetailsManager userDetailService = new InMemoryUserDetailsManager();
-
-        UserDetails user = User.withUsername("john")
-                .password("1234")
-                .authorities("read")
-                .build();
-
-        userDetailService.createUser(user);
-
-        return userDetailService;
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//
+//        InMemoryUserDetailsManager userDetailService = new InMemoryUserDetailsManager();
+//
+//        UserDetails user = User.withUsername("john")
+//                .password("1234")
+//                .authorities("read")
+//                .build();
+//
+//        userDetailService.createUser(user);
+//
+//        return userDetailService;
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
+
     }
 
     @Override
@@ -54,6 +63,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic();
         http.authorizeRequests()
                 .anyRequest().permitAll();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
+        auth.userDetailsService(memberService)
+                .passwordEncoder(passwordEncoder());
     }
 
 

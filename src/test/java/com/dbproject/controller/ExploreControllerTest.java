@@ -12,6 +12,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+
+
 @SpringBootTest
 @AutoConfigureMockMvc
 class ExploreControllerTest {
@@ -23,10 +32,30 @@ class ExploreControllerTest {
     @DisplayName("도시 페이지 연결 테스트")
     public void getCityPage() throws Exception{
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/exploreCity?searchArrival=臺北市"))
+        mockMvc.perform(
+                    get("/exploreCity")
+                            .queryParam("searchArrival", "臺北市")
+                )
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @DisplayName("도시 이름은 필수 값입니다.")
+    @Test
+    void test() throws Exception {
+
+        //given
+
+        //when
+        //then
+        mockMvc.perform(
+                        get("/exploreCity")
+                                .queryParam("searchArrival", "")
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+     }
 
 //    @Test
 //    @DisplayName("상품 등록 페이지 권한 테스트")
