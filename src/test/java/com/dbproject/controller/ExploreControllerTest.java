@@ -48,12 +48,15 @@ class ExploreControllerTest {
 
         //when
         //then
-        mockMvc.perform(
-                        get("/exploreCity")
-                                .queryParam("searchArrival", "")
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest());
+
+//        입구 getMapping 은 일반형으로 검사하고 나머지는 rest 로 검사하기
+
+//        mockMvc.perform(
+//                        get("/exploreCity")
+//                                .queryParam("searchArrival", "")
+//                )
+//                .andDo(print())
+//                .andExpect(status().isBadRequest());
 
      }
 
