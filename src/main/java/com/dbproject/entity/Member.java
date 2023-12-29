@@ -15,12 +15,12 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @Column(name="member_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)     //IDENTITY 는 쓰기지연사용 불가
-    private Long memberId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String name;
 
@@ -33,7 +33,6 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
     @Builder
     public Member(String name, String email, String password, String address, Role role) {
         this.name = name;
