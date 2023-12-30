@@ -1,6 +1,8 @@
 package com.dbproject.service;
 
+import com.dbproject.dto.MyProfileDto;
 import com.dbproject.dto.RegisterFormDto;
+import com.dbproject.dto.UpdateProfileDto;
 import com.dbproject.entity.Member;
 import com.dbproject.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,14 @@ public class MemberService implements UserDetailsService {
         }
     }
 
+    public MyProfileDto findMe(String name) {
+
+        Member member = memberRepository.findByEmail(name);
+        MyProfileDto myProfileDto = MyProfileDto.of(member);
+
+        return myProfileDto;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException{
 
@@ -54,7 +64,15 @@ public class MemberService implements UserDetailsService {
                 .build();
     }
 
+//    @Transactional
+    public void updateProfile(String email, UpdateProfileDto updateProfileDto) {
 
+        Member member = memberRepository.findByEmail(email);
+
+        member.setName(updateProfileDto.getName());
+        member.setAddress(updateProfileDto.getAddress());
+
+    }
 }
 
 

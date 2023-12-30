@@ -33,6 +33,7 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
     @Builder
     public Member(String name, String email, String password, String address, Role role) {
         this.name = name;

@@ -41,6 +41,11 @@
           로그아웃
         </a>
       </span>
+      <span sec:authorize="isAuthenticated()">
+        <a href="/members/profile" class="nav-link">
+          내 정보
+        </a>
+      </span>
     </div>
   </nav>
 
