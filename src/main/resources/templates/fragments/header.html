@@ -43,7 +43,12 @@
       </span>
       <span sec:authorize="isAuthenticated()">
         <a href="/members/profile" class="nav-link">
-          내 정보
+          마이페이지
+        </a>
+      </span>
+      <span sec:authorize="isAuthenticated()">
+        <a href="/favoriteList" class="nav-link">
+          가고 싶은 곳 리스트
         </a>
       </span>
     </div>

@@ -6,7 +6,7 @@ import lombok.Setter;
 import javax.servlet.http.PushBuilder;
 
 
-public class DuplicateMemberException extends Exception {
+public class DuplicateMemberException extends RuntimeException {
 
     public DuplicateMemberException(String message){
         super(message);

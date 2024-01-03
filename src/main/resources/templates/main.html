@@ -46,44 +46,43 @@
             });
 
 
+            //
+            // function taibei(){
+            //     console.log("taibei 호출됨");
+            //
+            //     $.ajax({
+            //         url      : "/exploreCity?searchArrival=臺北市",
+            //         type     : "GET",
+            //         contentType : "application/json",
+            //         dataType : "json",
+            //         cache   : false,
+            //         success  : function(result, status){
+            //             alert("확인되었습니다.");
+            //             location.href='/explore/exploreCity.html'
+            //             // location.href='/exploreCity?searchArrival=臺北市';
+            //         },
+            //         error : function(jqXHR, status, error, request){
+            //
+            //             alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+            //
+            //             // alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            //
+            //             // if(jqXHR.status == '401'){
+            //             //     alert('로그인 후 이용해주세요');
+            //             //     location.href='/members/login';
+            //             // } else{
+            //             //     alert(jqXHR.status);
+            //             //     // alert(jqXHR.responseText);
+            //             // }
+            //
+            //         }
+            //     });
+            // }
+
+
             $("#taibeiCard").on("click",function (){
-                // location.href = "/exploreCity?searchArrival=臺北市";
-                taibei();
+                location.href = "/exploreCity?searchArrival=臺北市";
             });
-
-            function taibei(){
-                console.log("taibei 호출됨");
-
-                $.ajax({
-                    url      : "/exploreCity?searchArrival=臺北市",
-                    type     : "GET",
-                    contentType : "application/json",
-                    dataType : "json",
-                    cache   : false,
-                    success  : function(result, status){
-                        alert("확인되었습니다.");
-                        location.href='/explore/exploreCity.html'
-                        // location.href='/exploreCity?searchArrival=臺北市';
-                    },
-                    error : function(jqXHR, status, error, request){
-
-                        alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
-
-                        // alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-
-                        // if(jqXHR.status == '401'){
-                        //     alert('로그인 후 이용해주세요');
-                        //     location.href='/members/login';
-                        // } else{
-                        //     alert(jqXHR.status);
-                        //     // alert(jqXHR.responseText);
-                        // }
-
-                    }
-                });
-            }
-
-
 
             $("#xinbeiCard").on("click",function (){
                 location.href = "/exploreCity?searchArrival=新北市";

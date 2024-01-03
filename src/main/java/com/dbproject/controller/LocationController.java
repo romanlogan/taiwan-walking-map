@@ -1,6 +1,7 @@
 package com.dbproject.controller;
 
 
+import com.dbproject.dto.LocationDtlResponse;
 import com.dbproject.dto.SearchByCityDto;
 import com.dbproject.entity.Location;
 import com.dbproject.service.ExploreService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.NotBlank;
+import java.security.Principal;
 import java.util.Optional;
 
 @Controller
@@ -32,13 +34,27 @@ public class LocationController {
     private final ExploreService exploreService;
 
     @GetMapping("/location/{attractionId}")
-    public String location(@PathVariable("attractionId") String attractionId,
+    public String locationDtl(@PathVariable("attractionId") String attractionId,
+                           Principal principal,
                            Model model) {
 
+        // API 스펙에 의존하게 된 코드
+//        Location location = locationService.getLocationDtl(attractionId);
 
-        Location location = locationService.getLocationDtl(attractionId);
+        LocationDtlResponse locationDtlResponse;
 
-        model.addAttribute("location", location);
+        if (principal == null) {
+
+            //로그인 하지 않은 유저
+            locationDtlResponse = locationService.getLocationDtl(attractionId);
+        }else{
+            //로그인 한 유저
+            locationDtlResponse = locationService.getLocationDtlWithAuthUser(attractionId,principal.getName());
+        }
+
+
+        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
+        model.addAttribute("location", locationDtlResponse);
 
         return "/location/exploreLocation";
     }
@@ -55,6 +71,7 @@ public class LocationController {
 
         SearchByCityDto searchByCityDto = new SearchByCityDto(searchArrival);
 
+        //리포지토리에서 dto를 바로 반환하도록 해서 dto 로 page<Location> 을 감싸야 하나 ?
         Page<Location> locationList = locationService.getLocationPageByCity(searchByCityDto, pageable);
 
         model.addAttribute("locationList", locationList);

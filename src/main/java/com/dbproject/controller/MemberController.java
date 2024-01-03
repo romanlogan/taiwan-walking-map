@@ -1,5 +1,6 @@
 package com.dbproject.controller;
 
+import com.dbproject.dto.DeleteMemberRequest;
 import com.dbproject.dto.MyProfileDto;
 import com.dbproject.dto.RegisterFormDto;
 import com.dbproject.dto.UpdateProfileDto;
@@ -85,5 +86,14 @@ public class MemberController {
 
         return new ResponseEntity<Long>(myProfileDto.getId(), HttpStatus.OK);
 
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Long> deleteMember(Principal principal) {
+
+        String email = principal.getName();
+        Long memberId = memberService.deleteMember(email);
+
+        return new ResponseEntity<>(memberId, HttpStatus.OK);
     }
 }

@@ -69,4 +69,27 @@ class MemberServiceTest {
     }
 
 
+
+    @DisplayName("email 을 받아서 회원을 삭제한다")
+    @Test
+    void deleteMemberTest(){
+        //given
+        RegisterFormDto registerFormDto = new RegisterFormDto();
+        registerFormDto.setName("손흥민");
+        registerFormDto.setAddress("서울 강남구");
+        registerFormDto.setEmail("asdf@asdf.com");
+        registerFormDto.setPassword("1234");
+
+        memberService.saveMember(registerFormDto, passwordEncoder);
+
+        //when
+        memberService.deleteMember("asdf@asdf.com");
+
+        //then
+        Member member = memberRepository.findByEmail("asdf@asdf.com");
+        assertThat(member).isNull();
+
+    }
+
+
 }

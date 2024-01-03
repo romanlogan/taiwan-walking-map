@@ -23,7 +23,7 @@ class LocationControllerTest {
     @DisplayName("Location 상세 정보 페이지 연결 테스트")
     public void getLocationDetailPageTest() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/location/Attraction_379000000A_000217"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/location/C1_379000000A_000243"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

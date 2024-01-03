@@ -73,6 +73,14 @@ public class MemberService implements UserDetailsService {
         member.setAddress(updateProfileDto.getAddress());
 
     }
+
+    public Long deleteMember(String email) {
+
+        Member member = memberRepository.findByEmail(email);
+        memberRepository.deleteByEmail(email);
+
+        return member.getId();
+    }
 }
 
 
