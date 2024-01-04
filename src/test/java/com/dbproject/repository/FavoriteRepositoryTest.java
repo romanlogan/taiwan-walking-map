@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 //    testProperty (h2)사용시 h2 에는 location 에 대한 데이터가 없으므로 테스트가 작동 x
-//@TestPropertySource(locations="classpath:application-test.properties")
+@TestPropertySource(locations="classpath:application-test.properties")
 class FavoriteRepositoryTest {
 
 
@@ -57,10 +57,11 @@ class FavoriteRepositoryTest {
         //given
         Member member = memberRepository.findByEmail("zxcv@zxcv.com");
         String locationId = "C1_379000000A_001572";
+        /// 여기 locaiton 을 못찾음
         Location location = locationRepository.findByLocationId(locationId);
+        String memo = "메모 1 입니다.";
 
-
-        FavoriteLocation favoriteLocation = new FavoriteLocation(member, location);
+        FavoriteLocation favoriteLocation = new FavoriteLocation(member, location, memo);
 
         //when
         favoriteRepository.save(favoriteLocation);
@@ -78,7 +79,8 @@ class FavoriteRepositoryTest {
          Member member = memberRepository.findByEmail("zxcv@zxcv.com");
          String locationId = "C1_379000000A_001572";
          Location location = locationRepository.findByLocationId(locationId);
-         FavoriteLocation savedFavoriteLocation = new FavoriteLocation(member, location);
+         String memo = "메모 1 입니다.";
+         FavoriteLocation savedFavoriteLocation = new FavoriteLocation(member, location, memo);
          favoriteRepository.save(savedFavoriteLocation);
 
 

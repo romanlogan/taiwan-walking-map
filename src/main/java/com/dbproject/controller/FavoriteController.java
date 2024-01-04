@@ -1,6 +1,7 @@
 package com.dbproject.controller;
 
 import com.dbproject.dto.AddFavoriteLocationRequest;
+import com.dbproject.dto.DeleteFavoriteLocationRequest;
 import com.dbproject.dto.FavoriteListResponse;
 import com.dbproject.entity.Location;
 import com.dbproject.exception.DuplicateFavoriteLocationException;
@@ -14,10 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Optional;
@@ -26,12 +24,23 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FavoriteController {
 
-
     @Value("${google.maps.api.key}")
     private String googleMapsApiKey;
 
-
     private final FavoriteService favoriteService;
+
+    @DeleteMapping("/deleteFavorite")
+    public ResponseEntity deleteFavoriteLocation(@RequestBody DeleteFavoriteLocationRequest deleteFavoriteLocationRequest) {
+
+        System.out.println("----------------------------------------------------------------");
+        System.out.println(deleteFavoriteLocationRequest.getFavoriteLocationId());
+
+        favoriteService.deleteFavoriteLocation(deleteFavoriteLocationRequest.getFavoriteLocationId());
+
+        return new ResponseEntity(1L,HttpStatus.OK);
+    }
+
+
 
     @PostMapping("/addFavoriteList")
     public ResponseEntity addFavoriteList(
@@ -71,6 +80,8 @@ public class FavoriteController {
 
         return "/favorite/favoriteList";
     }
+
+
 }
 
 

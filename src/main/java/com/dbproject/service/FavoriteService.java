@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
 
 @Service
@@ -36,7 +37,7 @@ public class FavoriteService {
 
         checkDuplicateFavoriteLocation(addFavoriteLocationRequest.getLocationId(), email);
 
-        FavoriteLocation favoriteLocation = FavoriteLocation.createFavoriteLocation(member, location);
+        FavoriteLocation favoriteLocation = FavoriteLocation.createFavoriteLocation(member, location, addFavoriteLocationRequest.getMemo());
         favoriteRepository.save(favoriteLocation);
 
         return favoriteLocation.getId();
@@ -54,5 +55,15 @@ public class FavoriteService {
     public Page<FavoriteListResponse> getFavoriteLocationList(Pageable pageable, Principal principal) {
 
         return favoriteRepository.getFavoriteLocationList(pageable, principal);
+    }
+
+    public void deleteFavoriteLocation(String favoriteLocationId){
+
+        //중복 체크
+
+        Long id = Long.valueOf(favoriteLocationId);
+        FavoriteLocation favoriteLocation = favoriteRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        favoriteRepository.delete(favoriteLocation);
     }
 }

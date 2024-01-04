@@ -31,6 +31,7 @@
 
         var paramData = {
           locationId : $("#locationId").val(),
+          memo : $("#memo").val()
         };
 
         var param = JSON.stringify(paramData);
@@ -198,7 +199,35 @@
           <button id="addedFavoriteBtn"><i class="fa-thin fa-star" style="color: #ffdd00;"></i>이미 저장된 장소입니다.</button>
         </div>
         <div th:unless="${location.isSaved()}">
-          <button id="addFavoriteBtn"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>
+        </div>
+
+        <!-- 모달 창 -->
+        <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">모달 제목</h4>
+              </div>
+              <div class="modal-body">
+                <!-- 모달 창 내의 데이터 입력 폼 -->
+                <div class="form-group">
+
+                  <label for="memo">메모</label>
+                  <textarea type="text" name="memo" id="memo" placeholder="메모 내용을 입력해주세요."></textarea>
+                  <br>
+
+<!--                  <label for="FirstRoomName">방 이름:</label>-->
+<!--                  <input type="text" name="FirstRoomName" id="FirstRoomName" placeholder="방 이름 입니다">-->
+<!--                  <br>-->
+
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button id="addFavoriteBtn" type="button" class="btn btn-default" data-dismiss="modal">추가</button>
+              </div>
+            </div>
+          </div>
         </div>
 
 

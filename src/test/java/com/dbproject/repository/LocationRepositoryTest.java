@@ -19,8 +19,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-//@Transactional
-//@TestPropertySource(locations="classpath:application-test.properties")
+@Transactional
+@TestPropertySource(locations="classpath:application-test.properties")
 class LocationRepositoryTest {
 
 

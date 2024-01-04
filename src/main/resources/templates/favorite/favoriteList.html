@@ -3,12 +3,103 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout1}">
 
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>ƒ
+
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 
     <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${googleMapsApiKey} + '&callback=initMap'" async defer></script>
 
     <script th:inline="javascript">
+
+        function deleteFavoriteLocation(favoriteLocationId) {
+
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            // var url = "/order/" + orderId + "/cancel";
+
+
+            var paramData = {
+                favoriteLocationId : favoriteLocationId,
+            };
+
+            var param = JSON.stringify(paramData);
+
+            $.ajax({
+                url      : "/deleteFavorite",
+                type     : "DELETE",
+                contentType : "application/json",
+                data     : param,
+                beforeSend : function(xhr){
+                    /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                cache   : false,
+                success  : function(result, status){
+                    location.href='/favoriteList';
+                },
+                error : function(jqXHR, status, error){
+                    console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+
+                    if(jqXHR.status == '401'){
+                        alert('로그인 후 이용해주세요');
+                        location.href='/members/login';
+                    } else{
+                        alert(jqXHR.status);
+                    }
+                }
+            });
+        }
+
+
+        function updateMemo(favoriteLocationId) {
+
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            var memo = document.getElementById("memo").value;
+
+            var paramData = {
+                favoriteLocationId : favoriteLocationId,
+                memo : memo
+
+            };
+
+            var param = JSON.stringify(paramData);
+
+            $.ajax({
+                url      : "/updateMemo",
+                type     : "PUT",
+                contentType : "application/json",
+                data     : param,
+                beforeSend : function(xhr){
+                    /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                cache   : false,
+                success  : function(result, status){
+                    alert("수정이 완료 되었습니다.");
+                    location.href='/favoriteList';
+                },
+                error : function(jqXHR, status, error){
+                    console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+
+                    if(jqXHR.status == '401'){
+                        alert('로그인 후 이용해주세요');
+                        location.href='/members/login';
+                    } else{
+                        alert(jqXHR.status);
+                    }
+                }
+            });
+        }
 
         var map;
         var marker;
@@ -42,7 +133,7 @@
 
             var searchArrival = $("#cityTypeArriveCity").val();
 
-            location.href = "/recommendLocationList/"+ page + "?searchArrival=" + searchArrival;
+            location.href = "/favoriteList/"+ page ;
         }
 
     </script>
@@ -102,15 +193,84 @@
             both: clear;
         }
 
+        .updateMemo{
+            width: 80px;
+            height: 30px;
+
+            float : right;
+
+            margin-right: 10px;
+            margin-left: 10px;
+
+            background-color: yellow;
+            color: white;
+            border: 1px solid #808080;
+            border-radius: 10px;
+        }
+
+        .deleteFavoriteLocation{
+            width: 80px;
+            height: 30px;
+
+            float : right;
+
+            margin-right: 10px;
+            margin-left: 10px;
+
+
+            background-color: red;
+            color: white;
+            border: 1px solid #808080;
+            border-radius: 10px;
+        }
+
     </style>
 </th:block>
 
 <div layout:fragment="content">
 
     <div class="left-half">
-        <form role="form" method="get" th:object="${locationList}">
+
+
+<!--        <form role="form" method="get" th:object="${locationList}">-->
 
             <div class="locationBox" th:each="location, status: ${locationList.getContent()}">
+
+<!--                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>-->
+                <button class="updateMemo" data-toggle="modal" data-target="#myModal1">Memo</button>
+                <button class="deleteFavoriteLocation" th:value="${location.favoriteLocationId}" onclick="deleteFavoriteLocation(this.value)">刪除</button>
+
+
+<!--                어떻게 반복문으로 id 를 돌려도 에러가 안날까?? 같은 id 가 여러개 존재하는데  -->
+                <!-- 모달 창 -->
+                <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">모달 제목</h4>
+                            </div>
+                            <div class="modal-body">
+                                <!-- 모달 창 내의 데이터 입력 폼 -->
+                                <div class="form-group">
+
+                                    <label for="memo">메모</label>
+                                    <textarea type="text" name="memo" id="memo" placeholder="메모 내용을 입력해주세요."></textarea>
+                                    <br>
+
+                                    <!--                  <label for="FirstRoomName">방 이름:</label>-->
+                                    <!--                  <input type="text" name="FirstRoomName" id="FirstRoomName" placeholder="방 이름 입니다">-->
+                                    <!--                  <br>-->
+
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="addFavoriteBtn" th:value="${location.favoriteLocationId}" onclick="updateMemo(this.value)" type="button" class="btn btn-default" data-dismiss="modal">수정</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
                 <a th:href="'/location/' +${location.locationId}" class="text-dark">
 
                     <div th:if="${#strings.isEmpty(location.picture1)}">
@@ -123,22 +283,16 @@
                     <div class="locationTextBox">
                         <p class="locationText">[[${location.name}]]</p>
 
-                        <div th:if="${location.region != null}">
-                            <p class="locationText"> region : [[${location.region}]]</p>
+                        <div th:if="${location.memo != null}">
+                            <p class="locationText"> memo : [[${location.memo}]]</p>
                         </div>
 
-                        <div th:if="${location.openTime != null}">
-                            <p class="locationText"> open time : [[${location.openTime}]]</p>
-                        </div>
-
-                        <div th:if="${location.ticketInfo != null}">
-                            <p class="locationText"> Fee Info : [[${location.ticketInfo}]]</p>
-                        </div>
 
                     </div>
                 </a>
 
                 <div class="clear"></div>
+
             </div>
 
 
@@ -162,7 +316,7 @@
                     </li>
                 </ul>
             </div>
-        </form>
+<!--        </form>-->
     </div>
 
     <div class="right-half">

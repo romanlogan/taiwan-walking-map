@@ -14,16 +14,21 @@ public class FavoriteListResponse {
     //location 에서 필요한 attr 가져오기
     private String locationId;
     private String name;
-    private String region;
-    private String openTime;
     private String picture1;
     private String longitude;
     private String latitude;
+
+    private Long favoriteLocationId;
+    private String memo;
+
+    //나중에 쿼리로 검색 할 수 있게
     private String ticketInfo;
+    private String region;
+    private String openTime;
 
 
     @QueryProjection
-    public FavoriteListResponse(String locationId, String name, String region, String openTime, String picture1, String longitude, String latitude,String ticketInfo) {
+    public FavoriteListResponse(String locationId, String name, String region, String openTime, String picture1, String longitude, String latitude,String ticketInfo,String memo,Long favoriteLocationId) {
         this.locationId = locationId;
         this.name = name;
         this.region = region;
@@ -32,5 +37,7 @@ public class FavoriteListResponse {
         this.longitude = longitude;
         this.latitude = latitude;
         this.ticketInfo = ticketInfo;
+        this.memo = memo;
+        this.favoriteLocationId = favoriteLocationId;
     }
 }

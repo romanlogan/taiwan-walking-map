@@ -24,21 +24,28 @@ public class FavoriteLocation {
     @JoinColumn(name = "location_id")
     private Location location;
 
+    private String memo;
 
     public FavoriteLocation() {
     }
 
     @Builder
-    public FavoriteLocation(Member member, Location location) {
+    public FavoriteLocation(Member member, Location location,String memo) {
         this.member = member;
         this.location = location;
+        this.memo = memo;
     }
 
-    public static FavoriteLocation createFavoriteLocation(Member member, Location location) {
+    public static FavoriteLocation createFavoriteLocation(Member member, Location location,String memo) {
 
         return FavoriteLocation.builder()
                 .location(location)
                 .member(member)
+                .memo(memo)
                 .build();
+    }
+
+    public void updateMemo(String memo) {
+        this.memo = memo;
     }
 }

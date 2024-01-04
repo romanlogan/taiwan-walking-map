@@ -46,7 +46,9 @@ public class FavoriteRepositoryCustomImpl implements FavoriteRepositoryCustom {
                             location.picture1,
                             location.longitude,
                             location.latitude,
-                            location.ticketInfo
+                            location.ticketInfo,
+                            favoriteLocation.memo,
+                            favoriteLocation.id
                     )
                 )
                 .from(favoriteLocation)

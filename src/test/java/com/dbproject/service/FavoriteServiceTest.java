@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-//@TestPropertySource(locations="classpath:application-test.properties")
+@TestPropertySource(locations="classpath:application-test.properties")
 class FavoriteServiceTest {
 
     @Autowired
@@ -62,7 +62,8 @@ class FavoriteServiceTest {
         //given
         String email = "test@test.com";
         String locationId = "C1_379000000A_001572";
-        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(locationId);
+        String memo = "메모 1 입니다.";
+        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(locationId, memo);
 
         //when
         favoriteService.addFavoriteList(addFavoriteLocationRequest, email);
@@ -70,8 +71,8 @@ class FavoriteServiceTest {
         //then
         List<FavoriteLocation> favoriteLocationList = favoriteRepository.findAll();
         assertThat(favoriteLocationList).hasSize(1);
-        System.out.println(favoriteLocationList.get(0).getLocation().getName());
         assertThat(favoriteLocationList.get(0).getLocation().getName()).isEqualTo("西門町");
+        assertThat(favoriteLocationList.get(0).getMemo()).isEqualTo("메모 1 입니다.");
 
      }
 }

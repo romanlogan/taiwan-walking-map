@@ -77,8 +77,9 @@ class LocationServiceTest {
         //given
         Member member = memberRepository.findByEmail("zxcv@zxcv.com");
         String locationId = "C1_379000000A_001572";
+        String memo = "메모 1 입니다.";
         Location location = locationRepository.findByLocationId(locationId);
-        FavoriteLocation savedFavoriteLocation = new FavoriteLocation(member, location);
+        FavoriteLocation savedFavoriteLocation = new FavoriteLocation(member, location, memo);
         favoriteRepository.save(savedFavoriteLocation);
 
 
