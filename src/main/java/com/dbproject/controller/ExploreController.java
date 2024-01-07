@@ -61,7 +61,7 @@ public class ExploreController {
 
         if (cityName == "") {
             return "/error/errorPage";
-//            return new ResponseEntity<String>("최소 1개 이상 담아주세요", HttpStatus.BAD_REQUEST);
+//            return new ResponseEntity(HTTP.BAD_REQUEST);
 
         }
 

@@ -50,4 +50,5 @@ public class Comment {
                 .location(location)
                 .build();
     }
+
 }

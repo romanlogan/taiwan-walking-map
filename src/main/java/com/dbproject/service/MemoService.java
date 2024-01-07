@@ -1,6 +1,6 @@
 package com.dbproject.service;
 
-import com.dbproject.controller.UpdateMemoRequest;
+import com.dbproject.dto.UpdateMemoRequest;
 import com.dbproject.entity.FavoriteLocation;
 import com.dbproject.repository.FavoriteRepository;
 import lombok.RequiredArgsConstructor;

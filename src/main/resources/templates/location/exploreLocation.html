@@ -109,7 +109,7 @@
               alert('로그인 후 이용해주세요');
               location.href='/members/login';
             } else{
-              alert(jqXHR.status);
+              alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
               // alert(jqXHR.responseText);
             }
 
@@ -355,6 +355,14 @@
 <!--        <label class="custom-file-label" text="댓글이미지"></label>-->
 <!--      </div>-->
 <!--    </div>-->
+
+    <th:block th:each="comment, status: ${location.getCommentList()}">
+      <div>
+        [[${comment.rate}]]
+        [[${comment.content}]]
+      </div>
+    </th:block>
+
   </section>
 </div>
 </html>

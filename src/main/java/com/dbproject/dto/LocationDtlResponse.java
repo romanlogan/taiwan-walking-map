@@ -1,5 +1,6 @@
 package com.dbproject.dto;
 
+import com.dbproject.entity.Comment;
 import com.dbproject.entity.Location;
 import com.dbproject.entity.Member;
 import lombok.Builder;
@@ -7,6 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,6 +32,8 @@ public class LocationDtlResponse {
     private String picture1;
     private String longitude;
     private String latitude;
+
+    private List<Comment> commentList = new ArrayList<>();
 
 //      modelMapper 사용시 null 값을 매핑 불가능 -> 에러 발생
 //      location 에는 null 값들도 들어있기 때문에 modelMapper 는 맞지 않음

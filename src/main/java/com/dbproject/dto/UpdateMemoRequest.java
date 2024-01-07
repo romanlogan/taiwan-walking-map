@@ -1,4 +1,4 @@
-package com.dbproject.controller;
+package com.dbproject.dto;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -26,10 +26,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LocationController {
 
-    private final LocationService locationService;
 
     @Value("${google.maps.api.key}")
     private String googleMapsApiKey;
+    private final LocationService locationService;
 
     private final ExploreService exploreService;
 
@@ -38,7 +38,7 @@ public class LocationController {
                            Principal principal,
                            Model model) {
 
-        // API 스펙에 의존하게 된 코드
+        // API 스펙에 의존하게 된 코드(엔티티를 그대로 반환 ) -> Dto를 반환하게 해야함
 //        Location location = locationService.getLocationDtl(attractionId);
 
         LocationDtlResponse locationDtlResponse;
