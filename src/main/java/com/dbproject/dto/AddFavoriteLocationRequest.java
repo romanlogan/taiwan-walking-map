@@ -1,5 +1,6 @@
 package com.dbproject.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,4 +19,6 @@ public class AddFavoriteLocationRequest {
         this.locationId = locationId;
         this.memo = memo;
     }
+
+
 }

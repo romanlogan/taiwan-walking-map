@@ -1,6 +1,9 @@
 package com.dbproject.repository;
 
 import com.dbproject.dto.FastSearchDto;
+import com.dbproject.dto.QuickSearchLocationDto;
+import com.dbproject.dto.RecLocationListRequest;
+import com.dbproject.dto.RecLocationListResponse;
 import com.dbproject.entity.Location;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -85,13 +88,45 @@ class LocationRepositoryTest {
         Pageable pageable = PageRequest.of(0, 5);
 
         //when
-        Page<Location> locationPage = locationRepository.getLocationPageBySearch(fastSearchDto, pageable);
+        Page<QuickSearchLocationDto> locationPage = locationRepository.getLocationPageBySearch(fastSearchDto, pageable);
 
         //then
         assertThat(locationPage.getTotalElements()).isEqualTo(7);
         assertThat(locationPage.getTotalPages()).isEqualTo(2);
     }
 
+    @DisplayName("장소 아이디을 주면 그 장소의 이미지를 가져온다")
+    @Test
+    void test(){
+        //given
+        String locationId = "C1_379000000A_001572";
+
+        //when
+        Location location = locationRepository.findByLocationId(locationId);
+
+        //then
+        assertThat(location.getLocationPicture().getPicture1()).isNotNull();
+    }
+
+    @DisplayName("추천 도시 이름과 pageable 로 추천 도시의 추천 장소 리스트를 페이징하여 돌려준다")
+    @Test
+    void getLocationPageByCity(){
+
+        //given
+        //0번째 페이지
+        Pageable pageable = PageRequest.of(0, 5);
+        String city = "臺北市";
+        RecLocationListRequest request = new RecLocationListRequest(city);
+
+        //when
+        Page<RecLocationListResponse> locationListPage = locationRepository.getLocationPageByCity(request, pageable);
+        List<RecLocationListResponse> pageContent = locationListPage.getContent();
+
+        //then
+        assertThat(locationListPage.getTotalPages()).isEqualTo(90);
+        assertThat(locationListPage.getTotalElements()).isEqualTo(449);
+        assertThat(pageContent).hasSize(5);
+    }
 
 
 

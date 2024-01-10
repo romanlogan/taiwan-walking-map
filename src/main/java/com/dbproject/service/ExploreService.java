@@ -125,7 +125,7 @@ public class ExploreService {
     public String findRouteLocationUrl(String routeLocationName) {
 
         Location routeLocation = locationRepository.findByName(routeLocationName);
-        return routeLocation.getPicture1();
+        return routeLocation.getLocationPicture().getPicture1();
     }
 
     public String findRouteLocationDescribe(String routeLocationName) {
@@ -142,7 +142,7 @@ public class ExploreService {
 
         for (int i = 0; i < tempLocationList.size(); i++) {
 
-            if (tempLocationList.get(i).getPicture1() == null) {
+            if (tempLocationList.get(i).getLocationPicture().getPicture1() == null) {
                 continue;
             }
 

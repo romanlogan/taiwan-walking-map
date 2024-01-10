@@ -2,6 +2,8 @@ package com.dbproject.service;
 
 
 import com.dbproject.dto.FastSearchDto;
+import com.dbproject.dto.QuickSearchCityDto;
+import com.dbproject.dto.QuickSearchLocationDto;
 import com.dbproject.dto.QuickSearchResultDto;
 import com.dbproject.entity.City;
 import com.dbproject.entity.Location;
@@ -28,7 +30,6 @@ public class QuickSearchService {
 
         //추천 장소 페이징 저장
         findLocationPage(quickSearchResultDto, fastSearchDto ,pageable);
-
         //도시 저장
         findCityDtl(quickSearchResultDto, fastSearchDto.getSearchCity());
 
@@ -39,8 +40,9 @@ public class QuickSearchService {
     private void findCityDtl(QuickSearchResultDto quickSearchResultDto, String searchCity) {
 
         City city = cityRepository.findBypostalAddressCity(searchCity);
-        quickSearchResultDto.setCity(city);
+        QuickSearchCityDto quickSearchCityDto = QuickSearchCityDto.of(city);
 
+        quickSearchResultDto.setCity(quickSearchCityDto);
     }
 
 
@@ -48,7 +50,7 @@ public class QuickSearchService {
                                                  FastSearchDto fastSearchDto,
                                                  Pageable pageable) {
 
-        Page<Location> locationPage = locationRepository.getLocationPageBySearch(fastSearchDto, pageable);
+        Page<QuickSearchLocationDto> locationPage = locationRepository.getLocationPageBySearch(fastSearchDto, pageable);
         quickSearchResultDto.setLocationPage(locationPage);
     }
 }

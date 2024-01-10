@@ -12,7 +12,7 @@ public class QuickSearchResultDto {
 
 //    dto 안에 엔티티도 변경 필요
 
-    private Page<Location> locationPage;
-    private City city;
+    private Page<QuickSearchLocationDto> locationPage;
+    private QuickSearchCityDto city;
 
 }

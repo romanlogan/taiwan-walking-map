@@ -45,9 +45,6 @@ class CommentControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @MockBean
     private MemberRepository memberRepository;
 
@@ -65,7 +62,7 @@ class CommentControllerTest {
 
         CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content, rating);
 
-        //when
+        //when  //then
         mockMvc.perform(MockMvcRequestBuilders.post("/createComment")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(createCommentRequest))
@@ -73,12 +70,10 @@ class CommentControllerTest {
 
                 )
                 .andExpect(status().isOk());
-        //then
-
      }
 
 
-    @DisplayName("비 로그인으로 신규 댓글을 등록을 등록시 403 에러가 발생합니다")
+    @DisplayName("비 로그인으로 신규 댓글을 등록을 등록시 401 UnAuthorization 에러가 발생합니다")
     @Test
     void test2() throws Exception {
 
@@ -92,11 +87,12 @@ class CommentControllerTest {
 
         //when
         mockMvc.perform(MockMvcRequestBuilders.post("/createComment")
+                        .with(csrf())
                         .content(objectMapper.writeValueAsString(createCommentRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
 //                .andExpect(jsonPath("$.code").value(403))
 //                .andExpect(jsonPath("$.status").value("FORBIDDEN"));
 
@@ -108,6 +104,7 @@ class CommentControllerTest {
 
     @DisplayName("댓글 작성시 content 는 필수 값 입니다")
     @Test
+    @WithMockUser(username = "user", roles = "USER")
     void test3() throws Exception {
 
         //given
@@ -118,20 +115,39 @@ class CommentControllerTest {
 
         CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content, rating);
 
-        //when
+        //when  //then
         mockMvc.perform(MockMvcRequestBuilders.post("/createComment")
+                        .with(csrf())
                         .content(objectMapper.writeValueAsString(createCommentRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
-                .andExpect(status().isForbidden());
-//                .andExpect(jsonPath("$.code").value(403))
-//                .andExpect(jsonPath("$.status").value("FORBIDDEN"));
-
-        //then
-
+                .andExpect(status().isBadRequest());
     }
 
+
+    @DisplayName("댓글 작성시 rating 는 필수 값 입니다")
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    void test4() throws Exception {
+
+        //given
+//        int rating = ;
+        String content = "댓글1 입니다.";
+        String email = "zxcv@zxcv.com";
+        String locationId = "C1_379000000A_001572";
+
+        CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content, null);
+
+        //when  //then
+        mockMvc.perform(MockMvcRequestBuilders.post("/createComment")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(createCommentRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
 
 }
 

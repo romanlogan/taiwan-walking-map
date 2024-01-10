@@ -1,8 +1,8 @@
 package com.dbproject.service;
 
-import com.dbproject.dto.CityDto;
 import com.dbproject.entity.City;
 import com.dbproject.entity.Location;
+import com.dbproject.entity.LocationPicture;
 import com.dbproject.entity.Route;
 import com.dbproject.repository.CityImgRepository;
 import com.dbproject.repository.CityRepository;
@@ -12,17 +12,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@Transactional
+@TestPropertySource(locations="classpath:application-test.properties")
 class ExploreServiceTest {
 
     @Autowired
@@ -52,6 +54,43 @@ class ExploreServiceTest {
     }
 
     @Test
+    @DisplayName("타이베이 도시 페이지에서 이미지가 있는 추천 장소(4곳) 찾기 테스트")
+    public void get4RecommendLocationThatHasImgInCityPageTest2() {
+
+        String[] cityArr = {"臺北市"};
+
+        for (int i = 0; i < cityArr.length; i++) {
+            //클래스 안에서 메서드로 분리한 코드를 테스트 할때는 메서드를 호출하여 테스트 해야하나 아니면 메서드 안의 내용을 테스트 해야 하나?
+
+            List<Location> LocationList = locationRepository.findByRegion(cityArr[i]);
+
+            List<Location> hasImgLocationList = new ArrayList<>();
+
+            for (int j = 0; j < LocationList.size(); j++) {
+
+                Location location = LocationList.get(i);
+                System.out.println("location = " + location);
+                LocationPicture locationPicture = location.getLocationPictureMethod();
+                System.out.println("locationPicture = " + locationPicture);
+                String pictureUrl = locationPicture.getPicture1();
+
+                if (pictureUrl == null) {
+                    continue;
+                }
+
+                hasImgLocationList.add(LocationList.get(j));
+
+                if (hasImgLocationList.size() == 4) {
+                    break;
+                }
+
+            }
+
+            assertThat(hasImgLocationList.size(), is(4));
+        }
+    }
+
+    @Test
     @DisplayName("도시 페이지에서 이미지가 있는 추천 장소(4곳) 찾기 테스트")
     public void get4RecommendLocationThatHasImgInCityPageTest() {
 
@@ -66,7 +105,13 @@ class ExploreServiceTest {
 
             for (int j = 0; j < LocationList.size(); j++) {
 
-                if (LocationList.get(j).getPicture1() == null) {
+                Location location = LocationList.get(i);
+                System.out.println("location = " + location);
+                LocationPicture locationPicture = location.getLocationPictureMethod();
+                System.out.println("locationPicture = " + locationPicture);
+                String pictureUrl = locationPicture.getPicture1();
+
+                if (pictureUrl == null) {
                     continue;
                 }
 
@@ -80,7 +125,6 @@ class ExploreServiceTest {
 
             assertThat(hasImgLocationList.size(), is(4));
         }
-
     }
 
     @Test

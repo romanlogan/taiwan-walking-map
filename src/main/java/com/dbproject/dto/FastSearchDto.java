@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FastSearchDto {
 
+
     private String searchQuery;
     private String searchCity;
 

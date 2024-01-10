@@ -8,4 +8,12 @@ import lombok.Setter;
 public class DeleteFavoriteLocationRequest {
 
     private String favoriteLocationId;
+
+    public DeleteFavoriteLocationRequest() {
+        
+    }
+
+    public DeleteFavoriteLocationRequest(String favoriteLocationId) {
+        this.favoriteLocationId = favoriteLocationId;
+    }
 }

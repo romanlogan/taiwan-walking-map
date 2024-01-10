@@ -1,6 +1,6 @@
 package com.dbproject.repository;
 
-import com.dbproject.dto.FastSearchDto;
+import com.dbproject.dto.*;
 import com.dbproject.entity.Location;
 import com.dbproject.entity.QLocation;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -9,7 +9,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.thymeleaf.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -24,18 +23,37 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
     }
 
     @Override
-    public Page<Location> getLocationPageByCity(String arriveCity, Pageable pageable){
+    public Page<RecLocationListResponse> getLocationPageByCity(RecLocationListRequest request, Pageable pageable){
 
-        List<Location> content = queryFactory
-                .selectFrom(QLocation.location)
-                .where(QLocation.location.region.eq(arriveCity))
+        QLocation location = QLocation.location;
+
+
+        List<RecLocationListResponse> content = queryFactory
+                .select(
+                        new QRecLocationListResponse(
+                                location.locationId,
+                                location.locationPicture.picture1,
+                                location.name,
+                                location.address,
+                                location.openTime,
+                                location.ticketInfo,
+                                location.website,
+                                location.tel,
+                                location.latitude,
+                                location.longitude
+                        )
+                )
+                .from(location)
+                .where(QLocation.location.region.eq(request.getSearchArrival()))
                 .orderBy(QLocation.location.locationId.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = queryFactory.select(Wildcard.count).from(QLocation.location)
-                .where(QLocation.location.region.eq(arriveCity))
+        long total = queryFactory
+                .select(Wildcard.count)
+                .from(QLocation.location)
+                .where(QLocation.location.region.eq(request.getSearchArrival()))
                 .fetchOne()
                 ;
 
@@ -50,10 +68,26 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
     }
 
     @Override
-    public Page<Location> getLocationPageBySearch(FastSearchDto fastSearchDto, Pageable pageable){
+    public Page<QuickSearchLocationDto> getLocationPageBySearch(FastSearchDto fastSearchDto, Pageable pageable){
 
-        List<Location> content = queryFactory
-                .selectFrom(QLocation.location)
+        QLocation location = QLocation.location;
+
+        List<QuickSearchLocationDto> content = queryFactory
+                .select(
+                        new QQuickSearchLocationDto(
+                                location.locationId,
+                                location.locationPicture.picture1,
+                                location.name,
+                                location.address,
+                                location.openTime,
+                                location.ticketInfo,
+                                location.website,
+                                location.tel,
+                                location.latitude,
+                                location.longitude
+                        )
+                )
+                .from(location)
                 .where(QLocation.location.region.eq(fastSearchDto.getSearchCity()),
                         searchByLike(fastSearchDto.getSearchQuery()))
                 .orderBy(QLocation.location.longitude.desc())
@@ -81,7 +115,9 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = queryFactory.select(Wildcard.count).from(QLocation.location)
+        long total = queryFactory
+                .select(Wildcard.count)
+                .from(QLocation.location)
                 .where(searchByLike(fastSearchDto.getSearchQuery()))
                 .fetchOne()
                 ;

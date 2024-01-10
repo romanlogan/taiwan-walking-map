@@ -113,17 +113,15 @@
 
     <div class="left-half">
 
-
         <form role="form" method="get" th:object="${locationList}">
-
             <div class="locationBox" th:each="location, status: ${locationList.getContent()}">
                 <a th:href="'/location/' +${location.locationId}" class="text-dark">
 
-                    <div th:if="${#strings.isEmpty(location.picture1)}">
+                    <div th:if="${#strings.isEmpty(location.getPicture1())}">
                         <img class = "locationBoxImg" src="/img/noImg.jpg">
                     </div>
-                    <div th:unless="${#strings.isEmpty(location.picture1)}">
-                        <img class = "locationBoxImg" th:src="${location.picture1}">
+                    <div th:unless="${#strings.isEmpty(location.getPicture1())}">
+                        <img class = "locationBoxImg" th:src="${location.getPicture1()}">
                     </div>
 
                     <div class="locationTextBox">

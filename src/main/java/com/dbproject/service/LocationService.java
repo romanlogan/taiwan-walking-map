@@ -1,11 +1,11 @@
 package com.dbproject.service;
 
 import com.dbproject.dto.LocationDtlResponse;
-import com.dbproject.dto.SearchByCityDto;
+import com.dbproject.dto.RecLocationListRequest;
+import com.dbproject.dto.RecLocationListResponse;
 import com.dbproject.entity.Comment;
 import com.dbproject.entity.FavoriteLocation;
 import com.dbproject.entity.Location;
-import com.dbproject.exception.DuplicateFavoriteLocationException;
 import com.dbproject.repository.CommentRepository;
 import com.dbproject.repository.FavoriteRepository;
 import com.dbproject.repository.LocationRepository;
@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -72,9 +71,9 @@ public class LocationService {
 
     }
 
-    public Page<Location> getLocationPageByCity(SearchByCityDto searchByCityDto, Pageable pageable) {
+    public Page<RecLocationListResponse> getLocationPageByCity(RecLocationListRequest request, Pageable pageable) {
 
-        Page<Location> locationList = locationRepository.getLocationPageByCity(searchByCityDto.getArriveCity(), pageable);
+        Page<RecLocationListResponse> locationList = locationRepository.getLocationPageByCity(request, pageable);
 
         return locationList;
     }

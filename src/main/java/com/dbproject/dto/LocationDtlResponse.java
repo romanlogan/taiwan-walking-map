@@ -79,7 +79,8 @@ public class LocationDtlResponse {
                 .remarks(location.getRemarks())
                 .travellingInfo(location.getTravellingInfo())
                 .parkingInfo(location.getParkingInfo())
-                .picture1(location.getPicture1())
+//                .picture1(location.getPicture1())
+                .picture1(location.getLocationPicture().getPicture1())
                 .longitude(location.getLongitude())
                 .latitude(location.getLatitude())
                 .build();

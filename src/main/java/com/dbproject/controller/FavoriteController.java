@@ -29,18 +29,7 @@ public class FavoriteController {
 
     private final FavoriteService favoriteService;
 
-    @DeleteMapping("/deleteFavorite")
-    public ResponseEntity deleteFavoriteLocation(@RequestBody DeleteFavoriteLocationRequest deleteFavoriteLocationRequest) {
-
-        System.out.println("----------------------------------------------------------------");
-        System.out.println(deleteFavoriteLocationRequest.getFavoriteLocationId());
-
-        favoriteService.deleteFavoriteLocation(deleteFavoriteLocationRequest.getFavoriteLocationId());
-
-        return new ResponseEntity(1L,HttpStatus.OK);
-    }
-
-
+    
 
     @PostMapping("/addFavoriteList")
     public ResponseEntity addFavoriteList(
@@ -81,6 +70,16 @@ public class FavoriteController {
         return "/favorite/favoriteList";
     }
 
+    @DeleteMapping("/deleteFavorite")
+    public ResponseEntity deleteFavoriteLocation(@RequestBody DeleteFavoriteLocationRequest deleteFavoriteLocationRequest) {
+
+        System.out.println("----------------------------------------------------------------");
+        System.out.println(deleteFavoriteLocationRequest.getFavoriteLocationId());
+
+        favoriteService.deleteFavoriteLocation(deleteFavoriteLocationRequest.getFavoriteLocationId());
+
+        return new ResponseEntity(1L,HttpStatus.OK);
+    }
 
 }
 

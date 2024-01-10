@@ -1,7 +1,8 @@
 package com.dbproject.service;
 
-import com.dbproject.dto.CreateCommentRequest;
 import com.dbproject.dto.LocationDtlResponse;
+import com.dbproject.dto.RecLocationListRequest;
+import com.dbproject.dto.RecLocationListResponse;
 import com.dbproject.dto.RegisterFormDto;
 import com.dbproject.entity.Comment;
 import com.dbproject.entity.FavoriteLocation;
@@ -24,7 +25,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,7 +32,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 @TestPropertySource(locations="classpath:application-test.properties")
 class LocationServiceTest {
-
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -173,24 +172,4 @@ class LocationServiceTest {
         //then
         assertThat(locationDtlResponse.isSaved()).isEqualTo(false);
     }
-
-     @DisplayName("추천 도시 이름과 pageable 로 추천 도시의 추천 장소 리스트를 페이징하여 돌려준다")
-     @Test
-     void getLocationPageByCity(){
-
-         //given
-         //0번째 페이지
-         Pageable pageable = PageRequest.of(0, 5);
-         String city = "臺北市";
-
-         //when
-         Page<Location> locationListPage = locationRepository.getLocationPageByCity(city, pageable);
-         List<Location> pageContent = locationListPage.getContent();
-
-         //then
-         assertThat(locationListPage.getTotalPages()).isEqualTo(90);
-         assertThat(locationListPage.getTotalElements()).isEqualTo(449);
-         assertThat(pageContent).hasSize(5);
-
-     }
 }

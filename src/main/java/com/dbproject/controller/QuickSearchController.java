@@ -43,8 +43,6 @@ public class QuickSearchController {
 //            return "errorPage"
 //        }
 
-
-
 //        model.addAttribute("locationList", locationList);
         model.addAttribute("quickSearchResultDto", quickSearchResultDto);
         model.addAttribute("maxPage", 5);

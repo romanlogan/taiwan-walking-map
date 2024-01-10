@@ -16,15 +16,16 @@ public class FavoriteLocation {
     @Column(name = "favorite_location_id")
     private Long id;
 
-    @ManyToOne
+    private String memo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")
     private Location location;
 
-    private String memo;
 
     public FavoriteLocation() {
     }

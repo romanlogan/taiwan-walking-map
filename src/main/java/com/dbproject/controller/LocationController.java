@@ -2,6 +2,8 @@ package com.dbproject.controller;
 
 
 import com.dbproject.dto.LocationDtlResponse;
+import com.dbproject.dto.RecLocationListRequest;
+import com.dbproject.dto.RecLocationListResponse;
 import com.dbproject.dto.SearchByCityDto;
 import com.dbproject.entity.Location;
 import com.dbproject.service.ExploreService;
@@ -13,12 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.constraints.NotBlank;
 import java.security.Principal;
 import java.util.Optional;
 
@@ -63,16 +62,16 @@ public class LocationController {
 
 
     @GetMapping(value = {"/recommendLocationList","/recommendLocationList/{page}"})
-    public String explore(@RequestParam("searchArrival") @NotBlank(message = "도착지는 필수 값 입니다.") String searchArrival,
+    public String explore(RecLocationListRequest request,
+//            @RequestParam("searchArrival") @NotBlank(message = "도착지는 필수 값 입니다.") String searchArrival,
                           @PathVariable("page") Optional<Integer> page,
                           Model model) {
 
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5 );
 
-        SearchByCityDto searchByCityDto = new SearchByCityDto(searchArrival);
+        SearchByCityDto searchByCityDto = new SearchByCityDto(request.getSearchArrival());
 
-        //리포지토리에서 dto를 바로 반환하도록 해서 dto 로 page<Location> 을 감싸야 하나 ?
-        Page<Location> locationList = locationService.getLocationPageByCity(searchByCityDto, pageable);
+        Page<RecLocationListResponse> locationList = locationService.getLocationPageByCity(request, pageable);
 
         model.addAttribute("locationList", locationList);
         model.addAttribute("maxPage", 5);

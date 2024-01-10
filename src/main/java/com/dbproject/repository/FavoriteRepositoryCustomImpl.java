@@ -43,7 +43,7 @@ public class FavoriteRepositoryCustomImpl implements FavoriteRepositoryCustom {
                             location.name,
                             location.region,
                             location.openTime,
-                            location.picture1,
+                            location.locationPicture.picture1,
                             location.longitude,
                             location.latitude,
                             location.ticketInfo,

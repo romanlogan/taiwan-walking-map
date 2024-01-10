@@ -29,10 +29,13 @@ class LocationControllerTest {
     }
 
     @Test
-    @DisplayName("추천 Location 페이지 연결 테스트")
+    @DisplayName("도시 이름을 받아서 그 도시의 추천 도시 리스트를 가져온다.")
     public void getRecommendLocationPageTest() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/recommendLocationList/0?searchArrival=臺北市"))
+        mockMvc.perform(MockMvcRequestBuilders.
+                        get("/recommendLocationList/0")
+                        .param("searchArrival","臺北市")
+                )
                 .andDo(print())
                 .andExpect(status().isOk());
     }

@@ -36,7 +36,7 @@ public class Member extends BaseEntity {
     private Role role;
 
 //    다대다 단방향으로 외래키는 연결 테이블이나 여기 테이블에 두기
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY)
     private List<FavoriteLocation> favoriteLocation;
 
 

@@ -338,7 +338,7 @@
                       <div class="col-md-3 margin">
                         <div class="card">
                           <a th:href="'/location/' +${location.locationId}" class="text-dark">
-                            <img th:src="${location.picture1}" class="card-img-top" height="200">
+                            <img th:src="${location.getLocationPicture().getPicture1()}" class="card-img-top" height="200">
                             <div class="recommandCard-body">
                               <h4 class="card-text">[[${location.name}]]</h4>
                                 <div th:if="${location.address != null}">

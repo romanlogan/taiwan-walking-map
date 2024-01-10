@@ -38,17 +38,20 @@ public class Location {
 
     private String openTime;
 
-    private String picture1;
+    @Embedded
+    private LocationPicture locationPicture;
 
-    private String picDescribe1;
-
-    private String picture2;
-
-    private String picDescribe2;
-
-    private String picture3;
-
-    private String picDescribe3;
+//    private String picture1;
+//
+//    private String picDescribe1;
+//
+//    private String picture2;
+//
+//    private String picDescribe2;
+//
+//    private String picture3;
+//
+//    private String picDescribe3;
 
     private String map;
 
@@ -58,13 +61,16 @@ public class Location {
 
     private String latitude;
 
-    private String orgclass;
+    @Embedded
+    private LocationClass locationClass;
 
-    private String class1;
-
-    private String class2;
-
-    private String class3;
+//    private String orgclass;
+//
+//    private String class1;
+//
+//    private String class2;
+//
+//    private String class3;
 
     private String level;
 
@@ -84,6 +90,9 @@ public class Location {
 
     private String changeTime;
 
+    public LocationPicture getLocationPictureMethod() {
+        return this.locationPicture;
+    }
 }
 
 
