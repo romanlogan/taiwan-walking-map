@@ -1,12 +1,13 @@
 package com.dbproject.service;
 
-import com.dbproject.dto.AddFavoriteLocationRequest;
-import com.dbproject.dto.RegisterFormDto;
-import com.dbproject.entity.FavoriteLocation;
-import com.dbproject.entity.Member;
-import com.dbproject.repository.FavoriteRepository;
-import com.dbproject.repository.LocationRepository;
-import com.dbproject.repository.MemberRepository;
+import com.dbproject.api.favorite.FavoriteService;
+import com.dbproject.web.favorite.AddFavoriteLocationRequest;
+import com.dbproject.web.member.RegisterFormDto;
+import com.dbproject.api.favorite.FavoriteLocation;
+import com.dbproject.api.member.Member;
+import com.dbproject.api.favorite.FavoriteRepository;
+import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.member.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest

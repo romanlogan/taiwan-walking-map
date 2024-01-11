@@ -1,10 +1,11 @@
 package com.dbproject.repository;
 
-import com.dbproject.dto.FastSearchDto;
-import com.dbproject.dto.QuickSearchLocationDto;
-import com.dbproject.dto.RecLocationListRequest;
-import com.dbproject.dto.RecLocationListResponse;
-import com.dbproject.entity.Location;
+import com.dbproject.api.location.LocationRepository;
+import com.dbproject.web.quickSearch.FastSearchDto;
+import com.dbproject.web.quickSearch.QuickSearchLocationDto;
+import com.dbproject.web.location.RecLocationListRequest;
+import com.dbproject.web.location.RecLocationListResponse;
+import com.dbproject.api.location.Location;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional

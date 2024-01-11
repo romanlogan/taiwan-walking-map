@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+
+  <script th:inline="javascript">
+
+    function page(page) {
+
+      var searchArrival = $("#cityTypeArriveCity").val();
+
+      location.href = "/recommendLocationList/"+ page + "?searchArrival=" + searchArrival;
+    }
+
+  </script>
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+  <style>
+    select{
+      margin-right:10px;
+    }
+    .left-half {
+      float: left;
+      width: 50%;
+    }
+
+    /* 오른쪽 절반 스타일 */
+    .right-half {
+      float: right;
+      width: 50%;
+    }
+
+
+    .locationBox{
+      margin: 20px;
+      padding: 10px;
+      width: 680px;
+      height: 110px;
+      background-color: #fff; /* 배경색 지정 */
+      border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 그림자 효과 추가 */
+    }
+
+    .locationBoxImg{
+      float : left;
+      width : 90px;
+      height : 90px;
+    }
+
+    .locationTextBox{
+      float: right;
+      width: 550px; /* 텍스트를 표시할 요소의 너비를 지정합니다. */
+      height: 90px;
+      white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 합니다. */
+      overflow: hidden; /* 넘치는 부분은 숨김 처리합니다. */
+      text-overflow: ellipsis; /* 넘치는 텍스트에 '...'을 추가하여 표시합니다. */
+
+    }
+
+    .locationText {
+      margin-bottom: 0;
+
+    }
+
+
+    .clear{
+      both: clear;
+    }
+
+  </style>
+</th:block>
+
+<div layout:fragment="content">
+
+  <div class="left-half">
+
+      <div class="locationBox" th:each="requestFriend, status: ${requestFriendList.getContent()}">
+        이름 : <div  th:text="${requestFriend.name}" class="fs24 font-weight-bold updatable"></div>
+        주소 : <div th:text="${requestFriend.email}" class="fs24 font-weight-bold updatable"></div>
+        <p class="locationText"> name : [[${requestFriend.name}]]</p>
+        <p class="locationText"> email : [[${requestFriend.email}]]</p>
+      </div>
+
+
+      <div th:with="start=${(requestFriendList.number/maxPage)*maxPage + 1}, end=(${(requestFriendList.totalPages == 0) ? 1 : (start + (maxPage - 1) < requestFriendList.totalPages ? start + (maxPage - 1) : requestFriendList.totalPages)})" >
+        <ul class="pagination justify-content-center">
+
+          <li class="page-item" th:classappend="${requestFriendList.first}?'disabled'">
+            <a th:onclick="'javascript:page(' + ${requestFriendList.number - 1} + ')'" aria-label='Previous' class="page-link">
+              <span aria-hidden='true'>Previous</span>
+            </a>
+          </li>
+
+          <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${requestFriendList.number eq page-1}?'active':''">
+            <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
+          </li>
+
+          <li class="page-item" th:classappend="${requestFriendList.last}?'disabled'">
+            <a th:onclick="'javascript:page(' + ${requestFriendList.number + 1} + ')'" aria-label='Next' class="page-link">
+              <span aria-hidden='true'>Next</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+<!--    </form>-->
+  </div>
+
+
+</div>
+
+<div class="clear"></div>
+
+</html>

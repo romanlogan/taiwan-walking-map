@@ -1,8 +1,9 @@
 package com.dbproject.service;
 
-import com.dbproject.dto.RegisterFormDto;
-import com.dbproject.entity.Member;
-import com.dbproject.repository.MemberRepository;
+import com.dbproject.api.member.MemberService;
+import com.dbproject.web.member.RegisterFormDto;
+import com.dbproject.api.member.Member;
+import com.dbproject.api.member.MemberRepository;
 import javassist.bytecode.DuplicateMemberException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

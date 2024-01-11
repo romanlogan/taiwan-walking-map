@@ -1,30 +1,24 @@
 package com.dbproject.service;
 
-import com.dbproject.dto.LocationDtlResponse;
-import com.dbproject.dto.RecLocationListRequest;
-import com.dbproject.dto.RecLocationListResponse;
-import com.dbproject.dto.RegisterFormDto;
-import com.dbproject.entity.Comment;
-import com.dbproject.entity.FavoriteLocation;
-import com.dbproject.entity.Location;
-import com.dbproject.entity.Member;
-import com.dbproject.repository.CommentRepository;
-import com.dbproject.repository.FavoriteRepository;
-import com.dbproject.repository.LocationRepository;
-import com.dbproject.repository.MemberRepository;
+import com.dbproject.api.location.LocationService;
+import com.dbproject.web.location.LocationDtlResponse;
+import com.dbproject.web.member.RegisterFormDto;
+import com.dbproject.api.comment.Comment;
+import com.dbproject.api.favorite.FavoriteLocation;
+import com.dbproject.api.location.Location;
+import com.dbproject.api.member.Member;
+import com.dbproject.api.comment.CommentRepository;
+import com.dbproject.api.favorite.FavoriteRepository;
+import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.member.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

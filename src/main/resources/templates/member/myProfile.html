@@ -104,6 +104,44 @@
             });
 
 
+            $("#addFriendBtn").on("click", function () {
+
+                //토큰 안적으면 403 포비던 뜸
+                var token = $("meta[name='_csrf']").attr("content");
+                var header = $("meta[name='_csrf_header']").attr("content");
+
+                var paramData = {
+                    friendEmail : $("#friendEmail").val(),
+                    memo : $("#memo").val()
+                };
+
+                var param = JSON.stringify(paramData);
+
+                $.ajax({
+                    url      : "/members/addFriend",
+                    type     : "POST",
+                    contentType : "application/json",
+                    data     : param,
+                    beforeSend : function(xhr){
+                        /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+                        xhr.setRequestHeader(header, token);
+                    },
+                    dataType : "json",
+                    cache   : false,
+                    success  : function(result, status){
+                        alert("확인되었습니다.");
+                        location.href='/members/profile'
+
+                    },
+                    error : function(jqXHR, status, error, request){
+
+                        alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+
+                    }
+                });
+            });
+
+
 
         });
     </script>
@@ -121,32 +159,114 @@
           display: none;
       }
 
+
+      /* 사이드바*/
+      .container {
+          margin: 0;
+          padding: 0;
+          font-family: Arial, sans-serif;
+          display: flex;
+        }
+
+/* 사이드바 스타일 */
+      .sidebar {
+          width: 250px; /* 사이드바 너비 조정 */
+          height: 100vh;
+          background-color: #333;
+          color: #fff;
+      }
+
+      .sidebar ul {
+          list-style: none;
+          padding: 0;
+      }
+
+      .sidebar ul li {
+          padding: 10px;
+      }
+
+      .sidebar ul li a {
+          text-decoration: none;
+          color: #fff;
+      }
+
+      .sidebar ul li a:hover {
+          color: #ffd700; /* 마우스 호버 시 색 변경 */
+          transition: 0.3s; /* 부드러운 전환 효과 */
+      }
+
+      /* 컨텐츠 영역 스타일 */
+      .contentBox {
+          flex: 1;
+          padding: 20px;
+      }
+
   </style>
 </th:block>
 
 <div layout:fragment="content">
 
-    <input id="userEmail" th:text="${user.getEmail()}" type="hidden" class="fs24 font-weight-bold">
+    <div class="container">
+        <div class="sidebar">
+            <ul>
+                <li><a href="/members/profile">myProfile</a></li>
+                <li><a href="/members/requestFriendList">받은 친구 요청</a></li>
+                <li><a href="#">메뉴 3</a></li>
+                <li><a href="#">메뉴 4</a></li>
+                <!-- 필요에 따라 메뉴 항목 추가 -->
+            </ul>
+        </div>
+        <div class="contentBox">
 
-    <h2 class="mb-4">
-        내 정보
-    </h2>
+            <input id="userEmail" th:text="${user.getEmail()}" type="hidden" class="fs24 font-weight-bold">
 
-    이메일 : <div th:text="${user.getEmail()}" class="fs24 font-weight-bold"></div>
-    <div id="showDetail">
-        이름 : <div  th:text="${user.getName()}" class="fs24 font-weight-bold updatable"></div>
-        주소 : <div th:text="${user.getAddress()}" class="fs24 font-weight-bold updatable"></div>
+            <h2 class="mb-4">
+                내 정보
+            </h2>
+
+            이메일 : <div th:text="${user.getEmail()}" class="fs24 font-weight-bold"></div>
+            <div id="showDetail">
+                이름 : <div  th:text="${user.getName()}" class="fs24 font-weight-bold updatable"></div>
+                주소 : <div th:text="${user.getAddress()}" class="fs24 font-weight-bold updatable"></div>
+            </div>
+
+            <div id="updateDetail">
+                이름 : <input id="updateName" class="fs24 font-weight-bold"><br>
+                주소 : <input id="updateAddress" class="fs24 font-weight-bold">
+            </div>
+
+            <button id="showUpdateProfile">회원 정보 수정</button>
+            <button id="update">수정</button>
+            <button id="deleteMember">회원 탈퇴</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1"><i class="fa-solid fa-user-group fa-xl"></i></button>
+
+            <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">모달 제목</h4>
+                        </div>
+                        <div class="modal-body">
+                            <!-- 모달 창 내의 데이터 입력 폼 -->
+                            <div class="form-group">
+
+                                <label for="friendEmail">친구 이메일</label>
+                                <input id="friendEmail" name="friendEmail" class="fs24 font-weight-bold"><br>
+
+                                <label for="memo">메모</label>
+                                <textarea type="text" name="memo" id="memo" placeholder="메모 내용을 입력해주세요."></textarea>
+                                <br>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="addFriendBtn" type="button" class="btn btn-default" data-dismiss="modal">추가</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div id="updateDetail">
-        이름 : <input id="updateName" class="fs24 font-weight-bold"><br>
-        주소 : <input id="updateAddress" class="fs24 font-weight-bold">
-    </div>
-
-    <button id="showUpdateProfile">회원 정보 수정</button>
-    <button id="update">수정</button>
-    <button id="deleteMember">회원 탈퇴</button>
-
 </div>
 
 </html>

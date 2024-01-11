@@ -1,14 +1,12 @@
 package com.dbproject.service;
 
-import com.dbproject.dto.FastSearchDto;
-import com.dbproject.dto.QuickSearchResultDto;
-import com.dbproject.entity.Location;
-import com.dbproject.repository.LocationRepository;
+import com.dbproject.api.quickSearch.QuickSearchService;
+import com.dbproject.web.quickSearch.FastSearchDto;
+import com.dbproject.web.quickSearch.QuickSearchResultDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.TestPropertySource;

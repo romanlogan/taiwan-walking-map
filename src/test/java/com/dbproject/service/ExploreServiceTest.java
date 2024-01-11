@@ -1,16 +1,16 @@
 package com.dbproject.service;
 
-import com.dbproject.entity.City;
-import com.dbproject.entity.Location;
-import com.dbproject.entity.LocationPicture;
-import com.dbproject.entity.Route;
-import com.dbproject.repository.CityImgRepository;
-import com.dbproject.repository.CityRepository;
-import com.dbproject.repository.LocationRepository;
+import com.dbproject.api.route.RouteService;
+import com.dbproject.api.city.City;
+import com.dbproject.api.location.Location;
+import com.dbproject.api.location.LocationPicture;
+import com.dbproject.api.route.Route;
+import com.dbproject.api.city.CityImgRepository;
+import com.dbproject.api.city.CityRepository;
+import com.dbproject.api.location.LocationRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;

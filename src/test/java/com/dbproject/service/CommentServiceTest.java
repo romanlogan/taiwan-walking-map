@@ -1,13 +1,13 @@
 package com.dbproject.service;
 
-import com.dbproject.dto.CreateCommentRequest;
-import com.dbproject.dto.RegisterFormDto;
-import com.dbproject.entity.Comment;
-import com.dbproject.entity.Location;
-import com.dbproject.entity.Member;
-import com.dbproject.repository.CommentRepository;
-import com.dbproject.repository.LocationRepository;
-import com.dbproject.repository.MemberRepository;
+import com.dbproject.api.comment.CommentService;
+import com.dbproject.web.comment.CreateCommentRequest;
+import com.dbproject.web.member.RegisterFormDto;
+import com.dbproject.api.comment.Comment;
+import com.dbproject.api.member.Member;
+import com.dbproject.api.comment.CommentRepository;
+import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.member.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
