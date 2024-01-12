@@ -19,7 +19,7 @@ public class FriendRequest {
 
     private String memo;
 
-    //어떻게 매핑은 email로 되지만 Member 객체 타입인거지 ?
+    //어떻게 매핑은 email 로 되지만 Member 객체 타입인거지 ?
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requester_email",
             referencedColumnName = "member_email")

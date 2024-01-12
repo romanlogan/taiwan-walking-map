@@ -54,6 +54,7 @@ public class FavoriteRepositoryCustomImpl implements FavoriteRepositoryCustom {
                 .from(favoriteLocation)
                 .join(favoriteLocation.location , location)
                 .join(favoriteLocation.member , member)
+                .where(member.email.eq(principal.getName()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -63,6 +64,7 @@ public class FavoriteRepositoryCustomImpl implements FavoriteRepositoryCustom {
                 .from(favoriteLocation)
                 .join(favoriteLocation.location , location)
                 .join(favoriteLocation.member , member)
+                .where(member.email.eq(principal.getName()))
                 .fetchOne();
 
         return new PageImpl<>(content, pageable, total);

@@ -26,9 +26,9 @@ public class FavoriteService {
     private final LocationRepository locationRepository;
 
 
-
-
     public Long addFavoriteList(AddFavoriteLocationRequest addFavoriteLocationRequest, String email) throws DuplicateFavoriteLocationException{
+
+
 
         Member member = memberRepository.findByEmail(email);
         Location location = locationRepository.findByLocationId(addFavoriteLocationRequest.getLocationId());

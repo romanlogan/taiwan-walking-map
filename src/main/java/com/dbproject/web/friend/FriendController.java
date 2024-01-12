@@ -26,7 +26,6 @@ public class FriendController {
     @PostMapping("/addFriend")
     public ResponseEntity addFriend(@RequestBody AddFriendRequest addFriendRequest,
                                     Principal principal) {
-
         //validate
 
         Long requesterId = friendService.request(addFriendRequest, principal.getName());
@@ -42,7 +41,6 @@ public class FriendController {
 
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5 );
         Page<RequestFriendListDto> requestFriendListDtos = friendService.getRequestFriendList(pageable, principal.getName());
-
 
         model.addAttribute("requestFriendList", requestFriendListDtos);
         model.addAttribute("maxPage", 5);
