@@ -4,7 +4,6 @@ import com.dbproject.api.friend.friendRequest.FriendRequest;
 import com.dbproject.api.friend.friendRequest.FriendRequestRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.constant.FriendRequestStatus;
 import com.dbproject.web.member.RegisterFormDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,16 +14,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
 @Transactional
 @TestPropertySource(locations="classpath:application-test.properties")
-class FriendRequestRepositoryTest {
-
+class FriendRepositoryTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -56,26 +52,4 @@ class FriendRequestRepositoryTest {
         Member member2 = Member.createMember(registerFormDto2, passwordEncoder);
         memberRepository.save(member2);
     }
-
-    @DisplayName("친구 요청을 저장한다")
-    @Test
-    void test(){
-        //given
-        Member member = memberRepository.findByEmail("qwer@qwer.com");
-        Member friend = memberRepository.findByEmail("zxcv@zxcv.com");
-        String memo = "memo1";
-        FriendRequest friendRequest = FriendRequest.createFriendRequest(member, friend, memo);
-
-
-        //when
-        friendRequestRepository.save(friendRequest);
-
-        //then
-        List<FriendRequest> friendRequestList = friendRequestRepository.findAll();
-        assertThat(friendRequestList.get(0).getRequester().getName()).isEqualTo("이병민");
-        assertThat(friendRequestList.get(0).getRespondent().getName()).isEqualTo("손흥민");
-        assertThat(friendRequestList.get(0).getFriendRequestStatus()).isEqualTo(FriendRequestStatus.WAITING);
-    }
-
-
 }

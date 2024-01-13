@@ -1,9 +1,7 @@
-package com.dbproject.api.friend;
+package com.dbproject.api.friend.friendRequest;
 
 
-import com.dbproject.dto.QFavoriteListResponse;
 import com.dbproject.entity.QMember;
-import com.dbproject.web.favorite.FavoriteListResponse;
 import com.dbproject.web.friend.QRequestFriendListDto;
 import com.dbproject.web.friend.RequestFriendListDto;
 import com.querydsl.core.types.dsl.Wildcard;
@@ -33,12 +31,13 @@ public class FriendRequestRepositoryCustomImpl implements FriendRequestRepositor
 //        select m.name, m.email
 //        from FriendRequest
 //        join member on FriendRequest.register = email
-
         List<RequestFriendListDto> content = queryFactory
                 .select(
                         new QRequestFriendListDto(
+                                friendRequest.id,
                                 friendRequest.requester.email,
-                                friendRequest.requester.name
+                                friendRequest.requester.name,
+                                friendRequest.friendRequestStatus
                         )
                 )
                 .from(friendRequest)

@@ -1,5 +1,6 @@
 package com.dbproject.api.favorite;
 
+import com.dbproject.api.baseEntity.BaseEntity;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
 import lombok.Builder;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Table(name = "favorite_location")
 @Getter
 @Setter
-public class FavoriteLocation {
+public class FavoriteLocation extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "favorite_location_id")
@@ -21,7 +22,7 @@ public class FavoriteLocation {
     private String memo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_email")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)

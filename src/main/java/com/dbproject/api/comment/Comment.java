@@ -1,6 +1,7 @@
 package com.dbproject.api.comment;
 
 
+import com.dbproject.api.baseEntity.BaseEntity;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Table
 @Getter
 @Setter
-public class Comment {
+public class Comment extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
@@ -24,7 +25,7 @@ public class Comment {
     private Integer rate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_email")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -52,5 +53,4 @@ public class Comment {
                 .location(location)
                 .build();
     }
-
 }

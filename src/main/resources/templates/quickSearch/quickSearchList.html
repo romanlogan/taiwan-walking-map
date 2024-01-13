@@ -79,7 +79,7 @@
                 width: 50%;
             }
 
-            .locationBox{
+            .requestFriendBox{
                 margin: 20px;
                 padding: 10px;
                 width: 680px;
@@ -152,7 +152,7 @@
 
 <!--    <form role="form" method="get" th:object="${locationList}">-->
 
-        <div class="locationBox" th:each="location, status: ${quickSearchResultDto.getLocationPage().getContent()}">
+        <div class="requestFriendBox" th:each="location, status: ${quickSearchResultDto.getLocationPage().getContent()}">
             <a th:href="'/location/' +${location.locationId}" class="text-dark">
                 <img class = "locationBoxImg" th:src="${location.picture1}">
                 <div class="locationTextBox">

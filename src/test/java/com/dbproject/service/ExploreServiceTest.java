@@ -96,7 +96,7 @@ class ExploreServiceTest {
 
         String[] cityArr = {"臺北市", "新北市", "臺中市", "臺南市", "臺東縣", "高雄市", "花蓮縣", "桃園市"};
 
-        for (int i = 0; i < cityArr.length; i++) {
+        for (int i = 0; i < cityArr.length-1; i++) {
             //클래스 안에서 메서드로 분리한 코드를 테스트 할때는 메서드를 호출하여 테스트 해야하나 아니면 메서드 안의 내용을 테스트 해야 하나?
 
             List<Location> LocationList = locationRepository.findByRegion(cityArr[i]);

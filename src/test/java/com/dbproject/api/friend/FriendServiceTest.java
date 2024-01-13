@@ -1,8 +1,13 @@
 package com.dbproject.api.friend;
 
+import com.dbproject.api.friend.friendRequest.FriendRequest;
+import com.dbproject.api.friend.friendRequest.FriendRequestRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
+import com.dbproject.constant.FriendRequestStatus;
+import com.dbproject.web.friend.AcceptAddFriendRequest;
 import com.dbproject.web.friend.AddFriendRequest;
+import com.dbproject.web.friend.RejectFriendRequest;
 import com.dbproject.web.member.RegisterFormDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
@@ -36,6 +40,10 @@ class FriendServiceTest {
 
     @Autowired
     private FriendService friendService;
+
+    @Autowired
+    private FriendRepository friendRepository;
+
 
 
 
@@ -77,7 +85,56 @@ class FriendServiceTest {
         List<FriendRequest> friendRequestList = friendRequestRepository.findAll();
         assertThat(friendRequestList.get(0).getRequester().getName()).isEqualTo("이병민");
         assertThat(friendRequestList.get(0).getRespondent().getName()).isEqualTo("손흥민");
-
-
+        assertThat(friendRequestList.get(0).getFriendRequestStatus()).isEqualTo(FriendRequestStatus.WAITING);
     }
+
+    @DisplayName("친구 요청 id 로 친구를 생성하고 친구요청을 수락됨으로 변경한다")
+    @Test
+    void test2() {
+        //given
+        String requesterEmail = "qwer@qwer.com";
+        Member requester = memberRepository.findByEmail(requesterEmail);
+        String respondentEmail = "zxcv@zxcv.com";
+        Member respondent = memberRepository.findByEmail(respondentEmail);
+
+        FriendRequest friendRequest = FriendRequest.createFriendRequest(requester, respondent, "memo1");
+        Long friendRequestId = friendRequestRepository.save(friendRequest).getId();
+        AcceptAddFriendRequest acceptAddFriendRequest = new AcceptAddFriendRequest(String.valueOf(friendRequestId));
+
+        //when
+        friendService.acceptAddFriend(acceptAddFriendRequest);
+
+        //then
+        List<FriendRequest> friendRequestList = friendRequestRepository.findAll();
+        List<Friend> friendList = friendRepository.findAll();
+
+        assertThat(friendRequestList).hasSize(1);
+        assertThat(friendRequestList.get(0).getFriendRequestStatus()).isEqualTo(FriendRequestStatus.ACCEPTED);
+        assertThat(friendList).hasSize(1);
+        assertThat(friendList.get(0).getRequester().getEmail()).isEqualTo("qwer@qwer.com");
+        assertThat(friendList.get(0).getRespondent().getEmail()).isEqualTo("zxcv@zxcv.com");
+    }
+
+
+    @DisplayName("친구 요청 id 로 친구요청을 거절상태로 변경한다")
+    @Test
+    void deleteFriendRequest(){
+        //given
+        String requesterEmail = "qwer@qwer.com";
+        Member requester = memberRepository.findByEmail(requesterEmail);
+        String respondentEmail = "zxcv@zxcv.com";
+        Member respondent = memberRepository.findByEmail(respondentEmail);
+
+        FriendRequest friendRequest = FriendRequest.createFriendRequest(requester, respondent, "memo1");
+        Long friendRequestId = friendRequestRepository.save(friendRequest).getId();
+        RejectFriendRequest rejectFriendRequest = new RejectFriendRequest(String.valueOf(friendRequestId));
+
+        //when
+        friendService.rejectFriendRequest(rejectFriendRequest);
+
+        //then
+        List<FriendRequest> friendRequestList = friendRequestRepository.findAll();
+        assertThat(friendRequestList.get(0).getFriendRequestStatus()).isEqualTo(FriendRequestStatus.REJECTED);
+
+     }
 }

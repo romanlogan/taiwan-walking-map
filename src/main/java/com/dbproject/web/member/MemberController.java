@@ -87,7 +87,7 @@ public class MemberController {
 
         model.addAttribute("user", myProfileDto);
 
-        return new ResponseEntity<Long>(myProfileDto.getId(), HttpStatus.OK);
+        return new ResponseEntity<Long>(1L, HttpStatus.OK);
 
     }
 

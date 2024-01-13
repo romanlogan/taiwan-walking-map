@@ -10,8 +10,6 @@ import lombok.Setter;
 @Setter
 public class MyProfileDto {
 
-    private Long id;
-
     private String name;
 
     private String email;
@@ -24,8 +22,7 @@ public class MyProfileDto {
     }
 
     @Builder
-    private MyProfileDto(Long id,String name, String email, String address, Role role) {
-        this.id = id;
+    private MyProfileDto(String name, String email, String address, Role role) {
         this.name = name;
         this.email = email;
         this.address = address;
@@ -35,7 +32,6 @@ public class MyProfileDto {
     public static MyProfileDto of(Member member) {
 
         return MyProfileDto.builder()
-                .id(member.getId())
                 .name(member.getName())
                 .email(member.getEmail())
                 .address(member.getAddress())

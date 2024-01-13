@@ -1,5 +1,7 @@
 package com.dbproject.api.friend;
 
+import com.dbproject.api.friend.friendRequest.FriendRequest;
+import com.dbproject.api.friend.friendRequest.FriendRequestRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.web.friend.RequestFriendListDto;
@@ -17,8 +19,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
 
 
 @SpringBootTest

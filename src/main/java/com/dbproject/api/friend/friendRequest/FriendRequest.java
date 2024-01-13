@@ -1,6 +1,8 @@
-package com.dbproject.api.friend;
+package com.dbproject.api.friend.friendRequest;
 
+import com.dbproject.api.baseEntity.BaseEntity;
 import com.dbproject.api.member.Member;
+import com.dbproject.constant.FriendRequestStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,13 +13,17 @@ import javax.persistence.*;
 @Table(name = "friend_request")
 @Getter
 @Setter
-public class FriendRequest {
+public class FriendRequest extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "friend_request_id")
     private Long id;
 
     private String memo;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private FriendRequestStatus friendRequestStatus;
 
     //어떻게 매핑은 email 로 되지만 Member 객체 타입인거지 ?
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,16 +41,19 @@ public class FriendRequest {
     }
 
     @Builder
-    public FriendRequest(String memo, Member requester, Member respondent) {
+    public FriendRequest(String memo, FriendRequestStatus friendRequestStatus, Member requester, Member respondent) {
         this.memo = memo;
+        this.friendRequestStatus = friendRequestStatus;
         this.requester = requester;
         this.respondent = respondent;
     }
+
 
     public static FriendRequest createFriendRequest(Member requester, Member respondent,String memo) {
 
         return FriendRequest.builder()
                 .memo(memo)
+                .friendRequestStatus(FriendRequestStatus.WAITING)
                 .requester(requester)
                 .respondent(respondent)
                 .build();

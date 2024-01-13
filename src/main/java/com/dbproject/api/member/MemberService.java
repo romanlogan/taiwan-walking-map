@@ -77,7 +77,7 @@ public class MemberService implements UserDetailsService {
         Member member = memberRepository.findByEmail(email);
         memberRepository.deleteByEmail(email);
 
-        return member.getId();
+        return 1L;
     }
 }
 

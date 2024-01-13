@@ -1,7 +1,6 @@
 package com.dbproject.api.member;
 
 import com.dbproject.api.baseEntity.BaseEntity;
-import com.dbproject.api.friend.FriendRequest;
 import com.dbproject.constant.Role;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.web.member.RegisterFormDto;
@@ -21,16 +20,16 @@ import java.util.List;
 @NoArgsConstructor
 public class Member extends BaseEntity {
 
+//    @Id
+//    @Column(name="member_id")
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+
     @Id
-    @Column(name="member_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "member_email")
+    private String email;
 
     private String name;
-
-    @Column(unique = true,
-            name = "member_email")
-    private String email;
 
     private String password;
 

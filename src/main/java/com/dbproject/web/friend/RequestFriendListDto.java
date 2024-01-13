@@ -1,5 +1,6 @@
 package com.dbproject.web.friend;
 
+import com.dbproject.constant.FriendRequestStatus;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,9 +9,13 @@ import lombok.Setter;
 @Setter
 public class RequestFriendListDto {
 
+    private Long id;
+
     private String email;
 
     private String name;
+
+    private FriendRequestStatus friendRequestStatus;
 
 
     public RequestFriendListDto() {
@@ -18,8 +23,10 @@ public class RequestFriendListDto {
     }
 
     @QueryProjection
-    public RequestFriendListDto(String email, String name) {
+    public RequestFriendListDto(Long id, String email, String name, FriendRequestStatus friendRequestStatus) {
+        this.id = id;
         this.email = email;
         this.name = name;
+        this.friendRequestStatus = friendRequestStatus;
     }
 }

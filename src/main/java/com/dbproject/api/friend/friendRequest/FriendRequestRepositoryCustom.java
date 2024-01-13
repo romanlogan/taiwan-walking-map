@@ -1,4 +1,4 @@
-package com.dbproject.api.friend;
+package com.dbproject.api.friend.friendRequest;
 
 import com.dbproject.web.friend.RequestFriendListDto;
 import org.springframework.data.domain.Page;
