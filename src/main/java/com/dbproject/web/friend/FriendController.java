@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public class FriendController {
     private final FriendService friendService;
 
     @PostMapping("/addFriend")
-    public ResponseEntity addFriend(@RequestBody AddFriendRequest addFriendRequest,
+    public ResponseEntity addFriend(@Valid @RequestBody AddFriendRequest addFriendRequest,
                                     Principal principal) {
         //validate
 
@@ -47,7 +48,7 @@ public class FriendController {
     }
 
     @PostMapping("/acceptAddFriend")
-    public ResponseEntity addFriend(@RequestBody AcceptAddFriendRequest acceptAddFriendRequest) {
+    public ResponseEntity addFriend(@Valid @RequestBody AcceptAddFriendRequest acceptAddFriendRequest) {
 
         Long id = friendService.acceptAddFriend(acceptAddFriendRequest);
 
@@ -55,7 +56,7 @@ public class FriendController {
     }
 
     @PutMapping("/rejectFriendRequest")
-    public ResponseEntity rejectFriendRequest(@RequestBody RejectFriendRequest deleteFriendRequest) {
+    public ResponseEntity rejectFriendRequest(@Valid @RequestBody RejectFriendRequest deleteFriendRequest) {
 
 //        Long id = friendService.acceptAddFriend(deleteFriendRequest);
         friendService.rejectFriendRequest(deleteFriendRequest);

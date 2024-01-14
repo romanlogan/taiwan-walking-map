@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Optional;
 
@@ -30,7 +31,7 @@ public class FavoriteController {
     @PostMapping("/addFavoriteList")
     public ResponseEntity addFavoriteList(
 //            requestBody 안쓰면 파라미터 못받아오니 조심하기
-            @RequestBody AddFavoriteLocationRequest addFavoriteLocationRequest,
+            @Valid @RequestBody AddFavoriteLocationRequest addFavoriteLocationRequest,
             Principal principal) {
 
         if (principal == null) {

@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Optional;
 
@@ -57,7 +58,7 @@ public class LocationController {
 
 
     @GetMapping(value = {"/recommendLocationList","/recommendLocationList/{page}"})
-    public String explore(RecLocationListRequest request,
+    public String explore(@Valid RecLocationListRequest request,
 //            @RequestParam("searchArrival") @NotBlank(message = "도착지는 필수 값 입니다.") String searchArrival,
                           @PathVariable("page") Optional<Integer> page,
                           Model model) {
