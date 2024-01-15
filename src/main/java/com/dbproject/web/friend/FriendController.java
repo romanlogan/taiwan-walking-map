@@ -22,12 +22,15 @@ public class FriendController {
 
     private final FriendService friendService;
 
-    @PostMapping("/addFriend")
-    public ResponseEntity addFriend(@Valid @RequestBody AddFriendRequest addFriendRequest,
+    @PostMapping("/addFriendRequest")
+    public ResponseEntity saveFriendRequest(@Valid @RequestBody AddFriendRequest addFriendRequest,
                                     Principal principal) {
         //validate
+        if (principal == null) {
+            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
+        }
 
-        Long requesterId = friendService.request(addFriendRequest, principal.getName());
+        Long requesterId = friendService.saveFriendRequest(addFriendRequest, principal.getName());
 
         return new ResponseEntity(requesterId, HttpStatus.OK);
     }
@@ -47,8 +50,9 @@ public class FriendController {
         return "/member/requestFriendList";
     }
 
+
     @PostMapping("/acceptAddFriend")
-    public ResponseEntity addFriend(@Valid @RequestBody AcceptAddFriendRequest acceptAddFriendRequest) {
+    public ResponseEntity acceptAddFriendRequest(@Valid @RequestBody AcceptAddFriendRequest acceptAddFriendRequest) {
 
         Long id = friendService.acceptAddFriend(acceptAddFriendRequest);
 

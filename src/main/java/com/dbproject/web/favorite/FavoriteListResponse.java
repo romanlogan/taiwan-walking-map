@@ -27,6 +27,11 @@ public class FavoriteListResponse {
     private String openTime;
 
 
+    public FavoriteListResponse(String locationId, String name) {
+        this.locationId = locationId;
+        this.name = name;
+    }
+
     @QueryProjection
     public FavoriteListResponse(String locationId, String name, String region, String openTime, String picture1, String longitude, String latitude,String ticketInfo,String memo,Long favoriteLocationId) {
         this.locationId = locationId;

@@ -8,5 +8,5 @@ import java.security.Principal;
 
 public interface FavoriteRepositoryCustom {
 
-     Page<FavoriteListResponse> getFavoriteLocationList(Pageable pageable, Principal principal);
+     Page<FavoriteListResponse> getFavoriteLocationList(Pageable pageable, String email);
 }

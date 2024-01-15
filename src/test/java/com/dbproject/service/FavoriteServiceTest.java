@@ -73,6 +73,5 @@ class FavoriteServiceTest {
         assertThat(favoriteLocationList).hasSize(1);
         assertThat(favoriteLocationList.get(0).getLocation().getName()).isEqualTo("西門町");
         assertThat(favoriteLocationList.get(0).getMemo()).isEqualTo("메모 1 입니다.");
-
      }
 }

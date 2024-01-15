@@ -27,7 +27,7 @@ public class FavoriteRepositoryCustomImpl implements FavoriteRepositoryCustom {
     }
 
     @Override
-    public Page<FavoriteListResponse> getFavoriteLocationList(Pageable pageable, Principal principal){
+    public Page<FavoriteListResponse> getFavoriteLocationList(Pageable pageable, String email){
 
         QLocation location = QLocation.location;
         QFavoriteLocation favoriteLocation = QFavoriteLocation.favoriteLocation;
@@ -54,7 +54,7 @@ public class FavoriteRepositoryCustomImpl implements FavoriteRepositoryCustom {
                 .from(favoriteLocation)
                 .join(favoriteLocation.location , location)
                 .join(favoriteLocation.member , member)
-                .where(member.email.eq(principal.getName()))
+                .where(member.email.eq(email))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -64,7 +64,7 @@ public class FavoriteRepositoryCustomImpl implements FavoriteRepositoryCustom {
                 .from(favoriteLocation)
                 .join(favoriteLocation.location , location)
                 .join(favoriteLocation.member , member)
-                .where(member.email.eq(principal.getName()))
+                .where(member.email.eq(email))
                 .fetchOne();
 
         return new PageImpl<>(content, pageable, total);

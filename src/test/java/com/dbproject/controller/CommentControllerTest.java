@@ -65,7 +65,7 @@ class CommentControllerTest {
      }
 
 
-    @DisplayName("비 로그인으로 신규 댓글을 등록을 등록시 401 UnAuthorization 에러가 발생합니다")
+    @DisplayName("비 로그인으로 신규 댓글을 등록을 등록시 401 UnAuthorization 을 반환합니다.")
     @Test
     void test2() throws Exception {
 
@@ -140,6 +140,7 @@ class CommentControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+
 
 }
 

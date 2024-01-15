@@ -79,7 +79,7 @@ class FriendServiceTest {
         AddFriendRequest addFriendRequest = new AddFriendRequest(respondentEmail, "memo1");
 
         //when
-        friendService.request(addFriendRequest, requesterEmail);
+        friendService.saveFriendRequest(addFriendRequest, requesterEmail);
 
         //then
         List<FriendRequest> friendRequestList = friendRequestRepository.findAll();

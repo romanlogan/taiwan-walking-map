@@ -50,9 +50,9 @@ public class FavoriteService {
         }
     }
 
-    public Page<FavoriteListResponse> getFavoriteLocationList(Pageable pageable, Principal principal) {
+    public Page<FavoriteListResponse> getFavoriteLocationList(Pageable pageable, String email) {
 
-        return favoriteRepository.getFavoriteLocationList(pageable, principal);
+        return favoriteRepository.getFavoriteLocationList(pageable, email);
     }
 
     public void deleteFavoriteLocation(String favoriteLocationId){

@@ -30,7 +30,7 @@ public class FriendService {
 
 
 
-    public Long request(AddFriendRequest addFriendRequest, String requesterEmail) {
+    public Long saveFriendRequest(AddFriendRequest addFriendRequest, String requesterEmail) {
 
         //요청자 Member 찾기
         Member requester = memberRepository.findByEmail(requesterEmail);

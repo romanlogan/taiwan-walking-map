@@ -104,7 +104,7 @@
             });
 
 
-            $("#addFriendBtn").on("click", function () {
+            $("#sendFriendRequest").on("click", function () {
 
                 //토큰 안적으면 403 포비던 뜸
                 var token = $("meta[name='_csrf']").attr("content");
@@ -118,7 +118,7 @@
                 var param = JSON.stringify(paramData);
 
                 $.ajax({
-                    url      : "/members/addFriend",
+                    url      : "/members/addFriendRequest",
                     type     : "POST",
                     contentType : "application/json",
                     data     : param,
@@ -260,7 +260,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button id="addFriendBtn" type="button" class="btn btn-default" data-dismiss="modal">추가</button>
+                            <button id="sendFriendRequest" type="button" class="btn btn-default" data-dismiss="modal">추가</button>
                         </div>
                     </div>
                 </div>

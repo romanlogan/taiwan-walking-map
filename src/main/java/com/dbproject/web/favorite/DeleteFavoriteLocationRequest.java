@@ -3,13 +3,14 @@ package com.dbproject.web.favorite;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter
 public class DeleteFavoriteLocationRequest {
 
-    @NotEmpty
+    @NotBlank
     private String favoriteLocationId;
 
     public DeleteFavoriteLocationRequest() {

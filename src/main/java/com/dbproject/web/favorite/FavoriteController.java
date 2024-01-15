@@ -48,6 +48,7 @@ public class FavoriteController {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
+
         return new ResponseEntity(favoriteId, HttpStatus.OK);
     }
 
@@ -57,8 +58,9 @@ public class FavoriteController {
                                   Model model) {
 
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5 );
+        String email = principal.getName();
 
-        Page<FavoriteListResponse> favoriteListResponsePage = favoriteService.getFavoriteLocationList(pageable, principal);
+        Page<FavoriteListResponse> favoriteListResponsePage = favoriteService.getFavoriteLocationList(pageable, email);
 //
         model.addAttribute("locationList", favoriteListResponsePage);
         model.addAttribute("maxPage", 5);
@@ -68,10 +70,12 @@ public class FavoriteController {
     }
 
     @DeleteMapping("/deleteFavorite")
-    public ResponseEntity deleteFavoriteLocation(@RequestBody DeleteFavoriteLocationRequest deleteFavoriteLocationRequest) {
+    public ResponseEntity deleteFavoriteLocation(@Valid @RequestBody DeleteFavoriteLocationRequest deleteFavoriteLocationRequest,
+                                                 Principal principal) {
 
-        System.out.println("----------------------------------------------------------------");
-        System.out.println(deleteFavoriteLocationRequest.getFavoriteLocationId());
+        if (principal == null) {
+            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
+        }
 
         favoriteService.deleteFavoriteLocation(deleteFavoriteLocationRequest.getFavoriteLocationId());
 
