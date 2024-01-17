@@ -31,7 +31,7 @@
             var param = JSON.stringify(paramData);
 
             $.ajax({
-                url      : "/deleteFavorite",
+                url      : "/favorite/deleteFavorite",
                 type     : "DELETE",
                 contentType : "application/json",
                 data     : param,
@@ -42,7 +42,7 @@
                 dataType : "json",
                 cache   : false,
                 success  : function(result, status){
-                    location.href='/favoriteList';
+                    location.href='/favorite/favoriteList';
                 },
                 error : function(jqXHR, status, error){
                     console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
@@ -74,7 +74,7 @@
             var param = JSON.stringify(paramData);
 
             $.ajax({
-                url      : "/updateMemo",
+                url      : "/memo/updateMemo",
                 type     : "PUT",
                 contentType : "application/json",
                 data     : param,
@@ -86,7 +86,7 @@
                 cache   : false,
                 success  : function(result, status){
                     alert("수정이 완료 되었습니다.");
-                    location.href='/favoriteList';
+                    location.href='/favorite/favoriteList';
                 },
                 error : function(jqXHR, status, error){
                     console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
@@ -133,7 +133,7 @@
 
             var searchArrival = $("#cityTypeArriveCity").val();
 
-            location.href = "/favoriteList/"+ page ;
+            location.href = "/favorite/favoriteList/"+ page ;
         }
 
     </script>

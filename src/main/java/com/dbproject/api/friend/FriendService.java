@@ -5,6 +5,7 @@ import com.dbproject.api.friend.friendRequest.FriendRequestRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.constant.FriendRequestStatus;
+import com.dbproject.exception.DuplicateFriendRequestException;
 import com.dbproject.web.friend.AcceptAddFriendRequest;
 import com.dbproject.web.friend.AddFriendRequest;
 import com.dbproject.web.friend.RejectFriendRequest;
@@ -29,20 +30,27 @@ public class FriendService {
     private final FriendRequestRepository friendRequestRepository;
 
 
-
     public Long saveFriendRequest(AddFriendRequest addFriendRequest, String requesterEmail) {
 
         //요청자 Member 찾기
         Member requester = memberRepository.findByEmail(requesterEmail);
 
         //응답자 Member 찾기
-        String respondentEmail = addFriendRequest.getFriendEmail();
-        Member respondent = memberRepository.findByEmail(respondentEmail);
+        Member respondent = memberRepository.findByEmail(addFriendRequest.getFriendEmail());
+
+        checkValidateFriendRequest(requester, respondent);
 
         FriendRequest friendRequest = FriendRequest.createFriendRequest(requester, respondent,addFriendRequest.getMemo());
         friendRequestRepository.save(friendRequest);
 
         return 1L;
+    }
+
+    private void checkValidateFriendRequest(Member requester, Member respondent) {
+        FriendRequest savedFriendRequest = friendRequestRepository.findByRequesterAndRespondent(requester, respondent);
+        if (savedFriendRequest != null) {
+            throw new DuplicateFriendRequestException("이미 요청한 사용자 입니다.");
+        }
     }
 
     public Page<RequestFriendListDto> getRequestFriendList(Pageable pageable, String email) {
@@ -51,21 +59,20 @@ public class FriendService {
     }
 
 
-    public Long acceptAddFriend(AcceptAddFriendRequest acceptAddFriendRequest) {
+    public Long acceptAddFriend(AcceptAddFriendRequest acceptAddFriendRequest,String email) {
 
-        //FriendRequest 엔티티에서 두 엔티티를 꺼내온다
-        Long FriendRequestId = Long.valueOf(acceptAddFriendRequest.getFriendRequestId());
-        FriendRequest friendRequest = getFriendRequest(FriendRequestId,FriendRequestStatus.ACCEPTED);
+        FriendRequest friendRequest = getFriendRequest(acceptAddFriendRequest.getFriendRequestId(),FriendRequestStatus.ACCEPTED);
 
-        Member requester = friendRequest.getRequester();
+        Member requester =  friendRequest.getRequester();
         Member respondent = friendRequest.getRespondent();
 
-        //두 엔티티를 친구로 등록한다
-        Friend friend = Friend.createFriend(requester, respondent);
-        friendRepository.save(friend);
 
-        //FriendRequest 에서 이 친구 요청을 삭제한다 (이미 수락됨) -> 삭제가 아니라 요청 수락됨으로 바꾸고 삭제 는 다른 버튼으로 처리
-//        friendRequestRepository.delete(friendRequest);
+        Friend friend = Friend.createFriend(requester,respondent);
+        Friend reverseFriend = Friend.createFriend(respondent, requester);
+
+        friendRepository.save(friend);
+        friendRepository.save(reverseFriend);
+
         return friend.getId();
     }
 
@@ -78,10 +85,14 @@ public class FriendService {
 
 
     public void rejectFriendRequest(RejectFriendRequest deleteFriendRequest) {
+        //변경 감지가 동작 하나 ? -> yes
 
-        Long friendRequestId = Long.valueOf(deleteFriendRequest.getFriendRequestId());
-        //변경 감지가 동작 하나 ?
-        getFriendRequest(friendRequestId, FriendRequestStatus.REJECTED);
+        getFriendRequest(deleteFriendRequest.getFriendRequestId(), FriendRequestStatus.REJECTED);
 //        friendRequestRepository.deleteById(Long.valueOf(deleteFriendRequest.getFriendRequestId()));
     }
+
+//    public Page<FriendListResponse> getFriendList(Pageable pageable, String email) {
+//
+//        return
+//    }
 }

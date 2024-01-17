@@ -37,7 +37,7 @@
         var param = JSON.stringify(paramData);
 
         $.ajax({
-          url      : "/addFavoriteList",
+          url      : "/favorite/addFavoriteList",
           type     : "POST",
           contentType : "application/json",
           data     : param,
@@ -86,7 +86,7 @@
         var param = JSON.stringify(paramData);
 
         $.ajax({
-          url      : "/createComment",
+          url      : "/comment/createComment",
           type     : "POST",
           contentType : "application/json",
           data     : param,

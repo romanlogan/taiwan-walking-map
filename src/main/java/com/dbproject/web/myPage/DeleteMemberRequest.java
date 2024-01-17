@@ -1,4 +1,4 @@
-package com.dbproject.web.member;
+package com.dbproject.web.myPage;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -55,7 +55,7 @@ class CommentControllerTest {
         CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content, rating);
 
         //when  //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/createComment")
+        mockMvc.perform(MockMvcRequestBuilders.post("/comment/createComment")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(createCommentRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -78,7 +78,7 @@ class CommentControllerTest {
         CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content, rating);
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post("/createComment")
+        mockMvc.perform(MockMvcRequestBuilders.post("/comment/createComment")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(createCommentRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +108,7 @@ class CommentControllerTest {
         CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content, rating);
 
         //when  //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/createComment")
+        mockMvc.perform(MockMvcRequestBuilders.post("/comment/createComment")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(createCommentRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -132,7 +132,7 @@ class CommentControllerTest {
         CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content, null);
 
         //when  //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/createComment")
+        mockMvc.perform(MockMvcRequestBuilders.post("/comment/createComment")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(createCommentRequest))
                         .contentType(MediaType.APPLICATION_JSON)

@@ -48,7 +48,7 @@ class MemoControllerTest {
 
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.put("/updateMemo")
+        mockMvc.perform(MockMvcRequestBuilders.put("/memo/updateMemo")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(updateMemoRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -69,7 +69,7 @@ class MemoControllerTest {
 
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.put("/updateMemo")
+        mockMvc.perform(MockMvcRequestBuilders.put("/memo/updateMemo")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(updateMemoRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -92,7 +92,7 @@ class MemoControllerTest {
 
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.put("/updateMemo")
+        mockMvc.perform(MockMvcRequestBuilders.put("/memo/updateMemo")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(updateMemoRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -116,7 +116,7 @@ class MemoControllerTest {
 
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.put("/updateMemo")
+        mockMvc.perform(MockMvcRequestBuilders.put("/memo/updateMemo")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(updateMemoRequest))
                         .contentType(MediaType.APPLICATION_JSON)

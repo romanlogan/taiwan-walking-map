@@ -39,7 +39,6 @@ public class LocationController {
         LocationDtlResponse locationDtlResponse;
 
         if (principal == null) {
-
             //로그인 하지 않은 유저
             locationDtlResponse = locationService.getLocationDtl(attractionId);
         }else{

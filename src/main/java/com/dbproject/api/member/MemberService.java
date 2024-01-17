@@ -1,8 +1,11 @@
 package com.dbproject.api.member;
 
-import com.dbproject.web.member.MyProfileDto;
+import com.dbproject.exception.DuplicateMemberException;
+import com.dbproject.exception.DuplicateUpdateMemberAddressException;
+import com.dbproject.exception.DuplicateUpdateMemberNameException;
+import com.dbproject.web.myPage.MyProfileDto;
 import com.dbproject.web.member.RegisterFormDto;
-import com.dbproject.web.member.UpdateProfileDto;
+import com.dbproject.web.myPage.UpdateProfileDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,8 +36,8 @@ public class MemberService implements UserDetailsService {
         Member member = memberRepository.findByEmail(registerFormDto.getEmail());
 
         if (member != null) {
-//            throw new DuplicateMemberException("동일한 아이디가 존재 합니다.");
-            throw new IllegalArgumentException("동일한 아이디가 존재 합니다.");
+            throw new DuplicateMemberException("동일한 아이디가 존재 합니다.");
+//            throw new IllegalArgumentException("동일한 아이디가 존재 합니다.");
         }
     }
 
@@ -66,6 +69,15 @@ public class MemberService implements UserDetailsService {
     public void updateProfile(String email, UpdateProfileDto updateProfileDto) {
 
         Member member = memberRepository.findByEmail(email);
+
+        if (updateProfileDto.getAddress().equals(member.getAddress())) {
+            throw new DuplicateUpdateMemberAddressException("이전 주소와 같습니다.");
+        } else if (updateProfileDto.getName().equals(member.getName())) {
+            throw new DuplicateUpdateMemberNameException("이전 이름과 같습니다.");
+        }
+
+
+
 
         member.setName(updateProfileDto.getName());
         member.setAddress(updateProfileDto.getAddress());

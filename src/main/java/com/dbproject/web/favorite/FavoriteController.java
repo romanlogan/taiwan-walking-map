@@ -19,6 +19,7 @@ import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/favorite")
 public class FavoriteController {
 
     @Value("${google.maps.api.key}")
@@ -34,9 +35,9 @@ public class FavoriteController {
             @Valid @RequestBody AddFavoriteLocationRequest addFavoriteLocationRequest,
             Principal principal) {
 
-        if (principal == null) {
-            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
-        }
+//        if (principal == null) {
+//            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
+//        }
 
         String email = principal.getName();
         Long favoriteId;
@@ -73,9 +74,9 @@ public class FavoriteController {
     public ResponseEntity deleteFavoriteLocation(@Valid @RequestBody DeleteFavoriteLocationRequest deleteFavoriteLocationRequest,
                                                  Principal principal) {
 
-        if (principal == null) {
-            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
-        }
+//        if (principal == null) {
+//            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
+//        }
 
         favoriteService.deleteFavoriteLocation(deleteFavoriteLocationRequest.getFavoriteLocationId());
 

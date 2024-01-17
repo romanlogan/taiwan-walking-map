@@ -73,7 +73,7 @@ class FavoriteControllerTest {
 //        stubbing 으로 객체를 stub 객체를 반환하여서 해결해야함
         //when  //then
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/favoriteList/0")
+                        .get("/favorite/favoriteList/0")
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -92,7 +92,7 @@ class FavoriteControllerTest {
         AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(locationId, memo);
 
         //when  //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/addFavoriteList")
+        mockMvc.perform(MockMvcRequestBuilders.post("/favorite/addFavoriteList")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(addFavoriteLocationRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +113,7 @@ class FavoriteControllerTest {
         AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(locationId, memo);
 
         //when  //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/addFavoriteList")
+        mockMvc.perform(MockMvcRequestBuilders.post("/favorite/addFavoriteList")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(addFavoriteLocationRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -136,7 +136,7 @@ class FavoriteControllerTest {
         AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(locationId, memo);
 
         //when  //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/addFavoriteList")
+        mockMvc.perform(MockMvcRequestBuilders.post("/favorite/addFavoriteList")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(addFavoriteLocationRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -157,7 +157,7 @@ class FavoriteControllerTest {
         AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(locationId, memo);
 
         //when  //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/addFavoriteList")
+        mockMvc.perform(MockMvcRequestBuilders.post("/favorite/addFavoriteList")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(addFavoriteLocationRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -177,7 +177,7 @@ class FavoriteControllerTest {
         DeleteFavoriteLocationRequest deleteFavoriteLocationRequest = new DeleteFavoriteLocationRequest(favoriteLocationId);
 
         //when  //then
-        mockMvc.perform(MockMvcRequestBuilders.delete("/deleteFavorite")
+        mockMvc.perform(MockMvcRequestBuilders.delete("/favorite/deleteFavorite")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(deleteFavoriteLocationRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -197,7 +197,7 @@ class FavoriteControllerTest {
         DeleteFavoriteLocationRequest deleteFavoriteLocationRequest = new DeleteFavoriteLocationRequest(favoriteLocationId);
 
         //when  //then
-        mockMvc.perform(MockMvcRequestBuilders.delete("/deleteFavorite")
+        mockMvc.perform(MockMvcRequestBuilders.delete("/favorite/deleteFavorite")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(deleteFavoriteLocationRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -220,7 +220,7 @@ class FavoriteControllerTest {
         DeleteFavoriteLocationRequest deleteFavoriteLocationRequest = new DeleteFavoriteLocationRequest(favoriteLocationId);
 
         //when  //then
-        mockMvc.perform(MockMvcRequestBuilders.delete("/deleteFavorite")
+        mockMvc.perform(MockMvcRequestBuilders.delete("/favorite/deleteFavorite")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(deleteFavoriteLocationRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -241,7 +241,7 @@ class FavoriteControllerTest {
         DeleteFavoriteLocationRequest deleteFavoriteLocationRequest = new DeleteFavoriteLocationRequest(favoriteLocationId);
 
         //when  //then
-        mockMvc.perform(MockMvcRequestBuilders.delete("/deleteFavorite")
+        mockMvc.perform(MockMvcRequestBuilders.delete("/favorite/deleteFavorite")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(deleteFavoriteLocationRequest))
                         .contentType(MediaType.APPLICATION_JSON)

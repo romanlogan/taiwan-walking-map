@@ -1,5 +1,6 @@
 package com.dbproject.advice;
 
+import com.dbproject.exception.DuplicateFriendRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,5 +18,12 @@ public class ControllerAdvice {
         return HttpStatus.BAD_REQUEST;
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DuplicateFriendRequestException.class)
+    public HttpStatus DuplicateFriendRequestException(DuplicateFriendRequestException e) {
+
+        //apiResponse 로 에러 메세지까지 보내야 한다
+        return HttpStatus.BAD_REQUEST;
+    }
 
 }

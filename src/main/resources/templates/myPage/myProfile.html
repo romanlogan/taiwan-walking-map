@@ -45,7 +45,7 @@
                 var param = JSON.stringify(paramData);
 
                 $.ajax({
-                    url      : "/members/update",
+                    url      : "/myPage/update",
                     type     : "PUT",
                     contentType : "application/json",
                     data     : param,
@@ -57,7 +57,7 @@
                     cache   : false,
                     success  : function(result, status){
                         alert("확인되었습니다.");
-                        location.href='/members/profile'
+                        location.href='/myPage/profile'
 
                     },
                     error : function(jqXHR, status, error, request){
@@ -80,7 +80,7 @@
                 // var param = JSON.stringify(paramData);
 
                 $.ajax({
-                    url      : "/members/delete",
+                    url      : "/myPage/delete",
                     type     : "DELETE",
                     contentType : "application/json",
                     beforeSend : function(xhr){
@@ -118,7 +118,7 @@
                 var param = JSON.stringify(paramData);
 
                 $.ajax({
-                    url      : "/members/addFriendRequest",
+                    url      : "/myPage/addFriendRequest",
                     type     : "POST",
                     contentType : "application/json",
                     data     : param,
@@ -130,7 +130,7 @@
                     cache   : false,
                     success  : function(result, status){
                         alert("확인되었습니다.");
-                        location.href='/members/profile'
+                        location.href='/myPage/profile'
 
                     },
                     error : function(jqXHR, status, error, request){
@@ -209,8 +209,8 @@
     <div class="container">
         <div class="sidebar">
             <ul>
-                <li><a href="/members/profile">myProfile</a></li>
-                <li><a href="/members/requestFriendList">받은 친구 요청</a></li>
+                <li><a href="/myPage/profile">myProfile</a></li>
+                <li><a href="/myPage/requestFriendList">받은 친구 요청</a></li>
                 <li><a href="#">메뉴 3</a></li>
                 <li><a href="#">메뉴 4</a></li>
                 <!-- 필요에 따라 메뉴 항목 추가 -->

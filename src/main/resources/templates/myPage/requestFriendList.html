@@ -26,7 +26,7 @@
       var param = JSON.stringify(paramData);
 
       $.ajax({
-        url      : "/members/acceptAddFriend",
+        url      : "/myPage/acceptAddFriend",
         type     : "POST",
         contentType : "application/json",
         data     : param,
@@ -38,7 +38,7 @@
         cache   : false,
         success  : function(result, status){
           alert("친구 추가가 완료되었습니다.");
-          location.href='/members/requestFriendList';
+          location.href='/myPage/requestFriendList';
         },
         error : function(jqXHR, status, error){
           console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
@@ -65,7 +65,7 @@
       var param = JSON.stringify(paramData);
 
       $.ajax({
-        url      : "/members/rejectFriendRequest",
+        url      : "/myPage/rejectFriendRequest",
         type     : "PUT",
         contentType : "application/json",
         data     : param,
@@ -77,7 +77,7 @@
         cache   : false,
         success  : function(result, status){
           alert("친구 삭제가 완료되었습니다.");
-          location.href='/members/requestFriendList';
+          location.href='/myPage/requestFriendList';
         },
         error : function(jqXHR, status, error){
           console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
@@ -94,7 +94,7 @@
 
     function page(page) {
 
-      location.href = "/members/requestFriendList/"+ page;
+      location.href = "/myPage/requestFriendList/"+ page;
     }
 
   </script>
@@ -200,8 +200,8 @@
   <div class="container">
     <div class="sidebar">
       <ul>
-        <li><a href="/members/profile">myProfile</a></li>
-        <li><a href="/members/requestFriendList">받은 친구 요청</a></li>
+        <li><a href="/myPage/profile">myProfile</a></li>
+        <li><a href="/myPage/requestFriendList">받은 친구 요청</a></li>
         <li><a href="#">메뉴 3</a></li>
         <li><a href="#">메뉴 4</a></li>
         <!-- 필요에 따라 메뉴 항목 추가 -->

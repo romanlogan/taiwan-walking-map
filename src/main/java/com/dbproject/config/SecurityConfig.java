@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -55,9 +56,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/");
 
         http.httpBasic();
+
         http.authorizeRequests()
+                .mvcMatchers("/","/members/**","/img/**","/css/**").permitAll()
+                .mvcMatchers("/myPage/**","/favorite/**","/comment/**","/memo/**").authenticated()
+                .mvcMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().permitAll();
+//                .anyRequest().authenticated();      //나머지 경로는 모두 인증을 요구
     }
+
+
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

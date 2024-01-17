@@ -28,18 +28,6 @@ public class MemberController {
 //        return "redirect:/members/profile";
 //    }
 
-    @GetMapping(value = "/profile")
-    public String memberProfile(Principal principal, Model model) {
-
-        String email = principal.getName();
-        MyProfileDto myProfileDto = memberService.findMe(email);
-
-        model.addAttribute("user", myProfileDto);
-
-
-        return "/member/myProfile";
-    }
-
     @GetMapping("/registration")
     public String provideMemberForm(Model model) {
 
@@ -75,28 +63,4 @@ public class MemberController {
     }
 
 
-
-    @PutMapping("/update")
-    public ResponseEntity<Long> updateProfile(@RequestBody UpdateProfileDto updateProfileDto,
-                                              Principal principal,
-                                              Model model) {
-
-        //update 와 조회 를 분리
-        memberService.updateProfile(principal.getName(),updateProfileDto);
-        MyProfileDto myProfileDto = memberService.findMe(principal.getName());
-
-        model.addAttribute("user", myProfileDto);
-
-        return new ResponseEntity<Long>(1L, HttpStatus.OK);
-
-    }
-
-    @DeleteMapping("/delete")
-    public ResponseEntity<Long> deleteMember(Principal principal) {
-
-        String email = principal.getName();
-        Long memberId = memberService.deleteMember(email);
-
-        return new ResponseEntity<>(memberId, HttpStatus.OK);
-    }
 }

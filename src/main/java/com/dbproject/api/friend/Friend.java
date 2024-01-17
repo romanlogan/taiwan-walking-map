@@ -1,10 +1,7 @@
 package com.dbproject.api.friend;
 
 
-import com.dbproject.api.friend.friendRequest.FriendRequest;
 import com.dbproject.api.member.Member;
-import com.dbproject.constant.FriendRequestStatus;
-import com.dbproject.constant.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,36 +19,42 @@ public class Friend {
     @Column(name = "friend_id")
     private Long id;
 
-    //어떻게 매핑은 email 로 되지만 Member 객체 타입인거지 ?
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requester_email",
-            referencedColumnName = "member_email")
-    private Member requester;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "friend_email",
+//            referencedColumnName = "member_email")
+//    private Member friend;
+
+//    어떻게 매핑은 email 로 되지만 Member 객체 타입인거지 ?
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "respondent_email",
+    @JoinColumn(name = "my_email",
             referencedColumnName = "member_email")
-    private Member respondent;
+    private Member me;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "friend_email",
+            referencedColumnName = "member_email")
+    private Member friend;
+
+
 
     public Friend() {
     }
 
     @Builder
-    public Friend(Member requester, Member respondent) {
-        this.requester = requester;
-        this.respondent = respondent;
+    public Friend(Member me, Member friend) {
+        this.me = me;
+        this.friend = friend;
     }
 
-    public static Friend createFriend(Member requester, Member respondent) {
+    public static Friend createFriend(Member me, Member friend) {
 
         return Friend.builder()
-                .requester(requester)
-                .respondent(respondent)
+                .me(me)
+                .friend(friend)
                 .build();
 
     }
-
-
 }
 
 

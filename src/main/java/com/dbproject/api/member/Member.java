@@ -1,6 +1,7 @@
 package com.dbproject.api.member;
 
 import com.dbproject.api.baseEntity.BaseEntity;
+import com.dbproject.api.friend.Friend;
 import com.dbproject.constant.Role;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.web.member.RegisterFormDto;
@@ -40,9 +41,12 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-
+//  table 은 key 로 양방향 조회가 가능하므로 테이블은 변경 안해도 됨
     @OneToMany(mappedBy = "member")
     private List<FavoriteLocation> favoriteLocation;
+
+    @OneToMany(mappedBy = "friend")
+    private List<Friend> friends;
 
 //    @OneToMany
 //    private List<Member> friend;
@@ -82,6 +86,9 @@ public class Member extends BaseEntity {
                 .build();
     }
 
+    public void addFriend(Friend friend) {
+        this.friends.add(friend);
+    }
 
 }
 

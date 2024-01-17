@@ -5,6 +5,7 @@ import com.dbproject.api.friend.friendRequest.FriendRequestRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.constant.FriendRequestStatus;
+import com.dbproject.exception.DuplicateFriendRequestException;
 import com.dbproject.web.friend.AcceptAddFriendRequest;
 import com.dbproject.web.friend.AddFriendRequest;
 import com.dbproject.web.friend.RejectFriendRequest;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 @SpringBootTest
@@ -43,9 +45,6 @@ class FriendServiceTest {
 
     @Autowired
     private FriendRepository friendRepository;
-
-
-
 
     @BeforeEach
     void createMember() {
@@ -72,7 +71,7 @@ class FriendServiceTest {
 
     @DisplayName("요청자와 응답자의 이메일을 받아서 요청 정보를 저장한다")
     @Test
-    void test(){
+    void saveFriendRequest(){
         //given
         String respondentEmail = "zxcv@zxcv.com";
         String requesterEmail = "qwer@qwer.com";
@@ -88,9 +87,25 @@ class FriendServiceTest {
         assertThat(friendRequestList.get(0).getFriendRequestStatus()).isEqualTo(FriendRequestStatus.WAITING);
     }
 
+    @DisplayName("중복된 친구 요청시 DuplicateFriendRequest 에러를 발생시킨다")
+    @Test
+    void saveFriendRequestWithDuplicateFriendRequest(){
+        //given
+        String respondentEmail = "zxcv@zxcv.com";
+        String requesterEmail = "qwer@qwer.com";
+        AddFriendRequest addFriendRequest = new AddFriendRequest(respondentEmail, "memo1");
+        friendService.saveFriendRequest(addFriendRequest, requesterEmail);
+
+        //when
+        //then
+        assertThatThrownBy(() -> friendService.saveFriendRequest(addFriendRequest, requesterEmail))
+                .isInstanceOf(DuplicateFriendRequestException.class)
+                .hasMessage("이미 요청한 사용자 입니다.");
+    }
+
     @DisplayName("친구 요청 id 로 친구를 생성하고 친구요청을 수락됨으로 변경한다")
     @Test
-    void test2() {
+    void acceptAddFriend() {
         //given
         String requesterEmail = "qwer@qwer.com";
         Member requester = memberRepository.findByEmail(requesterEmail);
@@ -99,7 +114,7 @@ class FriendServiceTest {
 
         FriendRequest friendRequest = FriendRequest.createFriendRequest(requester, respondent, "memo1");
         Long friendRequestId = friendRequestRepository.save(friendRequest).getId();
-        AcceptAddFriendRequest acceptAddFriendRequest = new AcceptAddFriendRequest(String.valueOf(friendRequestId));
+        AcceptAddFriendRequest acceptAddFriendRequest = new AcceptAddFriendRequest(friendRequestId);
 
         //when
         friendService.acceptAddFriend(acceptAddFriendRequest);
@@ -111,8 +126,8 @@ class FriendServiceTest {
         assertThat(friendRequestList).hasSize(1);
         assertThat(friendRequestList.get(0).getFriendRequestStatus()).isEqualTo(FriendRequestStatus.ACCEPTED);
         assertThat(friendList).hasSize(1);
-        assertThat(friendList.get(0).getRequester().getEmail()).isEqualTo("qwer@qwer.com");
-        assertThat(friendList.get(0).getRespondent().getEmail()).isEqualTo("zxcv@zxcv.com");
+        assertThat(friendList.get(0).getMe().getEmail()).isEqualTo("qwer@qwer.com");
+        assertThat(friendList.get(0).getFriend().getEmail()).isEqualTo("zxcv@zxcv.com");
     }
 
 
@@ -127,7 +142,7 @@ class FriendServiceTest {
 
         FriendRequest friendRequest = FriendRequest.createFriendRequest(requester, respondent, "memo1");
         Long friendRequestId = friendRequestRepository.save(friendRequest).getId();
-        RejectFriendRequest rejectFriendRequest = new RejectFriendRequest(String.valueOf(friendRequestId));
+        RejectFriendRequest rejectFriendRequest = new RejectFriendRequest(friendRequestId);
 
         //when
         friendService.rejectFriendRequest(rejectFriendRequest);

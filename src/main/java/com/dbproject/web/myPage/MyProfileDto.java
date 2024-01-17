@@ -1,4 +1,4 @@
-package com.dbproject.web.member;
+package com.dbproject.web.myPage;
 
 import com.dbproject.constant.Role;
 import com.dbproject.api.member.Member;

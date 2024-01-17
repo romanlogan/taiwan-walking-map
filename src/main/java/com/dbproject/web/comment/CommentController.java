@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -13,6 +14,7 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/comment")
 public class CommentController {
 
     private final CommentService commentService;
@@ -22,9 +24,9 @@ public class CommentController {
 //                                        BindingResult bindingResult,
                                         Principal principal) {
 
-        if (principal == null) {
-            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
-        }
+//        if (principal == null) {
+//            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
+//        }
 
 //        if (bindingResult.hasErrors()) {
 //            StringBuilder sb = new StringBuilder();

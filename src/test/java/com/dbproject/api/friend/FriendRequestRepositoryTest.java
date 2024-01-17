@@ -59,13 +59,12 @@ class FriendRequestRepositoryTest {
 
     @DisplayName("친구 요청을 저장한다")
     @Test
-    void test(){
+    void saveFriendRequest(){
         //given
         Member member = memberRepository.findByEmail("qwer@qwer.com");
         Member friend = memberRepository.findByEmail("zxcv@zxcv.com");
         String memo = "memo1";
         FriendRequest friendRequest = FriendRequest.createFriendRequest(member, friend, memo);
-
 
         //when
         friendRequestRepository.save(friendRequest);
@@ -76,6 +75,28 @@ class FriendRequestRepositoryTest {
         assertThat(friendRequestList.get(0).getRespondent().getName()).isEqualTo("손흥민");
         assertThat(friendRequestList.get(0).getFriendRequestStatus()).isEqualTo(FriendRequestStatus.WAITING);
     }
+
+    @DisplayName("요청자와 응답자로 친구 요청을 찾는다")
+    @Test
+    void findByRequesterAndRespondent(){
+        //given
+        Member requester = memberRepository.findByEmail("qwer@qwer.com");
+        Member respondent = memberRepository.findByEmail("zxcv@zxcv.com");
+        String memo = "memo1";
+        FriendRequest friendRequest = FriendRequest.createFriendRequest(requester, respondent, memo);
+        friendRequestRepository.save(friendRequest);
+
+        //when
+        FriendRequest savedFriendRequest = friendRequestRepository.findByRequesterAndRespondent(requester, respondent);
+
+        //then
+        assertThat(savedFriendRequest.getRequester().getName()).isEqualTo("이병민");
+        assertThat(savedFriendRequest.getRespondent().getName()).isEqualTo("손흥민");
+        assertThat(savedFriendRequest.getFriendRequestStatus()).isEqualTo(FriendRequestStatus.WAITING);
+
+    }
+
+
 
 
 }

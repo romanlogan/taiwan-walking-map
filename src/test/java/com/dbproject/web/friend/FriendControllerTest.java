@@ -2,17 +2,27 @@ package com.dbproject.web.friend;
 
 import com.dbproject.api.friend.FriendService;
 import com.dbproject.api.member.MemberService;
+import com.dbproject.constant.FriendRequestStatus;
+import com.dbproject.web.favorite.FavoriteListResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -47,7 +57,7 @@ class FriendControllerTest {
 
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/members/addFriendRequest")
+        mockMvc.perform(MockMvcRequestBuilders.post("/myPage/addFriendRequest")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(addFriendRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -68,7 +78,7 @@ class FriendControllerTest {
 
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/members/addFriendRequest")
+        mockMvc.perform(MockMvcRequestBuilders.post("/myPage/addFriendRequest")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(addFriendRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -89,7 +99,7 @@ class FriendControllerTest {
 
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/members/addFriendRequest")
+        mockMvc.perform(MockMvcRequestBuilders.post("/myPage/addFriendRequest")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(addFriendRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -110,7 +120,7 @@ class FriendControllerTest {
 
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/members/addFriendRequest")
+        mockMvc.perform(MockMvcRequestBuilders.post("/myPage/addFriendRequest")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(addFriendRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -131,7 +141,7 @@ class FriendControllerTest {
 
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/members/addFriendRequest")
+        mockMvc.perform(MockMvcRequestBuilders.post("/myPage/addFriendRequest")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(addFriendRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -140,6 +150,135 @@ class FriendControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    Page<RequestFriendListDto> getRequestFriendPage(Pageable pageable) {
+
+        RequestFriendListDto requestFriendListDto = new RequestFriendListDto(1L, "asdf@asdf.com", "lee", FriendRequestStatus.WAITING);
+        List<RequestFriendListDto> list = new ArrayList<>();
+        list.add(requestFriendListDto);
+
+        return new PageImpl<>(list, pageable, 1);
+    }
+
+    @DisplayName("받은 친구 요청 페이지를 조회합니다.")
+    @Test
+    @WithMockUser(username = "qwer@qwer.com", roles = "USER")
+    void getRequestFriendList() throws Exception{
+        //given
+        Pageable pageable = PageRequest.of(0, 5 );
+        Page<RequestFriendListDto> page = getRequestFriendPage(pageable);
+        Mockito.when(friendService.getRequestFriendList(pageable, "qwer@qwer.com")).thenReturn(page);
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/myPage/requestFriendList")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("친구 요청을 수락합니다")
+    @Test
+    @WithMockUser(username = "qwer@qwer.com", roles = "USER")
+    void acceptAddFriendRequest() throws Exception{
+        //given
+        AcceptAddFriendRequest acceptAddFriendRequest = new AcceptAddFriendRequest(1L);
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.post("/myPage/acceptAddFriend")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(acceptAddFriendRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+     }
+
+    @DisplayName("비 로그인 유저는 친구 요청 수락에 접근 할 수 없습니다.")
+    @Test
+    void acceptAddFriendRequestWithoutLogin() throws Exception{
+        //given
+        AcceptAddFriendRequest acceptAddFriendRequest = new AcceptAddFriendRequest(1L);
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.post("/myPage/acceptAddFriend")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(acceptAddFriendRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+
+    @DisplayName("친구 요청을 수락시 friendRequestId 는 null 이 될 수 없습니다.")
+    @Test
+    @WithMockUser(username = "qwer@qwer.com", roles = "USER")
+    void acceptAddFriendRequestCanNotWithNullFriendRequestId() throws Exception{
+        //given
+
+        String friendRequestId = null;
+        AcceptAddFriendRequest acceptAddFriendRequest = new AcceptAddFriendRequest(null);
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.post("/myPage/acceptAddFriend")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(acceptAddFriendRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("친구 요청을 거절합니다.")
+    @Test
+    @WithMockUser(username = "qwer@qwer.com", roles = "USER")
+    void rejectFriendRequest() throws Exception{
+        //given
+        RejectFriendRequest deleteFriendRequest = new RejectFriendRequest(1L);
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.put("/myPage/rejectFriendRequest")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(deleteFriendRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+     }
+
+    @DisplayName("비로그인 유저는 친구 요청을 거절에 접근 할 수 없습니다")
+    @Test
+    void rejectFriendRequestWithoutLogin() throws Exception{
+        //given
+        RejectFriendRequest deleteFriendRequest = new RejectFriendRequest(1L);
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.put("/myPage/rejectFriendRequest")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(deleteFriendRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @DisplayName("친구 요청을 거절시 deleteFriendRequest 는 null 이 될 수 없습니다")
+    @Test
+    @WithMockUser(username = "qwer@qwer.com", roles = "USER")
+    void rejectFriendRequestCanNotNullDeleteFriendRequest() throws Exception{
+        //given
+        RejectFriendRequest deleteFriendRequest = new RejectFriendRequest(null);
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.put("/myPage/rejectFriendRequest")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(deleteFriendRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isBadRequest());
+    }
 
 
 }
