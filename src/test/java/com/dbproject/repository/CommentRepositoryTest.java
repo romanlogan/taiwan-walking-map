@@ -3,7 +3,7 @@ package com.dbproject.repository;
 import com.dbproject.api.comment.CommentRepository;
 import com.dbproject.api.location.LocationRepository;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.web.member.RegisterFormDto;
+import com.dbproject.api.member.RegisterFormDto;
 import com.dbproject.api.comment.Comment;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;

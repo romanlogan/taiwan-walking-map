@@ -1,8 +1,8 @@
 package com.dbproject.service;
 
 import com.dbproject.api.quickSearch.QuickSearchService;
-import com.dbproject.web.quickSearch.FastSearchDto;
-import com.dbproject.web.quickSearch.QuickSearchResultDto;
+import com.dbproject.api.quickSearch.FastSearchDto;
+import com.dbproject.api.quickSearch.QuickSearchResultDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

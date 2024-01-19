@@ -1,7 +1,5 @@
 package com.dbproject.api.favorite;
 
-import com.dbproject.web.favorite.AddFavoriteLocationRequest;
-import com.dbproject.web.favorite.FavoriteListResponse;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
 import com.dbproject.exception.DuplicateFavoriteLocationException;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.security.Principal;
 
 @Service
 @Transactional
@@ -27,8 +24,6 @@ public class FavoriteService {
 
 
     public Long addFavoriteList(AddFavoriteLocationRequest addFavoriteLocationRequest, String email) throws DuplicateFavoriteLocationException{
-
-
 
         Member member = memberRepository.findByEmail(email);
         Location location = locationRepository.findByLocationId(addFavoriteLocationRequest.getLocationId());
@@ -52,7 +47,7 @@ public class FavoriteService {
 
     public Page<FavoriteListResponse> getFavoriteLocationList(Pageable pageable, String email) {
 
-        return favoriteRepository.getFavoriteLocationList(pageable, email);
+        return favoriteRepository.getFavoriteLocationListPage(pageable, email);
     }
 
     public void deleteFavoriteLocation(String favoriteLocationId){

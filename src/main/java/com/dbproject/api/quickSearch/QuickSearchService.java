@@ -1,10 +1,6 @@
 package com.dbproject.api.quickSearch;
 
 
-import com.dbproject.web.quickSearch.FastSearchDto;
-import com.dbproject.web.quickSearch.QuickSearchCityDto;
-import com.dbproject.web.quickSearch.QuickSearchLocationDto;
-import com.dbproject.web.quickSearch.QuickSearchResultDto;
 import com.dbproject.api.city.City;
 import com.dbproject.api.city.CityRepository;
 import com.dbproject.api.location.LocationRepository;

@@ -1,6 +1,7 @@
 package com.dbproject.api.friend;
 
 
+import com.dbproject.api.baseEntity.BaseEntity;
 import com.dbproject.api.member.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Table(name = "friend")
 @Getter
 @Setter
-public class Friend {
+public class Friend extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +35,7 @@ public class Friend {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "friend_email",
             referencedColumnName = "member_email")
-    private Member friend;
+    private Member newFriend;
 
 
 
@@ -44,7 +45,7 @@ public class Friend {
     @Builder
     public Friend(Member me, Member friend) {
         this.me = me;
-        this.friend = friend;
+        this.newFriend = friend;
     }
 
     public static Friend createFriend(Member me, Member friend) {

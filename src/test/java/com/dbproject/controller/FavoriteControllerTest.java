@@ -1,12 +1,12 @@
 package com.dbproject.controller;
 
-import com.dbproject.web.favorite.AddFavoriteLocationRequest;
-import com.dbproject.web.favorite.DeleteFavoriteLocationRequest;
+import com.dbproject.api.favorite.AddFavoriteLocationRequest;
+import com.dbproject.api.favorite.DeleteFavoriteLocationRequest;
 import com.dbproject.api.favorite.FavoriteRepository;
 import com.dbproject.api.favorite.FavoriteService;
 import com.dbproject.api.member.MemberService;
 import com.dbproject.web.favorite.FavoriteController;
-import com.dbproject.web.favorite.FavoriteListResponse;
+import com.dbproject.api.favorite.FavoriteListResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,8 +1,11 @@
 package com.dbproject.web.friend;
 
+import com.dbproject.api.friend.AcceptAddFriendRequest;
+import com.dbproject.api.friend.AddFriendRequest;
 import com.dbproject.api.friend.FriendListResponse;
 import com.dbproject.api.friend.FriendService;
-import com.dbproject.api.member.Member;
+import com.dbproject.api.friend.friendRequest.RejectFriendRequest;
+import com.dbproject.api.friend.friendRequest.RequestFriendListDto;
 import com.dbproject.api.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -57,15 +60,13 @@ public class FriendController {
 
 
     @PostMapping("/acceptAddFriend")
-    public ResponseEntity acceptAddFriendRequest(@Valid @RequestBody AcceptAddFriendRequest acceptAddFriendRequest,
-                                                 Principal principal) {
+    public ResponseEntity acceptAddFriendRequest(@Valid @RequestBody AcceptAddFriendRequest acceptAddFriendRequest) {
 
 //        if (principal == null) {
 //            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
 //        }
 
-        String email = principal.getName();
-        Long id = friendService.acceptAddFriend(acceptAddFriendRequest, email);
+        Long id = friendService.acceptAddFriend(acceptAddFriendRequest);
 
         return new ResponseEntity(id, HttpStatus.OK);
     }
@@ -85,30 +86,23 @@ public class FriendController {
         return new ResponseEntity(1L, HttpStatus.OK);
     }
 
-    @GetMapping("/friendCount")
-    public String getFriendCount(Principal principal) {
+    @GetMapping(value = {"/friendList","/friendList/{page}"})
+    public String getFriendList(@PathVariable("page") Optional<Integer> page,
+                                Principal principal,
+                                Model model) {
 
+
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
         String email = principal.getName();
+        FriendListResponse friendListResponse = friendService.getFriendList(pageable, email);
 
-        Member member = memberRepository.findByEmail(email);
-        System.out.println("=====================================");
-        System.out.println(member.getFriends().size());
-        System.out.println("=====================================");
 
-        return "redirect:/";
+//        model.addAttribute("favoriteList", friendPage);
+//        model.addAttribute("friendList", friendPage);
+        model.addAttribute("friendListResponse", friendListResponse);
+        model.addAttribute("maxPage", 5);
 
+
+        return "/myPage/friendList";
     }
-
-//    @GetMapping(value = {"/friendList","/friendList/{page}"})
-//    public String getFriendList(@PathVariable("page") Optional<Integer> page,
-//                                Principal principal,
-//                                Model model) {
-//
-//
-//        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
-//        String email = principal.getName();
-//        Page<FriendListResponse> friendPage = friendService.getFriendList(pageable, email);
-//
-//        return "/myPage/friendList";
-//    }
 }

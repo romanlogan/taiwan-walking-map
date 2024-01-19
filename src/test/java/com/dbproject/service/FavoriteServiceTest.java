@@ -1,8 +1,8 @@
 package com.dbproject.service;
 
 import com.dbproject.api.favorite.FavoriteService;
-import com.dbproject.web.favorite.AddFavoriteLocationRequest;
-import com.dbproject.web.member.RegisterFormDto;
+import com.dbproject.api.favorite.AddFavoriteLocationRequest;
+import com.dbproject.api.member.RegisterFormDto;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.favorite.FavoriteRepository;

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+
+<head>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+
+  <script th:inline="javascript">
+
+    function page(page) {
+
+      location.href = "/myPage/friendList/"+ page;
+    }
+
+  </script>
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+  <style>
+    select{
+      margin-right:10px;
+    }
+    .left-half {
+      float: left;
+      width: 50%;
+    }
+
+    /* 오른쪽 절반 스타일 */
+    .right-half {
+      float: right;
+      width: 50%;
+    }
+
+
+    .FriendBox{
+      margin: 20px;
+      padding: 10px;
+      width: 680px;
+      height: 110px;
+      background-color: #fff; /* 배경색 지정 */
+      border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 그림자 효과 추가 */
+    }
+
+    .locationBoxImg{
+      float : left;
+      width : 90px;
+      height : 90px;
+    }
+
+    .locationTextBox{
+      float: right;
+      width: 550px; /* 텍스트를 표시할 요소의 너비를 지정합니다. */
+      height: 90px;
+      white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 합니다. */
+      overflow: hidden; /* 넘치는 부분은 숨김 처리합니다. */
+      text-overflow: ellipsis; /* 넘치는 텍스트에 '...'을 추가하여 표시합니다. */
+
+    }
+
+    .locationText {
+      margin-bottom: 0;
+
+    }
+
+
+    .clear{
+      both: clear;
+    }
+
+
+    /* 사이드바*/
+    .container {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+    }
+
+    /* 사이드바 스타일 */
+    .sidebar {
+      width: 250px; /* 사이드바 너비 조정 */
+      height: 100vh;
+      background-color: #333;
+      color: #fff;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      padding: 10px;
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .sidebar ul li a:hover {
+      color: #ffd700; /* 마우스 호버 시 색 변경 */
+      transition: 0.3s; /* 부드러운 전환 효과 */
+    }
+
+
+
+
+  </style>
+</th:block>
+
+<div layout:fragment="content">
+
+
+  <div class="container">
+    <div class="sidebar">
+      <ul>
+        <li><a href="/myPage/profile">myProfile</a></li>
+        <li><a href="/myPage/requestFriendList">받은 친구 요청</a></li>
+        <li><a href="/myPage/friendList">친구 목록</a></li>
+        <li><a href="#">메뉴 4</a></li>
+        <!-- 필요에 따라 메뉴 항목 추가 -->
+      </ul>
+    </div>
+
+    <div class="FriendBox" th:each="friend, status: ${friendListResponse.getFriendListPages().getContent()}">
+
+      이메일 : <div th:text="${friend.friendEmail}" class="fs24 font-weight-bold updatable"></div>
+      이름 : <div  th:text="${friend.friendName}" class="fs24 font-weight-bold updatable"></div>
+
+
+      <button class="planModalBtn" data-toggle="modal" data-target="#planModal">약속 잡기</button>
+
+      <!--                어떻게 반복문으로 id 를 돌려도 에러가 안날까?? 같은 id 가 여러개 존재하는데  -->
+      <!-- 모달 창 -->
+      <div class="modal fade" id="planModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title" id="myModalLabel">약속 잡기</h4>
+            </div>
+            <div class="modal-body">
+              <!-- 모달 창 내의 데이터 입력 폼 -->
+              <div class="form-group">
+
+<!--                왼쪽 오른쪽으로 나눠서 map 찾기처럼 왼쪽에는 리스트 오른쪽에는 메시지 -->
+<!--                아니면 첫번째 모달은 리스트에서 선택하고 버튼으로 두번째 모달로 이동해서 두번째 모달에서 메시지를 적을수 잇게-->
+<!--                  check box 로 선택 가능-->
+                <div class="favoriteList" th:each="favoriteList, status: ${friendListResponse.getFavoriteLocationList()}">
+                    <div th:if="${#strings.isEmpty(favoriteList.picture1)}">
+                        <img class = "locationBoxImg" src="/img/noImg.jpg">
+                    </div>
+                    <div th:unless="${#strings.isEmpty(favoriteList.picture1)}">
+                        <img class = "locationBoxImg" th:src="${favoriteList.picture1}">
+                    </div>
+
+                    <div class="locationTextBox">
+                        <p class="locationText">[[${favoriteList.name}]]</p>
+                    </div>
+                </div>
+
+
+                <label for="message">메시지</label>
+                <textarea type="text" name="message" id="message" placeholder="메시지 내용을 입력해주세요."></textarea>
+
+
+              </div>
+            </div>
+            <div class="modal-footer">
+<!--              <button id="addFavoriteBtn" th:value="${}" onclick="updateMemo(this.value)" type="button" class="btn btn-default" data-dismiss="modal">수정</button>-->
+<!--                location.favoriteLocationId-->
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div th:with="start=${(friendListResponse.getFriendListPages().number/maxPage)*maxPage + 1}, end=(${(friendListResponse.getFriendListPages().totalPages == 0) ? 1 : (start + (maxPage - 1) < friendListResponse.getFriendListPages().totalPages ? start + (maxPage - 1) : friendListResponse.getFriendListPages().totalPages)})" >
+      <ul class="pagination justify-content-center">
+
+        <li class="page-item" th:classappend="${friendListResponse.getFriendListPages().first}?'disabled'">
+          <a th:onclick="'javascript:page(' + ${friendListResponse.getFriendListPages().number - 1} + ')'" aria-label='Previous' class="page-link">
+            <span aria-hidden='true'>Previous</span>
+          </a>
+        </li>
+
+        <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${friendListResponse.getFriendListPages().number eq page-1}?'active':''">
+          <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
+        </li>
+
+        <li class="page-item" th:classappend="${friendListResponse.getFriendListPages().last}?'disabled'">
+          <a th:onclick="'javascript:page(' + ${friendListResponse.getFriendListPages().number + 1} + ')'" aria-label='Next' class="page-link">
+            <span aria-hidden='true'>Next</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+</html>

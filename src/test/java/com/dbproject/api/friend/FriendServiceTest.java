@@ -1,20 +1,24 @@
 package com.dbproject.api.friend;
 
+import com.dbproject.api.favorite.FavoriteLocation;
+import com.dbproject.api.favorite.FavoriteRepository;
 import com.dbproject.api.friend.friendRequest.FriendRequest;
 import com.dbproject.api.friend.friendRequest.FriendRequestRepository;
+import com.dbproject.api.location.Location;
+import com.dbproject.api.location.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.constant.FriendRequestStatus;
 import com.dbproject.exception.DuplicateFriendRequestException;
-import com.dbproject.web.friend.AcceptAddFriendRequest;
-import com.dbproject.web.friend.AddFriendRequest;
-import com.dbproject.web.friend.RejectFriendRequest;
-import com.dbproject.web.member.RegisterFormDto;
+import com.dbproject.api.friend.friendRequest.RejectFriendRequest;
+import com.dbproject.api.member.RegisterFormDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +50,12 @@ class FriendServiceTest {
     @Autowired
     private FriendRepository friendRepository;
 
+    @Autowired
+    private LocationRepository locationRepository;
+
+    @Autowired
+    private FavoriteRepository favoriteRepository;
+
     @BeforeEach
     void createMember() {
 
@@ -66,6 +76,15 @@ class FriendServiceTest {
 
         Member member2 = Member.createMember(registerFormDto2, passwordEncoder);
         memberRepository.save(member2);
+
+        RegisterFormDto registerFormDto3 = new RegisterFormDto();
+        registerFormDto3.setName("장원유");
+        registerFormDto3.setAddress("대만 산총구");
+        registerFormDto3.setEmail("yunni@yunni.com");
+        registerFormDto3.setPassword("1234");
+
+        Member member3 = Member.createMember(registerFormDto3, passwordEncoder);
+        memberRepository.save(member3);
     }
 
 
@@ -103,7 +122,7 @@ class FriendServiceTest {
                 .hasMessage("이미 요청한 사용자 입니다.");
     }
 
-    @DisplayName("친구 요청 id 로 친구를 생성하고 친구요청을 수락됨으로 변경한다")
+    @DisplayName("친구 요청 id 로 친구를 양방향으로 생성하고 친구요청을 수락됨으로 변경한다")
     @Test
     void acceptAddFriend() {
         //given
@@ -125,9 +144,11 @@ class FriendServiceTest {
 
         assertThat(friendRequestList).hasSize(1);
         assertThat(friendRequestList.get(0).getFriendRequestStatus()).isEqualTo(FriendRequestStatus.ACCEPTED);
-        assertThat(friendList).hasSize(1);
+        assertThat(friendList).hasSize(2);
         assertThat(friendList.get(0).getMe().getEmail()).isEqualTo("qwer@qwer.com");
-        assertThat(friendList.get(0).getFriend().getEmail()).isEqualTo("zxcv@zxcv.com");
+        assertThat(friendList.get(0).getNewFriend().getEmail()).isEqualTo("zxcv@zxcv.com");
+        assertThat(friendList.get(1).getMe().getEmail()).isEqualTo("zxcv@zxcv.com");
+        assertThat(friendList.get(1).getNewFriend().getEmail()).isEqualTo("qwer@qwer.com");
     }
 
 
@@ -150,6 +171,52 @@ class FriendServiceTest {
         //then
         List<FriendRequest> friendRequestList = friendRequestRepository.findAll();
         assertThat(friendRequestList.get(0).getFriendRequestStatus()).isEqualTo(FriendRequestStatus.REJECTED);
+     }
+
+     @DisplayName("친구 목록 페이징을 가져올때 즐겨찾기 리스트도 같이 가져옵니다")
+     @Test
+     void getFriendListWithFavoriteList(){
+
+         //given
+         Member son = memberRepository.findByEmail("zxcv@zxcv.com");
+         Member lee = memberRepository.findByEmail("qwer@qwer.com");
+         Member yunni = memberRepository.findByEmail("yunni@yunni.com");
+         createRequestAndAccept(lee, son);
+         createRequestAndAccept(lee, yunni);
+         Pageable pageable = PageRequest.of( 0, 5 );
+         saveFavoriteLocation(lee);
+
+         //when
+         FriendListResponse friendListResponse = friendService.getFriendList(pageable, "qwer@qwer.com");
+
+         //then
+         assertThat(friendListResponse.getFriendListPages().getTotalElements()).isEqualTo(2);
+         assertThat(friendListResponse.getFriendListPages().getContent().get(0).getFriendName()).isEqualTo("손흥민");
+         assertThat(friendListResponse.getFriendListPages().getContent().get(0).getFriendEmail()).isEqualTo("zxcv@zxcv.com");
+         assertThat(friendListResponse.getFriendListPages().getContent().get(0).getFriendAddress()).isEqualTo("서울 강남구");
+         assertThat(friendListResponse.getFriendListPages().getContent().get(1).getFriendName()).isEqualTo("장원유");
+         assertThat(friendListResponse.getFriendListPages().getContent().get(1).getFriendEmail()).isEqualTo("yunni@yunni.com");
+         assertThat(friendListResponse.getFriendListPages().getContent().get(1).getFriendAddress()).isEqualTo("대만 산총구");
+         assertThat(friendListResponse.getFavoriteLocationList().get(0).getName()).isEqualTo("西門町");
+         assertThat(friendListResponse.getFavoriteLocationList().get(0).getLocationId()).isEqualTo("C1_379000000A_001572");
+
 
      }
+
+    private void saveFavoriteLocation(Member member) {
+        String locationId = "C1_379000000A_001572";
+        Location location = locationRepository.findByLocationId(locationId);
+        String memo = "메모 1 입니다.";
+        FavoriteLocation savedFavoriteLocation = new FavoriteLocation(member, location, memo);
+        favoriteRepository.save(savedFavoriteLocation);
+    }
+
+    private void createRequestAndAccept(Member requester , Member respondent) {
+        FriendRequest friendRequest = FriendRequest.createFriendRequest(requester, respondent, "1");
+        Long id = friendRequestRepository.save(friendRequest).getId();
+        AcceptAddFriendRequest acceptAddFriendRequest = new AcceptAddFriendRequest(id);
+        friendService.acceptAddFriend(acceptAddFriendRequest);
+    }
+
+
 }

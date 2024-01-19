@@ -2,13 +2,12 @@ package com.dbproject.repository;
 
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.favorite.FavoriteRepository;
-import com.dbproject.api.favorite.FavoriteRepositoryCustomImpl;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.location.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.web.favorite.FavoriteListResponse;
-import com.dbproject.web.member.RegisterFormDto;
+import com.dbproject.api.favorite.FavoriteListResponse;
+import com.dbproject.api.member.RegisterFormDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
@@ -70,7 +68,7 @@ class FavoriteRepositoryCustomImplTest {
         favoriteRepository.save(savedFavoriteLocation);
 
         //when
-        Page<FavoriteListResponse> favoriteListResponsePage = favoriteRepository.getFavoriteLocationList(pageable, email);
+        Page<FavoriteListResponse> favoriteListResponsePage = favoriteRepository.getFavoriteLocationListPage(pageable, email);
 
         //then
         assertThat(favoriteListResponsePage.getContent().get(0).getName()).isEqualTo("西門町");

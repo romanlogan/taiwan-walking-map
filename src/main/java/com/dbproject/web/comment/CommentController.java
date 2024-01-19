@@ -1,6 +1,7 @@
 package com.dbproject.web.comment;
 
 import com.dbproject.api.comment.CommentService;
+import com.dbproject.api.comment.CreateCommentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

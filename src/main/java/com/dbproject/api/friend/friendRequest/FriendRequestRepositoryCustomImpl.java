@@ -3,7 +3,6 @@ package com.dbproject.api.friend.friendRequest;
 
 import com.dbproject.entity.QMember;
 import com.dbproject.web.friend.QRequestFriendListDto;
-import com.dbproject.web.friend.RequestFriendListDto;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;

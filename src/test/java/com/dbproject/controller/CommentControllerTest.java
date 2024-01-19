@@ -1,6 +1,6 @@
 package com.dbproject.controller;
 
-import com.dbproject.web.comment.CreateCommentRequest;
+import com.dbproject.api.comment.CreateCommentRequest;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.comment.CommentService;
 import com.dbproject.api.member.MemberService;

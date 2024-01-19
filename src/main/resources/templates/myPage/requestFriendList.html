@@ -118,7 +118,7 @@
     }
 
 
-    .requestFriendBox{
+    .FriendBox{
       margin: 20px;
       padding: 10px;
       width: 680px;
@@ -202,12 +202,12 @@
       <ul>
         <li><a href="/myPage/profile">myProfile</a></li>
         <li><a href="/myPage/requestFriendList">받은 친구 요청</a></li>
-        <li><a href="#">메뉴 3</a></li>
+        <li><a href="/myPage/friendList">친구 목록</a></li>
         <li><a href="#">메뉴 4</a></li>
         <!-- 필요에 따라 메뉴 항목 추가 -->
       </ul>
     </div>
-    <div class="requestFriendBox" th:each="requestFriend, status: ${requestFriendList.getContent()}">
+    <div class="FriendBox" th:each="requestFriend, status: ${requestFriendList.getContent()}">
       이름 : <div  th:text="${requestFriend.name}" class="fs24 font-weight-bold updatable"></div>
       주소 : <div th:text="${requestFriend.email}" class="fs24 font-weight-bold updatable"></div>
 <!--      <button id="addFavoriteBtn" th:value="${location.favoriteLocationId}" onclick="updateMemo(this.value)" type="button" class="btn btn-default" data-dismiss="modal">수정</button>-->

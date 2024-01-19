@@ -1,6 +1,8 @@
 package com.dbproject.web.quickSearch;
 
 import com.dbproject.api.explore.ExploreService;
+import com.dbproject.api.quickSearch.FastSearchDto;
+import com.dbproject.api.quickSearch.QuickSearchResultDto;
 import com.dbproject.api.quickSearch.QuickSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

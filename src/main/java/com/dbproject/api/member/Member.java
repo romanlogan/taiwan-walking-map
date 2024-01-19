@@ -4,7 +4,6 @@ import com.dbproject.api.baseEntity.BaseEntity;
 import com.dbproject.api.friend.Friend;
 import com.dbproject.constant.Role;
 import com.dbproject.api.favorite.FavoriteLocation;
-import com.dbproject.web.member.RegisterFormDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,7 +44,7 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<FavoriteLocation> favoriteLocation;
 
-    @OneToMany(mappedBy = "friend")
+    @OneToMany(mappedBy = "newFriend")
     private List<Friend> friends;
 
 //    @OneToMany

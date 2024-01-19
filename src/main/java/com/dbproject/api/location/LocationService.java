@@ -1,8 +1,5 @@
 package com.dbproject.api.location;
 
-import com.dbproject.web.location.LocationDtlResponse;
-import com.dbproject.web.location.RecLocationListRequest;
-import com.dbproject.web.location.RecLocationListResponse;
 import com.dbproject.api.comment.Comment;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.comment.CommentRepository;

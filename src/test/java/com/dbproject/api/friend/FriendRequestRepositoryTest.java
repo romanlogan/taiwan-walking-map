@@ -5,7 +5,7 @@ import com.dbproject.api.friend.friendRequest.FriendRequestRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.constant.FriendRequestStatus;
-import com.dbproject.web.member.RegisterFormDto;
+import com.dbproject.api.member.RegisterFormDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

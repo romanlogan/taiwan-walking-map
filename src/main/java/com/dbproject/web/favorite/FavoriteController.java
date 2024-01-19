@@ -1,5 +1,8 @@
 package com.dbproject.web.favorite;
 
+import com.dbproject.api.favorite.AddFavoriteLocationRequest;
+import com.dbproject.api.favorite.DeleteFavoriteLocationRequest;
+import com.dbproject.api.favorite.FavoriteListResponse;
 import com.dbproject.exception.DuplicateFavoriteLocationException;
 import com.dbproject.api.favorite.FavoriteService;
 import lombok.RequiredArgsConstructor;

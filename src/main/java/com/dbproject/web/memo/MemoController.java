@@ -1,6 +1,7 @@
 package com.dbproject.web.memo;
 
 import com.dbproject.api.memo.MemoService;
+import com.dbproject.api.memo.UpdateMemoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

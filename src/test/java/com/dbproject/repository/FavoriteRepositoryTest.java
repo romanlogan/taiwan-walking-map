@@ -3,7 +3,7 @@ package com.dbproject.repository;
 import com.dbproject.api.favorite.FavoriteRepository;
 import com.dbproject.api.location.LocationRepository;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.web.member.RegisterFormDto;
+import com.dbproject.api.member.RegisterFormDto;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
@@ -91,7 +91,29 @@ class FavoriteRepositoryTest {
 
          //then
          assertThat(favoriteLocation.getLocation().getName()).isEqualTo("西門町");
-
       }
+
+    @DisplayName("email 로 즐겨찾기 리스트를 가져온다")
+    @Test
+    void getFavoriteLocationList(){
+
+        //given
+        Member member = memberRepository.findByEmail("zxcv@zxcv.com");
+        String locationId = "C1_379000000A_001572";
+        Location location = locationRepository.findByLocationId(locationId);
+        String memo = "메모 1 입니다.";
+        FavoriteLocation savedFavoriteLocation = new FavoriteLocation(member, location, memo);
+        favoriteRepository.save(savedFavoriteLocation);
+
+        //when
+        List<FavoriteLocation> favoriteLocationList = favoriteRepository.getFavoriteLocationList("zxcv@zxcv.com");
+
+        //then
+        assertThat(favoriteLocationList.get(0).getLocation().getName()).isEqualTo("西門町");
+    }
+
+
+
+
 
 }

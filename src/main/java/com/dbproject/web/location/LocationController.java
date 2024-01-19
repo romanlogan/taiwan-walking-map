@@ -2,7 +2,7 @@ package com.dbproject.web.location;
 
 
 import com.dbproject.api.explore.ExploreService;
-import com.dbproject.api.location.LocationService;
+import com.dbproject.api.location.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;

@@ -1,33 +1,37 @@
 package com.dbproject.api.friend;
 
-
-import com.querydsl.core.annotations.QueryProjection;
+import com.dbproject.api.favorite.FavoriteLocation;
+import com.dbproject.api.favorite.FavoriteLocationDto;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class FriendListResponse {
 
-    private Long id;
+    private Page<FriendDto> friendListPages;
 
-    private String requesterEmail;
+    private List<FavoriteLocationDto> favoriteLocationList = new ArrayList<>();
 
-    private String respondentEmail;
-
-    private String name;
-
-    private String address;
-
-
-    @QueryProjection
-    public FriendListResponse(Long id, String requesterEmail, String respondentEmail, String name, String address) {
-        this.id = id;
-        this.requesterEmail = requesterEmail;
-        this.respondentEmail = respondentEmail;
-        this.name = name;
-        this.address = address;
+    @Builder
+    private FriendListResponse(Page<FriendDto> friendListPages, List<FavoriteLocationDto> favoriteLocationList) {
+        this.friendListPages = friendListPages;
+        this.favoriteLocationList = favoriteLocationList;
     }
+
+    public static FriendListResponse createFriendListResponse(Page<FriendDto> friendListPages, List<FavoriteLocationDto> favoriteLocationList) {
+
+        return FriendListResponse.builder()
+                .friendListPages(friendListPages)
+                .favoriteLocationList(favoriteLocationList)
+                .build();
+    }
+
 }

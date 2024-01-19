@@ -1,9 +1,13 @@
 package com.dbproject.web.friend;
 
+import com.dbproject.api.friend.AcceptAddFriendRequest;
+import com.dbproject.api.friend.AddFriendRequest;
 import com.dbproject.api.friend.FriendService;
+import com.dbproject.api.friend.friendRequest.RejectFriendRequest;
+import com.dbproject.api.friend.friendRequest.RequestFriendListDto;
+import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.MemberService;
 import com.dbproject.constant.FriendRequestStatus;
-import com.dbproject.web.favorite.FavoriteListResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,7 +27,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,6 +43,9 @@ class FriendControllerTest {
 
     @MockBean
     private MemberService memberService;
+
+    @MockBean
+    private MemberRepository memberRepository;
 
     @MockBean
     private FriendService friendService;

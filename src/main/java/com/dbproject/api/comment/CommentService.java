@@ -1,6 +1,5 @@
 package com.dbproject.api.comment;
 
-import com.dbproject.web.comment.CreateCommentRequest;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.location.LocationRepository;

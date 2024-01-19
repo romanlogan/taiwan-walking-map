@@ -1,7 +1,5 @@
 package com.dbproject.api.favorite;
 
-import com.dbproject.api.favorite.FavoriteRepositoryCustom;
-import com.dbproject.web.favorite.FavoriteListResponse;
 import com.dbproject.dto.QFavoriteListResponse;
 import com.dbproject.entity.QFavoriteLocation;
 import com.dbproject.entity.QLocation;
@@ -13,7 +11,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityManager;
-import java.security.Principal;
 import java.util.List;
 
 public class FavoriteRepositoryCustomImpl implements FavoriteRepositoryCustom {
@@ -27,7 +24,7 @@ public class FavoriteRepositoryCustomImpl implements FavoriteRepositoryCustom {
     }
 
     @Override
-    public Page<FavoriteListResponse> getFavoriteLocationList(Pageable pageable, String email){
+    public Page<FavoriteListResponse> getFavoriteLocationListPage(Pageable pageable, String email){
 
         QLocation location = QLocation.location;
         QFavoriteLocation favoriteLocation = QFavoriteLocation.favoriteLocation;

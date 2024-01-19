@@ -1,5 +1,6 @@
 package com.dbproject.web.route;
 
+import com.dbproject.api.route.RouteDtlDto;
 import com.dbproject.api.route.RouteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

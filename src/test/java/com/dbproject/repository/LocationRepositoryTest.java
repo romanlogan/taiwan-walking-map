@@ -1,10 +1,10 @@
 package com.dbproject.repository;
 
 import com.dbproject.api.location.LocationRepository;
-import com.dbproject.web.quickSearch.FastSearchDto;
-import com.dbproject.web.quickSearch.QuickSearchLocationDto;
-import com.dbproject.web.location.RecLocationListRequest;
-import com.dbproject.web.location.RecLocationListResponse;
+import com.dbproject.api.quickSearch.FastSearchDto;
+import com.dbproject.api.quickSearch.QuickSearchLocationDto;
+import com.dbproject.api.location.RecLocationListRequest;
+import com.dbproject.api.location.RecLocationListResponse;
 import com.dbproject.api.location.Location;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

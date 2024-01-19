@@ -1,6 +1,5 @@
 package com.dbproject.api.memo;
 
-import com.dbproject.web.memo.UpdateMemoRequest;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.favorite.FavoriteRepository;
 import lombok.RequiredArgsConstructor;

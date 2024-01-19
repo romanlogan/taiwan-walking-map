@@ -1,8 +1,8 @@
 package com.dbproject.service;
 
 import com.dbproject.api.location.LocationService;
-import com.dbproject.web.location.LocationDtlResponse;
-import com.dbproject.web.member.RegisterFormDto;
+import com.dbproject.api.location.LocationDtlResponse;
+import com.dbproject.api.member.RegisterFormDto;
 import com.dbproject.api.comment.Comment;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.location.Location;

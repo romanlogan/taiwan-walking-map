@@ -1,6 +1,6 @@
 package com.dbproject.controller;
 
-import com.dbproject.web.member.RegisterFormDto;
+import com.dbproject.api.member.RegisterFormDto;
 import com.dbproject.api.member.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
