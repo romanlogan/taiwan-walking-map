@@ -13,6 +13,74 @@
 <th:block layout:fragment="script">
 
   <script th:inline="javascript">
+      // 체크박스 하나만 선택 가능하게...
+      $(document).on('click', "input[type='checkbox']", function(){
+          if(this.checked) {
+              const checkboxes = $("input[type='checkbox']");
+              for(let i = 0; i < checkboxes.length; i++){
+                  checkboxes[i].checked = false;
+              }
+              this.checked = true;
+          } else {
+              this.checked = false;
+          }
+      });
+
+      function planning() {
+
+          var token = $("meta[name='_csrf']").attr("content");
+          var header = $("meta[name='_csrf_header']").attr("content");
+
+          var checkValue;
+          const checkboxes = $("input[type='checkbox']");
+
+          for(let i = 0; i < checkboxes.length; i++){
+              if(checkboxes[i].checked){
+                checkValue = checkboxes[i].value;
+              }
+          }
+
+          var paramData = {
+              favoriteLocationId : checkValue,
+              departDate : $("#departDate").val(),
+              message : $("#message").val()
+          };
+
+          var param = JSON.stringify(paramData);
+
+          $.ajax({
+              url      : "/",
+              type     : "POST",
+              contentType : "application/json",
+              data     : param,
+              beforeSend : function(xhr){
+                  /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+                  xhr.setRequestHeader(header, token);
+              },
+              dataType : "json",
+              cache   : false,
+              success  : function(result, status){
+                  alert("확인되었습니다.");
+                  location.href='/myPage/friendList';
+
+              },
+              error : function(jqXHR, status, error, request){
+
+                  console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+
+                  if(jqXHR.status == '401'){
+                      alert('로그인 후 이용해주세요');
+                      location.href='/members/login';
+                  } else{
+                      alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
+                      // alert(jqXHR.responseText);
+                  }
+
+
+              }
+          });
+
+      }
 
     function page(page) {
 
@@ -50,6 +118,21 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 그림자 효과 추가 */
     }
 
+    .checkableLocationBox{
+
+        margin: 20px;
+        padding: 10px;
+        width: 340px;
+        height: 110px;
+        background-color: #fff; /* 배경색 지정 */
+        border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 그림자 효과 추가 */
+    }
+
+    #locationChecker{
+        display: inline;
+    }
+
     .locationBoxImg{
       float : left;
       width : 90px;
@@ -58,7 +141,7 @@
 
     .locationTextBox{
       float: right;
-      width: 550px; /* 텍스트를 표시할 요소의 너비를 지정합니다. */
+      width: 150px; /* 텍스트를 표시할 요소의 너비를 지정합니다. */
       height: 90px;
       white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 합니다. */
       overflow: hidden; /* 넘치는 부분은 숨김 처리합니다. */
@@ -114,7 +197,6 @@
 
 
 
-
   </style>
 </th:block>
 
@@ -134,49 +216,56 @@
 
     <div class="FriendBox" th:each="friend, status: ${friendListResponse.getFriendListPages().getContent()}">
 
-      이메일 : <div th:text="${friend.friendEmail}" class="fs24 font-weight-bold updatable"></div>
-      이름 : <div  th:text="${friend.friendName}" class="fs24 font-weight-bold updatable"></div>
-
+      이메일 : <div th:text="${friend.friendEmail}" class="fs24 font-weight-bold updatable" style="display: inline"></div>
+        <br>
+      이름 : <div  th:text="${friend.friendName}" class="fs24 font-weight-bold updatable" style="display: inline"></div>
+        <br>
 
       <button class="planModalBtn" data-toggle="modal" data-target="#planModal">약속 잡기</button>
 
       <!--                어떻게 반복문으로 id 를 돌려도 에러가 안날까?? 같은 id 가 여러개 존재하는데  -->
       <!-- 모달 창 -->
       <div class="modal fade" id="planModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
               <h4 class="modal-title" id="myModalLabel">약속 잡기</h4>
             </div>
             <div class="modal-body">
               <!-- 모달 창 내의 데이터 입력 폼 -->
-              <div class="form-group">
 
 <!--                왼쪽 오른쪽으로 나눠서 map 찾기처럼 왼쪽에는 리스트 오른쪽에는 메시지 -->
 <!--                아니면 첫번째 모달은 리스트에서 선택하고 버튼으로 두번째 모달로 이동해서 두번째 모달에서 메시지를 적을수 잇게-->
 <!--                  check box 로 선택 가능-->
-                <div class="favoriteList" th:each="favoriteList, status: ${friendListResponse.getFavoriteLocationList()}">
-                    <div th:if="${#strings.isEmpty(favoriteList.picture1)}">
-                        <img class = "locationBoxImg" src="/img/noImg.jpg">
-                    </div>
-                    <div th:unless="${#strings.isEmpty(favoriteList.picture1)}">
-                        <img class = "locationBoxImg" th:src="${favoriteList.picture1}">
-                    </div>
 
-                    <div class="locationTextBox">
-                        <p class="locationText">[[${favoriteList.name}]]</p>
-                    </div>
+                  <div class="left-half">
+                      <div class="checkableLocationBox" th:each="favoriteList, status: ${friendListResponse.getFavoriteLocationList()}">
+
+                          <input id="locationChecker" type="checkbox" th:value="${favoriteList.id}">
+    <!--                          체크박스-->
+                            <div th:if="${#strings.isEmpty(favoriteList.picture1)}">
+                                <img class = "locationBoxImg" src="/img/noImg.jpg">
+                            </div>
+                            <div th:unless="${#strings.isEmpty(favoriteList.picture1)}">
+                                <img class = "locationBoxImg" th:src="${favoriteList.picture1}">
+                            </div>
+                            <div class="locationTextBox">
+                                <p class="locationText">[[${favoriteList.name}]]</p>
+                            </div>
+
+                      </div>
+                  </div>
+                      
+                <div class="right-half">
+                   <label for="message">메시지</label>
+                   <textarea type="text" name="message" id="message" placeholder="메시지 내용을 입력해주세요."></textarea>
+                    <input type="date" id="DepartDate" placeholder="출발 날짜">
                 </div>
 
-
-                <label for="message">메시지</label>
-                <textarea type="text" name="message" id="message" placeholder="메시지 내용을 입력해주세요."></textarea>
-
-
-              </div>
+                <div class="clear"></div>
+                <button id="planBtn" onclick="planning()" type="button" class="btn btn-primary" data-dismiss="modal">수정</button>
             </div>
             <div class="modal-footer">
-<!--              <button id="addFavoriteBtn" th:value="${}" onclick="updateMemo(this.value)" type="button" class="btn btn-default" data-dismiss="modal">수정</button>-->
 <!--                location.favoriteLocationId-->
             </div>
           </div>
