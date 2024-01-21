@@ -26,7 +26,7 @@
           }
       });
 
-      function planning() {
+      function planning(friendEmail) {
 
           var token = $("meta[name='_csrf']").attr("content");
           var header = $("meta[name='_csrf_header']").attr("content");
@@ -42,14 +42,15 @@
 
           var paramData = {
               favoriteLocationId : checkValue,
-              departDate : $("#departDate").val(),
-              message : $("#message").val()
+              departDateTime : $("#departDateTime").val(),
+              message : $("#message").val(),
+              friendEmail : friendEmail
           };
 
           var param = JSON.stringify(paramData);
 
           $.ajax({
-              url      : "/",
+              url      : "/myPage/hangOut",
               type     : "POST",
               contentType : "application/json",
               data     : param,
@@ -259,11 +260,11 @@
                 <div class="right-half">
                    <label for="message">메시지</label>
                    <textarea type="text" name="message" id="message" placeholder="메시지 내용을 입력해주세요."></textarea>
-                    <input type="date" id="DepartDate" placeholder="출발 날짜">
+                    <input type="datetime-local" id="departDateTime" placeholder="출발 날짜">
                 </div>
 
                 <div class="clear"></div>
-                <button id="planBtn" onclick="planning()" type="button" class="btn btn-primary" data-dismiss="modal">수정</button>
+                <button id="planBtn" th:value="${friend.friendEmail}" onclick="planning(this.value)" type="button" class="btn btn-primary" data-dismiss="modal">수정</button>
             </div>
             <div class="modal-footer">
 <!--                location.favoriteLocationId-->
@@ -271,7 +272,6 @@
           </div>
         </div>
       </div>
-
     </div>
 
 
