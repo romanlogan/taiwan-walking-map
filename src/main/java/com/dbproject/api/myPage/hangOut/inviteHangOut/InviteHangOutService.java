@@ -50,20 +50,22 @@ public class InviteHangOutService {
         for (InviteHangOut invitedHangOut : invitedHangOutList) {
 
             //여기 성능 장애 의심됨 fetch join 으로 바꾸기
+            Long id = invitedHangOut.getId();
             String requesterName = invitedHangOut.getRequester().getName();
             String requesterEmail = invitedHangOut.getRequester().getEmail();
             String message = invitedHangOut.getMessage();
             LocalDateTime departDateTime = invitedHangOut.getDepartDateTime();
             String picture1Url = invitedHangOut.getFavoriteLocation().getLocation().getLocationPicture().getPicture1();
             String locationName = invitedHangOut.getFavoriteLocation().getLocation().getName();
+            InviteHangOutStatus inviteHangOutStatus = invitedHangOut.getInviteHangOutStatus();
 
-            InvitedHangOutDto invitedHangOutDto = new InvitedHangOutDto(requesterName,requesterEmail,message,departDateTime,picture1Url,locationName);
+            InvitedHangOutDto invitedHangOutDto = new InvitedHangOutDto(id,requesterName,requesterEmail,message,departDateTime,picture1Url,locationName,inviteHangOutStatus);
             invitedHangOutDtoList.add(invitedHangOutDto);
         }
 
-        InvitedHangOutResponse invitedHangOutResponse = new InvitedHangOutResponse();
+        InvitedHangOutResponse invitedHangOutResponse = new InvitedHangOutResponse(invitedHangOutDtoList);
 
-
+        return invitedHangOutResponse;
     }
 }
 

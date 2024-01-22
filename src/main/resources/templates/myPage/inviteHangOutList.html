@@ -32,27 +32,26 @@
             width: 50%;
         }
 
-
         .FriendBox{
             margin: 20px;
             padding: 10px;
             width: 680px;
-            height: 110px;
+            height: 300px;
             background-color: #fff; /* 배경색 지정 */
             border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 그림자 효과 추가 */
         }
 
-        .locationBoxImg{
+        .hangOutImgBox{
             float : left;
             width : 90px;
-            height : 90px;
+            height : 250px;
         }
 
-        .locationTextBox{
+        .hangOutTextBox{
             float: right;
             width: 550px; /* 텍스트를 표시할 요소의 너비를 지정합니다. */
-            height: 90px;
+            height: 250px;
             white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 합니다. */
             overflow: hidden; /* 넘치는 부분은 숨김 처리합니다. */
             text-overflow: ellipsis; /* 넘치는 텍스트에 '...'을 추가하여 표시합니다. */
@@ -87,23 +86,40 @@
             </ul>
         </div>
         <div class="left-half">
-            <div class="FriendBox" th:each="requestFriend, status: ${requestFriendList.getContent()}">
-                이름 : <div  th:text="${requestFriend.name}" class="fs24 font-weight-bold updatable"></div>
-                주소 : <div th:text="${requestFriend.email}" class="fs24 font-weight-bold updatable"></div>
-                <div th:switch="${requestFriend.friendRequestStatus}">
-                    <span th:case="${T(com.dbproject.constant.FriendRequestStatus).REJECTED}">거절됨</span>
-                    <span th:case="${T(com.dbproject.constant.FriendRequestStatus).ACCEPTED}">이미 수락됨</span>
-                    <span th:case="${T(com.dbproject.constant.FriendRequestStatus).WAITING}">
-          <button class="addFriendBtn" th:value="${requestFriend.id}" onclick="acceptAddFriend(this.value)">허용</button>
-        <button class="rejectFriendBtn" th:value="${requestFriend.id}" onclick="rejectFriendRequest(this.value)">거절</button>
-        </span>
+            <div class="FriendBox" th:each="invitedHangOut, status: ${invitedHangOutResponse.getInvitedHangOutDtoList()}">
+
+               
+                <div th:if="${#strings.isEmpty(invitedHangOut.getPicture1())}">
+                    <img class = "hangOutImgBox" src="/img/noImg.jpg">
+                </div>
+                <div th:unless="${#strings.isEmpty(invitedHangOut.getPicture1())}">
+                    <img class = "hangOutImgBox" th:src="${invitedHangOut.getPicture1()}">
+                </div>
+
+
+                <div class="hangOutTextBox">
+                    요청자 이름 : <div th:text="${invitedHangOut.getRequesterName()}" class="fs24 font-weight-bold updatable"></div>
+                    요청자 이메일 : <div th:text="${invitedHangOut.getRequesterEmail()}" class="fs24 font-weight-bold updatable"></div>
+                    메시지 : <div th:text="${invitedHangOut.getMessage()}" class="fs24 font-weight-bold updatable"></div>
+
+                    장소 이름 : <div th:text="${invitedHangOut.getLocationName()}" class="fs24 font-weight-bold updatable"></div>
+                    날짜  : <div th:text="${invitedHangOut.getDepartDateTime()}" class="fs24 font-weight-bold updatable"></div>
+
+                    <div th:switch="${invitedHangOut.inviteHangOutStatus}">
+                        <span th:case="${T(com.dbproject.constant.InviteHangOutStatus).REJECTED}">거절됨</span>
+                        <span th:case="${T(com.dbproject.constant.InviteHangOutStatus).ACCEPTED}">이미 수락됨</span>
+                        <span th:case="${T(com.dbproject.constant.InviteHangOutStatus).WAITING}">
+                            <button class="addFriendBtn" th:value="${invitedHangOut.id}" onclick="acceptInvite(this.value)">초대 수락</button>
+                            <button class="rejectFriendBtn" th:value="${invitedHangOut.id}" onclick="rejectInvite(this.value)">초대 거절</button>
+                        </span>
+                    </div>
                 </div>
             </div>
 
         </div>
 
         <div class="right-half">
-
+<!-- hangOut location detail 을 동적으로 가져오기 -->
 
         </div>
 

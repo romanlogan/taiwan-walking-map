@@ -3,6 +3,7 @@ package com.dbproject.web.myPage.hangOut;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOut;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutService;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRequest;
+import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InvitedHangOutResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,9 +39,9 @@ public class HangOutController {
     @GetMapping("/inviteHangOutList")
     public String getInviteHangOutList(Principal principal, Model model) {
 
-        List<InviteHangOut> invitedHangOutList = hangOutService.getInviteHangOutList(principal.getName());
+        InvitedHangOutResponse invitedHangOutResponse = hangOutService.getInvitedHangOutList(principal.getName());
 
-        model.addAttribute("invitedHangOutList", invitedHangOutList);
+        model.addAttribute("invitedHangOutResponse", invitedHangOutResponse);
         return "/myPage/inviteHangOutList";
     }
 }

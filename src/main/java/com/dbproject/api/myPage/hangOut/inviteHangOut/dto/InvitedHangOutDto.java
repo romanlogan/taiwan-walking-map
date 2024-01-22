@@ -1,7 +1,7 @@
 package com.dbproject.api.myPage.hangOut.inviteHangOut.dto;
 
 
-import lombok.Builder;
+import com.dbproject.constant.InviteHangOutStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class InvitedHangOutDto {
+
+    private Long id;
 
     //보낸사람 주소
     private String requesterEmail;
@@ -27,19 +29,23 @@ public class InvitedHangOutDto {
     private String picture1;
 
     //장소 이름
-    private String name;
+    private String locationName;
+
+    private InviteHangOutStatus inviteHangOutStatus;
 
     public InvitedHangOutDto() {
     }
 
 
-    public InvitedHangOutDto(String requesterEmail, String requesterName, String message, LocalDateTime departDateTime, String picture1, String name) {
+    public InvitedHangOutDto(Long id,String requesterEmail, String requesterName, String message, LocalDateTime departDateTime, String picture1, String name, InviteHangOutStatus inviteHangOutStatus) {
+        this.id = id;
         this.requesterEmail = requesterEmail;
         this.requesterName = requesterName;
         this.message = message;
         this.departDateTime = departDateTime;
         this.picture1 = picture1;
-        this.name = name;
+        this.locationName = name;
+        this.inviteHangOutStatus = inviteHangOutStatus;
     }
 
 }
