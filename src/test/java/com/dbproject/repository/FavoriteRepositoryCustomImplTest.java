@@ -64,8 +64,8 @@ class FavoriteRepositoryCustomImplTest {
         String locationId = "C1_379000000A_001572";
         Location location = locationRepository.findByLocationId(locationId);
         String memo = "메모 1 입니다.";
-        FavoriteLocation savedFavoriteLocation = new FavoriteLocation(member, location, memo);
-        favoriteRepository.save(savedFavoriteLocation);
+        FavoriteLocation favoriteLocation = new FavoriteLocation(member, location, memo);
+        favoriteRepository.save(favoriteLocation);
 
         //when
         Page<FavoriteListResponse> favoriteListResponsePage = favoriteRepository.getFavoriteLocationListPage(pageable, email);

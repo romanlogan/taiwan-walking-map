@@ -12,4 +12,8 @@ import javax.persistence.*;
 //public class Plan {
 //
 //
+
+
+
+// List<Member> invitedMemberList
 //}
