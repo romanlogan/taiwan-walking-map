@@ -157,7 +157,7 @@
         }
 
 
-        .FriendBox{
+        .InvitedHangOutBox{
             margin: 20px;
             padding: 10px;
             width: 680px;
@@ -234,7 +234,7 @@
 
 <!--        <form role="form" method="get" th:object="${locationList}">-->
 
-            <div class="FriendBox" th:each="location, status: ${locationList.getContent()}">
+            <div class="InvitedHangOutBox" th:each="location, status: ${locationList.getContent()}">
 
 <!--                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>-->
                 <button class="updateMemo" data-toggle="modal" data-target="#myModal1">Memo</button>

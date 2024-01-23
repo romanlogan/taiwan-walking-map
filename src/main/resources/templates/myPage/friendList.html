@@ -26,7 +26,7 @@
           }
       });
 
-      function planning(friendEmail) {
+      function inviteHangOut(friendEmail) {
 
           var token = $("meta[name='_csrf']").attr("content");
           var header = $("meta[name='_csrf_header']").attr("content");
@@ -109,7 +109,7 @@
     }
 
 
-    .FriendBox{
+    .InvitedHangOutBox{
       margin: 20px;
       padding: 10px;
       width: 680px;
@@ -178,7 +178,7 @@
       </ul>
     </div>
 
-    <div class="FriendBox" th:each="friend, status: ${friendListResponse.getFriendListPages().getContent()}">
+    <div class="InvitedHangOutBox" th:each="friend, status: ${friendListResponse.getFriendListPages().getContent()}">
 
       이메일 : <div th:text="${friend.friendEmail}" class="fs24 font-weight-bold updatable" style="display: inline"></div>
         <br>
@@ -227,7 +227,7 @@
                 </div>
 
                 <div class="clear"></div>
-                <button id="planBtn" th:value="${friend.friendEmail}" onclick="planning(this.value)" type="button" class="btn btn-primary" data-dismiss="modal">수정</button>
+                <button id="planBtn" th:value="${friend.friendEmail}" onclick="inviteHangOut(this.value)" type="button" class="btn btn-primary" data-dismiss="modal">수정</button>
             </div>
             <div class="modal-footer">
 <!--                location.favoriteLocationId-->

@@ -3,6 +3,7 @@ package com.dbproject.web.myPage.hangOut;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOut;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutService;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRequest;
+import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InviteHangOutLocationDto;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InvitedHangOutResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,13 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -37,9 +36,12 @@ public class HangOutController {
     }
 
     @GetMapping("/inviteHangOutList")
-    public String getInviteHangOutList(Principal principal, Model model) {
+    public String getInviteHangOutList(@RequestParam(name = "inviteHangOutId") Optional<Long> inviteHangOutId,
+                                        Principal principal, Model model) {
 
-        InvitedHangOutResponse invitedHangOutResponse = hangOutService.getInvitedHangOutList(principal.getName());
+
+
+        InvitedHangOutResponse invitedHangOutResponse = hangOutService.getInvitedHangOutList(principal.getName(),inviteHangOutId);
 
         model.addAttribute("invitedHangOutResponse", invitedHangOutResponse);
         return "/myPage/inviteHangOutList";

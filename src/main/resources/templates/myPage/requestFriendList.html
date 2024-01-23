@@ -119,7 +119,7 @@
     }
 
 
-    .FriendBox{
+    .InvitedHangOutBox{
       margin: 20px;
       padding: 10px;
       width: 680px;
@@ -174,7 +174,7 @@
         <!-- 필요에 따라 메뉴 항목 추가 -->
       </ul>
     </div>
-    <div class="FriendBox" th:each="requestFriend, status: ${requestFriendList.getContent()}">
+    <div class="InvitedHangOutBox" th:each="requestFriend, status: ${requestFriendList.getContent()}">
       이름 : <div  th:text="${requestFriend.name}" class="fs24 font-weight-bold updatable"></div>
       주소 : <div th:text="${requestFriend.email}" class="fs24 font-weight-bold updatable"></div>
 <!--      <button id="addFavoriteBtn" th:value="${location.favoriteLocationId}" onclick="updateMemo(this.value)" type="button" class="btn btn-default" data-dismiss="modal">수정</button>-->

@@ -14,6 +14,37 @@
 
     <script th:inline="javascript">
 
+
+
+        function showLocationDetail(inviteHangOutId){
+
+            console.log(inviteHangOutId);
+
+            $.ajax({
+                url      : "/myPage/hangOut/getHangOutLocationDtl?inviteHangOutId="+inviteHangOutId,
+                type     : "GET",
+                cache   : false,
+                success  : function(result, status){
+
+                    location.href='/myPage/inviteHangOutList?inviteHangOutId='+inviteHangOutId;
+
+                },
+                error : function(jqXHR, status, error, request){
+
+                    console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+
+                    if(jqXHR.status == '401'){
+                        alert('로그인 후 이용해주세요');
+                        location.href='/members/login';
+                    } else{
+                        alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
+                        // alert(jqXHR.responseText);
+                    }
+                }
+            });
+
+
+        }
     </script>
 </th:block>
 
@@ -32,11 +63,11 @@
             width: 50%;
         }
 
-        .FriendBox{
+        .InvitedHangOutBox{
             margin: 20px;
             padding: 10px;
-            width: 680px;
-            height: 300px;
+            width: 550px;
+            height: 230px;
             background-color: #fff; /* 배경색 지정 */
             border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 그림자 효과 추가 */
@@ -44,19 +75,29 @@
 
         .hangOutImgBox{
             float : left;
-            width : 90px;
-            height : 250px;
+        }
+
+        .hangOutImg{
+            width : 200px;
+            height : 200px;
         }
 
         .hangOutTextBox{
-            float: right;
-            width: 550px; /* 텍스트를 표시할 요소의 너비를 지정합니다. */
-            height: 250px;
-            white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 합니다. */
-            overflow: hidden; /* 넘치는 부분은 숨김 처리합니다. */
-            text-overflow: ellipsis; /* 넘치는 텍스트에 '...'을 추가하여 표시합니다. */
-
+            margin-left: 10px;
+            float: left;
+            width: 200px;
+            height: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
+
+        .hangOutBtnBox{
+            float: right;
+            width: 80px;
+            height: 200px;
+        }
+
 
         .locationText {
             margin-bottom: 0;
@@ -68,6 +109,14 @@
             both: clear;
         }
 
+        #showLocationDtlBtnBox {
+            background: none;
+            border: none;
+            padding: 0;
+            font: inherit;
+            cursor: pointer;
+            outline: inherit;
+        }
 
 
     </style>
@@ -86,32 +135,38 @@
             </ul>
         </div>
         <div class="left-half">
-            <div class="FriendBox" th:each="invitedHangOut, status: ${invitedHangOutResponse.getInvitedHangOutDtoList()}">
 
-               
-                <div th:if="${#strings.isEmpty(invitedHangOut.getPicture1())}">
-                    <img class = "hangOutImgBox" src="/img/noImg.jpg">
-                </div>
-                <div th:unless="${#strings.isEmpty(invitedHangOut.getPicture1())}">
-                    <img class = "hangOutImgBox" th:src="${invitedHangOut.getPicture1()}">
+            <div class="InvitedHangOutBox" th:each="invitedHangOut, status: ${invitedHangOutResponse.getInvitedHangOutDtoList()}">
+
+                <div class="hangOutImgBox">
+                    <button id="showLocationDtlBtnBox" th:value="${invitedHangOut.id}" onclick="showLocationDetail(this.value)">
+                        <div th:if="${#strings.isEmpty(invitedHangOut.getPicture1())}">
+                            <img class = "hangOutImg" src="/img/noImg.jpg">
+                        </div>
+                        <div th:unless="${#strings.isEmpty(invitedHangOut.getPicture1())}">
+                            <img class = "hangOutImg" th:src="${invitedHangOut.getPicture1()}">
+                        </div>
+                    </button>
                 </div>
 
 
                 <div class="hangOutTextBox">
                     요청자 이름 : <div th:text="${invitedHangOut.getRequesterName()}" class="fs24 font-weight-bold updatable"></div>
                     요청자 이메일 : <div th:text="${invitedHangOut.getRequesterEmail()}" class="fs24 font-weight-bold updatable"></div>
-                    메시지 : <div th:text="${invitedHangOut.getMessage()}" class="fs24 font-weight-bold updatable"></div>
 
                     장소 이름 : <div th:text="${invitedHangOut.getLocationName()}" class="fs24 font-weight-bold updatable"></div>
                     날짜  : <div th:text="${invitedHangOut.getDepartDateTime()}" class="fs24 font-weight-bold updatable"></div>
+                </div>
 
+                <div class="hangOutBtnBox">
                     <div th:switch="${invitedHangOut.inviteHangOutStatus}">
                         <span th:case="${T(com.dbproject.constant.InviteHangOutStatus).REJECTED}">거절됨</span>
                         <span th:case="${T(com.dbproject.constant.InviteHangOutStatus).ACCEPTED}">이미 수락됨</span>
-                        <span th:case="${T(com.dbproject.constant.InviteHangOutStatus).WAITING}">
-                            <button class="addFriendBtn" th:value="${invitedHangOut.id}" onclick="acceptInvite(this.value)">초대 수락</button>
-                            <button class="rejectFriendBtn" th:value="${invitedHangOut.id}" onclick="rejectInvite(this.value)">초대 거절</button>
-                        </span>
+
+                        <div th:case="${T(com.dbproject.constant.InviteHangOutStatus).WAITING}">
+                            <button type="button" class="addFriendBtn" th:value="${invitedHangOut.id}" onclick="showLocationDetail(this.value)">초대 수락</button>
+                            <button type="button" class="rejectFriendBtn" th:value="${invitedHangOut.id}" onclick="showLocationDetail(this.value)">초대 거절</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -121,6 +176,15 @@
         <div class="right-half">
 <!-- hangOut location detail 을 동적으로 가져오기 -->
 
+            <div th:if="${invitedHangOutResponse.getInviteHangOutLocationDto().isEmpty()}">
+                사진을 선택하면 장소 의 상세정보가 표시됩니다.
+            </div>
+            <div th:unless="${invitedHangOutResponse.getInviteHangOutLocationDto().isEmpty()}">
+                <div class="hangOutLocationImg">
+                    <img th:src="${invitedHangOutResponse.getInviteHangOutLocationDto().getPicture1()}" >
+                </div>
+
+            </div>
         </div>
 
 

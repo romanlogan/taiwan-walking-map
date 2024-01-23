@@ -4,6 +4,7 @@ import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.favorite.FavoriteRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
+import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InviteHangOutLocationDto;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InvitedHangOutDto;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InvitedHangOutResponse;
 import com.dbproject.constant.InviteHangOutStatus;
@@ -15,6 +16,7 @@ import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -41,7 +43,7 @@ public class InviteHangOutService {
     }
 
 
-    public InvitedHangOutResponse getInvitedHangOutList(String email) {
+    public InvitedHangOutResponse getInvitedHangOutList(String email, Optional<Long> optionalInviteHangOutId) {
 
         List<InviteHangOut> invitedHangOutList = inviteHangOutRepository.findWaitingListByRequesterEmail(email);
 
@@ -59,11 +61,22 @@ public class InviteHangOutService {
             String locationName = invitedHangOut.getFavoriteLocation().getLocation().getName();
             InviteHangOutStatus inviteHangOutStatus = invitedHangOut.getInviteHangOutStatus();
 
-            InvitedHangOutDto invitedHangOutDto = new InvitedHangOutDto(id,requesterName,requesterEmail,message,departDateTime,picture1Url,locationName,inviteHangOutStatus);
+            InvitedHangOutDto invitedHangOutDto = new InvitedHangOutDto(id,requesterEmail,requesterName,message,departDateTime,picture1Url,locationName,inviteHangOutStatus);
             invitedHangOutDtoList.add(invitedHangOutDto);
         }
 
-        InvitedHangOutResponse invitedHangOutResponse = new InvitedHangOutResponse(invitedHangOutDtoList);
+        InviteHangOutLocationDto inviteHangOutLocationDto;
+
+        if(optionalInviteHangOutId.isPresent()) {
+            Long inviteHangOutId = optionalInviteHangOutId.get();
+            InviteHangOut inviteHangOut = inviteHangOutRepository.findById(inviteHangOutId).orElseThrow(EntityNotFoundException::new);
+            inviteHangOutLocationDto = InviteHangOutLocationDto.from(inviteHangOut);
+
+        }else{
+            inviteHangOutLocationDto = InviteHangOutLocationDto.createEmptyDto();
+        }
+
+        InvitedHangOutResponse invitedHangOutResponse = new InvitedHangOutResponse(inviteHangOutLocationDto ,invitedHangOutDtoList);
 
         return invitedHangOutResponse;
     }
