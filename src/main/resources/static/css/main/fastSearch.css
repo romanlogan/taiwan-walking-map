@@ -1,0 +1,79 @@
+
+#fastSearchForm{
+    /*display: flex;*/
+    /*justify-content: center; !* 가로 방향으로 가운데 정렬 *!*/
+    /*align-items: center; !* 세로 방향으로 가운데 정렬 *!*/
+
+    margin-bottom: 10px;
+}
+
+#fastSearchCity{
+    margin-left: 230px;
+    margin-right: 30px;
+    width: 200px;
+    height: 50px;
+}
+
+#fastSearchInput {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-right: 10px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    width: 500px;
+    border: none;
+    border-radius: 10px;
+    /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+#fastSearchInputBtn{
+    background-color: white;
+    border: 1px solid lightgray ;
+    border-radius: 50%;
+
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+#fastSearchBtns{
+    display: flex;
+    justify-content: center; /* 가로 방향으로 가운데 정렬 */
+    align-items: center;     /* 세로 방향으로 가운데 정렬 */
+}
+
+.fastSearchBtn {
+    width: 100px;
+    height: 40px;
+
+    /*padding-top: 25px;*/
+    /*padding-bottom: 15px;*/
+    /*padding-right: 10px;*/
+    /*padding-left: 10px;*/
+
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-right: 10px;
+    margin-left: 10px;
+
+    transition-duration: 0.4s;
+    background-color: #002480;
+    color: white;
+    border: 1px solid #808080; /* Green */
+    border-radius: 10px;
+
+}
+
+.fastSearchByBtn:hover {
+    background-color: #008CBA; /* Green */
+    color: white;
+}
+
+.fastSearchBtnText{
+    margin-top :5px;
+}

@@ -11,9 +11,52 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+
     <script th:inline="javascript">
 
+
         $(document).ready(function() {
+
+
+            $("#showUpdateImgBoxBtn").on("click" , function (){
+                var updateImgBox = document.getElementById('updateImgBox');
+                updateImgBox.style.display = 'block';
+
+            });
+
+
+            // $("#updateImgBtn").on("click", function () {
+            //
+            //     //토큰 안적으면 403 포비던 뜸
+            //     var token = $("meta[name='_csrf']").attr("content");
+            //     var header = $("meta[name='_csrf_header']").attr("content");
+            //
+            //     var formData = new FormData();
+            //     formData.append('file',$("#updateImgInput").files[0])
+            //
+            //     $.ajax({
+            //         url      : "/myPage/updateMemberImg",
+            //         type     : "POST",
+            //         processData: false,
+            //         contentType : false,
+            //         data     : formData,
+            //         beforeSend : function(xhr){
+            //             /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+            //             xhr.setRequestHeader(header, token);
+            //         },
+            //         cache   : false,
+            //         success  : function(result, status){
+            //             // location.href='/myPage/profile'
+            //
+            //
+            //         },
+            //         error : function(jqXHR, status, error, request){
+            //
+            //             alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+            //
+            //         }
+            //     });
+            // });
 
             $("#showUpdateProfile").on("click", function () {
 
@@ -56,7 +99,6 @@
                     dataType : "json",
                     cache   : false,
                     success  : function(result, status){
-                        alert("확인되었습니다.");
                         location.href='/myPage/profile'
 
                     },
@@ -129,7 +171,6 @@
                     dataType : "json",
                     cache   : false,
                     success  : function(result, status){
-                        alert("확인되었습니다.");
                         location.href='/myPage/profile'
 
                     },
@@ -160,13 +201,18 @@
           display: none;
       }
 
-
-
-
       /* 컨텐츠 영역 스타일 */
       .contentBox {
           flex: 1;
           padding: 20px;
+      }
+      .memberImg{
+          width: 200px;
+          height: 200px;
+      }
+
+      #updateImgBox{
+          display: none;
       }
 
   </style>
@@ -191,6 +237,29 @@
             <h2 class="mb-4">
                 내 정보
             </h2>
+
+
+
+            <div id="memberImgBtnBox">
+                <div th:if="${#strings.isEmpty(user.getImgUrl())}">
+                    <img class="memberImg" src="/img/noImg.jpg">
+                </div>
+                <div th:unless="${#strings.isEmpty(user.getImgUrl())}">
+                    <img class="memberImg" th:src="${user.getImgUrl()}">
+                </div>
+            </div>
+            <button id="showUpdateImgBoxBtn">이미지 수정</button>
+
+            <div id="updateImgBox">
+                <form id="imageForm" method="post" enctype="multipart/form-data">
+                    <input id="updateImgInput" type="file" name="memberImgFile">
+                    <button id="updateImgBtn" th:formaction="@{/myPage/updateMemberImg}" type="submit">확인</button>
+<!--                    form 전송시 -->
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                </form>
+            </div>
+
+
 
             이메일 : <div th:text="${user.getEmail()}" class="fs24 font-weight-bold"></div>
             <div id="showDetail">

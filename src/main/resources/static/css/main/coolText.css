@@ -1,0 +1,18 @@
+
+#coolContainer{
+    display: grid;
+    height: 100vh;
+    place-items: center;
+}
+
+.cool {
+    margin-bottom: 100px;
+    font: bold 5rem/1.2 sans-serif;
+    max-width: 20rem;
+}
+
+.cool > span{
+    color: #191970;
+    display: inline-block;
+    position: relative;
+}

@@ -1,5 +1,7 @@
 package com.dbproject.api.member;
 
+import com.dbproject.api.member.memberImg.MemberImg;
+import com.dbproject.api.member.memberImg.MemberImgRepository;
 import com.dbproject.exception.DuplicateMemberException;
 import com.dbproject.exception.DuplicateUpdateMemberAddressException;
 import com.dbproject.exception.DuplicateUpdateMemberNameException;
@@ -14,12 +16,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
+    private final MemberImgRepository memberImgRepository;
+
 
     public void saveMember(RegisterFormDto registerFormDto, PasswordEncoder passwordEncoder) {
         Member member;
@@ -43,7 +49,13 @@ public class MemberService implements UserDetailsService {
     public MyProfileDto findMe(String name) {
 
         Member member = memberRepository.findByEmail(name);
-        MyProfileDto myProfileDto = MyProfileDto.of(member);
+        Optional<MemberImg> memberImg = memberImgRepository.findByMemberEmail(name);
+
+        System.out.println(memberImg.get().getImgUrl());
+
+        MyProfileDto myProfileDto = MyProfileDto.from(member,memberImg);
+
+
 
         return myProfileDto;
     }
@@ -90,6 +102,9 @@ public class MemberService implements UserDetailsService {
 
         return 1L;
     }
+
+
+
 }
 
 

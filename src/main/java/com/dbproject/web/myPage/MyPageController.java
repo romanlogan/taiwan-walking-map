@@ -1,6 +1,7 @@
 package com.dbproject.web.myPage;
 
 import com.dbproject.api.member.MemberService;
+import com.dbproject.api.member.memberImg.MemberImgService;
 import com.dbproject.api.myPage.MyProfileDto;
 import com.dbproject.api.myPage.UpdateProfileDto;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -20,9 +22,14 @@ public class MyPageController {
 
     private final MemberService memberService;
 
+    private final MemberImgService memberImgService;
+
 
     @GetMapping(value = "/profile")
     public String memberProfile(Principal principal, Model model) {
+
+
+        System.out.println("------------------profile---------------------");
 
         String email = principal.getName();
         MyProfileDto myProfileDto = memberService.findMe(email);
@@ -54,6 +61,22 @@ public class MyPageController {
         Long memberId = memberService.deleteMember(email);
 
         return new ResponseEntity<>(memberId, HttpStatus.OK);
+    }
+
+    @PostMapping("/updateMemberImg")
+    public String updateMemberImg(@RequestParam("memberImgFile") MultipartFile memberImgFile,
+                                          Principal principal) throws Exception{
+
+        System.out.println("------------------------------------");
+        System.out.println("start");
+        System.out.println("------------------------------------");
+
+        memberImgService.updateMemberImg(memberImgFile, principal.getName());
+
+
+//        return "redirect:/myPage/profile";
+        return "redirect:/";
+
     }
 
 }
