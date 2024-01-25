@@ -7,6 +7,8 @@ import com.dbproject.api.friend.friendRequest.FriendRequest;
 import com.dbproject.api.friend.friendRequest.FriendRequestRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
+import com.dbproject.api.member.memberImg.MemberImg;
+import com.dbproject.api.member.memberImg.MemberImgRepository;
 import com.dbproject.constant.FriendRequestStatus;
 import com.dbproject.exception.DuplicateFriendRequestException;
 import com.dbproject.api.friend.friendRequest.RejectFriendRequest;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -34,6 +37,7 @@ public class FriendService {
 
     private final FavoriteRepository favoriteRepository;
 
+    private final MemberImgRepository memberImgRepository;
 
 
     public Long saveFriendRequest(AddFriendRequest addFriendRequest, String requesterEmail) {
@@ -96,16 +100,17 @@ public class FriendService {
 //        friendRequestRepository.deleteById(Long.valueOf(deleteFriendRequest.getFriendRequestId()));
     }
 
-    public FriendListResponse getFriendList(Pageable pageable, String email) {
+    public FriendListResponse getFriendList(String email) {
 
             // 즐겨찾기 리스트를 같이 가져와야 하는데
     //        검색 쿼리를 두번 날릴까
     //        애초에 페이징쿼리 날릴떄는 즐겨찾기 리스트를 가져올수 없다
 
-        Page<FriendDto> friendListPages = getFriendDtoPage(pageable, email);
+        List<FriendDto> friendDtoList = getFriendDtoList(email);
+
         List<FavoriteLocationDto> favoriteLocationDtoList = getFavoriteLocationDtoList(email);
 
-        return FriendListResponse.createFriendListResponse(friendListPages, favoriteLocationDtoList);
+        return FriendListResponse.createFriendListResponse(friendDtoList, favoriteLocationDtoList);
     }
 
     private List<FavoriteLocationDto> getFavoriteLocationDtoList(String email) {
@@ -121,8 +126,21 @@ public class FriendService {
         return favoriteLocationDtoList;
     }
 
-    private Page<FriendDto> getFriendDtoPage(Pageable pageable, String email) {
+    private List<FriendDto> getFriendDtoList(String email) {
 
-        return friendRepository.getFriendListPage(pageable, email);
+        List<Friend> friendList = friendRepository.getFriendList(email);
+        List<FriendDto> friendDtoList = new ArrayList<>();
+
+        //N+1 성능 장애 예상 지점(친구 1명마다 memberImg table 를 뒤져서 찾는 쿼리)
+        for (Friend friend : friendList) {
+
+            Optional<MemberImg> friendImg = memberImgRepository.findByMemberEmail(friend.getNewFriend().getEmail());
+
+            FriendDto friendDto = FriendDto.from(friend, friendImg);
+            friendDtoList.add(friendDto);
+        }
+
+        return friendDtoList;
     }
+
 }

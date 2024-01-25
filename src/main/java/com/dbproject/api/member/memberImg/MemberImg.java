@@ -14,7 +14,6 @@ import javax.persistence.*;
 @Setter
 public class MemberImg extends BaseEntity {
 
-
     @Id
     @Column(name = "member_img_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

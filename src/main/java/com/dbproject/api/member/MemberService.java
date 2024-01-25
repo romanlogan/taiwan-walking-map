@@ -51,8 +51,6 @@ public class MemberService implements UserDetailsService {
         Member member = memberRepository.findByEmail(name);
         Optional<MemberImg> memberImg = memberImgRepository.findByMemberEmail(name);
 
-        System.out.println(memberImg.get().getImgUrl());
-
         MyProfileDto myProfileDto = MyProfileDto.from(member,memberImg);
 
 

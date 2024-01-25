@@ -52,4 +52,28 @@ public class QuickSearchController {
         return "/quickSearch/quickSearchList";
     }
 
+    @GetMapping("/quickSearch")
+    public String exploreByQuery(FastSearchDto fastSearchDto,
+                                 Model model) {
+
+        Integer page = 0;
+        Pageable pageable = PageRequest.of(0, 5);
+
+        QuickSearchResultDto quickSearchResultDto = quickSearchService.getQuickSearchPage(fastSearchDto,pageable);
+
+//        if( dto = null){
+//            model.addAttribute("errorMessage", "");
+//            return "errorPage"
+//        }
+
+//        model.addAttribute("locationList", locationList);
+        model.addAttribute("quickSearchResultDto", quickSearchResultDto);
+        model.addAttribute("maxPage", 5);
+        model.addAttribute("fastSearchDto", fastSearchDto);
+        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
+
+        return "/quickSearch/quickSearchList";
+    }
+
+
 }

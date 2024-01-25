@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -25,10 +26,11 @@ public class MemberImgService {
     private final FileService fileService;
 
     private final MemberRepository memberRepository;
+
     private final MemberImgRepository memberImgRepository;
 
 
-    public void updateMemberImg(MultipartFile memberImgFile, String email) throws Exception {
+    public Long updateMemberImg(MultipartFile memberImgFile, String email) throws Exception {
 
         Optional<MemberImg> memberImg = memberImgRepository.findByMemberEmail(email);
 
@@ -43,8 +45,8 @@ public class MemberImgService {
 
             String oriImgName = memberImgFile.getOriginalFilename();
             String imgName = fileService.uploadFile(memberImgLocation, oriImgName, memberImgFile.getBytes());
-            String imgUrl = "/images/member" + imgName;
-            savedMemberImg.updateMemberImg(oriImgName, imgName, imgUrl);
+            String imgUrl = "/images/member/" + imgName;
+            savedMemberImg.updateMemberImg(imgName, oriImgName, imgUrl);
 
         }else{
             //save
@@ -56,14 +58,16 @@ public class MemberImgService {
             //파일 업로드
             if (!StringUtils.isEmpty(oriImgName)) {
                 imgName = fileService.uploadFile(memberImgLocation, oriImgName, memberImgFile.getBytes());
-                imgUrl = "/images/member/"+imgName;
+                imgUrl = "/images/member/" + imgName;
             }
 
             Member member = memberRepository.findByEmail(email);
             MemberImg newMemberImg = new MemberImg(imgName, oriImgName, imgUrl, member);
-            memberImgRepository.save(newMemberImg);
 
+            memberImgRepository.save(newMemberImg);
         }
+
+        return 1L;
 
     }
 }

@@ -81,17 +81,14 @@
 
       }
 
-    function page(page) {
-
-      location.href = "/myPage/friendList/"+ page;
-    }
-
   </script>
 </th:block>
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
     <link rel="stylesheet" href="/css/myPage/sidebar/sidebar.css"/>
+    <link rel="stylesheet" href="/css/myPage/friendList/friendList.css"/>
+
 
   <style>
     select{
@@ -109,15 +106,15 @@
     }
 
 
-    .InvitedHangOutBox{
-      margin: 20px;
-      padding: 10px;
-      width: 680px;
-      height: 110px;
-      background-color: #fff; /* 배경색 지정 */
-      border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 그림자 효과 추가 */
-    }
+    /*.InvitedHangOutBox{*/
+    /*  margin: 20px;*/
+    /*  padding: 10px;*/
+    /*  width: 680px;*/
+    /*  height: 110px;*/
+    /*  background-color: #fff; !* 배경색 지정 *!*/
+    /*  border-radius: 8px; !* 테두리를 둥글게 만듭니다. *!*/
+    /*  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); !* 그림자 효과 추가 *!*/
+    /*}*/
 
     .checkableLocationBox{
 
@@ -178,86 +175,80 @@
       </ul>
     </div>
 
-    <div class="InvitedHangOutBox" th:each="friend, status: ${friendListResponse.getFriendListPages().getContent()}">
-
-      이메일 : <div th:text="${friend.friendEmail}" class="fs24 font-weight-bold updatable" style="display: inline"></div>
-        <br>
-      이름 : <div  th:text="${friend.friendName}" class="fs24 font-weight-bold updatable" style="display: inline"></div>
-        <br>
-
-      <button class="planModalBtn" data-toggle="modal" data-target="#planModal">약속 잡기</button>
-
-      <!--                어떻게 반복문으로 id 를 돌려도 에러가 안날까?? 같은 id 가 여러개 존재하는데  -->
-      <!-- 모달 창 -->
-      <div class="modal fade" id="planModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title" id="myModalLabel">약속 잡기</h4>
-            </div>
-            <div class="modal-body">
-              <!-- 모달 창 내의 데이터 입력 폼 -->
-
-<!--                왼쪽 오른쪽으로 나눠서 map 찾기처럼 왼쪽에는 리스트 오른쪽에는 메시지 -->
-<!--                아니면 첫번째 모달은 리스트에서 선택하고 버튼으로 두번째 모달로 이동해서 두번째 모달에서 메시지를 적을수 잇게-->
-<!--                  check box 로 선택 가능-->
-
-                  <div class="left-half">
-                      <div class="checkableLocationBox" th:each="favoriteList, status: ${friendListResponse.getFavoriteLocationList()}">
-
-                          <input id="locationChecker" type="checkbox" th:value="${favoriteList.id}">
-    <!--                          체크박스-->
-                            <div th:if="${#strings.isEmpty(favoriteList.picture1)}">
-                                <img class = "locationBoxImg" src="/img/noImg.jpg">
-                            </div>
-                            <div th:unless="${#strings.isEmpty(favoriteList.picture1)}">
-                                <img class = "locationBoxImg" th:src="${favoriteList.picture1}">
-                            </div>
-                            <div class="locationTextBox">
-                                <p class="locationText">[[${favoriteList.name}]]</p>
-                            </div>
-
-                      </div>
-                  </div>
-                      
-                <div class="right-half">
-                   <label for="message">메시지</label>
-                   <textarea type="text" name="message" id="message" placeholder="메시지 내용을 입력해주세요."></textarea>
-                    <input type="datetime-local" id="departDateTime" placeholder="출발 날짜">
+      <div class="left-half">
+        <div th:each="friend, status: ${friendListResponse.getFriendDtoList()}">
+            <div class="friendBox">
+                <div class="friendImgBox">
+        <!--            <button id="friendImgBtn" th:value="${friend.id}" onclick="showLocationDetail(this.value)">-->
+                    <button id="friendImgBtn">
+                        <div th:if="${#strings.isEmpty(friend.getFriendImgUrl())}">
+                            <img class = "friendImg" src="/img/noImg.jpg">
+                        </div>
+                        <div th:unless="${#strings.isEmpty(friend.getFriendImgUrl())}">
+                            <img class = "friendImg" th:src="${friend.getFriendImgUrl()}">
+                        </div>
+                    </button>
                 </div>
 
-                <div class="clear"></div>
-                <button id="planBtn" th:value="${friend.friendEmail}" onclick="inviteHangOut(this.value)" type="button" class="btn btn-primary" data-dismiss="modal">수정</button>
+
+                <div class="friendNameBox">
+                    <div th:text="${friend.friendName}" class="fs24 font-weight-bold updatable"></div>-->
+                </div>
             </div>
-            <div class="modal-footer">
-<!--                location.favoriteLocationId-->
+
+          <!--                어떻게 반복문으로 id 를 돌려도 에러가 안날까?? 같은 id 가 여러개 존재하는데  -->
+          <!-- 모달 창 -->
+          <div class="modal fade" id="planModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="myModalLabel">약속 잡기</h4>
+                </div>
+                <div class="modal-body">
+                  <!-- 모달 창 내의 데이터 입력 폼 -->
+
+    <!--                왼쪽 오른쪽으로 나눠서 map 찾기처럼 왼쪽에는 리스트 오른쪽에는 메시지 -->
+    <!--                아니면 첫번째 모달은 리스트에서 선택하고 버튼으로 두번째 모달로 이동해서 두번째 모달에서 메시지를 적을수 잇게-->
+    <!--                  check box 로 선택 가능-->
+
+                      <div class="left-half">
+                          <div class="checkableLocationBox" th:each="favoriteList, status: ${friendListResponse.getFavoriteLocationList()}">
+
+                              <input id="locationChecker" type="checkbox" th:value="${favoriteList.id}">
+        <!--                          체크박스-->
+                                <div th:if="${#strings.isEmpty(favoriteList.picture1)}">
+                                    <img class = "locationBoxImg" src="/img/noImg.jpg">
+                                </div>
+                                <div th:unless="${#strings.isEmpty(favoriteList.picture1)}">
+                                    <img class = "locationBoxImg" th:src="${favoriteList.picture1}">
+                                </div>
+                                <div class="locationTextBox">
+                                    <p class="locationText">[[${favoriteList.name}]]</p>
+                                </div>
+
+                          </div>
+                      </div>
+
+                    <div class="right-half">
+                       <label for="message">메시지</label>
+                       <textarea type="text" name="message" id="message" placeholder="메시지 내용을 입력해주세요."></textarea>
+                        <input type="datetime-local" id="departDateTime" placeholder="출발 날짜">
+                    </div>
+
+                    <div class="clear"></div>
+                    <button id="planBtn" th:value="${friend.friendEmail}" onclick="inviteHangOut(this.value)" type="button" class="btn btn-primary" data-dismiss="modal">수정</button>
+                </div>
+                <div class="modal-footer">
+    <!--                location.favoriteLocationId-->
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <div class="right-half">
 
-
-    <div th:with="start=${(friendListResponse.getFriendListPages().number/maxPage)*maxPage + 1}, end=(${(friendListResponse.getFriendListPages().totalPages == 0) ? 1 : (start + (maxPage - 1) < friendListResponse.getFriendListPages().totalPages ? start + (maxPage - 1) : friendListResponse.getFriendListPages().totalPages)})" >
-      <ul class="pagination justify-content-center">
-
-        <li class="page-item" th:classappend="${friendListResponse.getFriendListPages().first}?'disabled'">
-          <a th:onclick="'javascript:page(' + ${friendListResponse.getFriendListPages().number - 1} + ')'" aria-label='Previous' class="page-link">
-            <span aria-hidden='true'>Previous</span>
-          </a>
-        </li>
-
-        <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${friendListResponse.getFriendListPages().number eq page-1}?'active':''">
-          <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
-        </li>
-
-        <li class="page-item" th:classappend="${friendListResponse.getFriendListPages().last}?'disabled'">
-          <a th:onclick="'javascript:page(' + ${friendListResponse.getFriendListPages().number + 1} + ')'" aria-label='Next' class="page-link">
-            <span aria-hidden='true'>Next</span>
-          </a>
-        </li>
-      </ul>
-    </div>
+      </div>
   </div>
 </div>
 </html>

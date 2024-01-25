@@ -16,20 +16,20 @@ import java.util.List;
 @NoArgsConstructor
 public class FriendListResponse {
 
-    private Page<FriendDto> friendListPages;
+    private List<FriendDto> friendDtoList;
 
     private List<FavoriteLocationDto> favoriteLocationList = new ArrayList<>();
 
     @Builder
-    private FriendListResponse(Page<FriendDto> friendListPages, List<FavoriteLocationDto> favoriteLocationList) {
-        this.friendListPages = friendListPages;
+    public FriendListResponse(List<FriendDto> friendDtoList, List<FavoriteLocationDto> favoriteLocationList) {
+        this.friendDtoList = friendDtoList;
         this.favoriteLocationList = favoriteLocationList;
     }
 
-    public static FriendListResponse createFriendListResponse(Page<FriendDto> friendListPages, List<FavoriteLocationDto> favoriteLocationList) {
+    public static FriendListResponse createFriendListResponse(List<FriendDto> friendDtoList, List<FavoriteLocationDto> favoriteLocationList) {
 
         return FriendListResponse.builder()
-                .friendListPages(friendListPages)
+                .friendDtoList(friendDtoList)
                 .favoriteLocationList(favoriteLocationList)
                 .build();
     }

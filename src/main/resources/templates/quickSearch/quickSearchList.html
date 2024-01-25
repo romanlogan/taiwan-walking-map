@@ -13,7 +13,69 @@
 
             $(document).ready(function() {
 
+                $("#fastSearchQuery").on("input", function () {
 
+                    var searchCity = $('#fastSearchCity').val();
+                    var searchQuery = $('#fastSearchQuery').val();
+
+                    $.ajax({
+                        url      : "/quickSearch/0?searchQuery="+searchQuery+"&searchCity="+searchCity,
+                        type     : "GET",
+                        cache   : false,
+                        success  : function(result, status){
+
+                            // location.href="/quickSearch/0?searchQuery="+searchQuery+"&searchCity="+searchCity;
+
+                            //안에 아이템을 모두 지우고 해야하나?
+                            const locationList = document.getElementById('changeLocationBox');
+                            locationList.innerHTML = `
+                                         <div class="InvitedHangOutBox" th:each="location, status: ${quickSearchResultDto.getLocationPage().getContent()}">
+                                            <a th:href="'/location/' +${location.locationId}" class="text-dark">
+                                                <img class = "locationBoxImg" th:src="${location.picture1}">
+                                                <div class="locationTextBox">
+                                                    <p class="locationText">[[${location.name}]]</p>
+
+                                                    <div th:if="${location.address != null}">
+                                                        <p class="locationText"> address : [[${location.address}]]</p>
+                                                    </div>
+
+                                                    <div th:if="${location.openTime != null}">
+                                                        <p class="locationText"> open time : [[${location.openTime}]]</p>
+                                                    </div>
+
+                                                    <div th:if="${location.ticketInfo != null}">
+                                                        <p class="locationText"> Fee Info : [[${location.ticketInfo}]]</p>
+                                                    </div>
+
+                                                    <div th:if="${location.website != null}">
+                                                        <p class="locationText"> Website Url : [[${location.website}]]</p>
+                                                    </div>
+
+                                                    <div th:if="${location.tel != null}">
+                                                        <p class="locationText"> Tel : [[${location.tel}]]</p>
+                                                    </div>
+                                                </div>
+                                            </a>
+
+                                            <div class="clear"></div>
+                                         </div>
+                                        `;
+
+                        },
+                        error : function(jqXHR, status, error, request){
+
+                            console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+
+                            if(jqXHR.status == '401'){
+                                alert('로그인 후 이용해주세요');
+                                location.href='/members/login';
+                            } else{
+                                alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
+                                // alert(jqXHR.responseText);
+                            }
+                        }
+                    });
+                });
             });
 
             window.onload = function initMap() {
@@ -51,8 +113,8 @@
             function page(page) {
 
                 // var searchArrival = $("#cityTypeArriveCity").val();
-                var searchQuery = document.getElementById('fastSearchQuery').value;
-                var searchCity = document.getElementById('fastSearchCity').value;
+                var searchQuery = document.getElementById('SearchQuery').value;
+                var searchCity = document.getElementById('SearchCity').value;
 
                 location.href = "/quickSearch/" + page + "?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
             }
@@ -115,6 +177,51 @@
                 both: clear;
             }
 
+
+            #fastSearchForm{
+                /*display: flex;*/
+                /*justify-content: center; !* 가로 방향으로 가운데 정렬 *!*/
+                /*align-items: center; !* 세로 방향으로 가운데 정렬 *!*/
+                margin-top: 15px;
+                margin-bottom: 10px;
+            }
+
+
+            #fastSearchCity{
+                margin-left: 30px;
+                width: 70px;
+                height: 40px;
+            }
+
+
+
+
+            #fastSearchQuery {
+                margin-top: 10px;
+                margin-bottom: 10px;
+                margin-left: 10px;
+                width: 250px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                border: none;
+                border-radius: 10px;
+                /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/
+                box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            }
+
+            #fastSearchInputBtn{
+                background-color: white;
+                border: 1px solid lightgray ;
+                border-radius: 50%;
+
+                padding: 10px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            }
         </style>
 
 </th:block>
@@ -146,12 +253,39 @@
 
 
 <div id="left-half" class="left-half">
+<!--    <input id="fastSearchInput" placeholder="查查看想去的地方" type="search" name="search">-->
+    <input type="hidden" id="SearchCity" th:value="${fastSearchDto.getSearchCity()}"/>
+    <input type="hidden" id="SearchQuery" th:value="${fastSearchDto.getSearchQuery()}" />
 
-    <input type="hidden" id="fastSearchQuery" th:value="${fastSearchDto.getSearchQuery()}"/>
-    <input type="hidden" id="fastSearchCity" th:value="${fastSearchDto.getSearchCity()}"/>
+
+    <div id="fastSearchForm">
+        <select id="fastSearchCity" name="fastSearchCity">
+            <option value="臺北市">臺北市</option>
+            <option value="桃園市">新北市</option>
+            <option value="臺中市">臺中市</option>
+            <option value="臺南市">臺南市</option>
+            <option value="臺東縣">臺東縣</option>
+            <option value="高雄市">高雄市</option>
+            <option value="花蓮縣">花蓮縣</option>
+            <option value="桃園市">桃園市</option>
+        </select>
+
+
+        <input id="fastSearchQuery" th:value="${fastSearchDto.getSearchQuery()}" type="search" name="search" />
+        <button id="fastSearchInputBtn" class="search-btn" type="submit">
+            <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #d9d9d9;"></i>
+        </button>
+
+        <select id="orderType" name="orderType">
+            <option value="name">이름순</option>
+            <option value="桃園市"></option>
+            <option value="臺中市">臺中市</option>
+        </select>
+    </div>
 
 <!--    <form role="form" method="get" th:object="${locationList}">-->
 
+    <div id="changeLocationBox">
         <div class="InvitedHangOutBox" th:each="location, status: ${quickSearchResultDto.getLocationPage().getContent()}">
             <a th:href="'/location/' +${location.locationId}" class="text-dark">
                 <img class = "locationBoxImg" th:src="${location.picture1}">
@@ -182,7 +316,7 @@
 
             <div class="clear"></div>
         </div>
-
+    </div>
 
 
         <div th:with="start=${(quickSearchResultDto.getLocationPage().number/maxPage)*maxPage + 1}, end=(${(quickSearchResultDto.getLocationPage().totalPages == 0) ? 1 : (start + (maxPage - 1) < quickSearchResultDto.getLocationPage().totalPages ? start + (maxPage - 1) : quickSearchResultDto.getLocationPage().totalPages)})" >
