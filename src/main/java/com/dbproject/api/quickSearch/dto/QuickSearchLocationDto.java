@@ -1,5 +1,6 @@
-package com.dbproject.api.quickSearch;
+package com.dbproject.api.quickSearch.dto;
 
+import com.dbproject.api.location.Location;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class QuickSearchLocationDto {
     private String tel;
     private String latitude;
     private String longitude;
+    private String region;
 
 
     @QueryProjection
@@ -36,6 +38,24 @@ public class QuickSearchLocationDto {
         this.tel = tel;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public static QuickSearchLocationDto from(Location location) {
+
+        QuickSearchLocationDto quickSearchLocationDto = new QuickSearchLocationDto();
+        quickSearchLocationDto.locationId = location.getLocationId();
+        quickSearchLocationDto.picture1 = location.getLocationPicture().getPicture1();
+        quickSearchLocationDto.name = location.getName();
+        quickSearchLocationDto.address = location.getAddress();
+        quickSearchLocationDto.openTime = location.getOpenTime();
+        quickSearchLocationDto.ticketInfo = location.getTicketInfo();
+        quickSearchLocationDto.website = location.getWebsite();
+        quickSearchLocationDto.tel = location.getTel();
+        quickSearchLocationDto.latitude = location.getLatitude();
+        quickSearchLocationDto.longitude = location.getLongitude();
+        quickSearchLocationDto.region = location.getRegion();
+
+        return quickSearchLocationDto;
     }
 
 }

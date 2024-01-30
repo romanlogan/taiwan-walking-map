@@ -40,7 +40,6 @@ public class HangOutController {
                                         Principal principal, Model model) {
 
 
-
         InvitedHangOutResponse invitedHangOutResponse = hangOutService.getInvitedHangOutList(principal.getName(),inviteHangOutId);
 
         model.addAttribute("invitedHangOutResponse", invitedHangOutResponse);

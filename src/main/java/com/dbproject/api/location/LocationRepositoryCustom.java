@@ -1,7 +1,7 @@
 package com.dbproject.api.location;
 
-import com.dbproject.api.quickSearch.FastSearchDto;
-import com.dbproject.api.quickSearch.QuickSearchLocationDto;
+import com.dbproject.api.quickSearch.dto.FastSearchDto;
+import com.dbproject.api.quickSearch.dto.QuickSearchLocationDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

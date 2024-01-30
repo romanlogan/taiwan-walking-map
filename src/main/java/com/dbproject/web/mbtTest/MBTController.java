@@ -12,13 +12,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Controller
-@RequestMapping("/mbtTest")
+//@Controller
+//@RequestMapping("/mbtTest")
 public class MBTController {
 
     private final MBTService mbtService;
 
-    public MBTController(MBTService mbtService) {
+    public MBTController(@Qualifier("MBTServiceImpl") MBTService mbtService) {
         this.mbtService = mbtService;
     }
 

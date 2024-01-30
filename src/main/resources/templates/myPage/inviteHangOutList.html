@@ -21,7 +21,7 @@
             console.log(inviteHangOutId);
 
             $.ajax({
-                url      : "/myPage/hangOut/getHangOutLocationDtl?inviteHangOutId="+inviteHangOutId,
+                url      : "/myPage/inviteHangOutList?inviteHangOutId="+inviteHangOutId,
                 type     : "GET",
                 cache   : false,
                 success  : function(result, status){

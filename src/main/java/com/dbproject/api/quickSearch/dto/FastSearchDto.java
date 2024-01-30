@@ -1,4 +1,4 @@
-package com.dbproject.api.quickSearch;
+package com.dbproject.api.quickSearch.dto;
 
 import lombok.Builder;
 import lombok.Getter;

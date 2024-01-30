@@ -1,9 +1,11 @@
 package com.dbproject.web.quickSearch;
 
 import com.dbproject.api.explore.ExploreService;
-import com.dbproject.api.quickSearch.FastSearchDto;
-import com.dbproject.api.quickSearch.QuickSearchResultDto;
+import com.dbproject.api.quickSearch.dto.FastSearchDto;
+import com.dbproject.api.quickSearch.dto.QuickSearchListResponse;
+import com.dbproject.api.quickSearch.dto.QuickSearchPageResponse;
 import com.dbproject.api.quickSearch.QuickSearchService;
+import com.dbproject.api.quickSearch.dto.QuickSearchResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -36,7 +38,7 @@ public class QuickSearchController {
 
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
 
-        QuickSearchResultDto quickSearchResultDto = quickSearchService.getQuickSearchPage(fastSearchDto,pageable);
+        QuickSearchResponse quickSearchResultDto = quickSearchService.getQuickSearchPage(fastSearchDto,pageable);
 
 //        if( dto = null){
 //            model.addAttribute("errorMessage", "");
@@ -49,31 +51,29 @@ public class QuickSearchController {
         model.addAttribute("fastSearchDto", fastSearchDto);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
-        return "/quickSearch/quickSearchList";
+        return "/quickSearch/quickSearchPage";
     }
 
-    @GetMapping("/quickSearch")
-    public String exploreByQuery(FastSearchDto fastSearchDto,
+//    이거는 리스트 페이지 처음 들어왔을때 (정렬이나 다른 조건 없음 )
+    @GetMapping("/quickSearchList")
+    public String exploreQuickSearchList(FastSearchDto fastSearchDto,
                                  Model model) {
 
-        Integer page = 0;
-        Pageable pageable = PageRequest.of(0, 5);
+        Pageable pageable = PageRequest.of(0, 10);
 
-        QuickSearchResultDto quickSearchResultDto = quickSearchService.getQuickSearchPage(fastSearchDto,pageable);
-
-//        if( dto = null){
-//            model.addAttribute("errorMessage", "");
-//            return "errorPage"
-//        }
+        QuickSearchListResponse quickSearchListResponse = quickSearchService.getQuickSearchList(fastSearchDto, pageable);
 
 //        model.addAttribute("locationList", locationList);
-        model.addAttribute("quickSearchResultDto", quickSearchResultDto);
-        model.addAttribute("maxPage", 5);
+        model.addAttribute("quickSearchListResponse", quickSearchListResponse);
         model.addAttribute("fastSearchDto", fastSearchDto);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
         return "/quickSearch/quickSearchList";
     }
+
+
+
+
 
 
 }

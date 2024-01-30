@@ -1,7 +1,9 @@
 package com.dbproject.api.myPage.hangOut.inviteHangOut.dto;
 
 
+import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOut;
 import com.dbproject.constant.InviteHangOutStatus;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,6 +39,7 @@ public class InvitedHangOutDto {
     }
 
 
+    @Builder
     public InvitedHangOutDto(Long id,String requesterEmail, String requesterName, String message, LocalDateTime departDateTime, String picture1, String name, InviteHangOutStatus inviteHangOutStatus) {
         this.id = id;
         this.requesterEmail = requesterEmail;
@@ -46,6 +49,21 @@ public class InvitedHangOutDto {
         this.picture1 = picture1;
         this.locationName = name;
         this.inviteHangOutStatus = inviteHangOutStatus;
+    }
+
+    public static InvitedHangOutDto from(InviteHangOut invitedHangOut) {
+
+
+        return InvitedHangOutDto.builder()
+                .id(invitedHangOut.getId())
+                .requesterEmail(invitedHangOut.getRequester().getEmail())
+                .requesterName(invitedHangOut.getRequester().getName())
+                .message(invitedHangOut.getMessage())
+                .departDateTime(invitedHangOut.getDepartDateTime())
+                .picture1(invitedHangOut.getFavoriteLocation().getLocation().getLocationPicture().getPicture1())
+                .name(invitedHangOut.getFavoriteLocation().getLocation().getName())
+                .inviteHangOutStatus(invitedHangOut.getInviteHangOutStatus())
+                .build();
     }
 
 }

@@ -2,8 +2,8 @@ package com.dbproject.api.location;
 
 import com.dbproject.dto.*;
 import com.dbproject.entity.QLocation;
-import com.dbproject.api.quickSearch.FastSearchDto;
-import com.dbproject.api.quickSearch.QuickSearchLocationDto;
+import com.dbproject.api.quickSearch.dto.FastSearchDto;
+import com.dbproject.api.quickSearch.dto.QuickSearchLocationDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;

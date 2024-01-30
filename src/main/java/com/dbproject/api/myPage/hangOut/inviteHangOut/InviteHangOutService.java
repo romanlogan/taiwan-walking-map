@@ -28,6 +28,7 @@ public class InviteHangOutService {
     private final MemberRepository memberRepository;
 
 
+    //초대 하기
     public Long inviteHangOut(InviteHangOutRequest inviteHangOutRequest, String email) {
 
         //프록시 객체로 가져오므로 location 정보가 없어서 location 정보가 필요할때 쿼리를 한번 더 날리게 될것
@@ -43,42 +44,53 @@ public class InviteHangOutService {
     }
 
 
+    //초대 받은 목록 가져오기
     public InvitedHangOutResponse getInvitedHangOutList(String email, Optional<Long> optionalInviteHangOutId) {
 
-        List<InviteHangOut> invitedHangOutList = inviteHangOutRepository.findWaitingListByRequesterEmail(email);
+        List<InvitedHangOutDto> invitedHangOutDtoList = getInvitedHangOutDtoList(email);
+        InviteHangOutLocationDto inviteHangOutLocationDto = getInviteHangOutLocationDto(optionalInviteHangOutId);
 
-        List<InvitedHangOutDto> invitedHangOutDtoList = new ArrayList<>();
+        return new InvitedHangOutResponse(inviteHangOutLocationDto ,invitedHangOutDtoList);
+    }
 
-        for (InviteHangOut invitedHangOut : invitedHangOutList) {
 
-            //여기 성능 장애 의심됨 fetch join 으로 바꾸기
-            Long id = invitedHangOut.getId();
-            String requesterName = invitedHangOut.getRequester().getName();
-            String requesterEmail = invitedHangOut.getRequester().getEmail();
-            String message = invitedHangOut.getMessage();
-            LocalDateTime departDateTime = invitedHangOut.getDepartDateTime();
-            String picture1Url = invitedHangOut.getFavoriteLocation().getLocation().getLocationPicture().getPicture1();
-            String locationName = invitedHangOut.getFavoriteLocation().getLocation().getName();
-            InviteHangOutStatus inviteHangOutStatus = invitedHangOut.getInviteHangOutStatus();
 
-            InvitedHangOutDto invitedHangOutDto = new InvitedHangOutDto(id,requesterEmail,requesterName,message,departDateTime,picture1Url,locationName,inviteHangOutStatus);
-            invitedHangOutDtoList.add(invitedHangOutDto);
-        }
+
+
+
+
+    private InviteHangOutLocationDto getInviteHangOutLocationDto(Optional<Long> optionalInviteHangOutId) {
 
         InviteHangOutLocationDto inviteHangOutLocationDto;
 
-        if(optionalInviteHangOutId.isPresent()) {
+        if(optionalInviteHangOutId.isPresent()) {       // 초대받은 locationDtl 을 보고싶을때
+
             Long inviteHangOutId = optionalInviteHangOutId.get();
             InviteHangOut inviteHangOut = inviteHangOutRepository.findById(inviteHangOutId).orElseThrow(EntityNotFoundException::new);
             inviteHangOutLocationDto = InviteHangOutLocationDto.from(inviteHangOut);
 
-        }else{
+        }else{      // 처음 들어와서 리스트만 보일때
             inviteHangOutLocationDto = InviteHangOutLocationDto.createEmptyDto();
         }
+        return inviteHangOutLocationDto;
+    }
 
-        InvitedHangOutResponse invitedHangOutResponse = new InvitedHangOutResponse(inviteHangOutLocationDto ,invitedHangOutDtoList);
 
-        return invitedHangOutResponse;
+    private List<InvitedHangOutDto> getInvitedHangOutDtoList(String email) {
+
+        // hangout 리스트를 가져온다
+        List<InviteHangOut> invitedHangOutList = inviteHangOutRepository.findWaitingListByRequesterEmail(email);
+        List<InvitedHangOutDto> invitedHangOutDtoList = new ArrayList<>();
+
+        //dto 로 변환 (스트림으로 변환하기)
+        for (InviteHangOut invitedHangOut : invitedHangOutList) {
+
+            //여기 성능 장애 의심됨 fetch join 으로 바꾸기
+            InvitedHangOutDto invitedHangOutDto = InvitedHangOutDto.from(invitedHangOut);
+            invitedHangOutDtoList.add(invitedHangOutDto);
+        }
+
+        return invitedHangOutDtoList;
     }
 }
 

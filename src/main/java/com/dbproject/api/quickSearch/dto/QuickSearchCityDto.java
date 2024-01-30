@@ -1,4 +1,4 @@
-package com.dbproject.api.quickSearch;
+package com.dbproject.api.quickSearch.dto;
 
 import com.dbproject.api.city.City;
 import lombok.Builder;

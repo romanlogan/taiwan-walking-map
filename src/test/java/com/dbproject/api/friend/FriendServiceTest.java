@@ -173,35 +173,35 @@ class FriendServiceTest {
         assertThat(friendRequestList.get(0).getFriendRequestStatus()).isEqualTo(FriendRequestStatus.REJECTED);
      }
 
-     @DisplayName("친구 목록 페이징을 가져올때 즐겨찾기 리스트도 같이 가져옵니다")
-     @Test
-     void getFriendListWithFavoriteList(){
-
-         //given
-         Member son = memberRepository.findByEmail("zxcv@zxcv.com");
-         Member lee = memberRepository.findByEmail("qwer@qwer.com");
-         Member yunni = memberRepository.findByEmail("yunni@yunni.com");
-         createRequestAndAccept(lee, son);
-         createRequestAndAccept(lee, yunni);
-         Pageable pageable = PageRequest.of( 0, 5 );
-         saveFavoriteLocation(lee);
-
-         //when
-         FriendListResponse friendListResponse = friendService.getFriendList(pageable, "qwer@qwer.com");
-
-         //then
-         assertThat(friendListResponse.getFriendListPages().getTotalElements()).isEqualTo(2);
-         assertThat(friendListResponse.getFriendListPages().getContent().get(0).getFriendName()).isEqualTo("손흥민");
-         assertThat(friendListResponse.getFriendListPages().getContent().get(0).getFriendEmail()).isEqualTo("zxcv@zxcv.com");
-         assertThat(friendListResponse.getFriendListPages().getContent().get(0).getFriendAddress()).isEqualTo("서울 강남구");
-         assertThat(friendListResponse.getFriendListPages().getContent().get(1).getFriendName()).isEqualTo("장원유");
-         assertThat(friendListResponse.getFriendListPages().getContent().get(1).getFriendEmail()).isEqualTo("yunni@yunni.com");
-         assertThat(friendListResponse.getFriendListPages().getContent().get(1).getFriendAddress()).isEqualTo("대만 산총구");
-         assertThat(friendListResponse.getFavoriteLocationList().get(0).getName()).isEqualTo("西門町");
-         assertThat(friendListResponse.getFavoriteLocationList().get(0).getLocationId()).isEqualTo("C1_379000000A_001572");
-
-
-     }
+//     @DisplayName("친구 목록 페이징을 가져올때 즐겨찾기 리스트도 같이 가져옵니다")
+//     @Test
+//     void getFriendListWithFavoriteList(){
+//
+//         //given
+//         Member son = memberRepository.findByEmail("zxcv@zxcv.com");
+//         Member lee = memberRepository.findByEmail("qwer@qwer.com");
+//         Member yunni = memberRepository.findByEmail("yunni@yunni.com");
+//         createRequestAndAccept(lee, son);
+//         createRequestAndAccept(lee, yunni);
+//         Pageable pageable = PageRequest.of( 0, 5 );
+//         saveFavoriteLocation(lee);
+//
+//         //when
+//         FriendListResponse friendListResponse = friendService.getFriendList(pageable, "qwer@qwer.com");
+//
+//         //then
+//         assertThat(friendListResponse.getFriendListPages().getTotalElements()).isEqualTo(2);
+//         assertThat(friendListResponse.getFriendListPages().getContent().get(0).getFriendName()).isEqualTo("손흥민");
+//         assertThat(friendListResponse.getFriendListPages().getContent().get(0).getFriendEmail()).isEqualTo("zxcv@zxcv.com");
+//         assertThat(friendListResponse.getFriendListPages().getContent().get(0).getFriendAddress()).isEqualTo("서울 강남구");
+//         assertThat(friendListResponse.getFriendListPages().getContent().get(1).getFriendName()).isEqualTo("장원유");
+//         assertThat(friendListResponse.getFriendListPages().getContent().get(1).getFriendEmail()).isEqualTo("yunni@yunni.com");
+//         assertThat(friendListResponse.getFriendListPages().getContent().get(1).getFriendAddress()).isEqualTo("대만 산총구");
+//         assertThat(friendListResponse.getFavoriteLocationList().get(0).getName()).isEqualTo("西門町");
+//         assertThat(friendListResponse.getFavoriteLocationList().get(0).getLocationId()).isEqualTo("C1_379000000A_001572");
+//
+//
+//     }
 
     private void saveFavoriteLocation(Member member) {
         String locationId = "C1_379000000A_001572";

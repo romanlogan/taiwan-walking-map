@@ -1,30 +1,32 @@
 package com.dbproject.api.member.memberImg;
 
-import com.dbproject.api.favorite.FavoriteRepository;
-import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.File.FileService;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.RegisterFormDto;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
 @Transactional
 @TestPropertySource(locations = "classpath:application-test.properties")
-class MemberImgRepositoryTest {
+class MemberImgServiceTest {
 
 
     @Autowired
@@ -35,6 +37,13 @@ class MemberImgRepositoryTest {
 
     @Autowired
     private MemberImgRepository memberImgRepository;
+
+    @Autowired
+    private MemberImgService memberImgService;
+
+    @MockBean
+    private FileService fileService;
+
 
     @BeforeEach
     void createMember() {
@@ -49,9 +58,11 @@ class MemberImgRepositoryTest {
         memberRepository.save(member);
     }
 
-    @DisplayName("회원의 이미지 파일을 저장합니다.")
+
+    @DisplayName("회원 이미지를 저장합니다")
     @Test
-    void test(){
+    void  updateMemberImg() throws Exception {
+
 
         //given
         String oriImgName = "oriImg.jpg";
@@ -59,25 +70,21 @@ class MemberImgRepositoryTest {
         String imgUrl = "/images/member/" + imgName;
         Member member = memberRepository.findByEmail("asdf@asdf.com");
 
-        MemberImg memberImg = new MemberImg(imgName, oriImgName, imgUrl, member);
+
+        //mockMultifile 과 when thenReturn 으로 만들기
+//        대안으로는 uuid 만드는 부분을 여기서 만들어서 파라미터로 줄 수 있게 ->
+
+        MockMultipartFile multipartFile = new MockMultipartFile(imgName, oriImgName, "text/plain", oriImgName.getBytes(StandardCharsets.UTF_8) );
+        when(fileService.uploadFile(imgUrl, oriImgName, oriImgName.getBytes(StandardCharsets.UTF_8))).thenReturn(imgName);
 
         //when
-        MemberImg savedMemberImg = memberImgRepository.save(memberImg);
+        memberImgService.updateMemberImg(multipartFile, member.getEmail());
 
         //then
-        assertThat(savedMemberImg.getMember().getEmail()).isEqualTo("asdf@asdf.com");
-        assertThat(savedMemberImg.getMember().getName()).isEqualTo("이병민");
-        assertThat(savedMemberImg.getImgName()).isEqualTo(imgName);
-        assertThat(savedMemberImg.getOriImgName()).isEqualTo(oriImgName);
+        Optional<MemberImg> optionalMemberImg = memberImgRepository.findByMemberEmail("asdf@asdf.com");
+        MemberImg savedMemberImg = optionalMemberImg .get();
+
         assertThat(savedMemberImg.getImgUrl()).isEqualTo(imgUrl);
-
-
-
      }
-
-
-
-
-
 
 }

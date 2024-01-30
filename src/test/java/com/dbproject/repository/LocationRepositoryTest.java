@@ -1,8 +1,8 @@
 package com.dbproject.repository;
 
 import com.dbproject.api.location.LocationRepository;
-import com.dbproject.api.quickSearch.FastSearchDto;
-import com.dbproject.api.quickSearch.QuickSearchLocationDto;
+import com.dbproject.api.quickSearch.dto.FastSearchDto;
+import com.dbproject.api.quickSearch.dto.QuickSearchLocationDto;
 import com.dbproject.api.location.RecLocationListRequest;
 import com.dbproject.api.location.RecLocationListResponse;
 import com.dbproject.api.location.Location;
@@ -126,6 +126,28 @@ class LocationRepositoryTest {
         assertThat(locationListPage.getTotalElements()).isEqualTo(449);
         assertThat(pageContent).hasSize(5);
     }
+
+    @DisplayName("검색어와 도시 이름으로 장소 리스트를 가져옵니다 (LIMIT 10)")
+    @Test
+    void findBySearchQueryAndSearchCity(){
+        //given
+        String searchCity = "臺北市";
+        String searchQuery = "公園";
+        Pageable pageable = PageRequest.of(0, 10);
+
+        //when
+        List<Location> locationList = locationRepository.findBySearchQueryAndSearchCity(searchQuery, searchCity, pageable);
+
+        //then
+        assertThat(locationList).hasSize(10);
+        assertThat(locationList.get(0).getName()).isEqualTo("140高地公園");
+        assertThat(locationList.get(0).getRegion()).isEqualTo("臺北市");
+        assertThat(locationList.get(0).getLocationId()).isEqualTo("C1_379000000A_000406");
+
+        assertThat(locationList.get(9).getName()).isEqualTo("北投社三層崎公園");
+        assertThat(locationList.get(9).getRegion()).isEqualTo("臺北市");
+        assertThat(locationList.get(9).getLocationId()).isEqualTo("C1_379000000A_002197");
+     }
 
 
 
