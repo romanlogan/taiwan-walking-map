@@ -1,20 +1,21 @@
 package com.dbproject.web.quickSearch;
 
 import com.dbproject.api.explore.ExploreService;
-import com.dbproject.api.quickSearch.dto.FastSearchDto;
-import com.dbproject.api.quickSearch.dto.QuickSearchListResponse;
-import com.dbproject.api.quickSearch.dto.QuickSearchPageResponse;
+import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.quickSearch.dto.*;
 import com.dbproject.api.quickSearch.QuickSearchService;
-import com.dbproject.api.quickSearch.dto.QuickSearchResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.PushBuilder;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -28,6 +29,8 @@ public class QuickSearchController {
     private final ExploreService exploreService;
 
     private final QuickSearchService quickSearchService;
+
+    private final LocationRepository locationRepository;
 
 
 
@@ -71,7 +74,28 @@ public class QuickSearchController {
         return "/quickSearch/quickSearchList";
     }
 
+    @GetMapping("/quickSearch/getTownList")
+    public ResponseEntity getTownList(@RequestParam("cityName") String cityName) {
 
+        List<String> townList = locationRepository.findTownListByRegion(cityName);
+
+        return new ResponseEntity(townList, HttpStatus.OK);
+    }
+
+    @GetMapping("/quickSearch/newList")
+    public String getListByCondition(QuickSearchFormRequest quickSearchFormRequest,
+                                             Model model) {
+
+        Pageable pageable = PageRequest.of(0, 10);
+        QuickSearchListResponse quickSearchListResponse = quickSearchService.getQuickSearchListByCond(quickSearchFormRequest, pageable);
+
+
+        model.addAttribute("quickSearchListResponse", quickSearchListResponse);
+        model.addAttribute("fastSearchDto", quickSearchFormRequest);
+        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
+
+        return "/quickSearch/quickSearchList";
+    }
 
 
 

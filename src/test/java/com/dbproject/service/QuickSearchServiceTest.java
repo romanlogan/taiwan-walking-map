@@ -65,6 +65,9 @@ class QuickSearchServiceTest {
         assertThat(quickSearchListResponse.getQuickSearchLocationDtoList().get(9).getLocationId()).isEqualTo("C1_379000000A_002197");
         assertThat(quickSearchListResponse.getCityNameList()).hasSize(8);
         assertThat(quickSearchListResponse.getCity().getPostalAddressCity()).isEqualTo("臺北市");
-
+        assertThat(quickSearchListResponse.getTownNameList()).hasSize(12);
+        assertThat(quickSearchListResponse.getTownNameList().get(0)).isEqualTo("中山區");
+        assertThat(quickSearchListResponse.getTownNameList().get(1)).isEqualTo("中正區");
+        assertThat(quickSearchListResponse.getTownNameList().get(2)).isEqualTo("信義區");
     }
 }

@@ -42,13 +42,67 @@ public class QuickSearchService {
 
         QuickSearchListResponse quickSearchListResponse = new QuickSearchListResponse();
         //장소 리스트 찾기
-        findLocationList(quickSearchListResponse, fastSearchDto, pageable);
+        findLocationList(quickSearchListResponse, fastSearchDto.getSearchQuery(), fastSearchDto.getSearchCity(), pageable);
 
         //선택된 도시 의 정보를 가져온다
         findCityDtl(quickSearchListResponse, fastSearchDto.getSearchCity());
         findCityList(quickSearchListResponse);
+        findTownList(quickSearchListResponse, fastSearchDto.getSearchCity());
 
         return quickSearchListResponse;
+    }
+
+
+    public QuickSearchListResponse getQuickSearchListByCond(QuickSearchFormRequest quickSearchFormRequest, Pageable pageable) {
+
+
+        QuickSearchListResponse quickSearchListResponse = new QuickSearchListResponse();
+        //장소 리스트 찾기
+//        findLocationList(quickSearchListResponse, quickSearchFormRequest.getSearchQuery(), quickSearchFormRequest.getSearchCity(), pageable);
+        findLocationListByCond(quickSearchListResponse, quickSearchFormRequest, pageable);
+        //선택된 도시 의 정보를 가져온다
+        findCityDtl(quickSearchListResponse, quickSearchFormRequest.getSearchCity());
+        findCityList(quickSearchListResponse);
+        findTownList(quickSearchListResponse, quickSearchFormRequest.getSearchCity());
+
+        return quickSearchListResponse;
+
+
+    }
+
+    private void findLocationListByCond(QuickSearchListResponse quickSearchListResponse,
+                                        QuickSearchFormRequest quickSearchFormRequest,
+                                        Pageable pageable) {
+
+
+        List<QuickSearchLocationDto> locationDtoList = locationRepository.getLocationListByCond(quickSearchFormRequest, pageable);
+
+
+        quickSearchListResponse.setQuickSearchLocationDtoList(locationDtoList);
+    }
+
+
+    // 상속과 다형성을 이용한 QuickSearchResponse 자식들의 메소드 같이 사용
+    public void findLocationList(QuickSearchListResponse quickSearchListResponse,
+                                 String searchQuery,
+                                 String searchCity,
+                                 Pageable pageable) {
+
+
+        List<Location> locationList = locationRepository.findBySearchQueryAndSearchCity(searchQuery, searchCity, pageable);
+        List<QuickSearchLocationDto> locationDtoList = new ArrayList<>();
+
+        for (Location location : locationList) {
+            QuickSearchLocationDto quickSearchLocationDto = QuickSearchLocationDto.from(location);
+            locationDtoList.add(quickSearchLocationDto);
+        }
+        quickSearchListResponse.setQuickSearchLocationDtoList(locationDtoList);
+    }
+
+    private void findTownList(QuickSearchResponse quickSearchListResponse,String cityName) {
+
+        List<String> townList = locationRepository.findTownListByRegion(cityName);
+        quickSearchListResponse.setTownNameList(townList);
 
     }
 
@@ -64,7 +118,6 @@ public class QuickSearchService {
     }
 
 
-    // 상속과 다형성을 이용한 QuickSearchResponse 자식들의 메소드 같이 사용
     private void findCityDtl(QuickSearchResponse quickSearchResponse, String searchCity) {
 
         City city = cityRepository.findBypostalAddressCity(searchCity);
@@ -83,21 +136,6 @@ public class QuickSearchService {
     }
 
 
-    public void findLocationList(QuickSearchListResponse quickSearchListResponse,
-                                 FastSearchDto fastSearchDto,
-                                 Pageable pageable) {
-
-
-        List<Location> locationList = locationRepository.findBySearchQueryAndSearchCity(fastSearchDto.getSearchQuery(), fastSearchDto.getSearchCity(), pageable);
-        List<QuickSearchLocationDto> locationDtoList = new ArrayList<>();
-
-        for (Location location : locationList) {
-            QuickSearchLocationDto quickSearchLocationDto = QuickSearchLocationDto.from(location);
-            locationDtoList.add(quickSearchLocationDto);
-        }
-        quickSearchListResponse.setQuickSearchLocationDtoList(locationDtoList);
-
-    }
 
 
 

@@ -32,4 +32,9 @@ public interface LocationRepository extends JpaRepository<Location, String>, Loc
                                                   @Param("searchCity") String searchCity,
                                                   Pageable pageable);
 
+    @Query("select distinct l.town from Location l" +
+            " where l.region = :region" +
+            " order by l.town asc")
+    List<String> findTownListByRegion(@Param("region") String region);
+
 }

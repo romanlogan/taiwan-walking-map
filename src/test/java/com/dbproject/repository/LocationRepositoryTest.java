@@ -149,6 +149,23 @@ class LocationRepositoryTest {
         assertThat(locationList.get(9).getLocationId()).isEqualTo("C1_379000000A_002197");
      }
 
+     @DisplayName("도시 이름으로 중복 제거된 Town 이름 리스트를 가져옵니다")
+     @Test
+     void findTownListByRegion(){
 
+         //given
+         String searchCity = "臺北市";
+
+         //when
+         List<String> townList = locationRepository.findTownListByRegion(searchCity);
+
+         //then
+         assertThat(townList).hasSize(12);
+         assertThat(townList.get(0)).isEqualTo("中山區");
+         assertThat(townList.get(1)).isEqualTo("中正區");
+         assertThat(townList.get(2)).isEqualTo("信義區");
+
+
+      }
 
 }

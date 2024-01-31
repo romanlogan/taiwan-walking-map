@@ -13,9 +13,169 @@
 
             $(document).ready(function() {
 
-                var city = [[${quickSearchListResponse.getCity()}]];
-                console.log(city.positionLat);
+                window.onload = function initMap() {
+                    console.log("initMap 호출됨");
+
+                    var city = [[${quickSearchListResponse.getCity()}]];
+                    console.log(city.positionLat);
+
+                    map = new google.maps.Map(document.getElementById('map'), {
+                        zoom: 10,
+                        center: { lat: city.positionLat, lng: city.positionLon },
+                    });
+                }
+
+
+                findCityList();
+                findTownList();
+
+
+                $("#quickSearchCity").change(function() {
+
+                    console.log('has change');
+                    var selectedCity = $(this).val();
+
+
+                    $.ajax({
+                        url      : '/quickSearch/getTownList?cityName='+selectedCity,
+                        type     : "GET",
+                        cache   : false,
+                        success  : function(result, status, response){
+
+
+                            //이 방법으로 저번에 시도했던 문자를 칠때마다 결과가 라이브로 바뀌는 기능을 구현할 수 있겠다
+                            console.log('response : ' + response);
+                            console.log('result : ' + result);
+                            var townNameList = [[${townList}]];
+                            console.log('townNameList : ' + townNameList);
+
+
+                            var selectTown = $("#quickSearchTown");
+                            selectTown.empty();
+
+                            $.each(result, function(index, town) {
+
+                                selectTown.append('<option value="' + town + '">' + town + '</option>');
+                            });
+
+                            selectTown.append('<option value="noSelected">선택안함</option>');
+                            console.log('change success');
+
+
+                        },
+                        error : function(jqXHR, status, error, request){
+
+                            console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+
+                            if(jqXHR.status == '401'){
+                                alert('로그인 후 이용해주세요');
+                                location.href='/members/login';
+                            } else{
+                                alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
+                                // alert(jqXHR.responseText);
+                            }
+                        }
+                    });
+                });
+
+                $("#quickSearchInputBtn").on("click", function () {
+
+                    var searchQuery = document.getElementById('quickSearchQuery').value;
+                    var searchCity = document.getElementById('quickSearchCity').value;
+                    var searchTown = document.getElementById('quickSearchTown').value;
+                    var orderType = document.getElementById('orderType').value;
+
+                    var openTimeCondElem = document.getElementById('openTimeCond');
+                    var feeCondElem = document.getElementById('feeCond');
+                    var picCondElem = document.getElementById('picCond');
+
+                    if (searchTown == '선택안함') {
+                        searchTown="";
+                    }
+
+                    var openTimeCond
+                    var feeCond
+                    var picCond
+
+                    if(openTimeCondElem.checked){
+                        openTimeCond = true;
+                    }else{
+                        openTimeCond = "";
+                    }
+
+                    if(feeCondElem.checked){
+                        feeCond = true;
+                    }else{
+                        feeCond = "";
+                    }
+
+                    if(picCondElem.checked){
+                        picCond = true;
+                    }else{
+                        picCond = "";
+                    }
+                    console.log(orderType);
+                    console.log(openTimeCond);
+                    console.log(feeCond);
+                    console.log(picCond);
+                    console.log(searchTown);
+
+                    $.ajax({
+                        url      : "/quickSearch/newList?searchQuery=" + searchQuery + "&searchCity=" + searchCity + "&searchTown=" + searchTown + "&orderType=" + orderType + "&openTimeCond=" + openTimeCond + "&feeCond=" + feeCond + "&picCond=" + picCond,
+                        type     : "GET",
+                        cache   : false,
+                        success  : function(result, status){
+                            console.log("success")
+
+                            location.href="/quickSearch/newList?searchQuery=" + searchQuery + "&searchCity=" + searchCity + "&searchTown=" + searchTown + "&orderType=" + orderType + "&openTimeCond=" + openTimeCond + "&feeCond=" + feeCond + "&picCond=" + picCond;
+                        },
+                        error : function(jqXHR, status, error, request){
+
+                            console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+
+                            if(jqXHR.status == '401'){
+                                alert('로그인 후 이용해주세요');
+                                location.href='/members/login';
+                            } else{
+                                alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
+                                // alert(jqXHR.responseText);
+                            }
+                        }
+                    });
+                });
             });
+
+            function findCityList() {
+
+                var cityNameList = [[${quickSearchListResponse.getCityNameList()}]];
+
+                var selectCity = $("#quickSearchCity");
+                selectCity.empty();
+
+                $.each(cityNameList, function(index, city) {
+
+                    selectCity.append('<option value="' + city + '">' + city + '</option>');
+                });
+
+                selectCity.trigger("change");
+            }
+
+            function findTownList() {
+                var townNameList = [[${quickSearchListResponse.getTownNameList()}]];
+
+                var selectTown = $("#quickSearchTown");
+                selectTown.empty();
+
+                $.each(townNameList, function(index, town) {
+
+                    selectTown.append('<option value="' + town + '">' + town + '</option>');
+                });
+
+                //마지막에 선택안함 하나 더 추가
+                selectTown.append('<option value="noSelected">선택안함</option>');
+                selectTown.trigger("change");
+            }
+
 
         </script>
 </th:block>
@@ -82,7 +242,11 @@
                 /*justify-content: center; !* 가로 방향으로 가운데 정렬 *!*/
                 /*align-items: center; !* 세로 방향으로 가운데 정렬 *!*/
                 margin-top: 15px;
-                margin-bottom: 10px;
+                margin-bottom: 100px;
+                margin-left: 15px;
+                margin-right: 15px;
+                height: 10rem;
+
             }
 
 
@@ -95,7 +259,7 @@
 
 
 
-            #fastSearchQuery {
+            #quickSearchQuery {
                 margin-top: 10px;
                 margin-bottom: 10px;
                 margin-left: 10px;
@@ -108,7 +272,7 @@
                 box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
             }
 
-            #fastSearchInputBtn{
+            #quickSearchInputBtn{
                 background-color: white;
                 border: 1px solid lightgray ;
                 border-radius: 50%;
@@ -121,6 +285,15 @@
                 margin: 4px 2px;
                 box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
             }
+
+            #map{
+                margin-top: 1rem;
+                margin-left: 2.5rem;
+                margin-right: 1.5rem;
+                width: 90%;
+                height: 50vh;
+            }
+
         </style>
 
 </th:block>
@@ -159,35 +332,44 @@
 
     <div id="fastSearchForm">
 
-        개방 시간이 있는 장소만 검색
-        <input type="checkbox" id="isHasOpenTime" name="isHasOpenTime">
-        <input type="checkbox" id="isHasFee" name="isHasFee">
-        <input type="checkbox" id="isHasPic" name="isHasPic">
-
-        <label for="QuickSearchCity">Select City:</label>
-        <select id="QuickSearchCity" name="QuickSearchCity">
-
+        <label for="quickSearchCity">Select City:</label>
+        <select id="quickSearchCity" name="quickSearchCity">
         </select>
 
-        <label for="QuickSearchTown">Select Town:</label>
-        <select id="QuickSearchTown" name="QuickSearchTown">
-
-
+        <label for="quickSearchTown">Select Town:</label>
+        <select id="quickSearchTown" name="quickSearchTown">
         </select>
 
-
-
-        <input id="fastSearchQuery" th:value="${fastSearchDto.getSearchQuery()}" type="search" name="search" />
-        <button id="fastSearchInputBtn" class="search-btn" type="submit">
+        <input id="quickSearchQuery" th:value="${fastSearchDto.getSearchQuery()}" type="search" name="search" />
+        <button id="quickSearchInputBtn" class="search-btn" type="submit">
             <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #d9d9d9;"></i>
         </button>
 
         <select id="orderType" name="orderType">
             <option value="name">이름순</option>
-            <option value="桃園市">댓글순</option>
-            <option value="臺中市">즐겨찾기 개수순</option>
-            <option value="臺中市">추천순</option>
+            <option value="comment">댓글순</option>
+            <option value="favorite">즐겨찾기 개수순</option>
+            <option value="recommend">추천순</option>
         </select>
+        <br>
+
+        <div>
+            <label for="openTimeCond">개방 시간이 있는 장소만 검색</label>
+            <input type="checkbox" id="openTimeCond" name="openTimeCond">
+        </div>
+        <div>
+            <label for="feeCond">가격 정보가 있는 장소만 검색</label>
+            <input type="checkbox" id="feeCond" name="feeCond">
+        </div>
+        <div>
+            <label for="picCond">사진이 있는 장소만 검색</label>
+            <input type="checkbox" id="picCond" name="picCond">
+        </div>
+    </div>
+
+    <div id="mapBox">
+<!--        마우스가 올려져 있는 장소만 지도에 표시 해주기 -->
+        <div id="map"></div>
     </div>
 </div>
 

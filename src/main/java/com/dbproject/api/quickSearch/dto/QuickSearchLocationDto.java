@@ -27,7 +27,7 @@ public class QuickSearchLocationDto {
 
 
     @QueryProjection
-    public QuickSearchLocationDto(String locationId, String picture1, String name, String address, String openTime, String ticketInfo, String website, String tel, String latitude, String longitude) {
+    public QuickSearchLocationDto(String locationId, String picture1, String name, String address, String openTime, String ticketInfo, String website, String tel, String latitude, String longitude,String region) {
         this.locationId = locationId;
         this.picture1 = picture1;
         this.name = name;
@@ -38,6 +38,7 @@ public class QuickSearchLocationDto {
         this.tel = tel;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.region = region;
     }
 
     public static QuickSearchLocationDto from(Location location) {
