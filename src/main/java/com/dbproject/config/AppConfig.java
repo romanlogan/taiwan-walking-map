@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 //DI 컨테이너
-@Configuration
+//@Configuration
 public class AppConfig {
 
     @Bean

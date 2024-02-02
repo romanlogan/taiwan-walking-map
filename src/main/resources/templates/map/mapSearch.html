@@ -276,6 +276,11 @@
 
                                 if (place.rating >= 4 && place.user_ratings_total >= 1000) {
 
+                                    // <div class="restaurant-item">
+                                    //     <strong className="restListPlaceName">${place.name}</strong>
+                                    //     <p>rating: ${place.rating}</p>
+                                    //     <p>comments: ${place.user_ratings_total}</p>
+                                    // </div>
                                     const listItem = document.createElement('div');
                                     listItem.className = 'restaurant-item';
                                     listItem.innerHTML = `

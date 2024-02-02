@@ -57,6 +57,8 @@ public class QuickSearchService {
 
 
         QuickSearchListResponse quickSearchListResponse = new QuickSearchListResponse();
+        quickSearchListResponse.setSelectedTown(quickSearchFormRequest.getSearchTown());
+
         //장소 리스트 찾기
 //        findLocationList(quickSearchListResponse, quickSearchFormRequest.getSearchQuery(), quickSearchFormRequest.getSearchCity(), pageable);
         findLocationListByCond(quickSearchListResponse, quickSearchFormRequest, pageable);

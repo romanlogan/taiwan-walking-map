@@ -21,6 +21,7 @@ public class CommentService {
 
         Member member = memberRepository.findByEmail(email);
         Location location = locationRepository.findByLocationId(createCommentRequest.getLocationId());
+        location.increaseCommentCount();
         Comment comment = Comment.createComment(createCommentRequest.getContent(), createCommentRequest.getRate(), member, location);
 
         return commentRepository.save(comment).getId();

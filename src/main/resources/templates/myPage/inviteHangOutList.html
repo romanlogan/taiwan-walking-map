@@ -183,6 +183,27 @@
                     <img th:src="${invitedHangOutResponse.getInviteHangOutLocationDto().getPicture1()}" >
                 </div>
 
+                <div th:if="${invitedHangOutResponse.getInviteHangOutLocationDto().name != null}">
+                    <p class="locationText"> name : [[${invitedHangOutResponse.getInviteHangOutLocationDto().name}]]</p>
+                </div>
+
+                <div th:if="${invitedHangOutResponse.getInviteHangOutLocationDto().address != null}">
+                    <p class="locationText"> address : [[${invitedHangOutResponse.getInviteHangOutLocationDto().address}]]</p>
+                </div>
+
+                <div th:if="${invitedHangOutResponse.getInviteHangOutLocationDto().openTime != null}">
+                    <p class="locationText"> open time : [[${invitedHangOutResponse.getInviteHangOutLocationDto().openTime}]]</p>
+                </div>
+
+                <div th:if="${invitedHangOutResponse.getInviteHangOutLocationDto().ticketInfo != null}">
+                    <p class="locationText"> Fee Info : [[${invitedHangOutResponse.getInviteHangOutLocationDto().ticketInfo}]]</p>
+                </div>
+
+                <div th:if="${invitedHangOutResponse.getInviteHangOutLocationDto().tel != null}">
+                    <p class="locationText"> Tel : [[${invitedHangOutResponse.getInviteHangOutLocationDto().tel}]]</p>
+                </div>
+
+                <a th:href="'/location/'+${invitedHangOutResponse.getInviteHangOutLocationDto().locationId}">자세히 보기</a>
             </div>
         </div>
 

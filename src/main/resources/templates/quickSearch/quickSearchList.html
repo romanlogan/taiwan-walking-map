@@ -123,11 +123,50 @@
                     $.ajax({
                         url      : "/quickSearch/newList?searchQuery=" + searchQuery + "&searchCity=" + searchCity + "&searchTown=" + searchTown + "&orderType=" + orderType + "&openTimeCond=" + openTimeCond + "&feeCond=" + feeCond + "&picCond=" + picCond,
                         type     : "GET",
+                        dataType: "json" ,
                         cache   : false,
-                        success  : function(result, status){
+                        success  : function(data, status){
                             console.log("success")
 
-                            location.href="/quickSearch/newList?searchQuery=" + searchQuery + "&searchCity=" + searchCity + "&searchTown=" + searchTown + "&orderType=" + orderType + "&openTimeCond=" + openTimeCond + "&feeCond=" + feeCond + "&picCond=" + picCond;
+                            //검색시 town 이름이 유지가 안됨 , 계속 마지막에 페이지가 리로드 되는 문제
+                            // 그렇다면 리로드 되게 하지말고 quickSearchListResponse 를 반납하
+                            const locationList = document.getElementById('changeLocationBox');
+                            // for (var i = 0; i < results.length; i++) {
+
+                            // }.
+
+
+                            //result 를 어떻게 써야 하는 걸까 ?
+                            console.log("result : " + data);
+                            console.log("result type : " + typeof data);
+                            console.log("quickSearchLocationDtoList : " + data.quickSearchLocationDtoList);     //r검색 결과에 따라 개수가 변경 되기는
+                            console.log("result.dtoList.name : " + data.quickSearchLocationDtoList.name);
+                            console.log("getQuickSearchLocationDtoList : " + data.getQuickSearchLocationDtoList());
+
+
+                            //
+                            //
+                            //
+                            var selectedTown = [[${quickSearchListResponse.getSelectedTown()}]];
+                            var townNameList = [[${townList}]];
+                            var selectTown = $("#quickSearchTown");
+                            selectTown.empty();
+
+                            $.each(data, function(index, town) {
+
+                                console.log("town : " + town + "selectedTonw : " + selectedTown )
+
+                                if(selectedTown === town){
+                                    selectTown.append('<option selected value="' + town + '">' + town + '</option>');
+                                }else {
+                                    selectTown.append('<option value="' + town + '">' + town + '</option>');
+                                }
+                            });
+
+                            selectTown.append('<option value="noSelected">선택안함</option>');
+                            console.log('change success');
+
+
                         },
                         error : function(jqXHR, status, error, request){
 
@@ -148,16 +187,22 @@
             function findCityList() {
 
                 var cityNameList = [[${quickSearchListResponse.getCityNameList()}]];
+                var selectedCity = [[${quickSearchListResponse.getCity().getPostalAddressCity()}]];
 
-                var selectCity = $("#quickSearchCity");
-                selectCity.empty();
+
+                var selectCityList = $("#quickSearchCity");
+                selectCityList.empty();
 
                 $.each(cityNameList, function(index, city) {
 
-                    selectCity.append('<option value="' + city + '">' + city + '</option>');
+                    if(selectedCity === city){
+                        selectCityList.append('<option selected value="' + city + '">' + city + '</option>');
+                    }else{
+                        selectCityList.append('<option value="' + city + '">' + city + '</option>');
+                    }
                 });
 
-                selectCity.trigger("change");
+                selectCityList.trigger("change");
             }
 
             function findTownList() {
@@ -377,34 +422,35 @@
 
 <div id="right-half" class="right-half">
     <div id="changeLocationBox">
-        <div class="InvitedHangOutBox" th:each="location, status: ${quickSearchListResponse.getQuickSearchLocationDtoList()}">
-            <a th:href="'/location/' +${location.locationId}" class="text-dark">
-                <img class = "locationBoxImg" th:src="${location.picture1}">
-                <div class="locationTextBox">
-                    <p class="locationText">[[${location.name}]]</p>
+        <div th:each="location, status: ${quickSearchListResponse.getQuickSearchLocationDtoList()}">
+            <div class="InvitedHangOutBox">
+                <a th:href="'/location/' +${location.locationId}" class="text-dark">
+                    <img class = "locationBoxImg" th:src="${location.picture1}">
+                    <div class="locationTextBox">
+                        <p class="locationText">[[${location.name}]]</p>
 
-                    <div th:if="${location.address != null}">
-                        <p class="locationText"> address : [[${location.address}]]</p>
+                        <div th:if="${location.address != null}">
+                            <p class="locationText"> address : [[${location.address}]]</p>
+                        </div>
+
+                        <div th:if="${location.openTime != null}">
+                            <p class="locationText"> open time : [[${location.openTime}]]</p>
+                        </div>
+
+                        <div th:if="${location.ticketInfo != null}">
+                            <p class="locationText"> Fee Info : [[${location.ticketInfo}]]</p>
+                        </div>
+
+                        <div th:if="${location.website != null}">
+                            <p class="locationText"> Website Url : [[${location.website}]]</p>
+                        </div>
+
+                        <div th:if="${location.tel != null}">
+                            <p class="locationText"> Tel : [[${location.tel}]]</p>
+                        </div>
                     </div>
-
-                    <div th:if="${location.openTime != null}">
-                        <p class="locationText"> open time : [[${location.openTime}]]</p>
-                    </div>
-
-                    <div th:if="${location.ticketInfo != null}">
-                        <p class="locationText"> Fee Info : [[${location.ticketInfo}]]</p>
-                    </div>
-
-                    <div th:if="${location.website != null}">
-                        <p class="locationText"> Website Url : [[${location.website}]]</p>
-                    </div>
-
-                    <div th:if="${location.tel != null}">
-                        <p class="locationText"> Tel : [[${location.tel}]]</p>
-                    </div>
-                </div>
-            </a>
-
+                </a>
+            </div>
             <div class="clear"></div>
         </div>
     </div>

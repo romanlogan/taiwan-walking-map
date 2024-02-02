@@ -83,7 +83,7 @@ public class QuickSearchController {
     }
 
     @GetMapping("/quickSearch/newList")
-    public String getListByCondition(QuickSearchFormRequest quickSearchFormRequest,
+    public ResponseEntity<QuickSearchListResponse> getListByCondition(QuickSearchFormRequest quickSearchFormRequest,
                                              Model model) {
 
         Pageable pageable = PageRequest.of(0, 10);
@@ -94,7 +94,7 @@ public class QuickSearchController {
         model.addAttribute("fastSearchDto", quickSearchFormRequest);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
-        return "/quickSearch/quickSearchList";
+        return new ResponseEntity<>(quickSearchListResponse, HttpStatus.OK);
     }
 
 

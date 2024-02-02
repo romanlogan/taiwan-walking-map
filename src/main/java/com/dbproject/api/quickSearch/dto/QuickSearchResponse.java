@@ -14,6 +14,8 @@ public class QuickSearchResponse {
 
     private QuickSearchCityDto city;
 
+    private String selectedTown;
+
     private List<String> cityNameList = new ArrayList<>();
 
     private List<String> townNameList = new ArrayList<>();

@@ -54,10 +54,22 @@ public class InviteHangOutService {
     }
 
 
+    private List<InvitedHangOutDto> getInvitedHangOutDtoList(String email) {
 
+        // hangout 리스트를 가져온다
+        List<InviteHangOut> invitedHangOutList = inviteHangOutRepository.findWaitingListByRequesterEmail(email);
+        List<InvitedHangOutDto> invitedHangOutDtoList = new ArrayList<>();
 
+        //dto 로 변환 (스트림으로 변환하기)
+        for (InviteHangOut invitedHangOut : invitedHangOutList) {
 
+            //여기 성능 장애 의심됨 fetch join 으로 바꾸기
+            InvitedHangOutDto invitedHangOutDto = InvitedHangOutDto.from(invitedHangOut);
+            invitedHangOutDtoList.add(invitedHangOutDto);
+        }
 
+        return invitedHangOutDtoList;
+    }
 
     private InviteHangOutLocationDto getInviteHangOutLocationDto(Optional<Long> optionalInviteHangOutId) {
 
@@ -75,23 +87,6 @@ public class InviteHangOutService {
         return inviteHangOutLocationDto;
     }
 
-
-    private List<InvitedHangOutDto> getInvitedHangOutDtoList(String email) {
-
-        // hangout 리스트를 가져온다
-        List<InviteHangOut> invitedHangOutList = inviteHangOutRepository.findWaitingListByRequesterEmail(email);
-        List<InvitedHangOutDto> invitedHangOutDtoList = new ArrayList<>();
-
-        //dto 로 변환 (스트림으로 변환하기)
-        for (InviteHangOut invitedHangOut : invitedHangOutList) {
-
-            //여기 성능 장애 의심됨 fetch join 으로 바꾸기
-            InvitedHangOutDto invitedHangOutDto = InvitedHangOutDto.from(invitedHangOut);
-            invitedHangOutDtoList.add(invitedHangOutDto);
-        }
-
-        return invitedHangOutDtoList;
-    }
 }
 
 

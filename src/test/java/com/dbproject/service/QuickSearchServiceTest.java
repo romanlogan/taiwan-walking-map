@@ -1,10 +1,7 @@
 package com.dbproject.service;
 
 import com.dbproject.api.quickSearch.QuickSearchService;
-import com.dbproject.api.quickSearch.dto.FastSearchDto;
-import com.dbproject.api.quickSearch.dto.QuickSearchListResponse;
-import com.dbproject.api.quickSearch.dto.QuickSearchPageResponse;
-import com.dbproject.api.quickSearch.dto.QuickSearchResponse;
+import com.dbproject.api.quickSearch.dto.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,5 +66,45 @@ class QuickSearchServiceTest {
         assertThat(quickSearchListResponse.getTownNameList().get(0)).isEqualTo("中山區");
         assertThat(quickSearchListResponse.getTownNameList().get(1)).isEqualTo("中正區");
         assertThat(quickSearchListResponse.getTownNameList().get(2)).isEqualTo("信義區");
+    }
+
+
+    @DisplayName("")
+    @Test
+    void getQuickSearchListByCond(){
+        //given
+        String searchQuery = "公園";
+        String searchCity = "臺北市";
+        String searchTown = "大安區";
+        String orderType = "name";
+        String openTimeCond = "true";
+        String feeCond = "";
+        String picCond = "";
+        QuickSearchFormRequest quickSearchFormRequest = new QuickSearchFormRequest(searchQuery, searchCity, searchTown, orderType, openTimeCond, feeCond, picCond);
+        Pageable pageable = PageRequest.of(0, 10);
+
+        //when
+        QuickSearchListResponse quickSearchListResponse = quickSearchService.getQuickSearchListByCond(quickSearchFormRequest, pageable);
+
+        //then
+        assertThat(quickSearchListResponse.getQuickSearchLocationDtoList()).hasSize(3);
+        assertThat(quickSearchListResponse.getQuickSearchLocationDtoList().get(0).getName()).isEqualTo("大安森林公園");
+        assertThat(quickSearchListResponse.getQuickSearchLocationDtoList().get(0).getLocationId()).isEqualTo("C1_379000000A_000190");
+        assertThat(quickSearchListResponse.getQuickSearchLocationDtoList().get(1).getName()).isEqualTo("富陽自然生態公園");
+        assertThat(quickSearchListResponse.getQuickSearchLocationDtoList().get(1).getLocationId()).isEqualTo("C1_379000000A_000261");
+        assertThat(quickSearchListResponse.getQuickSearchLocationDtoList().get(2).getName()).isEqualTo("敦安公園");
+        assertThat(quickSearchListResponse.getQuickSearchLocationDtoList().get(2).getLocationId()).isEqualTo("C1_379000000A_000411");
+        assertThat(quickSearchListResponse.getCityNameList()).hasSize(8);
+        assertThat(quickSearchListResponse.getCity().getPostalAddressCity()).isEqualTo("臺北市");
+        assertThat(quickSearchListResponse.getSelectedTown()).isEqualTo("大安區");
+
+        assertThat(quickSearchListResponse.getTownNameList()).hasSize(12);
+        assertThat(quickSearchListResponse.getTownNameList().get(0)).isEqualTo("中山區");
+        assertThat(quickSearchListResponse.getTownNameList().get(1)).isEqualTo("中正區");
+        assertThat(quickSearchListResponse.getTownNameList().get(2)).isEqualTo("信義區");
+
+
+
+
     }
 }

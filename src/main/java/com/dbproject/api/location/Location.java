@@ -16,6 +16,8 @@ public class Location {
 
     private String name;
 
+    private Integer commentCount;
+
     private String zone;
 
     private String tolDescribe;
@@ -90,6 +92,15 @@ public class Location {
 
     public LocationPicture getLocationPictureMethod() {
         return this.locationPicture;
+    }
+
+    public void increaseCommentCount() {
+
+        if (this.getCommentCount() == null) {
+            this.commentCount = 1;
+        }else{
+            this.commentCount++;
+        }
     }
 }
 
