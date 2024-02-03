@@ -17,8 +17,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -54,13 +56,7 @@ class CommentRepositoryTest {
     @Test
     void save(){
         //given
-        int rating = 5;
-        String content = "댓글1 입니다.";
-        Member member = memberRepository.findByEmail("zxcv@zxcv.com");
-        String locationId = "C1_379000000A_001572";
-        Location location = locationRepository.findByLocationId(locationId);
-
-        Comment comment = Comment.createComment(content, rating, member, location);
+        Comment comment = getComment();
 
         //when
         commentRepository.save(comment);
@@ -69,6 +65,44 @@ class CommentRepositoryTest {
         List<Comment> commentList = commentRepository.findAll();
         assertThat(commentList).hasSize(1);
         assertThat(commentList.get(0).getLocation().getName()).isEqualTo("西門町");
+    }
+
+
+    @DisplayName("댓글 저장시 이미 같은 장소에 같은 아이디로 댓글이 있으면 null 이 아닌 Optional 객체를 반환합니다")
+    @Test
+    void findDuplicateCommentWhenSaved(){
+        //given
+        Comment comment = getComment();
+        commentRepository.save(comment);
+
+        //when
+        Optional<Comment> optionalComment = commentRepository.findDuplicateComment("C1_379000000A_001572", "zxcv@zxcv.com");
+
+        // then
+        assertThat(optionalComment.isPresent()).isTrue();
+    }
+
+    @DisplayName("댓글 저장시 이미 같은 장소에 같은 아이디로 댓글이 없으면 null 인 Optional 객체를 반환합니다")
+    @Test
+    void findDuplicateCommentWhenNotSaved(){
+        //given
+
+        //when
+        Optional<Comment> optionalComment = commentRepository.findDuplicateComment("C1_379000000A_001572", "zxcv@zxcv.com");
+
+        // then
+        assertThat(optionalComment.isEmpty()).isTrue();
+    }
+
+    private Comment getComment() {
+        int rating = 5;
+        String content = "댓글1 입니다.";
+        Member member = memberRepository.findByEmail("zxcv@zxcv.com");
+        String locationId = "C1_379000000A_001572";
+        Location location = locationRepository.findByLocationId(locationId);
+
+        Comment comment = Comment.createComment(content, member, location);
+        return comment;
     }
 
 

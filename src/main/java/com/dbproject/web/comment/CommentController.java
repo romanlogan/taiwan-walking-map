@@ -22,26 +22,9 @@ public class CommentController {
 
     @PostMapping("/createComment")
     public ResponseEntity createComment(@Valid @RequestBody CreateCommentRequest createCommentRequest,
-//                                        BindingResult bindingResult,
                                         Principal principal) {
 
-//        로그인 에러는 securityConfig
-//        if (principal == null) {
-//            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
-//        }
-
-//        binding error 는 advice
-//        if (bindingResult.hasErrors()) {
-//            StringBuilder sb = new StringBuilder();
-//            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-//
-//            for (FieldError fieldError : fieldErrors) {
-//                sb.append(fieldError.getDefaultMessage());
-//            }
-//
-//            return new ResponseEntity<String>(sb.toString(), HttpStatus.BAD_REQUEST);
-//        }
-
+//        commentService.checkDuplicateCreateComment(createCommentRequest,principal.getName());
 
         Long commentId = commentService.createComment(createCommentRequest, principal.getName());
 

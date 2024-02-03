@@ -47,12 +47,11 @@ class CommentControllerTest {
     void test() throws Exception {
 
         //given
-        int rating = 5;
         String content = "댓글1 입니다.";
         String email = "zxcv@zxcv.com";
         String locationId = "C1_379000000A_001572";
 
-        CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content, rating);
+        CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content);
 
         //when  //then
         mockMvc.perform(MockMvcRequestBuilders.post("/comment/createComment")
@@ -70,12 +69,11 @@ class CommentControllerTest {
     void test2() throws Exception {
 
         //given
-        int rating = 5;
         String content = "댓글1 입니다.";
         String email = "zxcv@zxcv.com";
         String locationId = "C1_379000000A_001572";
 
-        CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content, rating);
+        CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content);
 
         //when
         mockMvc.perform(MockMvcRequestBuilders.post("/comment/createComment")
@@ -100,12 +98,11 @@ class CommentControllerTest {
     void test3() throws Exception {
 
         //given
-        int rating = 5;
         String content = "";
         String email = "zxcv@zxcv.com";
         String locationId = "C1_379000000A_001572";
 
-        CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content, rating);
+        CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content);
 
         //when  //then
         mockMvc.perform(MockMvcRequestBuilders.post("/comment/createComment")
@@ -129,7 +126,7 @@ class CommentControllerTest {
         String email = "zxcv@zxcv.com";
         String locationId = "C1_379000000A_001572";
 
-        CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content, null);
+        CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content);
 
         //when  //then
         mockMvc.perform(MockMvcRequestBuilders.post("/comment/createComment")
