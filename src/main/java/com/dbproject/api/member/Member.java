@@ -25,6 +25,8 @@ public class Member extends BaseEntity {
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    private Long id;
 
+//    국적
+
     @Id
     @Column(name = "member_email")
     private String email;

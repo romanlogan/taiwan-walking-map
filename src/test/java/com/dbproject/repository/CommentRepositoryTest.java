@@ -101,7 +101,7 @@ class CommentRepositoryTest {
         String locationId = "C1_379000000A_001572";
         Location location = locationRepository.findByLocationId(locationId);
 
-        Comment comment = Comment.createComment(content, member, location);
+        Comment comment = Comment.createComment(content, member, location,rating);
         return comment;
     }
 

@@ -104,7 +104,7 @@ class LocationServiceTest {
         Member member = memberRepository.findByEmail(email);
         Location location = locationRepository.findByLocationId(locationId);
 
-        Comment comment = Comment.createComment(content,member, location);
+        Comment comment = Comment.createComment(content, member, location, rating);
         commentRepository.save(comment);
     }
 
@@ -122,7 +122,10 @@ class LocationServiceTest {
 
         //then
         assertThat(locationDtlResponse.getName()).isEqualTo("西門町");
-        assertThat(locationDtlResponse.getCommentList()).hasSize(1);
+        assertThat(locationDtlResponse.getCommentDtoList()).hasSize(1);
+        assertThat(locationDtlResponse.getCommentDtoList().get(0).getContent()).isEqualTo("댓글1 입니다.");
+        assertThat(locationDtlResponse.getCommentDtoList().get(0).getName()).isEqualTo("손흥민");
+        assertThat(locationDtlResponse.getCommentDtoList().get(0).getEmail()).isEqualTo("zxcv@zxcv.com");
     }
 
 
@@ -135,13 +138,12 @@ class LocationServiceTest {
         createFavoriteLocation(locationId);
         createComment();
 
-
         //when
         LocationDtlResponse locationDtlResponse = locationService.getLocationDtlWithAuthUser(locationId,email);
 
         //then
         assertThat(locationDtlResponse.getName()).isEqualTo("西門町");
-        assertThat(locationDtlResponse.getCommentList()).hasSize(1);
+        assertThat(locationDtlResponse.getCommentDtoList()).hasSize(1);
     }
 
     private void createFavoriteLocation(String locationId) {
@@ -166,4 +168,6 @@ class LocationServiceTest {
         //then
         assertThat(locationDtlResponse.isSaved()).isEqualTo(false);
     }
+
+
 }

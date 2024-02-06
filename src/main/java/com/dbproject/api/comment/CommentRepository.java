@@ -11,7 +11,8 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("select c from Comment c"+
-            " where c.location.locationId = :locationId")
+            " where c.location.locationId = :locationId" +
+            " order by c.regTime desc")
     List<Comment> findByLocationId(@Param("locationId") String locationId);
 
 

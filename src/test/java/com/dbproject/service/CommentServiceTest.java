@@ -97,7 +97,7 @@ class CommentServiceTest {
         String email = "zxcv@zxcv.com";
         String locationId = "C1_379000000A_001572";
 
-        CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content);
+        CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content,rating);
 
         //when
         commentService.createComment(createCommentRequest, email);
@@ -136,6 +136,8 @@ class CommentServiceTest {
         int rating = 5;
         String content = "댓글입니다.";
         String locationId = "C1_379000000A_001572";
-        return new CreateCommentRequest(locationId, content);
+        return new CreateCommentRequest(locationId, content, rating);
     }
+
+
 }

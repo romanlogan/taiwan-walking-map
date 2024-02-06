@@ -24,11 +24,14 @@ public class CommentController {
     public ResponseEntity createComment(@Valid @RequestBody CreateCommentRequest createCommentRequest,
                                         Principal principal) {
 
-//        commentService.checkDuplicateCreateComment(createCommentRequest,principal.getName());
 
+        System.out.println("start~~~~");
+        commentService.checkDuplicateCreateComment(createCommentRequest,principal.getName());
+
+        System.out.println("after checkDup~~~~");
         Long commentId = commentService.createComment(createCommentRequest, principal.getName());
 
-
+        System.out.println("saved");
         return new ResponseEntity(commentId, HttpStatus.OK);
 
     }

@@ -22,6 +22,8 @@ public class Comment extends BaseEntity {
 
     private String content;
 
+    private Integer rate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_email")
     private Member member;
@@ -31,22 +33,24 @@ public class Comment extends BaseEntity {
     private Location location;
 
     @Builder
-    public Comment(String content, Member member, Location location) {
+    public Comment(String content, Member member, Location location, Integer rate) {
         this.content = content;
         this.member = member;
         this.location = location;
+        this.rate = rate;
     }
 
     public Comment() {
 
     }
 
-    public static Comment createComment(String content, Member member, Location location) {
+    public static Comment createComment(String content, Member member, Location location, Integer rate) {
 
         return Comment.builder()
                 .content(content)
                 .member(member)
                 .location(location)
+                .rate(rate)
                 .build();
     }
 }
