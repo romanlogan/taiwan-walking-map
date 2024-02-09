@@ -105,5 +105,22 @@ class CommentRepositoryTest {
         return comment;
     }
 
+    @DisplayName("댓글을 저장후 댓글을 수정하기위해 다시 가져옵니다")
+    @Test
+    void test(){
+        //given
+        Comment comment1 = getComment();
+        commentRepository.save(comment1);
+
+        //when
+        Comment savedComment = commentRepository.findByLocationIdAndEmail("C1_379000000A_001572", "zxcv@zxcv.com");
+
+        //then
+        assertThat(savedComment.getContent()).isEqualTo("댓글1 입니다.");
+        assertThat(savedComment.getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
+        assertThat(savedComment.getRate()).isEqualTo(5);
+
+     }
+
 
 }

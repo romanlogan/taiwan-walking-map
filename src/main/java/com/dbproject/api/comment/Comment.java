@@ -2,6 +2,7 @@ package com.dbproject.api.comment;
 
 
 import com.dbproject.api.baseEntity.BaseEntity;
+import com.dbproject.api.comment.dto.UpdateCommentRequest;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
 import lombok.Builder;
@@ -52,5 +53,10 @@ public class Comment extends BaseEntity {
                 .location(location)
                 .rate(rate)
                 .build();
+    }
+
+    public void updateComment(UpdateCommentRequest updateCommentRequest) {
+        this.content = updateCommentRequest.getContent();
+        this.rate = updateCommentRequest.getRate();
     }
 }

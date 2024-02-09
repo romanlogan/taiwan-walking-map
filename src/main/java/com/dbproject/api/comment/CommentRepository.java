@@ -21,4 +21,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             " and c.member.email = :email")
     Optional<Comment> findDuplicateComment(@Param("locationId") String locationId,
                                            @Param("email") String email);
+
+    @Query("select c from Comment c" +
+            " where c.location.locationId = :locationId"+
+            " and c.member.email = :email")
+    Comment findByLocationIdAndEmail(@Param("locationId") String locationId,
+                                           @Param("email") String email);
 }

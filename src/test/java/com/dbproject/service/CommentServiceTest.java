@@ -2,6 +2,7 @@ package com.dbproject.service;
 
 import com.dbproject.api.comment.CommentService;
 import com.dbproject.api.comment.CreateCommentRequest;
+import com.dbproject.api.comment.dto.UpdateCommentRequest;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.RegisterFormDto;
 import com.dbproject.api.comment.Comment;
@@ -139,5 +140,27 @@ class CommentServiceTest {
         return new CreateCommentRequest(locationId, content, rating);
     }
 
+    @DisplayName("댓글을 update 합니다")
+    @Test
+    void updateComment(){
+
+        //given
+        Member member = memberRepository.findByEmail("qwer@qwer.com");
+        Location location = locationRepository.findByLocationId("C1_379000000A_001572");
+        UpdateCommentRequest updateCommentRequest = new UpdateCommentRequest("C1_379000000A_001572", "불만족입니다", 1);
+
+        Comment comment = Comment.createComment("만족합니다", member, location, 5);
+        commentRepository.save(comment);
+
+        //when
+        commentService.updateComment(updateCommentRequest, "qwer@qwer.com");
+
+        //then
+        List<Comment> commentList = commentRepository.findAll();
+        assertThat(commentList).hasSize(1);
+        assertThat(commentList.get(0).getContent()).isEqualTo("불만족입니다");
+        assertThat(commentList.get(0).getRate()).isEqualTo(1);
+
+    }
 
 }

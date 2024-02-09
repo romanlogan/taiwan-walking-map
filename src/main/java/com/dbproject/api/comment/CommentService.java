@@ -1,5 +1,6 @@
 package com.dbproject.api.comment;
 
+import com.dbproject.api.comment.dto.UpdateCommentRequest;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.location.LocationRepository;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.Valid;
 import java.util.Optional;
 
 @Service
@@ -40,6 +40,20 @@ public class CommentService {
 
         if (optionalComment.isPresent()) {
             throw new DuplicateCreateCommentException("이미 댓글을 생성했습니다");
+        }
+    }
+
+    public void updateComment(UpdateCommentRequest updateCommentRequest, String email) {
+
+        Comment savedComment = commentRepository.findByLocationIdAndEmail(updateCommentRequest.getLocationId(), email);
+        savedComment.updateComment(updateCommentRequest);
+    }
+
+    public void deleteComment(String commentId) {
+        Optional<Comment> optionalComment = commentRepository.findById(Long.valueOf(commentId));
+        if (optionalComment.isPresent()) {
+            Comment comment = optionalComment.get();
+            commentRepository.delete(comment);
         }
     }
 }
