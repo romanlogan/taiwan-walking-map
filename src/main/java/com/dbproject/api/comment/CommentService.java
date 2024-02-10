@@ -49,11 +49,13 @@ public class CommentService {
         savedComment.updateComment(updateCommentRequest);
     }
 
-    public void deleteComment(String commentId) {
+    public void deleteComment(Integer commentId) {
+
         Optional<Comment> optionalComment = commentRepository.findById(Long.valueOf(commentId));
         if (optionalComment.isPresent()) {
             Comment comment = optionalComment.get();
             commentRepository.delete(comment);
         }
+
     }
 }

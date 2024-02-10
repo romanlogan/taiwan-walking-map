@@ -2,6 +2,7 @@ package com.dbproject.web.comment;
 
 import com.dbproject.api.comment.CommentService;
 import com.dbproject.api.comment.CreateCommentRequest;
+import com.dbproject.api.comment.dto.DeleteCommentRequest;
 import com.dbproject.api.comment.dto.UpdateCommentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,11 +39,10 @@ public class CommentController {
     }
 
     @DeleteMapping("/deleteComment")
-    public ResponseEntity deleteComment(@RequestBody String commentId,
+    public ResponseEntity deleteComment(@RequestBody DeleteCommentRequest deleteCommentRequest,
                                         Principal principal) {
 
-        commentService.deleteComment(commentId);
-
+        commentService.deleteComment(deleteCommentRequest.getCommentId());
 
         return new ResponseEntity(1L, HttpStatus.OK);
     }
