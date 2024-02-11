@@ -4,6 +4,9 @@ import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.favorite.FavoriteRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
+import com.dbproject.api.myPage.hangOut.hangOut.HangOut;
+import com.dbproject.api.myPage.hangOut.hangOut.HangOutRepository;
+import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.AcceptInvitedHangOutRequest;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InviteHangOutLocationDto;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InvitedHangOutDto;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InvitedHangOutResponse;
@@ -13,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,7 @@ public class InviteHangOutService {
     private final InviteHangOutRepository inviteHangOutRepository;
     private final FavoriteRepository favoriteRepository;
     private final MemberRepository memberRepository;
+    private final HangOutRepository hangOutRepository;
 
 
     //초대 하기
@@ -33,11 +36,14 @@ public class InviteHangOutService {
 
         //프록시 객체로 가져오므로 location 정보가 없어서 location 정보가 필요할때 쿼리를 한번 더 날리게 될것
         //entity not found 에러 처리 문제 ?
+
+        //favoriteLocation 말고 favoriteLocationId 로 장소를 찾아서
+        // Location 으로 저장
         FavoriteLocation favoriteLocation = favoriteRepository.findById(inviteHangOutRequest.getFavoriteLocationId()).orElseThrow(EntityNotFoundException::new);
         Member me = memberRepository.findByEmail(email);
         Member friend = memberRepository.findByEmail(inviteHangOutRequest.getFriendEmail());
 
-        InviteHangOut inviteHangOut = InviteHangOut.createHangOut(inviteHangOutRequest.getMessage(),inviteHangOutRequest.getDepartDateTime(), favoriteLocation, me, friend, InviteHangOutStatus.WAITING);
+        InviteHangOut inviteHangOut = InviteHangOut.createHangOut(inviteHangOutRequest.getMessage(),inviteHangOutRequest.getDepartDateTime(), favoriteLocation.getLocation(), me, friend, InviteHangOutStatus.WAITING);
         Long id = inviteHangOutRepository.save(inviteHangOut).getId();
 
         return id;
@@ -87,6 +93,19 @@ public class InviteHangOutService {
         return inviteHangOutLocationDto;
     }
 
+
+
+    public void acceptInvitedHangOut(AcceptInvitedHangOutRequest acceptInvitedHangOutRequest) {
+
+        //행아웃 요청 목록에서 지우고
+        Optional<InviteHangOut> invitedHangOut = inviteHangOutRepository.findById(Long.valueOf(acceptInvitedHangOutRequest.getInviteHangOutId()));
+        inviteHangOutRepository.deleteById(Long.valueOf(acceptInvitedHangOutRequest.getInviteHangOutId()));
+        InviteHangOut inviteHangOut = invitedHangOut.get();
+
+        //행아웃 을 새로 만들ㅁ보
+        HangOut hangOut = HangOut.createByInvitedHangOut(inviteHangOut);
+        hangOutRepository.save(hangOut);
+    }
 }
 
 

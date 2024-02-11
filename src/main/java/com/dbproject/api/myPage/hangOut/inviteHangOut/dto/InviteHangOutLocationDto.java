@@ -56,16 +56,16 @@ public class InviteHangOutLocationDto {
 
         return InviteHangOutLocationDto.builder()
                 .isEmpty(false)
-                .locationId(inviteHangOut.getFavoriteLocation().getLocation().getLocationId())
-                .name(inviteHangOut.getFavoriteLocation().getLocation().getName())
-                .tel(inviteHangOut.getFavoriteLocation().getLocation().getTel())
-                .address(inviteHangOut.getFavoriteLocation().getLocation().getAddress())
-                .region(inviteHangOut.getFavoriteLocation().getLocation().getRegion())
-                .openTime(inviteHangOut.getFavoriteLocation().getLocation().getOpenTime())
-                .longitude(inviteHangOut.getFavoriteLocation().getLocation().getLongitude())
-                .latitude(inviteHangOut.getFavoriteLocation().getLocation().getLatitude())
-                .ticketInfo(inviteHangOut.getFavoriteLocation().getLocation().getTicketInfo())
-                .picture1(inviteHangOut.getFavoriteLocation().getLocation().getLocationPicture().getPicture1())
+                .locationId(inviteHangOut.getLocation().getLocationId())
+                .name(inviteHangOut.getLocation().getName())
+                .tel(inviteHangOut.getLocation().getTel())
+                .address(inviteHangOut.getLocation().getAddress())
+                .region(inviteHangOut.getLocation().getRegion())
+                .openTime(inviteHangOut.getLocation().getOpenTime())
+                .longitude(inviteHangOut.getLocation().getLongitude())
+                .latitude(inviteHangOut.getLocation().getLatitude())
+                .ticketInfo(inviteHangOut.getLocation().getTicketInfo())
+                .picture1(inviteHangOut.getLocation().getLocationPicture().getPicture1())
                 .build();
     }
 

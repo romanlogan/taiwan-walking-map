@@ -177,6 +177,7 @@
 
       <div class="left-half">
         <div th:each="friend, status: ${friendListResponse.getFriendDtoList()}">
+
             <div class="friendBox">
                 <div class="friendImgBox">
         <!--            <button id="friendImgBtn" th:value="${friend.id}" onclick="showLocationDetail(this.value)">-->
@@ -190,19 +191,19 @@
                     </button>
                 </div>
 
-
                 <div class="friendNameBox">
-                    <div th:text="${friend.friendName}" class="fs24 font-weight-bold updatable"></div>-->
+                    <div th:text="${friend.friendName}" class="fs24 font-weight-bold updatable"></div>
+                    <button type="button" data-toggle="modal" data-target="#inviteHangOutModal">약속 잡기</button>
                 </div>
             </div>
 
           <!--                어떻게 반복문으로 id 를 돌려도 에러가 안날까?? 같은 id 가 여러개 존재하는데  -->
           <!-- 모달 창 -->
-          <div class="modal fade" id="planModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal fade" id="inviteHangOutModal" tabindex="-1" role="dialog" aria-labelledby="inviteHangOutModalLabel">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h4 class="modal-title" id="myModalLabel">약속 잡기</h4>
+                  <h4 class="modal-title" id="inviteHangOutModalLabel">약속 잡기</h4>
                 </div>
                 <div class="modal-body">
                   <!-- 모달 창 내의 데이터 입력 폼 -->

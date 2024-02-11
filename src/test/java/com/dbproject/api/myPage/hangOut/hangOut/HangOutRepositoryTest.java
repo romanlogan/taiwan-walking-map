@@ -1,4 +1,4 @@
-package com.dbproject.api.myPage.hangOut;
+package com.dbproject.api.myPage.hangOut.hangOut;
 
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.favorite.FavoriteRepository;
@@ -7,9 +7,7 @@ import com.dbproject.api.location.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.RegisterFormDto;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOut;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRepository;
-import com.dbproject.constant.InviteHangOutStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,11 +21,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 @SpringBootTest
 @Transactional
-@TestPropertySource(locations="classpath:application-test.properties")
-class InviteHangOutRepositoryTest {
+@TestPropertySource(locations = "classpath:application-test.properties")
+class HangOutRepositoryTest {
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -44,6 +45,8 @@ class InviteHangOutRepositoryTest {
     @Autowired
     private InviteHangOutRepository inviteHangOutRepository;
 
+    @Autowired
+    private HangOutRepository hangOutRepository;
 
 
     @BeforeEach
@@ -96,63 +99,27 @@ class InviteHangOutRepositoryTest {
 
     }
 
-    @DisplayName("InviteHangOut 을 저장합니다")
+
+    @DisplayName("HangOut 을 저장합니다")
     @Test
-    void saveHangOut(){
-
+    void save(){
         //given
-        LocalDateTime departDateTime = LocalDateTime.now();
+        Location location = locationRepository.findByLocationId("C1_379000000A_001572");
+        Member yunni = memberRepository.findByEmail("yunni@yunni.com");
+        Member lee = memberRepository.findByEmail("qwer@qwer.com");
+        String message = "메시지 입니다.";
+        LocalDateTime localDateTime = LocalDateTime.now();
 
-        InviteHangOut inviteHangOut = getInviteHangOut(departDateTime, "C1_379000000A_001572", "qwer@qwer.com",InviteHangOutStatus.WAITING);
+        HangOut hangOut = new HangOut(location, yunni, lee, message, localDateTime);
 
         //when
-        inviteHangOutRepository.save(inviteHangOut);
+        hangOutRepository.save(hangOut);
 
         //then
-        List<InviteHangOut> InviteHangOutList = inviteHangOutRepository.findAll();
-        assertThat(InviteHangOutList).size().isEqualTo(1);
-        assertThat(InviteHangOutList.get(0).getMessage()).isEqualTo("message 1");
-        assertThat(InviteHangOutList.get(0).getDepartDateTime()).isEqualTo(departDateTime);
-        assertThat(InviteHangOutList.get(0).getInviteHangOutStatus()).isEqualTo(InviteHangOutStatus.WAITING);
-        assertThat(InviteHangOutList.get(0).getRequester().getEmail()).isEqualTo("yunni@yunni.com");
-        assertThat(InviteHangOutList.get(0).getRespondent().getEmail()).isEqualTo("qwer@qwer.com");
-        assertThat(InviteHangOutList.get(0).getLocation().getName()).isEqualTo("西門町");
-     }
-
-    private InviteHangOut getInviteHangOut(LocalDateTime departDateTime, String locationId, String friendEmail,InviteHangOutStatus inviteHangOutStatus) {
-        String message = "message 1";
-        Member me = memberRepository.findByEmail("yunni@yunni.com");
-        Member friend = memberRepository.findByEmail(friendEmail);
-        Location location = locationRepository.findByLocationId(locationId);
-
-        return InviteHangOut.createHangOut(message, departDateTime, location, me, friend, inviteHangOutStatus);
+        List<HangOut> hangOutList = hangOutRepository.findAll();
+        assertThat(hangOutList.get(0).getLocation().getName()).isEqualTo("西門町");
+        assertThat(hangOutList.get(0).getRequester().getEmail()).isEqualTo("yunni@yunni.com");
+        assertThat(hangOutList.get(0).getRespondent().getEmail()).isEqualTo("qwer@qwer.com");
     }
-
-
-    @DisplayName("나의 email 로 받은 약속 초대 리스트를 날짜 순으로 가져옵니다")
-     @Test
-     void findByRequesterEmail(){
-
-         //given
-        LocalDateTime departDateTime = LocalDateTime.now();
-
-        InviteHangOut inviteHangOut = getInviteHangOut(departDateTime, "C1_379000000A_001572", "qwer@qwer.com",InviteHangOutStatus.WAITING);
-        InviteHangOut inviteHangOut2 = getInviteHangOut(departDateTime.plusDays(1), "C1_379000000A_000217", "qwer@qwer.com",InviteHangOutStatus.WAITING);
-        inviteHangOutRepository.save(inviteHangOut);
-        inviteHangOutRepository.save(inviteHangOut2);
-
-        InviteHangOut inviteHangOut3 = getInviteHangOut(departDateTime.plusDays(2), "C1_379000000A_000217", "qwer@qwer.com",InviteHangOutStatus.ACCEPTED);
-        inviteHangOutRepository.save(inviteHangOut3);
-
-
-        //when
-        List<InviteHangOut> myInvitedHangOutList = inviteHangOutRepository.findWaitingListByRequesterEmail("qwer@qwer.com");
-
-         //then
-        assertThat(myInvitedHangOutList).hasSize(2);
-        assertThat(myInvitedHangOutList.get(0).getLocation().getName()).isEqualTo("西門町");
-        assertThat(myInvitedHangOutList.get(1).getLocation().getName()).isEqualTo("台北101");
-      }
-
 
 }

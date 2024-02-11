@@ -60,8 +60,8 @@ public class InvitedHangOutDto {
                 .requesterName(invitedHangOut.getRequester().getName())
                 .message(invitedHangOut.getMessage())
                 .departDateTime(invitedHangOut.getDepartDateTime())
-                .picture1(invitedHangOut.getFavoriteLocation().getLocation().getLocationPicture().getPicture1())
-                .name(invitedHangOut.getFavoriteLocation().getLocation().getName())
+                .picture1(invitedHangOut.getLocation().getLocationPicture().getPicture1())
+                .name(invitedHangOut.getLocation().getName())
                 .inviteHangOutStatus(invitedHangOut.getInviteHangOutStatus())
                 .build();
     }

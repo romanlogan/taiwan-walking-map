@@ -7,10 +7,13 @@ import com.dbproject.api.location.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.RegisterFormDto;
+import com.dbproject.api.myPage.hangOut.hangOut.HangOut;
+import com.dbproject.api.myPage.hangOut.hangOut.HangOutRepository;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOut;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRepository;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRequest;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutService;
+import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.AcceptInvitedHangOutRequest;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InvitedHangOutResponse;
 import com.dbproject.constant.InviteHangOutStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +55,8 @@ class InviteHangOutServiceTest {
     @Autowired
     private InviteHangOutService inviteHangOutService;
 
-
+    @Autowired
+    private HangOutRepository hangOutRepository;
 
 
 
@@ -118,10 +122,13 @@ class InviteHangOutServiceTest {
         assertThat(InviteHangOutList.get(0).getInviteHangOutStatus()).isEqualTo(InviteHangOutStatus.WAITING);
         assertThat(InviteHangOutList.get(0).getRequester().getEmail()).isEqualTo("asdf@asdf.com");
         assertThat(InviteHangOutList.get(0).getRespondent().getEmail()).isEqualTo("yunni@yunni.com");
+        assertThat(InviteHangOutList.get(0).getLocation().getName()).isEqualTo("西門町");
 
     }
 
-    @DisplayName("먼저 리스트 페이지로 들어왔을때 이메일로 초대 받은 목록 가져옵니다,optionalInviteHangOutId 은 null")
+
+    // 친구 목록에서 즐겨찾기 장소로 초대
+    @DisplayName("처음 리스트 페이지로 들어왔을때 이메일로 초대 받은 목록 가져옵니다, 처음 들어왔으므로 장소 정보는 없습니다, 그러므로  optionalInviteHangOutId 은 null ")
     @Test
     void getInvitedHangOutListWithNullId(){
 
@@ -143,9 +150,8 @@ class InviteHangOutServiceTest {
         LocalDateTime departDateTime = LocalDateTime.now();
         String message = "message 1";
 
-        InviteHangOut inviteHangOut = InviteHangOut.createHangOut(message, departDateTime, savedFavoriteLocation, friend, me, InviteHangOutStatus.WAITING);
+        InviteHangOut inviteHangOut = InviteHangOut.createHangOut(message, departDateTime, savedFavoriteLocation.getLocation(), friend, me, InviteHangOutStatus.WAITING);
         inviteHangOutRepository.save(inviteHangOut);
-
 
         //when
         InvitedHangOutResponse invitedHangOutResponse = inviteHangOutService.getInvitedHangOutList(myEmail, optionalInviteHangOutId);
@@ -159,12 +165,13 @@ class InviteHangOutServiceTest {
         assertThat(invitedHangOutResponse.getInvitedHangOutDtoList().get(0).getMessage()).isEqualTo(message);
      }
 
+
+    // 친구 목록에서 즐겨찾기 장소로 초대
     @DisplayName("이메일로 초대 받은 목록 가져오고 optionalInviteHangOutId 로 초대받은 장소 정보를 가져온다")
     @Test
     void getInvitedHangOutList(){
 
         //given
-        Optional<Long> optionalInviteHangOutId = Optional.empty();
         String myEmail = "asdf@asdf.com";
         String friendEmail = "yunni@yunni.com";
         Member friend = memberRepository.findByEmail(friendEmail);
@@ -181,7 +188,7 @@ class InviteHangOutServiceTest {
         LocalDateTime departDateTime = LocalDateTime.now();
         String message = "message 1";
 
-        InviteHangOut inviteHangOut = InviteHangOut.createHangOut(message, departDateTime, savedFavoriteLocation, friend, me, InviteHangOutStatus.WAITING);
+        InviteHangOut inviteHangOut = InviteHangOut.createHangOut(message, departDateTime, savedFavoriteLocation.getLocation(), friend, me, InviteHangOutStatus.WAITING);
         InviteHangOut savedInvitedHangOut = inviteHangOutRepository.save(inviteHangOut);
 
         Optional<Long> optionalInviteHangOutId2 = Optional.ofNullable(savedInvitedHangOut.getId());
@@ -198,6 +205,42 @@ class InviteHangOutServiceTest {
         assertThat(invitedHangOutResponse.getInvitedHangOutDtoList().get(0).getDepartDateTime()).isEqualTo(departDateTime);
         assertThat(invitedHangOutResponse.getInvitedHangOutDtoList().get(0).getMessage()).isEqualTo(message);
     }
+
+
+    @DisplayName("")
+    @Test
+    void acceptInvitedHangOut(){
+
+        //given
+        Member friend = memberRepository.findByEmail("yunni@yunni.com");
+        Member me = memberRepository.findByEmail("asdf@asdf.com");
+        Location location = locationRepository.findByLocationId("C1_379000000A_001572");
+        LocalDateTime departDateTime = LocalDateTime.now();
+        String message = "message 1";
+
+        //약속 초대 및 생성
+        InviteHangOut inviteHangOut = InviteHangOut.createHangOut(message, departDateTime, location , friend, me, InviteHangOutStatus.WAITING);
+        InviteHangOut savedInvitedHangOut = inviteHangOutRepository.save(inviteHangOut);
+
+        AcceptInvitedHangOutRequest acceptInvitedHangOutRequest = new AcceptInvitedHangOutRequest(Math.toIntExact(savedInvitedHangOut.getId()));
+
+        //when
+        inviteHangOutService.acceptInvitedHangOut(acceptInvitedHangOutRequest);
+
+        //then
+        List<InviteHangOut> inviteHangOutList = inviteHangOutRepository.findAll();
+        List<HangOut> hangOutList = hangOutRepository.findAll();
+
+        assertThat(inviteHangOutList).hasSize(0);
+        assertThat(hangOutList).hasSize(1);
+        assertThat(hangOutList.get(0).getLocation().getName()).isEqualTo("西門町");
+        assertThat(hangOutList.get(0).getRequester().getEmail()).isEqualTo("yunni@yunni.com");
+        assertThat(hangOutList.get(0).getRespondent().getEmail()).isEqualTo("asdf@asdf.com");
+        assertThat(hangOutList.get(0).getDepartDateTime()).isEqualTo(departDateTime);
+
+    }
+
+
 
 
 }

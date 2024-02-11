@@ -14,11 +14,7 @@
 
     <script th:inline="javascript">
 
-
-
         function showLocationDetail(inviteHangOutId){
-
-            console.log(inviteHangOutId);
 
             $.ajax({
                 url      : "/myPage/inviteHangOutList?inviteHangOutId="+inviteHangOutId,
@@ -42,8 +38,50 @@
                     }
                 }
             });
+        }
 
+        function acceptInvitedHangOut(inviteHangOutId){
 
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            console.log(inviteHangOutId)
+
+            var paramData = {
+                inviteHangOutId : inviteHangOutId
+            };
+
+            var param = JSON.stringify(paramData);
+
+            $.ajax({
+                url      : "/myPage/acceptInvitedHangOut",
+                type     : "POST",
+                cache   : false,
+                contentType : "application/json",
+                data     : param,
+                beforeSend : function(xhr){
+                    /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                success  : function(result, status){
+
+                    location.href='/myPage/inviteHangOutList';
+
+                },
+                error : function(jqXHR, status, error, request){
+
+                    console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+
+                    if(jqXHR.status == '401'){
+                        alert('로그인 후 이용해주세요');
+                        location.href='/members/login';
+                    } else{
+                        alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
+                        // alert(jqXHR.responseText);
+                    }
+                }
+            });
         }
     </script>
 </th:block>
@@ -163,8 +201,8 @@
                         <span th:case="${T(com.dbproject.constant.InviteHangOutStatus).ACCEPTED}">이미 수락됨</span>
 
                         <div th:case="${T(com.dbproject.constant.InviteHangOutStatus).WAITING}">
-                            <button type="button" class="addFriendBtn" th:value="${invitedHangOut.id}" onclick="showLocationDetail(this.value)">초대 수락</button>
-                            <button type="button" class="rejectFriendBtn" th:value="${invitedHangOut.id}" onclick="showLocationDetail(this.value)">초대 거절</button>
+                            <button type="button" class="acceptInvitedHangOutBtn" th:value="${invitedHangOut.id}" onclick="acceptInvitedHangOut(this.value)">초대 수락</button>
+                            <button type="button" class="rejectHangOutBtn" th:value="${invitedHangOut.id}" onclick="rejectHangOut(this.value)">초대 거절</button>
                         </div>
                     </div>
                 </div>
