@@ -14,6 +14,19 @@
   <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${googleMapsApiKey} + '&callback=initMap'" async defer></script>
 
   <script th:inline="javascript">
+
+    $(document).on('click', "input[type='checkbox']", function(){
+      if(this.checked) {
+        const checkboxes = $("input[type='checkbox']");
+        for(let i = 0; i < checkboxes.length; i++){
+          checkboxes[i].checked = false;
+        }
+        this.checked = true;
+      } else {
+        this.checked = false;
+      }
+    });
+
     $(document).ready(function () {
 
       $("#moreInfo").on("click",function (){
@@ -161,6 +174,64 @@
           }
         });
       });
+
+      $("#inviteBtn").on("click", function () {
+
+        //토큰 안적으면 403 포비던 뜸
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+
+        var locationId = $("#locationId").val();
+
+        var checkValue;
+        const checkboxes = $("input[type='checkbox']");
+
+        for(let i = 0; i < checkboxes.length; i++){
+          if(checkboxes[i].checked){
+            checkValue = checkboxes[i].value;
+          }
+        }
+
+        var paramData = {
+          locationId : $("#locationId").val(),
+          friendEmail : checkValue,
+          departDateTime : $("#departDateTime").val(),
+          message : $("#message").val()
+        };
+
+
+        var param = JSON.stringify(paramData);
+
+        $.ajax({
+          url      : "/comment/createComment",
+          type     : "POST",
+          contentType : "application/json",
+          data     : param,
+          beforeSend : function(xhr){
+            /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+            xhr.setRequestHeader(header, token);
+          },
+          dataType : "json",
+          cache   : false,
+          success  : function(result, status){
+            alert("확인되었습니다.");
+            location.href='/location/'+locationId;
+
+          },
+          error : function(jqXHR, status, error, request){
+
+            console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+
+            if(jqXHR.status == '401'){
+              alert('로그인 후 이용해주세요');
+              location.href='/members/login';
+            } else{
+              alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
+              // alert(jqXHR.responseText);
+            }
+          }
+        });
+      });
     });
 
     function deleteComment(commentId) {
@@ -211,8 +282,8 @@
 
     var map;
 
-    var latitude = [[${location.latitude}]];
-    var longitude = [[${location.longitude}]];
+    var latitude = [[${locationDtlResponse.latitude}]];
+    var longitude = [[${locationDtlResponse.longitude}]];
     const latPosition = Number(latitude);
     const lngPosition = Number(longitude);
 
@@ -375,6 +446,43 @@
     }
 
 
+    .checkableFriendBox{
+
+      margin: 20px;
+      padding: 10px;
+      width: 340px;
+      height: 110px;
+      background-color: #fff; /* 배경색 지정 */
+      border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 그림자 효과 추가 */
+    }
+
+    #friendChecker{
+      display: inline;
+    }
+
+    .friendBoxImg{
+      float : left;
+      width : 90px;
+      height : 90px;
+    }
+
+    .friendTextBox{
+      float: right;
+      width: 150px; /* 텍스트를 표시할 요소의 너비를 지정합니다. */
+      height: 90px;
+      white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 합니다. */
+      overflow: hidden; /* 넘치는 부분은 숨김 처리합니다. */
+      text-overflow: ellipsis; /* 넘치는 텍스트에 '...'을 추가하여 표시합니다. */
+
+    }
+
+    .friendText {
+      margin-bottom: 0;
+
+    }
+
+
 
   </style>
 </th:block>
@@ -425,7 +533,7 @@
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hangOutModal">약속 잡기</button>
     <!-- 모달 창 -->
     <div class="modal fade" id="hangOutModal" tabindex="-1" role="dialog" aria-labelledby="hangOutModalLabel">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
             <h4 class="modal-title" id="hangOutModalLabel">약속 잡기</h4>
@@ -436,9 +544,9 @@
 
               <div class="inviteModal-left-half">
 <!--            친구 목록     -->
-                <div th:each="friend, status: ${locationDtlResponse.getFriendDtoList()}">
+                <div class="checkableFriendBox" th:each="friend, status: ${locationDtlResponse.getFriendDtoList()}">
 
-                  <input id="friendChecker" type="checkbox" th:value="${friend.id}">
+                  <input id="friendChecker" type="checkbox" th:value="${friend.friendEmail}">
 
                   <div th:if="${#strings.isEmpty(friend.friendImgUrl)}">
                     <img class = "friendBoxImg" src="/img/noImg.jpg">
@@ -471,12 +579,14 @@
               </div>
 
               <div class="inviteModal-right-half">
-
+                <label for="message">메시지</label>
+                <textarea type="text" name="message" id="message" placeholder="메시지 내용을 입력해주세요."></textarea>
+                <input type="datetime-local" id="departDateTime" placeholder="출발 날짜">
               </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button id="addFavoriteBtn" type="button" class="btn btn-default" data-dismiss="modal">추가</button>
+            <button id="inviteBtn" type="button">요청 보내기</button>
           </div>
         </div>
       </div>

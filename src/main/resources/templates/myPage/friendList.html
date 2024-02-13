@@ -50,7 +50,7 @@
           var param = JSON.stringify(paramData);
 
           $.ajax({
-              url      : "/myPage/inviteHangOut",
+              url      : "/hangOut/inviteFromFriendList",
               type     : "POST",
               contentType : "application/json",
               data     : param,
@@ -237,7 +237,7 @@
                     </div>
 
                     <div class="clear"></div>
-                    <button id="planBtn" th:value="${friend.friendEmail}" onclick="inviteHangOut(this.value)" type="button" class="btn btn-primary" data-dismiss="modal">수정</button>
+                    <button id="planBtn" th:value="${friend.friendEmail}" onclick="inviteHangOut(this.value)" type="button" class="btn btn-primary" data-dismiss="modal">요청 보내기</button>
                 </div>
                 <div class="modal-footer">
     <!--                location.favoriteLocationId-->

@@ -1,12 +1,9 @@
-package com.dbproject.web.myPage.hangOut;
+package com.dbproject.web.hangOut;
 
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOut;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutService;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRequest;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.AcceptInvitedHangOutRequest;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InviteHangOutLocationDto;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InvitedHangOutResponse;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.RejectInvitedHangOutRequest;
+import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,24 +18,34 @@ import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/myPage")
+@RequestMapping("/hangOut")
 public class HangOutController {
 
     private final InviteHangOutService hangOutService;
 
-    @PostMapping("/inviteHangOut")
-    public ResponseEntity inviteHangOut(@RequestBody InviteHangOutRequest inviteHangOutRequest,
+//    마이페이지 에서 즐겨찾기를 사용해서 HangOut 초대
+//    @PostMapping("/inviteHangOut")
+    @PostMapping("/inviteFromFriendList")
+    public ResponseEntity inviteFromFriendList(@RequestBody InviteHangOutRequest inviteHangOutRequest,
                                         Principal principal) {
 
-
         Long id = hangOutService.inviteHangOut(inviteHangOutRequest, principal.getName());
-
 
         return new ResponseEntity(1L, HttpStatus.OK);
     }
 
-    @GetMapping("/inviteHangOutList")
-    public String getInviteHangOutList(@RequestParam(name = "inviteHangOutId") Optional<Long> inviteHangOutId,
+    //    마이페이지 에서 즐겨찾기를 사용해서 HangOut 초대
+    @PostMapping("/inviteFromLocationPage")
+    public ResponseEntity inviteFromLocationPage(@RequestBody InviteHangOutFromLocRequest inviteHangOutFromLocRequest) {
+
+        hangOutService.inviteFromLocationPage(inviteHangOutFromLocRequest);
+
+        return new ResponseEntity(1L, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/invitedList")
+    public String getInvitedHangOutList(@RequestParam(name = "inviteHangOutId") Optional<Long> inviteHangOutId,
                                        Principal principal, Model model) {
 
 
