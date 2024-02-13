@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+
+        $(document).ready(function() {
+            //model 로 넣은 데이터를 자바스크립트에서 꺼내 쓰는 방법
+            var friendEmail = [[${getScheduleResponse.getScheduleDtoList().get(0).getFriendEmail}]];
+            var locationName = [[${getScheduleResponse.getScheduleDtoList().get(0).getLocationName}]];
+
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            var eventArray = [[${getScheduleResponse.getScheduleJsonArray()}]]
+            // var url =  [[${getScheduleResponse.getScheduleJsonArray()}]]
+
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+
+                events: eventArray
+            });
+
+            calendar.render();
+        });
+    </script>
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+
+        #calendar{
+            padding-top: 1rem;
+            padding-left: 3rem;
+            padding-right: 3rem;
+        }
+
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+    <div id='calendar'></div>
+</div>
+</html>

@@ -5,12 +5,14 @@ import com.dbproject.api.mbtTest.MBTCityDto;
 import com.dbproject.api.mbtTest.repository.MBTMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Qualifier("MBTServiceImpl")
 public class MBTServiceImpl implements MBTService {
 
     @Autowired

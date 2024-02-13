@@ -48,7 +48,7 @@ public class LocationController {
 
 
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
-        model.addAttribute("location", locationDtlResponse);
+        model.addAttribute("locationDtlResponse", locationDtlResponse);
 
         return "/location/exploreLocation";
     }

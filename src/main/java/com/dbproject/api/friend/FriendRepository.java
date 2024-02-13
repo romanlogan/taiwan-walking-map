@@ -12,6 +12,11 @@ public interface FriendRepository extends JpaRepository<Friend, Long>,
         FriendRepositoryCustom {
 
 
+//    이건 어떨까 ? schedule 에서 시험해보기
+//    @Query("select f from Friend f" +
+//            " where f.me.email = :email"+
+//            " or f.newFriend = : email")
+
     @Query("select f from Friend f"+
             " where f.me.email = :email"+
             " order by f.newFriend.name asc")

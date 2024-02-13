@@ -363,94 +363,162 @@
 
     }
 
+
+    .inviteModal-left-half {
+      float: left;
+      width: 40%;
+    }
+
+    .inviteModal-right-half {
+      float: right;
+      width: 60%;
+    }
+
+
+
   </style>
 </th:block>
 
 <div layout:fragment="content">
 
-  <input id="locationId" type="hidden" th:value="${location.id}">
+  <input id="locationId" type="hidden" th:value="${locationDtlResponse.id}">
 
   <section id="content">
-    <h1 id="locationName">[[${location.name}]]</h1>
+    <h1 id="locationName">[[${locationDtlResponse.name}]]</h1>
+
+
+<!--  즐겨찾기  -->
+    <div th:if="${locationDtlResponse.isSaved()}">
+      <button id="addedFavoriteBtn"><i class="fa-thin fa-star" style="color: #ffdd00;"></i>이미 저장된 장소입니다.</button>
+    </div>
+    <div th:unless="${locationDtlResponse.isSaved()}">
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>
+    </div>
+
+    <!-- 모달 창 -->
+    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">모달 제목</h4>
+          </div>
+          <div class="modal-body">
+            <!-- 모달 창 내의 데이터 입력 폼 -->
+            <div class="form-group">
+
+              <label for="memo">메모</label>
+              <textarea type="text" name="memo" id="memo" placeholder="메모 내용을 입력해주세요."></textarea>
+              <br>
+
+
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="addFavoriteBtn" type="button" class="btn btn-default" data-dismiss="modal">추가</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+<!--  약속 잡기 -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hangOutModal">약속 잡기</button>
+    <!-- 모달 창 -->
+    <div class="modal fade" id="hangOutModal" tabindex="-1" role="dialog" aria-labelledby="hangOutModalLabel">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="hangOutModalLabel">약속 잡기</h4>
+          </div>
+          <div class="modal-body">
+            <!-- 모달 창 내의 데이터 입력 폼 -->
+            <div class="form-group">
+
+              <div class="inviteModal-left-half">
+<!--            친구 목록     -->
+                <div th:each="friend, status: ${locationDtlResponse.getFriendDtoList()}">
+
+                  <input id="friendChecker" type="checkbox" th:value="${friend.id}">
+
+                  <div th:if="${#strings.isEmpty(friend.friendImgUrl)}">
+                    <img class = "friendBoxImg" src="/img/noImg.jpg">
+                  </div>
+                  <div th:unless="${#strings.isEmpty(friend.friendImgUrl)}">
+                    <img class = "friendBoxImg" th:src="${friend.friendImgUrl}">
+                  </div>
+                  <div class="friendTextBox">
+                    <p class="friendText">[[${friend.friendName}]]</p>
+                    <p class="friendText">[[${friend.friendEmail}]]</p>
+                  </div>
+<!--                  <div class="friendBox">-->
+<!--                    <div class="friendImgBox">-->
+<!--                      &lt;!&ndash;            <button id="friendImgBtn" th:value="${friend.id}" onclick="showLocationDetail(this.value)">&ndash;&gt;-->
+<!--                      <button id="friendImgBtn">-->
+<!--                        <div th:if="${#strings.isEmpty(friend.getFriendImgUrl())}">-->
+<!--                          <img class = "friendImg" src="/img/noImg.jpg">-->
+<!--                        </div>-->
+<!--                        <div th:unless="${#strings.isEmpty(friend.getFriendImgUrl())}">-->
+<!--                          <img class = "friendImg" th:src="${friend.getFriendImgUrl()}">-->
+<!--                        </div>-->
+<!--                      </button>-->
+<!--                    </div>-->
+
+<!--                    <div class="friendNameBox">-->
+<!--                      <div th:text="${friend.friendName}" class="fs24 font-weight-bold updatable"></div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+                </div>
+              </div>
+
+              <div class="inviteModal-right-half">
+
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="addFavoriteBtn" type="button" class="btn btn-default" data-dismiss="modal">추가</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
 
     <div class="left-half">
       <div id="descBox">
         <h4 id="introduce">說明</h4>
 
+        <p>[[${locationDtlResponse.tolDescribe}]]</p>
 
-        <div th:if="${location.isSaved()}">
-          <button id="addedFavoriteBtn"><i class="fa-thin fa-star" style="color: #ffdd00;"></i>이미 저장된 장소입니다.</button>
-        </div>
-        <div th:unless="${location.isSaved()}">
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>
+        <div th:if="${locationDtlResponse.address != null}">
+          <p class="locationText"> address : [[${locationDtlResponse.address}]]</p>
         </div>
 
-        <!-- 모달 창 -->
-        <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">모달 제목</h4>
-              </div>
-              <div class="modal-body">
-                <!-- 모달 창 내의 데이터 입력 폼 -->
-                <div class="form-group">
-
-                  <label for="memo">메모</label>
-                  <textarea type="text" name="memo" id="memo" placeholder="메모 내용을 입력해주세요."></textarea>
-                  <br>
-
-<!--                  <label for="FirstRoomName">방 이름:</label>-->
-<!--                  <input type="text" name="FirstRoomName" id="FirstRoomName" placeholder="방 이름 입니다">-->
-<!--                  <br>-->
-
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button id="addFavoriteBtn" type="button" class="btn btn-default" data-dismiss="modal">추가</button>
-              </div>
-            </div>
-          </div>
+        <div th:if="${locationDtlResponse.openTime != null}">
+          <p class="locationText"> open time : [[${locationDtlResponse.openTime}]]</p>
         </div>
 
-
-
-
-
-
-        <p>[[${location.tolDescribe}]]</p>
-
-        <div th:if="${location.address != null}">
-          <p class="locationText"> address : [[${location.address}]]</p>
+        <div th:if="${locationDtlResponse.ticketInfo != null}">
+          <p class="locationText"> Fee Info : [[${locationDtlResponse.ticketInfo}]]</p>
         </div>
 
-        <div th:if="${location.openTime != null}">
-          <p class="locationText"> open time : [[${location.openTime}]]</p>
+        <div th:if="${locationDtlResponse.website != null}">
+          <p class="locationText"> Website Url : [[${locationDtlResponse.website}]]</p>
         </div>
 
-        <div th:if="${location.ticketInfo != null}">
-          <p class="locationText"> Fee Info : [[${location.ticketInfo}]]</p>
+        <div th:if="${locationDtlResponse.tel != null}">
+          <p class="locationText"> Tel : [[${locationDtlResponse.tel}]]</p>
         </div>
 
-        <div th:if="${location.website != null}">
-          <p class="locationText"> Website Url : [[${location.website}]]</p>
+        <div th:if="${locationDtlResponse.remarks != null}">
+          <p class="locationText"> remark : [[${locationDtlResponse.remarks}]]</p>
         </div>
 
-        <div th:if="${location.tel != null}">
-          <p class="locationText"> Tel : [[${location.tel}]]</p>
+        <div th:if="${locationDtlResponse.travellingInfo != null}">
+          <p class="locationText"> traffic_Info : [[${locationDtlResponse.travellingInfo}]]</p>
         </div>
 
-        <div th:if="${location.remarks != null}">
-          <p class="locationText"> remark : [[${location.remarks}]]</p>
-        </div>
-
-        <div th:if="${location.travellingInfo != null}">
-          <p class="locationText"> traffic_Info : [[${location.travellingInfo}]]</p>
-        </div>
-
-        <div th:if="${location.parkingInfo != null}">
-          <p class="locationText"> parking_info : [[${location.parkingInfo}]]</p>
+        <div th:if="${locationDtlResponse.parkingInfo != null}">
+          <p class="locationText"> parking_info : [[${locationDtlResponse.parkingInfo}]]</p>
         </div>
 
         <div id="map" style="width:100%; height: 450px;"></div>
@@ -459,11 +527,11 @@
 
     <div class="right-half">
       <div id="imgBox">
-        <div th:if="${#strings.isEmpty(location.picture1)}">
+        <div th:if="${#strings.isEmpty(locationDtlResponse.picture1)}">
           <img class = "locationImg" src="/img/noImg.jpg">
         </div>
-        <div th:unless="${#strings.isEmpty(location.picture1)}">
-          <img class = "locationImg" th:src="${location.picture1}">
+        <div th:unless="${#strings.isEmpty(locationDtlResponse.picture1)}">
+          <img class = "locationImg" th:src="${locationDtlResponse.picture1}">
         </div>
       </div>
     </div>
@@ -516,7 +584,7 @@
 <!--    </div>-->
 
     <div class="comment-left-half">
-      <th:block th:each="comment, status: ${location.getCommentDtoList()}">
+      <th:block th:each="comment, status: ${locationDtlResponse.getCommentDtoList()}">
         <div>
           <div class="savedCommentMemberBox">
             <img class="savedCommentMemberImg" th:src="${comment.getImgUrl()}">

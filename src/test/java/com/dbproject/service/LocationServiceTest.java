@@ -1,5 +1,7 @@
 package com.dbproject.service;
 
+import com.dbproject.api.friend.Friend;
+import com.dbproject.api.friend.FriendRepository;
 import com.dbproject.api.location.LocationService;
 import com.dbproject.api.location.LocationDtlResponse;
 import com.dbproject.api.member.RegisterFormDto;
@@ -19,6 +21,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,6 +49,10 @@ class LocationServiceTest {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Autowired
+    private FriendRepository friendRepository;
+
+
     @BeforeEach
     void createMember() {
 
@@ -56,6 +64,25 @@ class LocationServiceTest {
 
         Member member = Member.createMember(registerFormDto, passwordEncoder);
         memberRepository.save(member);
+
+
+        RegisterFormDto registerFormDto2 = new RegisterFormDto();
+        registerFormDto2.setName("이병민");
+        registerFormDto2.setAddress("강원도 원주시");
+        registerFormDto2.setEmail("qwer@qwer.com");
+        registerFormDto2.setPassword("1234");
+
+        Member member2 = Member.createMember(registerFormDto2, passwordEncoder);
+        memberRepository.save(member2);
+
+        RegisterFormDto registerFormDto3 = new RegisterFormDto();
+        registerFormDto3.setName("장원유");
+        registerFormDto3.setAddress("대만 산총구");
+        registerFormDto3.setEmail("yunni@yunni.com");
+        registerFormDto3.setPassword("1234");
+
+        Member member3 = Member.createMember(registerFormDto3, passwordEncoder);
+        memberRepository.save(member3);
     }
 
     @DisplayName("비로그인 유저가 추천 장소의 Id 를 주면 그 추천 장소를 가져온다")
@@ -92,8 +119,19 @@ class LocationServiceTest {
     }
 
 
+    @DisplayName("로그인 유저가 즐겨찾기 리스트에 추가된 장소인지 확인하고 false 를 저장한다")
+    @Test
+    void checkSavedFavoriteLocationFalse(){
 
+        //given
+        String locationId = "C1_379000000A_001572";
 
+        //when
+        LocationDtlResponse locationDtlResponse = locationService.getLocationDtl(locationId);
+
+        //then
+        assertThat(locationDtlResponse.isSaved()).isEqualTo(false);
+    }
 
     private void createComment() {
         int rating = 5;
@@ -155,19 +193,40 @@ class LocationServiceTest {
     }
 
 
-    @DisplayName("로그인 유저가 즐겨찾기 리스트에 추가된 장소인지 확인하고 false 를 저장한다")
-    @Test
-    void checkSavedFavoriteLocationFalse(){
 
+    @DisplayName("로그인 유저가 추천 장소의 Id 를 주면 그 추천 장소와 댓글과 친구 리스트 가져온다")
+    @Test
+    void getLocationDtlAndCommentListAndFriendListWithLoginUser(){
         //given
+//        login user = son
         String locationId = "C1_379000000A_001572";
+        String email = "zxcv@zxcv.com";
+        createFavoriteLocation(locationId);
+        createComment();
+        createFriend("qwer@qwer.com", "zxcv@zxcv.com");
+        createFriend("yunni@yunni.com", "zxcv@zxcv.com");
 
         //when
-        LocationDtlResponse locationDtlResponse = locationService.getLocationDtl(locationId);
+        LocationDtlResponse locationDtlResponse = locationService.getLocationDtlWithAuthUser(locationId,email);
 
         //then
-        assertThat(locationDtlResponse.isSaved()).isEqualTo(false);
+        assertThat(locationDtlResponse.getName()).isEqualTo("西門町");
+        assertThat(locationDtlResponse.getCommentDtoList()).hasSize(1);
+        assertThat(locationDtlResponse.getFriendDtoList()).hasSize(2);
+        assertThat(locationDtlResponse.getFriendDtoList().get(0).getFriendEmail()).isEqualTo("qwer@qwer.com");
+        assertThat(locationDtlResponse.getFriendDtoList().get(1).getFriendEmail()).isEqualTo("yunni@yunni.com");
+
+
     }
 
+    private void createFriend(String requesterEmail, String respondentEmail) {
+        Member requester = memberRepository.findByEmail(requesterEmail);
+        Member respondent = memberRepository.findByEmail(respondentEmail);
 
+        Friend friend = Friend.createFriend(requester, respondent);
+        Friend friendReversed = Friend.createFriend(respondent,requester);
+
+        friendRepository.save(friend);
+        friendRepository.save(friendReversed);
+    }
 }

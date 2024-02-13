@@ -1,5 +1,6 @@
 package com.dbproject.api.myPage.hangOut.inviteHangOut.dto;
 
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,11 +8,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AcceptInvitedHangOutRequest {
+public class RejectInvitedHangOutRequest {
 
-    private Integer inviteHangOutId;
+    private Long inviteHangOutId;
 
-    public AcceptInvitedHangOutRequest(Integer inviteHangOutId) {
+    public RejectInvitedHangOutRequest(Long inviteHangOutId) {
         this.inviteHangOutId = inviteHangOutId;
     }
 }

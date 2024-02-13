@@ -6,10 +6,7 @@ import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.myPage.hangOut.hangOut.HangOut;
 import com.dbproject.api.myPage.hangOut.hangOut.HangOutRepository;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.AcceptInvitedHangOutRequest;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InviteHangOutLocationDto;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InvitedHangOutDto;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InvitedHangOutResponse;
+import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.*;
 import com.dbproject.constant.InviteHangOutStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -102,9 +99,26 @@ public class InviteHangOutService {
         inviteHangOutRepository.deleteById(Long.valueOf(acceptInvitedHangOutRequest.getInviteHangOutId()));
         InviteHangOut inviteHangOut = invitedHangOut.get();
 
-        //행아웃 을 새로 만들ㅁ보
+        //행아웃 을 새로 만들어 저장
+        //저장후 나중에 스케쥴 뽑을때를 위해 requester respondent 바꾼것도 저장
         HangOut hangOut = HangOut.createByInvitedHangOut(inviteHangOut);
+        HangOut reverseHangOut = HangOut.createByInvitedHangOutReverse(inviteHangOut);
         hangOutRepository.save(hangOut);
+        hangOutRepository.save(reverseHangOut);
+
+    }
+
+    public void rejectInvitedHangOut(RejectInvitedHangOutRequest rejectInvitedHangOutRequest) {
+
+//        거절시 요청을 바로 삭제하기
+//        inviteHangOutRepository.deleteById(Long.valueOf(rejectInvitedHangOutRequest.getInviteHangOutId()));
+
+        //거절시 요청을 거절 상태로 변환
+//        나중에 요청자가 거절됨을 확인 하기위해
+        Optional<InviteHangOut> savedInviteHangOut = inviteHangOutRepository.findById(rejectInvitedHangOutRequest.getInviteHangOutId());
+        InviteHangOut inviteHangOut = savedInviteHangOut.get();
+        inviteHangOut.rejectInvitedHangOut();
+
     }
 }
 

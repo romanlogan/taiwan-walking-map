@@ -15,6 +15,7 @@ import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRequest;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutService;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.AcceptInvitedHangOutRequest;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InvitedHangOutResponse;
+import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.RejectInvitedHangOutRequest;
 import com.dbproject.constant.InviteHangOutStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.dbproject.constant.InviteHangOutStatus.REJECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -207,7 +209,7 @@ class InviteHangOutServiceTest {
     }
 
 
-    @DisplayName("")
+    @DisplayName("HangOut 요청을 수락합니다")
     @Test
     void acceptInvitedHangOut(){
 
@@ -232,12 +234,46 @@ class InviteHangOutServiceTest {
         List<HangOut> hangOutList = hangOutRepository.findAll();
 
         assertThat(inviteHangOutList).hasSize(0);
-        assertThat(hangOutList).hasSize(1);
+        assertThat(hangOutList).hasSize(2);
         assertThat(hangOutList.get(0).getLocation().getName()).isEqualTo("西門町");
         assertThat(hangOutList.get(0).getRequester().getEmail()).isEqualTo("yunni@yunni.com");
         assertThat(hangOutList.get(0).getRespondent().getEmail()).isEqualTo("asdf@asdf.com");
         assertThat(hangOutList.get(0).getDepartDateTime()).isEqualTo(departDateTime);
+        assertThat(hangOutList.get(1).getRequester().getEmail()).isEqualTo("asdf@asdf.com");
+        assertThat(hangOutList.get(1).getRespondent().getEmail()).isEqualTo("yunni@yunni.com");
 
+    }
+
+
+    @DisplayName("HangOut 요청을 거절합니다")
+    @Test
+    void rejectInvitedHangOut(){
+
+        //given
+        Member friend = memberRepository.findByEmail("yunni@yunni.com");
+        Member me = memberRepository.findByEmail("asdf@asdf.com");
+        Location location = locationRepository.findByLocationId("C1_379000000A_001572");
+        LocalDateTime departDateTime = LocalDateTime.now();
+        String message = "message 1";
+
+        //약속 초대 및 생성
+        InviteHangOut inviteHangOut = InviteHangOut.createHangOut(message, departDateTime, location , friend, me, InviteHangOutStatus.WAITING);
+        InviteHangOut savedInvitedHangOut = inviteHangOutRepository.save(inviteHangOut);
+
+        RejectInvitedHangOutRequest rejectInvitedHangOutRequest = new RejectInvitedHangOutRequest(savedInvitedHangOut.getId());
+
+        //when
+        inviteHangOutService.rejectInvitedHangOut(rejectInvitedHangOutRequest);
+
+        //then
+        List<InviteHangOut> inviteHangOutList = inviteHangOutRepository.findAll();
+
+        assertThat(inviteHangOutList).hasSize(1);
+        assertThat(inviteHangOutList.get(0).getLocation().getName()).isEqualTo("西門町");
+        assertThat(inviteHangOutList.get(0).getRequester().getEmail()).isEqualTo("yunni@yunni.com");
+        assertThat(inviteHangOutList.get(0).getRespondent().getEmail()).isEqualTo("asdf@asdf.com");
+        assertThat(inviteHangOutList.get(0).getDepartDateTime()).isEqualTo(departDateTime);
+        assertThat(inviteHangOutList.get(0).getInviteHangOutStatus()).isEqualTo(REJECTED);
     }
 
 

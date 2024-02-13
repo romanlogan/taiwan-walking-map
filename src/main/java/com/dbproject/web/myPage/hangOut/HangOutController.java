@@ -6,6 +6,7 @@ import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRequest;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.AcceptInvitedHangOutRequest;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InviteHangOutLocationDto;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InvitedHangOutResponse;
+import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.RejectInvitedHangOutRequest;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -53,6 +54,14 @@ public class HangOutController {
         System.out.println(acceptInvitedHangOutRequest.getInviteHangOutId());
 
         hangOutService.acceptInvitedHangOut(acceptInvitedHangOutRequest);
+
+        return new ResponseEntity(1L, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/rejectInvitedHangOut")
+    public ResponseEntity rejectInvitedHangOut(@RequestBody RejectInvitedHangOutRequest rejectInvitedHangOutRequest) {
+
+        hangOutService.rejectInvitedHangOut(rejectInvitedHangOutRequest);
 
         return new ResponseEntity(1L, HttpStatus.OK);
     }

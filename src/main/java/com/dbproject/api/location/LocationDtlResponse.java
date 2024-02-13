@@ -2,6 +2,7 @@ package com.dbproject.api.location;
 
 import com.dbproject.api.comment.Comment;
 import com.dbproject.api.comment.dto.CommentDto;
+import com.dbproject.api.friend.FriendDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,8 @@ public class LocationDtlResponse {
     private String latitude;
 
     private List<CommentDto> commentDtoList = new ArrayList<>();
+
+    private List<FriendDto> friendDtoList = new ArrayList<>();
 
 //      modelMapper 사용시 null 값을 매핑 불가능 -> 에러 발생
 //      location 에는 null 값들도 들어있기 때문에 modelMapper 는 맞지 않음

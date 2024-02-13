@@ -16,6 +16,7 @@ public class Location {
 
     private String name;
 
+    // 댓글 개수
     private Integer commentCount;
 
     private String zone;

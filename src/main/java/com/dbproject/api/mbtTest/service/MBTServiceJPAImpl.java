@@ -4,12 +4,14 @@ import com.dbproject.api.city.City;
 import com.dbproject.api.mbtTest.MBTCityDto;
 import com.dbproject.api.mbtTest.repository.MBTRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Qualifier("MBTServiceJPAImpl")
 public class MBTServiceJPAImpl implements MBTService{
 
     private final MBTRepository mbtRepository;

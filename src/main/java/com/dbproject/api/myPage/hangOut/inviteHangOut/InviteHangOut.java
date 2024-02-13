@@ -71,4 +71,9 @@ public class InviteHangOut extends BaseEntity {
                 .respondent(respondent)
                 .build();
     }
+
+    public void rejectInvitedHangOut() {
+
+        this.inviteHangOutStatus = InviteHangOutStatus.REJECTED;
+    }
 }

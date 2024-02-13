@@ -83,6 +83,50 @@
                 }
             });
         }
+
+        function rejectInvitedHangOut(inviteHangOutId){
+
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            console.log(inviteHangOutId)
+
+            var paramData = {
+                inviteHangOutId : inviteHangOutId
+            };
+
+            var param = JSON.stringify(paramData);
+
+            $.ajax({
+                url      : "/myPage/rejectInvitedHangOut",
+                type     : "DELETE",
+                cache   : false,
+                contentType : "application/json",
+                data     : param,
+                beforeSend : function(xhr){
+                    /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                success  : function(result, status){
+
+                    location.href='/myPage/inviteHangOutList';
+
+                },
+                error : function(jqXHR, status, error, request){
+
+                    console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+
+                    if(jqXHR.status == '401'){
+                        alert('로그인 후 이용해주세요');
+                        location.href='/members/login';
+                    } else{
+                        alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
+                        // alert(jqXHR.responseText);
+                    }
+                }
+            });
+        }
     </script>
 </th:block>
 
@@ -173,8 +217,8 @@
             </ul>
         </div>
         <div class="left-half">
-            <div class="InvitedHangOutBox" th:each="invitedHangOut, status: ${invitedHangOutResponse.getInvitedHangOutDtoList()}">
 
+            <div class="InvitedHangOutBox" th:each="invitedHangOut, status: ${invitedHangOutResponse.getInvitedHangOutDtoList()}">
                 <div class="hangOutImgBox">
                     <button id="showLocationDtlBtnBox" th:value="${invitedHangOut.id}" onclick="showLocationDetail(this.value)">
                         <div th:if="${#strings.isEmpty(invitedHangOut.getPicture1())}">
@@ -202,7 +246,7 @@
 
                         <div th:case="${T(com.dbproject.constant.InviteHangOutStatus).WAITING}">
                             <button type="button" class="acceptInvitedHangOutBtn" th:value="${invitedHangOut.id}" onclick="acceptInvitedHangOut(this.value)">초대 수락</button>
-                            <button type="button" class="rejectHangOutBtn" th:value="${invitedHangOut.id}" onclick="rejectHangOut(this.value)">초대 거절</button>
+                            <button type="button" class="rejectHangOutBtn" th:value="${invitedHangOut.id}" onclick="rejectInvitedHangOut(this.value)">초대 거절</button>
                         </div>
                     </div>
                 </div>

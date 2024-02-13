@@ -125,7 +125,9 @@ class FriendServiceTest {
     @DisplayName("친구 요청 id 로 친구를 양방향으로 생성하고 친구요청을 수락됨으로 변경한다")
     @Test
     void acceptAddFriend() {
+
         //given
+//        lee -> son
         String requesterEmail = "qwer@qwer.com";
         Member requester = memberRepository.findByEmail(requesterEmail);
         String respondentEmail = "zxcv@zxcv.com";

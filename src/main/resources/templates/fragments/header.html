@@ -51,6 +51,11 @@
           가고 싶은 곳 리스트
         </a>
       </span>
+      <span sec:authorize="isAuthenticated()">
+        <a href="/schedule" class="nav-link">
+          일정 보기
+        </a>
+      </span>
     </div>
   </nav>
 

@@ -65,6 +65,17 @@ public class HangOut extends BaseEntity {
                 .build();
     }
 
+    public static HangOut createByInvitedHangOutReverse(InviteHangOut inviteHangOut) {
+
+        return HangOut.builder()
+                .location(inviteHangOut.getLocation())
+                .requester(inviteHangOut.getRespondent())
+                .respondent(inviteHangOut.getRequester())
+                .message(inviteHangOut.getMessage())
+                .departDateTime(inviteHangOut.getDepartDateTime())
+                .build();
+    }
+
 }
 
 

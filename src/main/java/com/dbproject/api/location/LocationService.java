@@ -5,6 +5,10 @@ import com.dbproject.api.comment.dto.CommentDto;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.comment.CommentRepository;
 import com.dbproject.api.favorite.FavoriteRepository;
+import com.dbproject.api.friend.Friend;
+import com.dbproject.api.friend.FriendDto;
+import com.dbproject.api.friend.FriendRepository;
+import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.memberImg.MemberImg;
 import com.dbproject.api.member.memberImg.MemberImgRepository;
@@ -27,10 +31,12 @@ public class LocationService {
     private final FavoriteRepository favoriteRepository;
     private final CommentRepository commentRepository;
     private final MemberImgRepository memberImgRepository;
+    private final MemberRepository memberRepository;
+    private final FriendRepository friendRepository;
 
 
 
-// 비 로그인 유저가 장소 디테일을 볼때
+// ----------------비 로그인 유저가 장소 디테일을 볼때-----------------
     public LocationDtlResponse getLocationDtl(String locationId) {
 
         Location location = locationRepository.findByLocationId(locationId);
@@ -42,6 +48,37 @@ public class LocationService {
         return locationDtlResponse;
     }
 
+    // ----------------로그인 유저가 장소 디테일을 볼때-----------------
+    public LocationDtlResponse getLocationDtlWithAuthUser(String locationId,String email) {
+
+        Location location = locationRepository.findByLocationId(locationId);
+        LocationDtlResponse locationDtlResponse = LocationDtlResponse.of(location);
+
+        //로그인 유저는 이 장소가 favorite 에 등록 되어 있는지 확인
+        checkSavedFavoriteLocation(location,locationDtlResponse,email);
+
+        // 댓글 가져오기
+        getCommentList(locationId, locationDtlResponse);
+
+        // 로그인 한 유저의 친구 목록을 가져오기 , getCommentList 로직에서 member 관련 로직이랑 조금 겹치는 부분이 존재
+        getFriendList(email, locationDtlResponse);
+
+        return locationDtlResponse;
+    }
+
+    private void getFriendList(String email, LocationDtlResponse locationDtlResponse) {
+        List<Friend> friendList = friendRepository.getFriendList(email);
+
+        List<FriendDto> friendDtoList = new ArrayList<>();
+        for (Friend friend : friendList) {
+
+            Optional<MemberImg> optionalMemberImg = memberImgRepository.findByMemberEmail(friend.getNewFriend().getEmail());
+            FriendDto friendDto = FriendDto.from(friend, optionalMemberImg);
+            friendDtoList.add(friendDto);
+        }
+        locationDtlResponse.setFriendDtoList(friendDtoList);
+    }
+
     private void getCommentList(String locationId, LocationDtlResponse locationDtlResponse) {
 
         List<Comment> commentList = commentRepository.findByLocationId(locationId);
@@ -49,6 +86,7 @@ public class LocationService {
         List<CommentDto> commentDtoList = new ArrayList<>();
         for (Comment comment : commentList) {
 
+//            여기 로직을 commentDTo 안으로 넣어야함 (FriendDto 참고 )
             String email = comment.getMember().getEmail();
             Optional<MemberImg> optionalMemberImg = memberImgRepository.findByMemberEmail(email);
             String imgUrl;
@@ -66,22 +104,6 @@ public class LocationService {
         locationDtlResponse.setCommentDtoList(commentDtoList);
 //        locationDtlResponse.setCommentList(commentList);
     }
-
-    // 로그인 유저가 장소 디테일을 볼때
-    public LocationDtlResponse getLocationDtlWithAuthUser(String locationId,String email) {
-
-        Location location = locationRepository.findByLocationId(locationId);
-        LocationDtlResponse locationDtlResponse = LocationDtlResponse.of(location);
-
-        //로그인 유저는 이 장소가 favorite 에 등록 되어 있는지 확인
-        checkSavedFavoriteLocation(location,locationDtlResponse,email);
-
-        getCommentList(locationId, locationDtlResponse);
-
-        return locationDtlResponse;
-    }
-
-
 
     private void checkSavedFavoriteLocation(Location location, LocationDtlResponse locationDtlResponse, String email) {
 
