@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ public class InviteHangOutRequest {
 
     private String message;
 
-    @NotEmpty
+    @NotBlank
     private String friendEmail;
 
     public InviteHangOutRequest(Long favoriteLocationId, LocalDateTime departDateTime, String message, String friendEmail) {

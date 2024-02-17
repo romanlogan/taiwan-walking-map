@@ -175,9 +175,7 @@ class FriendControllerTest {
 
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/myPage/requestFriendList")
-                )
+        mockMvc.perform(MockMvcRequestBuilders.get("/myPage/requestFriendList"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

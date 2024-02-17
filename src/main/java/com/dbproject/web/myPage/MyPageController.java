@@ -3,7 +3,7 @@ package com.dbproject.web.myPage;
 import com.dbproject.api.member.MemberService;
 import com.dbproject.api.member.memberImg.MemberImgService;
 import com.dbproject.api.myPage.MyProfileDto;
-import com.dbproject.api.myPage.UpdateProfileDto;
+import com.dbproject.api.myPage.UpdateProfileRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,25 +28,22 @@ public class MyPageController {
     @GetMapping(value = "/profile")
     public String memberProfile(Principal principal, Model model) {
 
-
-        System.out.println("------------------profile---------------------");
-
         String email = principal.getName();
+
         MyProfileDto myProfileDto = memberService.findMe(email);
 
         model.addAttribute("user", myProfileDto);
-
 
         return "/myPage/myProfile";
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Long> updateProfile(@Valid @RequestBody UpdateProfileDto updateProfileDto,
+    public ResponseEntity<Long> updateProfile(@Valid @RequestBody UpdateProfileRequest updateProfileRequest,
                                               Principal principal,
                                               Model model) {
-
         //update 와 조회 를 분리
-        memberService.updateProfile(principal.getName(),updateProfileDto);
+        memberService.updateProfile(principal.getName(),updateProfileRequest);
+
         MyProfileDto myProfileDto = memberService.findMe(principal.getName());
 
         model.addAttribute("user", myProfileDto);

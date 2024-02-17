@@ -2,6 +2,8 @@ package com.dbproject.api.myPage.hangOut.inviteHangOut;
 
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.favorite.FavoriteRepository;
+import com.dbproject.api.location.Location;
+import com.dbproject.api.location.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.myPage.hangOut.hangOut.HangOut;
@@ -26,6 +28,7 @@ public class InviteHangOutService {
     private final FavoriteRepository favoriteRepository;
     private final MemberRepository memberRepository;
     private final HangOutRepository hangOutRepository;
+    private final LocationRepository locationRepository;
 
 
     //초대 하기
@@ -95,8 +98,8 @@ public class InviteHangOutService {
     public void acceptInvitedHangOut(AcceptInvitedHangOutRequest acceptInvitedHangOutRequest) {
 
         //행아웃 요청 목록에서 지우고
-        Optional<InviteHangOut> invitedHangOut = inviteHangOutRepository.findById(Long.valueOf(acceptInvitedHangOutRequest.getInviteHangOutId()));
-        inviteHangOutRepository.deleteById(Long.valueOf(acceptInvitedHangOutRequest.getInviteHangOutId()));
+        Optional<InviteHangOut> invitedHangOut = inviteHangOutRepository.findById(acceptInvitedHangOutRequest.getInviteHangOutId());
+        inviteHangOutRepository.deleteById(acceptInvitedHangOutRequest.getInviteHangOutId());
         InviteHangOut inviteHangOut = invitedHangOut.get();
 
         //행아웃 을 새로 만들어 저장
@@ -119,6 +122,18 @@ public class InviteHangOutService {
         InviteHangOut inviteHangOut = savedInviteHangOut.get();
         inviteHangOut.rejectInvitedHangOut();
 
+    }
+
+    public void inviteFromLocationPage(InviteHangOutFromLocRequest inviteHangOutFromLocRequest, String email) {
+
+        //1. InviteHangOut 생성
+        Location location = locationRepository.findByLocationId(inviteHangOutFromLocRequest.getLocationId());
+        Member requester = memberRepository.findByEmail(email);
+        Member respondent = memberRepository.findByEmail(inviteHangOutFromLocRequest.getFriendEmail());
+        InviteHangOut inviteHangOut = InviteHangOut.createHangOut(inviteHangOutFromLocRequest.getMessage(), inviteHangOutFromLocRequest.getDepartDateTime(), location, requester, respondent, InviteHangOutStatus.WAITING);
+
+        //2. InviteHangOut 저장
+        inviteHangOutRepository.save(inviteHangOut);
     }
 }
 

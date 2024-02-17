@@ -22,6 +22,7 @@ public class MBTServiceJPAImpl implements MBTService{
         String cityName = "臺北市";
         City city = mbtRepository.findBypostalAddressCity(cityName);
 
+        System.out.println("jpa : "+city.getCityDetail());
         MBTCityDto cityDto = new MBTCityDto(city.getPostalAddressCity(), city.getCityDetail());
         return cityDto;
     }

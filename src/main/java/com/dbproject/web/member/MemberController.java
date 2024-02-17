@@ -3,6 +3,7 @@ package com.dbproject.web.member;
 import com.dbproject.api.member.MemberService;
 import com.dbproject.api.member.RegisterFormDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 @RequestMapping("/members")
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
 
     private final MemberService memberService;
@@ -39,6 +41,7 @@ public class MemberController {
                             Model model) {
 
         if (bindingResult.hasErrors()) {
+            log.info("error={} ", bindingResult);
             return "/member/registerForm";
         }
 

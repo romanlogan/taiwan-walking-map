@@ -6,7 +6,7 @@ import com.dbproject.exception.DuplicateUpdateMemberNameException;
 import com.dbproject.api.member.RegisterFormDto;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.api.myPage.UpdateProfileDto;
+import com.dbproject.api.myPage.UpdateProfileRequest;
 import javassist.bytecode.DuplicateMemberException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -83,7 +83,7 @@ class MemberServiceTest {
     void updateMemberInfo() {
         //given
         String email = "asdf@asdf.com";
-        UpdateProfileDto updateProfileDto = new UpdateProfileDto("이병민","강원 원주시");
+        UpdateProfileRequest updateProfileDto = new UpdateProfileRequest("이병민","강원 원주시");
 
         //when
         memberService.updateProfile(email, updateProfileDto);
@@ -99,7 +99,7 @@ class MemberServiceTest {
     void updateMemberInfoWithDuplicateAddress() throws DuplicateUpdateMemberAddressException {
         //given
         String email = "asdf@asdf.com";
-        UpdateProfileDto updateProfileDto = new UpdateProfileDto("이병민","서울 강남구");
+        UpdateProfileRequest updateProfileDto = new UpdateProfileRequest("이병민","서울 강남구");
 
         //when
         //then
@@ -115,7 +115,7 @@ class MemberServiceTest {
     void updateMemberInfoWithDuplicateName() throws DuplicateUpdateMemberAddressException {
         //given
         String email = "asdf@asdf.com";
-        UpdateProfileDto updateProfileDto = new UpdateProfileDto("손흥민","강원 원주시");
+        UpdateProfileRequest updateProfileDto = new UpdateProfileRequest("손흥민","강원 원주시");
 
         //when
         //then

@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
@@ -11,9 +13,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class InviteHangOutFromLocRequest {
 
+    @NotBlank
     private String locationId;
+
+    @NotBlank
     private String friendEmail;
+
+    @NotNull
     private LocalDateTime departDateTime;
+
     private String message;
 
     public InviteHangOutFromLocRequest(String locationId, String friendEmail, LocalDateTime departDateTime, String message) {

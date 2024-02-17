@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .mvcMatchers("/","/members/**","/img/**","/css/**").permitAll()
-                .mvcMatchers("/myPage/**","/favorite/**","/comment/**","/memo/**").authenticated()
+                .mvcMatchers("/myPage/**","/favorite/**","/comment/**","/memo/**","/hangOut/**").authenticated()
                 .mvcMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().permitAll();
 //                .anyRequest().authenticated();      //나머지 경로는 모두 인증을 요구

@@ -4,10 +4,12 @@ package com.dbproject.api.member;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -26,6 +28,15 @@ public class RegisterFormDto {
 
     @NotEmpty(message = "주소는 필수 입력 값입니다.")
     private String address;
+    /**
+     *
+     */
+    @NotBlank
+    private String NoBlank;
+
+    @Range(min = 100, max = 1000)
+    private Integer range;
+
 
 
 }

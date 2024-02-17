@@ -50,6 +50,15 @@
         <input type="text" th:field="*{address}" class="form-control" placeholder="주소를 입력해주세요">
         <p th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="fieldError">Incorrect data</p>
       </div>
+      <div>
+        <input type="text" th:field="*{range}">,
+        <p th:if="${#fields.hasErrors('range')}" th:errors="*{range}" class="fieldError">Incorrect data</p>
+      </div>
+
+      <div>
+        <input type="text" th:field="*{noBlank}">,
+        <p th:if="${#fields.hasErrors('noBlank')}" th:errors="*{noBlank}" class="fieldError">Incorrect data</p>
+      </div>
 
       </br>
 

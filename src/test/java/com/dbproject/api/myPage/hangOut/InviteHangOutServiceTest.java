@@ -9,11 +9,13 @@ import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.RegisterFormDto;
 import com.dbproject.api.myPage.hangOut.hangOut.HangOut;
 import com.dbproject.api.myPage.hangOut.hangOut.HangOutRepository;
+import com.dbproject.api.myPage.hangOut.hangOut.HangOutService;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOut;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRepository;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRequest;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutService;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.AcceptInvitedHangOutRequest;
+import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InviteHangOutFromLocRequest;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InvitedHangOutResponse;
 import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.RejectInvitedHangOutRequest;
 import com.dbproject.constant.InviteHangOutStatus;
@@ -31,7 +33,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.dbproject.constant.InviteHangOutStatus.REJECTED;
+import static com.dbproject.constant.InviteHangOutStatus.WAITING;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.in;
 
 
 @SpringBootTest
@@ -224,7 +228,7 @@ class InviteHangOutServiceTest {
         InviteHangOut inviteHangOut = InviteHangOut.createHangOut(message, departDateTime, location , friend, me, InviteHangOutStatus.WAITING);
         InviteHangOut savedInvitedHangOut = inviteHangOutRepository.save(inviteHangOut);
 
-        AcceptInvitedHangOutRequest acceptInvitedHangOutRequest = new AcceptInvitedHangOutRequest(Math.toIntExact(savedInvitedHangOut.getId()));
+        AcceptInvitedHangOutRequest acceptInvitedHangOutRequest = new AcceptInvitedHangOutRequest(savedInvitedHangOut.getId());
 
         //when
         inviteHangOutService.acceptInvitedHangOut(acceptInvitedHangOutRequest);
@@ -276,7 +280,32 @@ class InviteHangOutServiceTest {
         assertThat(inviteHangOutList.get(0).getInviteHangOutStatus()).isEqualTo(REJECTED);
     }
 
+    @DisplayName("장소 페이지에서 친구에게 HangOut 요청을 보냅니다.")
+    @Test
+    void inviteFromLocationPage() {
 
+        //given
+        Member friend = memberRepository.findByEmail("yunni@yunni.com");
+        Member me = memberRepository.findByEmail("asdf@asdf.com");
+        Location location = locationRepository.findByLocationId("C1_379000000A_001572");
+        LocalDateTime departDateTime = LocalDateTime.now();
+        String message = "message 1";
+
+        InviteHangOutFromLocRequest inviteHangOutFromLocRequest = new InviteHangOutFromLocRequest(location.getLocationId(), friend.getEmail(), departDateTime, message);
+
+        //when
+        inviteHangOutService.inviteFromLocationPage(inviteHangOutFromLocRequest, me.getEmail());
+
+        //then
+        List<InviteHangOut> inviteHangOutList = inviteHangOutRepository.findAll();
+        assertThat(inviteHangOutList).hasSize(1);
+        assertThat(inviteHangOutList.get(0).getLocation().getName()).isEqualTo("西門町");
+        assertThat(inviteHangOutList.get(0).getRequester().getEmail()).isEqualTo("asdf@asdf.com");
+        assertThat(inviteHangOutList.get(0).getRespondent().getEmail()).isEqualTo("yunni@yunni.com");
+        assertThat(inviteHangOutList.get(0).getDepartDateTime()).isEqualTo(departDateTime);
+        assertThat(inviteHangOutList.get(0).getInviteHangOutStatus()).isEqualTo(WAITING);
+
+    }
 
 
 }

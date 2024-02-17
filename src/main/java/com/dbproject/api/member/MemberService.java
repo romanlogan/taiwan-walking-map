@@ -6,7 +6,7 @@ import com.dbproject.exception.DuplicateMemberException;
 import com.dbproject.exception.DuplicateUpdateMemberAddressException;
 import com.dbproject.exception.DuplicateUpdateMemberNameException;
 import com.dbproject.api.myPage.MyProfileDto;
-import com.dbproject.api.myPage.UpdateProfileDto;
+import com.dbproject.api.myPage.UpdateProfileRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,11 +51,7 @@ public class MemberService implements UserDetailsService {
         Member member = memberRepository.findByEmail(name);
         Optional<MemberImg> memberImg = memberImgRepository.findByMemberEmail(name);
 
-        MyProfileDto myProfileDto = MyProfileDto.from(member,memberImg);
-
-
-
-        return myProfileDto;
+        return MyProfileDto.from(member,memberImg);
     }
 
     @Override
@@ -75,7 +71,7 @@ public class MemberService implements UserDetailsService {
     }
 
 //    @Transactional
-    public void updateProfile(String email, UpdateProfileDto updateProfileDto) {
+    public void updateProfile(String email, UpdateProfileRequest updateProfileDto) {
 
         Member member = memberRepository.findByEmail(email);
 
@@ -84,9 +80,6 @@ public class MemberService implements UserDetailsService {
         } else if (updateProfileDto.getName().equals(member.getName())) {
             throw new DuplicateUpdateMemberNameException("이전 이름과 같습니다.");
         }
-
-
-
 
         member.setName(updateProfileDto.getName());
         member.setAddress(updateProfileDto.getAddress());

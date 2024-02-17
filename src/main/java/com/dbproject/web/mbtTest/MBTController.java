@@ -19,7 +19,7 @@ public class MBTController {
     private final MBTService mbtService;
 
     //jpa 를 사용해야할때는 qualifier 를 jpa 로 변경
-    public MBTController(@Qualifier("MBTServiceImpl") MBTService mbtService) {
+    public MBTController(@Qualifier("MBTServiceJPAImpl") MBTService mbtService) {
         this.mbtService = mbtService;
     }
 

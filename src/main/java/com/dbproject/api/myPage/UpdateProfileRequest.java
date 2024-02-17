@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UpdateProfileDto {
+public class UpdateProfileRequest {
 
     @NotBlank
     private String name;
@@ -17,7 +17,7 @@ public class UpdateProfileDto {
     @NotBlank
     private String address;
 
-    public UpdateProfileDto(String name, String address) {
+    public UpdateProfileRequest(String name, String address) {
         this.name = name;
         this.address = address;
     }

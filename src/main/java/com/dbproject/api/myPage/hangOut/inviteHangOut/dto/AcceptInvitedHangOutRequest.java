@@ -4,14 +4,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Setter
 @NoArgsConstructor
 public class AcceptInvitedHangOutRequest {
 
-    private Integer inviteHangOutId;
+    @NotNull
+    private Long inviteHangOutId;
 
-    public AcceptInvitedHangOutRequest(Integer inviteHangOutId) {
+    public AcceptInvitedHangOutRequest(Long inviteHangOutId) {
         this.inviteHangOutId = inviteHangOutId;
     }
 }

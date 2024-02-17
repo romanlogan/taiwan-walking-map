@@ -24,7 +24,7 @@ public class MBTServiceImpl implements MBTService {
         String cityName = "臺北市";
         String str = mapper.selectCity(cityName);
 
-        System.out.println(str);
+        System.out.println("mybatis : "+str);
 //        MBTCityDto mbtCityDto = new MBTCityDto(city.getPostalAddressCity(), city.getCityDetail());
         MBTCityDto mbtCityDto = new MBTCityDto();
         return mbtCityDto;
