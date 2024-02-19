@@ -11,6 +11,8 @@ import lombok.Setter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -37,7 +39,24 @@ public class Member extends BaseEntity {
 
     private String address;
 
+//    ---------- 추가 목록 ------------
+
+    private String nickName;
+
+    private String phoneNumber;
+
+    private LocalDate dateOfBirth;
+
+    //1 - man
+//    0 - Woman
+    private Integer gender;
+
+
+    private Boolean acceptReceiveAdvertising;
+
     //전화번호
+//   생년월일
+//    광고 수신 동의
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -65,13 +84,17 @@ public class Member extends BaseEntity {
 //    private List<FriendRequest> beRequestedFriend;
 
 
-
     @Builder
-    public Member(String name, String email, String password, String address, Role role) {
-        this.name = name;
+    public Member(String email, String name, String password, String address, String nickName, String phoneNumber, LocalDate dateOfBirth, Integer gender, Boolean acceptReceiveAdvertising, Role role) {
         this.email = email;
+        this.name = name;
         this.password = password;
         this.address = address;
+        this.nickName = nickName;
+        this.phoneNumber = phoneNumber;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.acceptReceiveAdvertising = acceptReceiveAdvertising;
         this.role = role;
     }
 
@@ -79,10 +102,15 @@ public class Member extends BaseEntity {
                                       PasswordEncoder passwordEncoder) {
 
         return Member.builder()
-                .name(registerFormDto.getName())
                 .email(registerFormDto.getEmail())
+                .name(registerFormDto.getName())
                 .password(passwordEncoder.encode(registerFormDto.getPassword()))
                 .address(registerFormDto.getAddress())
+//                .nickName(registerFormDto.getNickName())
+                .phoneNumber(registerFormDto.getPhoneNumber())
+                .dateOfBirth(registerFormDto.getDateOfBirth())
+                .gender(registerFormDto.getGender())
+                .acceptReceiveAdvertising(registerFormDto.getAcceptReceiveAdvertising())
                 .role(Role.USER)
                 .build();
     }

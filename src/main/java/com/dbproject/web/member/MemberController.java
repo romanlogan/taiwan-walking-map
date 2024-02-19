@@ -45,6 +45,7 @@ public class MemberController {
             return "/member/registerForm";
         }
 
+        System.out.println(registerFormDto.toString());
         memberService.saveMember(registerFormDto, passwordEncoder);
 
         return "redirect:/";

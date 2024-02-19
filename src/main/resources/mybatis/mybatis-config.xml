@@ -5,6 +5,9 @@
 
 <configuration>
 
+<!--    <setting name="mapUnderscoreToCamelCase" value="true"/>-->
 
-
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/> <!-- 카멜케이스 적용 -->
+    </settings>
 </configuration>
