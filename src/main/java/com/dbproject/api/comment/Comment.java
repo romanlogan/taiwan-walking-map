@@ -25,7 +25,7 @@ public class Comment extends BaseEntity {
 
     private Integer rate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL )
     @JoinColumn(name = "member_email")
     private Member member;
 

@@ -56,7 +56,7 @@ class CommentRepositoryTest {
     @Test
     void save(){
         //given
-        Comment comment = getComment();
+        Comment comment = getComment(5,"댓글1 입니다.");
 
         //when
         commentRepository.save(comment);
@@ -72,7 +72,7 @@ class CommentRepositoryTest {
     @Test
     void findDuplicateCommentWhenSaved(){
         //given
-        Comment comment = getComment();
+        Comment comment = getComment(5,"댓글1 입니다.");
         commentRepository.save(comment);
 
         //when
@@ -94,9 +94,8 @@ class CommentRepositoryTest {
         assertThat(optionalComment.isEmpty()).isTrue();
     }
 
-    private Comment getComment() {
-        int rating = 5;
-        String content = "댓글1 입니다.";
+    private Comment getComment(int rating, String content) {
+
         Member member = memberRepository.findByEmail("zxcv@zxcv.com");
         String locationId = "C1_379000000A_001572";
         Location location = locationRepository.findByLocationId(locationId);
@@ -109,7 +108,7 @@ class CommentRepositoryTest {
     @Test
     void test(){
         //given
-        Comment comment1 = getComment();
+        Comment comment1 = getComment(5,"댓글1 입니다.");
         commentRepository.save(comment1);
 
         //when
@@ -119,8 +118,57 @@ class CommentRepositoryTest {
         assertThat(savedComment.getContent()).isEqualTo("댓글1 입니다.");
         assertThat(savedComment.getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
         assertThat(savedComment.getRate()).isEqualTo(5);
-
      }
+
+
+    @DisplayName("회원이 작성한 댓글 리스트를 가져옵니다")
+    @Test
+    void findCommentListByMemberEmail(){
+        //given
+        Comment comment1 = getComment(5,"댓글1 입니다.");
+        Comment comment2 = getComment(4,"댓글2 입니다.");
+        Comment comment3 = getComment(3,"댓글3 입니다.");
+        commentRepository.save(comment1);
+        commentRepository.save(comment2);
+        commentRepository.save(comment3);
+
+        //when
+        List<Comment> commentList = commentRepository.findByMemberEmail("zxcv@zxcv.com");
+
+        //then
+        assertThat(commentList.get(0).getContent()).isEqualTo("댓글3 입니다.");
+        assertThat(commentList.get(0).getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
+        assertThat(commentList.get(0).getRate()).isEqualTo(3);
+        assertThat(commentList.get(1).getContent()).isEqualTo("댓글2 입니다.");
+        assertThat(commentList.get(1).getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
+        assertThat(commentList.get(1).getRate()).isEqualTo(4);
+        assertThat(commentList.get(2).getContent()).isEqualTo("댓글1 입니다.");
+        assertThat(commentList.get(2).getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
+        assertThat(commentList.get(2).getRate()).isEqualTo(5);
+    }
+
+
+
+    @DisplayName("회원이 작성한 댓글 리스트를 삭제합니다")
+    @Test
+    void deleteCommentListByMemberEmail(){
+        //given
+        Comment comment1 = getComment(5,"댓글1 입니다.");
+        Comment comment2 = getComment(4,"댓글2 입니다.");
+        Comment comment3 = getComment(3,"댓글3 입니다.");
+        commentRepository.save(comment1);
+        commentRepository.save(comment2);
+        commentRepository.save(comment3);
+
+        //when
+        commentRepository.deleteByMemberEmail("zxcv@zxcv.com");
+
+        //then
+        List<Comment> commentList = commentRepository.findByMemberEmail("zxcv@zxcv.com");
+        assertThat(commentList).hasSize(0);
+    }
+
+
 
 
 }

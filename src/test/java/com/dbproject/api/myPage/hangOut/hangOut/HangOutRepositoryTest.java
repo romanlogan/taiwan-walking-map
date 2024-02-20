@@ -122,4 +122,28 @@ class HangOutRepositoryTest {
         assertThat(hangOutList.get(0).getRespondent().getEmail()).isEqualTo("qwer@qwer.com");
     }
 
+
+    @DisplayName("회원 email 로 회원의 Email 이 포함된 hangout을 모두 삭제합니다")
+    @Test
+    void deleteByEmail(){
+
+        //given
+        Location location = locationRepository.findByLocationId("C1_379000000A_001572");
+        Member yunni = memberRepository.findByEmail("yunni@yunni.com");
+        Member lee = memberRepository.findByEmail("qwer@qwer.com");
+        String message = "메시지 입니다.";
+        LocalDateTime localDateTime = LocalDateTime.now();
+        HangOut hangOut = new HangOut(location, yunni, lee, message, localDateTime);
+        hangOutRepository.save(hangOut);
+        List<HangOut> savedHangOutList = hangOutRepository.findAll();
+        assertThat(savedHangOutList).hasSize(1);
+
+        //when
+        hangOutRepository.deleteByEmail("qwer@qwer.com");
+
+        //then
+        List<HangOut> hangOutList = hangOutRepository.findAll();
+        assertThat(hangOutList).hasSize(0);
+
+    }
 }

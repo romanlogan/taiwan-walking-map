@@ -25,17 +25,19 @@ public class MBTServiceImpl implements MBTService {
     @Override
     public MBTCityDtoCamel getCity() {
 
+//        List<MBTCityDto> allCity = mapper.selectAll();
+//
+//        for (MBTCityDto cityDto : allCity) {
+//            cityDto.printDetail();
+//        }
+
+
         MBTCityDtoCamel mbtCityDto = mapper.selectCity("臺北市");
         mbtCityDto.printDetail();
 
         MBTCityDtoCamel mbtCityDto2 = mapper.selectCity("臺南市");
         mbtCityDto2.printDetail();
 
-        List<MBTCityDto> allCity = mapper.selectAll();
-
-        for (MBTCityDto cityDto : allCity) {
-            cityDto.printDetail();
-        }
 //        MBTCityDto mbtCityDto = new MBTCityDto(city.getPostalAddressCity(), city.getCityDetail());
 //        MBTCityDto mbtCityDto = new MBTCityDto();
         return mbtCityDto2;

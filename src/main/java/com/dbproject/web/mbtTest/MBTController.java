@@ -30,7 +30,6 @@ public class MBTController {
 
         model.addAttribute("city", city);
 
-
         return "/mbtTest/mbtTest";
 
     }

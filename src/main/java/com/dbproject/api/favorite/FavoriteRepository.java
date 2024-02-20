@@ -2,6 +2,7 @@ package com.dbproject.api.favorite;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
@@ -27,4 +28,13 @@ public interface FavoriteRepository extends JpaRepository<FavoriteLocation, Long
             " where fl.member.email = :email" +
             " order by fl.location.name asc")
     List<FavoriteLocation> getFavoriteLocationList(String email);
+
+    @Query("select fl from FavoriteLocation fl" +
+            " where fl.member.email = :email")
+    List<FavoriteLocation> findByMemberEmail(@Param("email") String email);
+
+    @Modifying
+    @Query("delete from FavoriteLocation fl" +
+            " where fl.member.email = :email")
+    void deleteByMemberEmail(@Param("email") String email);
 }

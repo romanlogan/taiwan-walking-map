@@ -62,9 +62,16 @@ public class Member extends BaseEntity {
     private Role role;
 
 //  table 은 key 로 양방향 조회가 가능하므로 테이블은 변경 안해도 됨
+//    양방향이 아닌 관계는 수동으로 삭제 해야 하는 건가 ?
+//    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
     @OneToMany(mappedBy = "member")
     private List<FavoriteLocation> favoriteLocation;
 
+
+
+//     newFriend 만 지우니 me (my_email) 이 안지워져서 에러 -> 설계 잘못인가?
+//    그렇다면 friend 처럼 1번 요청으로 request-respondent 형태로 2번 나가는 쿼리는 고아객체 제거가 안되는건가?
+//    @OneToMany(mappedBy = "newFriend",cascade = CascadeType.ALL, orphanRemoval = true)
     @OneToMany(mappedBy = "newFriend")
     private List<Friend> friends;
 

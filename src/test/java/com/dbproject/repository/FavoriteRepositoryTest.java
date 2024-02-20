@@ -112,6 +112,40 @@ class FavoriteRepositoryTest {
         assertThat(favoriteLocationList.get(0).getLocation().getName()).isEqualTo("西門町");
     }
 
+    @DisplayName("회원의 Email로 회원의 즐겨찾기 장소들을 삭제합니다")
+    @Test
+    void deleteByMemberEmail(){
+        //given
+        Member member = memberRepository.findByEmail("zxcv@zxcv.com");
+        String locationId = "C1_379000000A_001572";
+        Location location = locationRepository.findByLocationId(locationId);
+        String memo = "메모 1 입니다.";
+
+        FavoriteLocation favoriteLocation = new FavoriteLocation(member, location, memo);
+        favoriteRepository.save(favoriteLocation);
+
+        Member member2 = memberRepository.findByEmail("zxcv@zxcv.com");
+        String locationId2 = "C1_379000000A_001573";
+        Location location2 = locationRepository.findByLocationId(locationId2);
+        String memo2 = "메모 2 입니다.";
+
+        FavoriteLocation favoriteLocation2 = new FavoriteLocation(member2, location2, memo2);
+        favoriteRepository.save(favoriteLocation2);
+
+        List<FavoriteLocation> favoriteLocationList = favoriteRepository.findByMemberEmail("zxcv@zxcv.com");
+
+        assertThat(favoriteLocationList).hasSize(2);
+
+        //when
+        favoriteRepository.deleteByMemberEmail("zxcv@zxcv.com");
+
+        //then
+        List<FavoriteLocation> deletedFavoriteLocationList = favoriteRepository.findByMemberEmail("zxcv@zxcv.com");
+        assertThat(deletedFavoriteLocationList).hasSize(0);
+
+
+    }
+
 
 
 
