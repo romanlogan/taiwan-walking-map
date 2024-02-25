@@ -3,12 +3,11 @@ package com.dbproject.api.location;
 import com.dbproject.api.comment.Comment;
 import com.dbproject.api.comment.dto.CommentDto;
 import com.dbproject.api.favorite.FavoriteLocation;
-import com.dbproject.api.comment.CommentRepository;
+import com.dbproject.api.comment.repository.CommentJpaRepository;
 import com.dbproject.api.favorite.FavoriteRepository;
 import com.dbproject.api.friend.Friend;
 import com.dbproject.api.friend.FriendDto;
 import com.dbproject.api.friend.FriendRepository;
-import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.memberImg.MemberImg;
 import com.dbproject.api.member.memberImg.MemberImgRepository;
@@ -29,7 +28,9 @@ public class LocationService {
 
     private final LocationRepository locationRepository;
     private final FavoriteRepository favoriteRepository;
-    private final CommentRepository commentRepository;
+
+//
+    private final CommentJpaRepository commentRepository;
     private final MemberImgRepository memberImgRepository;
     private final MemberRepository memberRepository;
     private final FriendRepository friendRepository;

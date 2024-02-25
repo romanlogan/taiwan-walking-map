@@ -9,7 +9,7 @@ import com.dbproject.api.comment.Comment;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
-import com.dbproject.api.comment.CommentRepository;
+import com.dbproject.api.comment.repository.CommentJpaRepository;
 import com.dbproject.api.favorite.FavoriteRepository;
 import com.dbproject.api.location.LocationRepository;
 import com.dbproject.api.member.MemberRepository;
@@ -21,8 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,7 +45,7 @@ class LocationServiceTest {
     private LocationService locationService;
 
     @Autowired
-    private CommentRepository commentRepository;
+    private CommentJpaRepository commentRepository;
 
     @Autowired
     private FriendRepository friendRepository;

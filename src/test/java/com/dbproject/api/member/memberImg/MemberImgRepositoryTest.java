@@ -51,7 +51,7 @@ class MemberImgRepositoryTest {
 
     @DisplayName("회원의 이미지 파일을 저장합니다.")
     @Test
-    void test(){
+    void save(){
 
         //given
         String oriImgName = "oriImg.jpg";
@@ -70,12 +70,29 @@ class MemberImgRepositoryTest {
         assertThat(savedMemberImg.getImgName()).isEqualTo(imgName);
         assertThat(savedMemberImg.getOriImgName()).isEqualTo(oriImgName);
         assertThat(savedMemberImg.getImgUrl()).isEqualTo(imgUrl);
+    }
 
+    @DisplayName("회원의 email 로 회원의 이미지를 삭제합니다")
+    @Test
+    void deleteByMemberEmail(){
+        //given
+        String oriImgName = "oriImg.jpg";
+        String imgName = "imgName.jpg";
+        String imgUrl = "/images/member/" + imgName;
+        Member member = memberRepository.findByEmail("asdf@asdf.com");
+        MemberImg memberImg = new MemberImg(imgName, oriImgName, imgUrl, member);
+        memberImgRepository.save(memberImg);
+        Member savedMember = memberRepository.findByEmail("asdf@asdf.com");
+        assertThat(savedMember).isNotNull();
 
+        //when
+        memberRepository.deleteByEmail("asdf@asdf.com");
 
-     }
+        //then
+        Member deletedMember = memberRepository.findByEmail("asdf@asdf.com");
+        assertThat(deletedMember).isNotNull();
 
-
+    }
 
 
 

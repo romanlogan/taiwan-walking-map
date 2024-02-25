@@ -25,7 +25,9 @@ public class Comment extends BaseEntity {
 
     private Integer rate;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL )
+//    cacade 를 걸었을때 delete 시 error 발생
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL )
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_email")
     private Member member;
 

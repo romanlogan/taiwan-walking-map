@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dbproject.api.comment.repository.CommentMapper">
+
+<!--    comment 가 jpa entity 인데 괜찮을까 ? -->
+    <insert id="save" parameterType="com.dbproject.api.comment.dto.UserComment" useGeneratedKeys="true" keyProperty="comment_id">
+        insert into comment(content, rate, member_email, location_id) values (#{content}, #{rate}, #{memberEmail}, #{locationId})
+    </insert>
+
+    <select id="findByLocationIdAndEmail" resultType="com.dbproject.api.comment.Comment">
+        select *
+        from comment
+        where location_id=#{locationId} and member_email=#{email}
+    </select>
+
+    <select id="selectAll" resultType="com.dbproject.api.mbtTest.MBTCityDto">
+        select * from city
+    </select>
+
+</mapper>
+

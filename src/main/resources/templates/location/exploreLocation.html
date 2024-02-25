@@ -107,14 +107,41 @@
           },
           dataType : "json",
           cache   : false,
-          success  : function(result, status){
-            alert("확인되었습니다.");
-            location.href='/location/'+locationId;
+          success  : function(result, status,data){
+            // alert("확인되었습니다.");
+
+            // ApiResponse 만 사용하던 ResponseEntity 로 한번 감싸던 똑같이 result 로 사용 가능
+            // location.href='/location/'+locationId;
+            console.log("data : "+data);
+            console.log("result :  " +result);
+            console.log("result.code : "+result.code);
+            console.log("result.data : "+result.data);
+            console.log("result.messageList : "+result.messageList);
+            console.log("result.status : "+result.status);
+
+            if(result.code == '200'){
+              location.href='/location/'+locationId;
+
+            }else if (result.code == '400') {
+              console.log('---------400--------')
+              var commentError = document.getElementById("commentError");
+              commentError.innerText = result.messageList[0];
+            }
 
           },
-          error : function(jqXHR, status, error, request){
+          error : function(jqXHR, status, error, result){
 
-            console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+            //------------ error 로 빼지 말고 success 쪽에서 처리 하기 --------------
+            console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
+            console.log("code : "+jqXHR.code);
+            console.log("status : "+jqXHR.status);
+            console.log("messageList : "+jqXHR.messageList);
+            console.log("data : "+jqXHR.data);
+            console.log("result : "+result);
+           var ab = [[${data}]]
+            console.log("ab : "+ab);
+            console.log("response : "+jqXHR.response);
+            console.log("jqXHR : "+jqXHR);
 
             if(jqXHR.status == '401'){
               alert('로그인 후 이용해주세요');
@@ -482,6 +509,11 @@
 
     }
 
+    .fieldError {
+      color: #bd2130;
+    }
+
+
 
 
   </style>
@@ -666,6 +698,7 @@
 
               <label for="commentContent"></label>
               <textarea type="text" id="commentContent" name="commentContent"></textarea>
+              <p id="commentError" class="fieldError"></p>
 
                   <select id="commentRate" name="commentRate">
                     <option value="1">1</option>
@@ -702,6 +735,7 @@
           </div>
           <p class="savedCommentContent">[[${comment.content}]]</p>
           <p class="savedCommentRegTime">[[${comment.regTime}]]</p>
+<!--          점수 출력하기 (추가 필요)-->
         </div>
 <!--        비 로그인 유저가 들어왔을때ㅑ 에러 발생 -->
         <div th:if="${#strings.equals(comment.email, #authentication.principal.username)}">

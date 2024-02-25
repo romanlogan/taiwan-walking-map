@@ -1,7 +1,7 @@
 package com.dbproject.service;
 
 import com.dbproject.api.comment.Comment;
-import com.dbproject.api.comment.CommentRepository;
+import com.dbproject.api.comment.repository.CommentJpaRepository;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.location.LocationRepository;
 import com.dbproject.api.member.MemberService;
@@ -41,7 +41,7 @@ class MemberServiceTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private CommentRepository commentRepository;
+    private CommentJpaRepository commentRepository;
 
     @Autowired
     private LocationRepository locationRepository;

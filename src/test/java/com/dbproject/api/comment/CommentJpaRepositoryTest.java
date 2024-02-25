@@ -1,6 +1,6 @@
-package com.dbproject.repository;
+package com.dbproject.api.comment;
 
-import com.dbproject.api.comment.CommentRepository;
+import com.dbproject.api.comment.repository.CommentJpaRepository;
 import com.dbproject.api.location.LocationRepository;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.RegisterFormDto;
@@ -25,10 +25,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @Transactional
 @TestPropertySource(locations="classpath:application-test.properties")
-class CommentRepositoryTest {
+class CommentJpaRepositoryTest {
 
     @Autowired
-    private CommentRepository commentRepository;
+    private CommentJpaRepository commentRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;

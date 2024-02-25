@@ -1,8 +1,6 @@
 package com.dbproject.api.member;
 
-import com.dbproject.api.comment.Comment;
-import com.dbproject.api.comment.CommentRepository;
-import com.dbproject.api.favorite.FavoriteLocation;
+import com.dbproject.api.comment.repository.CommentJpaRepository;
 import com.dbproject.api.favorite.FavoriteRepository;
 import com.dbproject.api.friend.FriendRepository;
 import com.dbproject.api.friend.friendRequest.FriendRequestRepository;
@@ -24,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,13 +31,12 @@ public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final MemberImgRepository memberImgRepository;
-    private final CommentRepository commentRepository;
+    private final CommentJpaRepository commentRepository;
     private final FavoriteRepository favoriteRepository;
     private final FriendRepository friendRepository;
     private final FriendRequestRepository friendRequestRepository;
     private final HangOutRepository hangOutRepository;
     private final InviteHangOutRepository inviteHangOutRepository;
-
 
 
 
@@ -109,13 +105,13 @@ public class MemberService implements UserDetailsService {
 
 //        에러 코드 바뀐거 확인 완료 -> member 와 연관된 다른 데이터도 삭제 필요
         commentRepository.deleteByMemberEmail(email);
-
 //    양방향이 아닌 관계는 수동으로 삭제 해야 하는 건가 ?
         favoriteRepository.deleteByMemberEmail(email);
         friendRepository.deleteByEmail(email);
         friendRequestRepository.deleteByEmail(email);
         inviteHangOutRepository.deleteByEmail(email);
         hangOutRepository.deleteByEmail(email);
+        memberImgRepository.deleteByMemberEmail(email);
 
         Member member = memberRepository.findByEmail(email);
         memberRepository.deleteByEmail(email);

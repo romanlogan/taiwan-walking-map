@@ -35,13 +35,12 @@ public class Member extends BaseEntity {
 
     private String name;
 
+    //    별명은 중복되면 안됨
+    private String nickName;
+
     private String password;
 
     private String address;
-
-//    ---------- 추가 목록 ------------
-
-    private String nickName;
 
     private String phoneNumber;
 
@@ -51,12 +50,7 @@ public class Member extends BaseEntity {
 //    0 - Woman
     private Integer gender;
 
-
     private Boolean acceptReceiveAdvertising;
-
-    //전화번호
-//   생년월일
-//    광고 수신 동의
 
     @Enumerated(EnumType.STRING)
     private Role role;

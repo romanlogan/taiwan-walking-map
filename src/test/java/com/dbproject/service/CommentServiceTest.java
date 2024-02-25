@@ -7,10 +7,9 @@ import com.dbproject.api.location.Location;
 import com.dbproject.api.member.RegisterFormDto;
 import com.dbproject.api.comment.Comment;
 import com.dbproject.api.member.Member;
-import com.dbproject.api.comment.CommentRepository;
+import com.dbproject.api.comment.repository.CommentJpaRepository;
 import com.dbproject.api.location.LocationRepository;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.exception.DuplicateCreateCommentException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class CommentServiceTest {
 
     @Autowired
-    private CommentRepository commentRepository;
+    private CommentJpaRepository commentRepository;
 
     @Autowired
     private CommentService commentService;

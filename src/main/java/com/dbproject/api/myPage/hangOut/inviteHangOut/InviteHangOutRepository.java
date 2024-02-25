@@ -15,13 +15,12 @@ public interface InviteHangOutRepository extends JpaRepository<InviteHangOut, Lo
             " order by iho.regTime asc")
     List<InviteHangOut> findWaitingListByRequesterEmail(@Param("requesterEmail") String email);
 
-
-
     @Modifying
     @Query("delete from InviteHangOut iho" +
             " where iho.requester.email = :email" +
             " or iho.respondent.email = :email")
     void deleteByEmail(@Param("email") String email);
+
 
 
 }

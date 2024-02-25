@@ -1,6 +1,7 @@
 package com.dbproject.api.comment;
 
 import com.dbproject.api.comment.dto.UpdateCommentRequest;
+import com.dbproject.api.comment.repository.CommentJpaRepository;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.location.LocationRepository;
@@ -17,9 +18,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CommentService {
 
-    private final CommentRepository commentRepository;
+    private final CommentJpaRepository commentRepository;
     private final MemberRepository memberRepository;
     private final LocationRepository locationRepository;
+
+
 
     public Long createComment(CreateCommentRequest createCommentRequest, String email) {
 
