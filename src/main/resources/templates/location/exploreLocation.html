@@ -61,8 +61,16 @@
           dataType : "json",
           cache   : false,
           success  : function(result, status){
-            alert("확인되었습니다.");
-            location.href='/location/'+locationId;
+
+            if(result.code == '200'){
+              location.href='/location/'+locationId;
+
+            }else if (result.code == '400') {
+              //memo 超過255字
+              console.log('---------400--------')
+              var memoError = document.getElementById("memoError");
+              memoError.innerText = result.messageList[0];
+            }
 
           },
           error : function(jqXHR, status, error, request){
@@ -125,6 +133,9 @@
             }else if (result.code == '400') {
               console.log('---------400--------')
               var commentError = document.getElementById("commentError");
+
+              // 2~3 개 필드가 동시에 에러가 나면 0번째를 가져오면 안됨
+              // 그러면 message 를 list 가 아니라 map 으로 가져와야 하나 ?
               commentError.innerText = result.messageList[0];
             }
 
@@ -532,29 +543,27 @@
       <button id="addedFavoriteBtn"><i class="fa-thin fa-star" style="color: #ffdd00;"></i>이미 저장된 장소입니다.</button>
     </div>
     <div th:unless="${locationDtlResponse.isSaved()}">
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addFavoriteModal"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>
     </div>
 
     <!-- 모달 창 -->
-    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal fade" id="addFavoriteModal" tabindex="-1" role="dialog" aria-labelledby="addFavoriteModalLabel">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title" id="myModalLabel">모달 제목</h4>
+            <h4 class="modal-title" id="addFavoriteModalLabel">즐겨찾기 추가</h4>
           </div>
           <div class="modal-body">
             <!-- 모달 창 내의 데이터 입력 폼 -->
             <div class="form-group">
-
               <label for="memo">메모</label>
               <textarea type="text" name="memo" id="memo" placeholder="메모 내용을 입력해주세요."></textarea>
+              <p id="memoError" class="fieldError"></p>
               <br>
-
-
             </div>
           </div>
           <div class="modal-footer">
-            <button id="addFavoriteBtn" type="button" class="btn btn-default" data-dismiss="modal">추가</button>
+            <button id="addFavoriteBtn" type="button" >추가</button>
           </div>
         </div>
       </div>

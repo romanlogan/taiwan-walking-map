@@ -8,6 +8,7 @@ import com.dbproject.api.member.MemberService;
 import com.dbproject.web.favorite.FavoriteController;
 import com.dbproject.api.favorite.FavoriteListResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -26,9 +27,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = FavoriteController.class)
@@ -48,35 +51,6 @@ class FavoriteControllerTest {
 
     @MockBean
     private FavoriteRepository favoriteRepository;
-
-
-    @DisplayName("즐겨찾기 장소들을 조회한다")
-    @Test
-    @WithMockUser(username = "qwer@qwer.com", roles = "USER")
-    void getFavoriteList() throws Exception {
-        //given
-        Pageable pageable = PageRequest.of(0, 5 );
-
-        FavoriteListResponse favoriteListResponse = new FavoriteListResponse("C1_379000000A_001572", "西門町");
-        List<FavoriteListResponse> list = new ArrayList<>();
-        list.add(favoriteListResponse);
-
-        Page<FavoriteListResponse> page = new PageImpl<>(list, pageable, 1);
-        Mockito.when(favoriteService.getFavoriteLocationList(pageable, "qwer@qwer.com")).thenReturn(page);
-
-
-//      현재 문제는 MockUser를 사용하여 test 진행시 mockUser가 faovriteList가 없는 문제/
-//        QueryProjection 의 테스트 방법이 따로 있나?
-//        결과가 계속 null 이 들어가서 html 에서 에러 발생
-
-//        stubbing 으로 객체를 stub 객체를 반환하여서 해결해야함
-        //when  //then
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/favorite/favoriteList/0")
-                )
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
 
 
     @DisplayName("즐겨찾기 장소를 등록한다")
@@ -129,10 +103,9 @@ class FavoriteControllerTest {
     void LocationIdCanNotNullWhenAddFavoriteList() throws Exception {
 
         //given
-        String locationId = null;
         String memo = "메모 1 입니다.";
 
-        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(locationId, memo);
+        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(null, memo);
 
         //when  //then
         mockMvc.perform(MockMvcRequestBuilders.post("/favorite/addFavoriteList")
@@ -141,16 +114,21 @@ class FavoriteControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.messageList",Matchers.hasItems("locationId值是必要")))
+                .andExpect(jsonPath("$.dataList", Matchers.hasItems(nullValue())));
     }
 
-    @DisplayName("즐겨찾기 장소를 등록시 location Id는 ' ' 이 될 수 없다")
+    @DisplayName("儲存FavoriteLocation時locationId值只能20字")
     @Test
     @WithMockUser(username = "user", roles = "USER")
-    void LocationIdCanNotEmptyWhenAddFavoriteList() throws Exception {
+    void saveFavoriteLocationWithNotFormattedLocationId() throws Exception {
 
         //given
-        String locationId = " ";
+        //19
+        String locationId = "abcdeabcdeabcdeabcd";
         String memo = "메모 1 입니다.";
 
         AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(locationId, memo);
@@ -162,8 +140,68 @@ class FavoriteControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.messageList",Matchers.hasItems("locationId要20個字")))
+                .andExpect(jsonPath("$.dataList", Matchers.hasItems("abcdeabcdeabcdeabcd")));
     }
+
+    @DisplayName("儲存FavoriteLocation時memo值最多只能255字")
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    void saveFavoriteLocationWithOverSizeMemo() throws Exception {
+
+        //given
+        String locationId = "C1_379000000A_001572";
+//        256 字
+        String memo = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid";
+
+        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(locationId, memo);
+
+        //when  //then
+        mockMvc.perform(MockMvcRequestBuilders.post("/favorite/addFavoriteList")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(addFavoriteLocationRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.messageList",Matchers.hasItems("memo值只能最多255字")))
+                .andExpect(jsonPath("$.dataList", Matchers.hasItems("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid")));
+    }
+
+
+    @DisplayName("즐겨찾기 장소들을 조회한다")
+    @Test
+    @WithMockUser(username = "qwer@qwer.com", roles = "USER")
+    void getFavoriteList() throws Exception {
+        //given
+        Pageable pageable = PageRequest.of(0, 5 );
+
+        FavoriteListResponse favoriteListResponse = new FavoriteListResponse("C1_379000000A_001572", "西門町");
+        List<FavoriteListResponse> list = new ArrayList<>();
+        list.add(favoriteListResponse);
+
+        Page<FavoriteListResponse> page = new PageImpl<>(list, pageable, 1);
+        Mockito.when(favoriteService.getFavoriteLocationList(pageable, "qwer@qwer.com")).thenReturn(page);
+
+
+//      현재 문제는 MockUser를 사용하여 test 진행시 mockUser가 faovriteList가 없는 문제/
+//        QueryProjection 의 테스트 방법이 따로 있나?
+//        결과가 계속 null 이 들어가서 html 에서 에러 발생
+
+//        stubbing 으로 객체를 stub 객체를 반환하여서 해결해야함
+        //when  //then
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/favorite/favoriteList/0")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
 
     @DisplayName("즐겨찾기 장소를 삭제한다")
     @Test
