@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -89,11 +90,17 @@ public class FavoriteController {
     }
 
     @GetMapping({"/favoriteList","/favoriteList/{page}"})
-    public String getFavoriteList(@PathVariable("page") Optional<Integer> page,
+    public String getFavoriteList(@PathVariable("page") Optional<Integer> optionalPage,
                                   Principal principal,
                                   Model model) {
+        //초과된 page 가 파라미터로 들어오면? 예 page = 1000000000000
+        //최대 페이지를 계산 하여 마지막 페이지를 보여준다
+        Integer size = 5;
+        Integer page = null;
+        page = calculatePage(optionalPage, size);
 
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5 );
+//        Pageable pageable = PageRequest.of(optionalPage.isPresent() ? optionalPage.get() : 0, 5 );
+        Pageable pageable = PageRequest.of(page , size );
         String email = principal.getName();
 
         Page<FavoriteListResponse> favoriteListResponsePage = favoriteService.getFavoriteLocationList(pageable, email);
@@ -103,6 +110,21 @@ public class FavoriteController {
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
         return "/favorite/favoriteList";
+    }
+
+    private Integer calculatePage(Optional<Integer> optionalPage, Integer size) {
+        Integer page;
+        Integer maxPage = favoriteService.getMaxPage(size);
+        if (optionalPage.isPresent()) {
+            if (optionalPage.get() > maxPage) {
+                page = maxPage;
+            }else{
+                page = optionalPage.get();
+            }
+        }else {
+            page = 0;
+        }
+        return page;
     }
 
     @DeleteMapping("/deleteFavorite")

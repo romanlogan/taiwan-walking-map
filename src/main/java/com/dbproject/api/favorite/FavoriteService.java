@@ -59,4 +59,12 @@ public class FavoriteService {
 
         favoriteRepository.delete(favoriteLocation);
     }
+
+    public Integer getMaxPage(Integer size) {
+
+        Integer totalCount = Math.toIntExact(favoriteRepository.count());
+
+        //page 는 0부터 시작하므로 +1 안해도 됨
+        return (totalCount / size) ;
+    }
 }

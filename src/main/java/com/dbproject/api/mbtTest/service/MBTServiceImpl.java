@@ -15,12 +15,16 @@ import java.util.List;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Qualifier("MBTServiceImpl")
 public class MBTServiceImpl implements MBTService {
 
     @Autowired
-    MBTMapper mapper;
+    private MBTMapper mapper;
+
+//    public MBTServiceImpl(MBTMapper mapper) {
+//        this.mapper = mapper;
+//    }
 
     @Override
     public MBTCityDtoCamel getCity() {
@@ -30,7 +34,7 @@ public class MBTServiceImpl implements MBTService {
 //        for (MBTCityDto cityDto : allCity) {
 //            cityDto.printDetail();
 //        }
-
+        System.out.println("-------------mybatis------------");
 
         MBTCityDtoCamel mbtCityDto = mapper.selectCity("臺北市");
         mbtCityDto.printDetail();

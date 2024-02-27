@@ -13,15 +13,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/mbtTest")
 public class MBTController {
 
     private final MBTService mbtService;
 
     //jpa 를 사용해야할때는 qualifier 를 jpa 로 변경
-    public MBTController(@Qualifier("MBTServiceImpl") MBTService mbtService) {
-        this.mbtService = mbtService;
-    }
+//    public MBTController(@Qualifier("MBTServiceImpl") MBTService mbtService) {
+//        this.mbtService = mbtService;
+//    }
 
     @GetMapping("/getCity")
     public String getCity(Model model) {

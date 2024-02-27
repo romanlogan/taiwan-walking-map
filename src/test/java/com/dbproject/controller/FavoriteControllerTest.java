@@ -202,6 +202,29 @@ class FavoriteControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @DisplayName("如果未登入使用者查詢FavoriteLocationList時，return 401 UnAuthorization Error")
+    @Test
+//    @WithMockUser(username = "qwer@qwer.com", roles = "USER")
+    void getFavoriteListWithNoLoginUser() throws Exception {
+        //given
+        Pageable pageable = PageRequest.of(0, 5 );
+
+        FavoriteListResponse favoriteListResponse = new FavoriteListResponse("C1_379000000A_001572", "西門町");
+        List<FavoriteListResponse> list = new ArrayList<>();
+        list.add(favoriteListResponse);
+
+        Page<FavoriteListResponse> page = new PageImpl<>(list, pageable, 1);
+        Mockito.when(favoriteService.getFavoriteLocationList(pageable, "qwer@qwer.com")).thenReturn(page);
+
+        //when  //then
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/favorite/favoriteList/0")
+                )
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+
 
     @DisplayName("즐겨찾기 장소를 삭제한다")
     @Test

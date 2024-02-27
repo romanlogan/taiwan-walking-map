@@ -53,17 +53,48 @@ class FavoriteRepositoryTest {
         memberRepository.save(member);
     }
 
+    @DisplayName("沒有儲存FavoriteLocation後call count（）時，會return 0")
+    @Test
+    void countWithNoFavoriteLocation(){
+        //given
+
+        //when
+        long count = favoriteRepository.count();
+
+        //then
+        assertThat(count).isEqualTo(0L);
+    }
+
+
+    @DisplayName("儲存3個FavoriteLocation後call count（）時，會return 3L")
+    @Test
+    void count(){
+        //given
+        String locationId = "C1_379000000A_001572";
+        FavoriteLocation favoriteLocation = getFavoriteLocation(locationId);
+        favoriteRepository.save(favoriteLocation);
+
+        String locationId2 = "C1_379000000A_001573";
+        FavoriteLocation favoriteLocation2 = getFavoriteLocation(locationId2);
+        favoriteRepository.save(favoriteLocation2);
+
+        String locationId3 = "C1_379000000A_001574";
+        FavoriteLocation favoriteLocation3 = getFavoriteLocation(locationId3);
+        favoriteRepository.save(favoriteLocation3);
+
+        //when
+        long count = favoriteRepository.count();
+
+        //then
+        assertThat(count).isEqualTo(3L);
+     }
+
     @DisplayName("가고싶은 장소를 즐겨찾기 리스트에 추가 한다")
     @Test
-    void test(){
+    void save(){
         //given
-        Member member = memberRepository.findByEmail("zxcv@zxcv.com");
         String locationId = "C1_379000000A_001572";
-        /// 여기 locaiton 을 못찾음
-        Location location = locationRepository.findByLocationId(locationId);
-        String memo = "메모 1 입니다.";
-
-        FavoriteLocation favoriteLocation = new FavoriteLocation(member, location, memo);
+        FavoriteLocation favoriteLocation = getFavoriteLocation(locationId);
 
         //when
         favoriteRepository.save(favoriteLocation);
@@ -74,7 +105,15 @@ class FavoriteRepositoryTest {
         assertThat(favoriteLocationList.get(0).getLocation().getName()).isEqualTo("西門町");
      }
 
-     @DisplayName("locationId 로 이미 즐겨찾기 리스트에 저장된 장소인지 확인한다")
+    private FavoriteLocation getFavoriteLocation(String locationId) {
+        Member member = memberRepository.findByEmail("zxcv@zxcv.com");
+        Location location = locationRepository.findByLocationId(locationId);
+        String memo = "메모 1 입니다.";
+        FavoriteLocation favoriteLocation = new FavoriteLocation(member, location, memo);
+        return favoriteLocation;
+    }
+
+    @DisplayName("locationId 로 이미 즐겨찾기 리스트에 저장된 장소인지 확인한다")
      @Test
      void findByLocationId(){
          //given

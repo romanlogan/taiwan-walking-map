@@ -37,4 +37,9 @@ public interface FavoriteRepository extends JpaRepository<FavoriteLocation, Long
     @Query("delete from FavoriteLocation fl" +
             " where fl.member.email = :email")
     void deleteByMemberEmail(@Param("email") String email);
+
+
+//    @Query("select count(*) from FavoriteLocation fl")
+    long count();
+
 }

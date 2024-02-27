@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MBTRepository extends JpaRepository<City, String>, MBTRepoInt {
 
-
     City findBypostalAddressCity(String postalAddressCity);
 
 }
