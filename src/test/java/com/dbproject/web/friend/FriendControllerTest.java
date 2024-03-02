@@ -9,6 +9,7 @@ import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.MemberService;
 import com.dbproject.constant.FriendRequestStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -29,6 +30,7 @@ import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -110,7 +112,11 @@ class FriendControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.messageList", Matchers.hasItems("friendEmail值是必要")))
+                .andExpect(jsonPath("$.dataList", Matchers.hasItems(Matchers.nullValue())));
     }
 
     @DisplayName("친구 요청을 저장시 email 은 ' ' 이 될 수 없습니다 ")
@@ -131,7 +137,11 @@ class FriendControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.messageList", Matchers.hasItems("friendEmail值是必要")))
+                .andExpect(jsonPath("$.dataList", Matchers.hasItems(" ")));
     }
 
     @DisplayName("친구 요청을 저장시 email 은 이메일 형식이어야 합니다 ")
@@ -152,7 +162,36 @@ class FriendControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.messageList", Matchers.hasItems("請輸入email的形式")))
+                .andExpect(jsonPath("$.dataList", Matchers.hasItems("asdasdf")));
+    }
+
+    @DisplayName("친구 요청을 저장시 memo 는 최대 255자 까지만 가능합니다")
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    void canNotSaveFriendRequestWithOverMemoSize() throws Exception{
+        //given
+        String email = "asdf@asdf.com";
+        String memo = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid";
+
+        AddFriendRequest addFriendRequest = new AddFriendRequest(email, memo);
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.post("/myPage/addFriendRequest")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(addFriendRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.messageList", Matchers.hasItems("memo只能最多255字")))
+                .andExpect(jsonPath("$.dataList", Matchers.hasItems("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid")));
     }
 
     Page<RequestFriendListDto> getRequestFriendPage(Pageable pageable) {

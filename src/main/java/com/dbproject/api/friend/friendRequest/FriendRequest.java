@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Entity
 @Table(name = "friend_request")
@@ -49,7 +50,7 @@ public class FriendRequest extends BaseEntity {
     }
 
 
-    public static FriendRequest createFriendRequest(Member requester, Member respondent,String memo) {
+    public static FriendRequest createFriendRequest(Member requester, Member respondent, String memo) {
 
         return FriendRequest.builder()
                 .memo(memo)

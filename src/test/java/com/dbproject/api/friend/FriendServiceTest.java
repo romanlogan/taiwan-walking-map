@@ -17,13 +17,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -88,7 +87,7 @@ class FriendServiceTest {
     }
 
 
-    @DisplayName("요청자와 응답자의 이메일을 받아서 요청 정보를 저장한다")
+    @DisplayName("用requester和respondent的email來，儲存friendRequest")
     @Test
     void saveFriendRequest(){
         //given
@@ -105,6 +104,22 @@ class FriendServiceTest {
         assertThat(friendRequestList.get(0).getRespondent().getName()).isEqualTo("손흥민");
         assertThat(friendRequestList.get(0).getFriendRequestStatus()).isEqualTo(FriendRequestStatus.WAITING);
     }
+
+    @DisplayName("儲存friendRequest時，如果requesterEmail沒在Member裡的話，return FriendNotExistException")
+    @Test
+    void saveFriendRequestWithNotExistFriendEmail(){
+        //given
+        String requesterEmail = "qwer@qwer.com";
+        String respondentEmail = "unknown@unknown.com";
+        AddFriendRequest addFriendRequest = new AddFriendRequest(respondentEmail, "memo1");
+
+        //when then
+//        friendService.saveFriendRequest(addFriendRequest, requesterEmail);
+        assertThatThrownBy(() -> friendService.saveFriendRequest(addFriendRequest, requesterEmail))
+                .isInstanceOf(com.dbproject.exception.FriendNotExistException.class)
+                .hasMessage("존재하지 않는 유저 입니다.");
+    }
+
 
     @DisplayName("중복된 친구 요청시 DuplicateFriendRequest 에러를 발생시킨다")
     @Test
@@ -160,6 +175,7 @@ class FriendServiceTest {
         //given
         String requesterEmail = "qwer@qwer.com";
         Member requester = memberRepository.findByEmail(requesterEmail);
+
         String respondentEmail = "zxcv@zxcv.com";
         Member respondent = memberRepository.findByEmail(respondentEmail);
 

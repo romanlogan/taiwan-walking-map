@@ -1,5 +1,6 @@
 package com.dbproject.web.friend;
 
+import com.dbproject.api.ApiResponse;
 import com.dbproject.api.friend.AcceptAddFriendRequest;
 import com.dbproject.api.friend.AddFriendRequest;
 import com.dbproject.api.friend.FriendListResponse;
@@ -15,10 +16,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -32,12 +37,32 @@ public class FriendController {
 
     @PostMapping("/addFriendRequest")
     public ResponseEntity saveFriendRequest(@Valid @RequestBody AddFriendRequest addFriendRequest,
+                                            BindingResult bindingResult,
                                             Principal principal) {
-        //validate
 //        if (principal == null) {
 //            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
 //        }
 
+        // 바인딩 에러
+        if (bindingResult.hasErrors()) {
+
+            List<String> messageList = new ArrayList<>();
+            List<Object> dataList = new ArrayList<>();
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            for (FieldError fieldError : fieldErrors) {
+                dataList.add(fieldError.getRejectedValue());
+                messageList.add(fieldError.getDefaultMessage());
+            }
+
+            return new ResponseEntity(ApiResponse.of(
+                    HttpStatus.BAD_REQUEST,
+                    messageList,
+                    dataList
+            ),HttpStatus.OK);
+        }
+
+
+//        친구 이메일 존재하는지 ? 없으면 다시 화면으로 돌려주고 없다고 표시
         Long requesterId = friendService.saveFriendRequest(addFriendRequest, principal.getName());
 
         return new ResponseEntity(requesterId, HttpStatus.OK);

@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface FriendRequestRepository extends JpaRepository<FriendRequest, Long> ,
         QuerydslPredicateExecutor<FavoriteLocation>,
         FriendRequestRepositoryCustom {
@@ -16,7 +18,7 @@ public interface FriendRequestRepository extends JpaRepository<FriendRequest, Lo
 //    checkDuplicate
 //    email 로 찾는게 더 빠를까 ?
 //    쉽게 생각하면 email 로 찾는게 더 빠를것 같긴 한데 내부에서 한번더 쿼리가 나가는건가 ?
-    FriendRequest findByRequesterAndRespondent(Member requester, Member respondent);
+    FriendRequest findByRequesterAndRespondent(Member requester,Member respondent);
 
     @Query("select fr from FriendRequest fr" +
             " where fr.requester.email = :requesterEmail" +

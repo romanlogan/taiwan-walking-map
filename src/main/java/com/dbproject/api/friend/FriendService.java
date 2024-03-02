@@ -13,6 +13,7 @@ import com.dbproject.constant.FriendRequestStatus;
 import com.dbproject.exception.DuplicateFriendRequestException;
 import com.dbproject.api.friend.friendRequest.RejectFriendRequest;
 import com.dbproject.api.friend.friendRequest.RequestFriendListDto;
+import com.dbproject.exception.FriendNotExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,12 +43,21 @@ public class FriendService {
 
     public Long saveFriendRequest(AddFriendRequest addFriendRequest, String requesterEmail) {
 
-        //요청자 Member 찾기
-        Member requester = memberRepository.findByEmail(requesterEmail);
+        //요청자 Member 찾기 (사용자)
+        Optional<Member> optionalRequester = memberRepository.findOptionalMemberByEmail(requesterEmail);
+        Member requester = optionalRequester.get();
 
-        //응답자 Member 찾기
-        Member respondent = memberRepository.findByEmail(addFriendRequest.getFriendEmail());
+        //응답자 Member 찾기 (친구 요청 받을 유저)
+        Optional<Member> optionalRespondent = memberRepository.findOptionalMemberByEmail(addFriendRequest.getFriendEmail());
 
+//        요청 받을 유저가 존재하는지 확인
+        if (optionalRespondent.isEmpty()) {
+            throw new FriendNotExistException("존재하지 않는 유저 입니다.");
+        }
+
+        Member respondent = optionalRespondent.get();
+
+        //이미 친구 요청한 유저인지 확인
         checkValidateFriendRequest(requester, respondent);
 
         FriendRequest friendRequest = FriendRequest.createFriendRequest(requester, respondent,addFriendRequest.getMemo());
