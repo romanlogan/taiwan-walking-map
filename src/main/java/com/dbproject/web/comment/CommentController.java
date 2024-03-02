@@ -57,7 +57,11 @@ public class CommentController {
         commentService.checkDuplicateCreateComment(createCommentRequest,principal.getName());
         Long commentId = commentService.createComment(createCommentRequest, principal.getName());
 
-        return new ResponseEntity(ApiResponse.of(HttpStatus.OK, null, List.of(commentId)), HttpStatus.OK);
+        return new ResponseEntity(ApiResponse.of(
+                HttpStatus.OK,
+                null,
+                List.of(commentId)
+        ), HttpStatus.OK);
     }
 
     @PutMapping("/updateComment")

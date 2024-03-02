@@ -174,6 +174,7 @@ class FavoriteControllerTest {
     }
 
 
+
     @DisplayName("즐겨찾기 장소들을 조회한다")
     @Test
     @WithMockUser(username = "qwer@qwer.com", roles = "USER")
@@ -232,7 +233,7 @@ class FavoriteControllerTest {
     void deleteFavoriteLocation() throws Exception {
 
         //given
-        String favoriteLocationId = "1";
+        Integer favoriteLocationId = 1;
 
         DeleteFavoriteLocationRequest deleteFavoriteLocationRequest = new DeleteFavoriteLocationRequest(favoriteLocationId);
 
@@ -252,7 +253,7 @@ class FavoriteControllerTest {
     void deleteFavoriteLocationWithoutLogin() throws Exception {
 
         //given
-        String favoriteLocationId = "1";
+        Integer favoriteLocationId = 1;
 
         DeleteFavoriteLocationRequest deleteFavoriteLocationRequest = new DeleteFavoriteLocationRequest(favoriteLocationId);
 
@@ -275,7 +276,7 @@ class FavoriteControllerTest {
     void favoriteLocationIdCanNotNullWhenDeleteFavoriteLocation() throws Exception {
 
         //given
-        String favoriteLocationId = null;
+        Integer favoriteLocationId = null;
 
         DeleteFavoriteLocationRequest deleteFavoriteLocationRequest = new DeleteFavoriteLocationRequest(favoriteLocationId);
 
@@ -290,13 +291,13 @@ class FavoriteControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("즐겨찾기 장소를 삭제시 favoriteLocationId 는 ' ' 이 될 수 없다")
+    @DisplayName("刪除FavoriteLocation時，favoriteLocationId不能0")
     @Test
     @WithMockUser(username = "user", roles = "USER")
-    void favoriteLocationIdCanNotBlankWhenDeleteFavoriteLocation() throws Exception {
+    void deleteFavoriteLocationWithZeroFavoriteLocationId() throws Exception {
 
         //given
-        String favoriteLocationId = " ";
+        Integer favoriteLocationId = 0;
 
         DeleteFavoriteLocationRequest deleteFavoriteLocationRequest = new DeleteFavoriteLocationRequest(favoriteLocationId);
 
@@ -308,8 +309,13 @@ class FavoriteControllerTest {
 
                 )
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.messageList", Matchers.hasItems("favoriteLocationId不能低於1")))
+                .andExpect(jsonPath("$.dataList", Matchers.hasItems(0)));
     }
+
 
 
 }

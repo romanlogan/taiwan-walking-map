@@ -50,10 +50,9 @@ public class FavoriteService {
         return favoriteRepository.getFavoriteLocationListPage(pageable, email);
     }
 
-    public void deleteFavoriteLocation(String favoriteLocationId){
+    public void deleteFavoriteLocation(Integer favoriteLocationId){
 
         //중복 체크
-
         Long id = Long.valueOf(favoriteLocationId);
         FavoriteLocation favoriteLocation = favoriteRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 

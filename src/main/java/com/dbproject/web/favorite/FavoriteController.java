@@ -71,8 +71,6 @@ public class FavoriteController {
             favoriteId = favoriteService.addFavoriteList(addFavoriteLocationRequest, email);
         } catch (DuplicateFavoriteLocationException e) {
 
-
-
 //            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
             return new ResponseEntity(ApiResponse.of(
                     HttpStatus.BAD_REQUEST,
@@ -129,11 +127,30 @@ public class FavoriteController {
 
     @DeleteMapping("/deleteFavorite")
     public ResponseEntity deleteFavoriteLocation(@Valid @RequestBody DeleteFavoriteLocationRequest deleteFavoriteLocationRequest,
+                                                 BindingResult bindingResult,
                                                  Principal principal) {
 
 //        if (principal == null) {
 //            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
 //        }
+
+        if (bindingResult.hasErrors()) {
+
+            List<String> messageList = new ArrayList<>();
+            List<Object> dataList = new ArrayList<>();
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            for (FieldError fieldError : fieldErrors) {
+                dataList.add(fieldError.getRejectedValue());
+                messageList.add(fieldError.getDefaultMessage());
+            }
+
+//          오류 데이터를 다시 보낼 필요가 없으므로 success 로 유도할 필요 없으므로 BAD_REQUEST
+            return new ResponseEntity(ApiResponse.of(
+                    HttpStatus.BAD_REQUEST,
+                    messageList,
+                    dataList
+            ),HttpStatus.BAD_REQUEST);
+        }
 
         favoriteService.deleteFavoriteLocation(deleteFavoriteLocationRequest.getFavoriteLocationId());
 
