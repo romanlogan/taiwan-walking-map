@@ -1,14 +1,14 @@
 package com.dbproject.service;
 
-import com.dbproject.api.comment.CommentService;
-import com.dbproject.api.comment.CreateCommentRequest;
+import com.dbproject.api.comment.service.CommentServiceImpl;
+import com.dbproject.api.comment.dto.CreateCommentRequest;
 import com.dbproject.api.comment.dto.UpdateCommentRequest;
 import com.dbproject.api.location.Location;
-import com.dbproject.api.member.RegisterFormDto;
+import com.dbproject.api.member.dto.RegisterFormDto;
 import com.dbproject.api.comment.Comment;
 import com.dbproject.api.member.Member;
-import com.dbproject.api.comment.repository.CommentJpaRepository;
-import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.comment.repository.CommentRepository;
+import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,10 +30,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class CommentServiceTest {
 
     @Autowired
-    private CommentJpaRepository commentRepository;
+    private CommentRepository commentRepository;
 
     @Autowired
-    private CommentService commentService;
+    private CommentServiceImpl commentService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;

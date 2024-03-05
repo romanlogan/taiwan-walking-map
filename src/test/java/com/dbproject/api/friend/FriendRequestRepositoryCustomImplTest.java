@@ -1,11 +1,11 @@
 package com.dbproject.api.friend;
 
 import com.dbproject.api.friend.friendRequest.FriendRequest;
-import com.dbproject.api.friend.friendRequest.FriendRequestRepository;
+import com.dbproject.api.friend.friendRequest.repository.FriendRequestRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.api.friend.friendRequest.RequestFriendListDto;
-import com.dbproject.api.member.RegisterFormDto;
+import com.dbproject.api.friend.friendRequest.dto.RequestFriendListDto;
+import com.dbproject.api.member.dto.RegisterFormDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,8 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

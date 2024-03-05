@@ -1,7 +1,7 @@
 package com.dbproject.api.memo;
 
 import com.dbproject.api.favorite.FavoriteLocation;
-import com.dbproject.api.favorite.FavoriteRepository;
+import com.dbproject.api.favorite.repository.FavoriteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,14 +16,14 @@ public class MemoService {
     private final FavoriteRepository favoriteRepository;
 
 
-    public Long updateMemo(UpdateMemoRequest updateMemoRequest) {
-
-        Long id = Long.valueOf(updateMemoRequest.getFavoriteLocationId());
-        FavoriteLocation favoriteLocation = favoriteRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        favoriteLocation.updateMemo(updateMemoRequest.getMemo());
-
-        return favoriteLocation.getId();
-    }
+//    public Long updateMemo(UpdateMemoRequest updateMemoRequest) {
+//
+//        Long id = Long.valueOf(updateMemoRequest.getFavoriteLocationId());
+//        FavoriteLocation favoriteLocation = favoriteRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+//        favoriteLocation.updateMemo(updateMemoRequest.getMemo());
+//
+//        return favoriteLocation.getId();
+//    }
 
 
 

@@ -3,7 +3,7 @@ package com.dbproject.api.member.memberImg;
 import com.dbproject.api.File.FileService;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.api.member.RegisterFormDto;
+import com.dbproject.api.member.dto.RegisterFormDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 

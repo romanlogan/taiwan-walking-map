@@ -7,7 +7,7 @@ import com.dbproject.api.location.LocationPicture;
 import com.dbproject.api.route.Route;
 import com.dbproject.api.city.CityImgRepository;
 import com.dbproject.api.city.CityRepository;
-import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.location.repository.LocationRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.dbproject;
 
-import com.dbproject.api.location.LocationService;
+import com.dbproject.api.location.service.LocationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequiredArgsConstructor
 public class MainController {
 
-    private final LocationService locationService;
+    private final LocationServiceImpl locationService;
 
     @GetMapping("/")
     public String main(Model model) {

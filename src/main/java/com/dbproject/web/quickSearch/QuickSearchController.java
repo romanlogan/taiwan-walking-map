@@ -1,9 +1,10 @@
 package com.dbproject.web.quickSearch;
 
 import com.dbproject.api.explore.ExploreService;
-import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.quickSearch.dto.*;
-import com.dbproject.api.quickSearch.QuickSearchService;
+import com.dbproject.api.quickSearch.service.QuickSearchService;
+import com.dbproject.api.quickSearch.service.QuickSearchServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.PushBuilder;
 import java.util.List;
 import java.util.Optional;
 

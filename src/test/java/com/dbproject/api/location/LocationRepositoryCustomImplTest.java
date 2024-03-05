@@ -1,5 +1,6 @@
 package com.dbproject.api.location;
 
+import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.quickSearch.dto.QuickSearchFormRequest;
 import com.dbproject.api.quickSearch.dto.QuickSearchLocationDto;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest

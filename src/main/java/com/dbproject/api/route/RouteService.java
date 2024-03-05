@@ -1,7 +1,7 @@
 package com.dbproject.api.route;
 
 import com.dbproject.api.location.Location;
-import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.location.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

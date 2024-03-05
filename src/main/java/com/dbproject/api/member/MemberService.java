@@ -1,18 +1,19 @@
 package com.dbproject.api.member;
 
-import com.dbproject.api.comment.repository.CommentJpaRepository;
-import com.dbproject.api.favorite.FavoriteRepository;
-import com.dbproject.api.friend.FriendRepository;
-import com.dbproject.api.friend.friendRequest.FriendRequestRepository;
+import com.dbproject.api.comment.repository.CommentRepository;
+import com.dbproject.api.favorite.repository.FavoriteRepository;
+import com.dbproject.api.friend.repository.FriendRepository;
+import com.dbproject.api.friend.friendRequest.repository.FriendRequestRepository;
+import com.dbproject.api.member.dto.RegisterFormDto;
 import com.dbproject.api.member.memberImg.MemberImg;
 import com.dbproject.api.member.memberImg.MemberImgRepository;
-import com.dbproject.api.myPage.hangOut.hangOut.HangOutRepository;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRepository;
+import com.dbproject.api.hangOut.hangOut.repository.HangOutRepository;
+import com.dbproject.api.hangOut.inviteHangOut.repository.InviteHangOutRepository;
 import com.dbproject.exception.DuplicateMemberException;
 import com.dbproject.exception.DuplicateUpdateMemberAddressException;
 import com.dbproject.exception.DuplicateUpdateMemberNameException;
-import com.dbproject.api.myPage.MyProfileDto;
-import com.dbproject.api.myPage.UpdateProfileRequest;
+import com.dbproject.api.member.dto.MyProfileDto;
+import com.dbproject.api.member.dto.UpdateProfileRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,7 +32,7 @@ public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final MemberImgRepository memberImgRepository;
-    private final CommentJpaRepository commentRepository;
+    private final CommentRepository commentRepository;
     private final FavoriteRepository favoriteRepository;
     private final FriendRepository friendRepository;
     private final FriendRequestRepository friendRequestRepository;

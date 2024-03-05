@@ -1,7 +1,7 @@
 package com.dbproject.web.member;
 
 import com.dbproject.api.member.MemberService;
-import com.dbproject.api.member.RegisterFormDto;
+import com.dbproject.api.member.dto.RegisterFormDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;

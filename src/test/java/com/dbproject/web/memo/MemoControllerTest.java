@@ -2,7 +2,7 @@ package com.dbproject.web.memo;
 
 import com.dbproject.api.member.MemberService;
 import com.dbproject.api.memo.MemoService;
-import com.dbproject.api.memo.UpdateMemoRequest;
+import com.dbproject.api.favorite.dto.UpdateMemoRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class MemoControllerTest {
     void updateMemo() throws Exception{
         //given
 
-        String favoriteLocationId = "1";
+        Integer favoriteLocationId = 1;
         String memo = "memo 1";
 
         UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(favoriteLocationId, memo);
@@ -61,7 +61,7 @@ class MemoControllerTest {
     void updateMemoWithoutLogin() throws Exception{
         //given
 
-        String favoriteLocationId = "1";
+        Integer favoriteLocationId = 1;
         String memo = "memo 1";
 
         UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(favoriteLocationId, memo);
@@ -78,37 +78,16 @@ class MemoControllerTest {
     }
 
 
-    @DisplayName("즐겨찾기 장소 id 가 ' ' 이면 BadRequest 를 반환")
-    @Test
-    @WithMockUser(username = "user", roles = "USER")
-    void favoriteLocationIdCanNotBlank() throws Exception{
-        //given
-
-        String favoriteLocationId = " ";
-        String memo = "memo 1";
-
-        UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(favoriteLocationId, memo);
-
-        //when
-        //then
-        mockMvc.perform(MockMvcRequestBuilders.put("/memo/updateMemo")
-                        .with(csrf())
-                        .content(objectMapper.writeValueAsString(updateMemoRequest))
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest());
-    }
 
 
 
-    @DisplayName("즐겨찾기 장소 id 가 '' 이면 BadRequest 를 반환")
+    @DisplayName("즐겨찾기 장소 id 가 null 이면 BadRequest 를 반환")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void favoriteLocationIdCanNotBlank2() throws Exception{
         //given
 
-        String favoriteLocationId = "";
+        Integer favoriteLocationId = null;
         String memo = "memo 1";
 
         UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(favoriteLocationId, memo);

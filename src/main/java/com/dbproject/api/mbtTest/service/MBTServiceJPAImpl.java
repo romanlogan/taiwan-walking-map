@@ -15,13 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Qualifier("MBTServiceJPAImpl")
 public class MBTServiceJPAImpl implements MBTService{
 
-    @Autowired
+//    @Autowired
     private MBTRepository mbtRepository;
 
-//    @Autowired
-//    public MBTServiceJPAImpl(MBTRepository mbtRepository) {
-//        this.mbtRepository = mbtRepository;
-//    }
+    @Autowired
+    public MBTServiceJPAImpl(MBTRepository mbtRepository) {
+        this.mbtRepository = mbtRepository;
+    }
 
     @Override
     public MBTCityDtoCamel getCity() {

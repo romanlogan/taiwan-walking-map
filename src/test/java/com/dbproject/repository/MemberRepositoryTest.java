@@ -1,7 +1,7 @@
 package com.dbproject.repository;
 
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.api.member.RegisterFormDto;
+import com.dbproject.api.member.dto.RegisterFormDto;
 import com.dbproject.api.member.Member;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

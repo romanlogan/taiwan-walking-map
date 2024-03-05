@@ -1,10 +1,12 @@
 package com.dbproject.web.hangOut;
 
-import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOut;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutService;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRequest;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.*;
-import lombok.Getter;
+import com.dbproject.api.hangOut.inviteHangOut.service.InviteHangOutService;
+import com.dbproject.api.hangOut.inviteHangOut.service.InviteHangOutServiceImpl;
+import com.dbproject.api.hangOut.inviteHangOut.dto.InviteHangOutRequest;
+import com.dbproject.api.hangOut.inviteHangOut.dto.AcceptInvitedHangOutRequest;
+import com.dbproject.api.hangOut.inviteHangOut.dto.InviteHangOutFromLocRequest;
+import com.dbproject.api.hangOut.inviteHangOut.dto.InvitedHangOutResponse;
+import com.dbproject.api.hangOut.inviteHangOut.dto.RejectInvitedHangOutRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
 
 @Controller

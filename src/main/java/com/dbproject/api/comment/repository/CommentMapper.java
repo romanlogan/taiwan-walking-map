@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Mapper
 @Repository
-public interface CommentMapper extends CommentRepository {
+public interface CommentMapper{
 
     void save(UserComment userComment);
 

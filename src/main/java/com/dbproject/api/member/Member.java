@@ -2,6 +2,7 @@ package com.dbproject.api.member;
 
 import com.dbproject.api.baseEntity.BaseEntity;
 import com.dbproject.api.friend.Friend;
+import com.dbproject.api.member.dto.RegisterFormDto;
 import com.dbproject.constant.Role;
 import com.dbproject.api.favorite.FavoriteLocation;
 import lombok.Builder;
@@ -12,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Entity

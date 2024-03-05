@@ -1,11 +1,8 @@
 package com.dbproject.api.member.memberImg;
 
-import com.dbproject.api.favorite.FavoriteRepository;
-import com.dbproject.api.location.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.api.member.RegisterFormDto;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRepository;
+import com.dbproject.api.member.dto.RegisterFormDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,10 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest

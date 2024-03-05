@@ -1,6 +1,7 @@
 package com.dbproject.service;
 
-import com.dbproject.api.quickSearch.QuickSearchService;
+import com.dbproject.api.quickSearch.service.QuickSearchService;
+import com.dbproject.api.quickSearch.service.QuickSearchServiceImpl;
 import com.dbproject.api.quickSearch.dto.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,6 @@ class QuickSearchServiceTest {
 
     @Autowired
     private QuickSearchService quickSearchService;
-
 
     @DisplayName("검색하고 싶은 이름과 도시로 추천 장소 페이지 와 city 객체를 받는다")
     @Test

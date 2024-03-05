@@ -1,13 +1,13 @@
 package com.dbproject.repository;
 
 import com.dbproject.api.favorite.FavoriteLocation;
-import com.dbproject.api.favorite.FavoriteRepository;
+import com.dbproject.api.favorite.dto.FavoriteLocationList;
+import com.dbproject.api.favorite.repository.FavoriteRepository;
 import com.dbproject.api.location.Location;
-import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.api.favorite.FavoriteListResponse;
-import com.dbproject.api.member.RegisterFormDto;
+import com.dbproject.api.member.dto.RegisterFormDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ class FavoriteRepositoryCustomImplTest {
         favoriteRepository.save(favoriteLocation);
 
         //when
-        Page<FavoriteListResponse> favoriteListResponsePage = favoriteRepository.getFavoriteLocationListPage(pageable, email);
+        Page<FavoriteLocationList> favoriteListResponsePage = favoriteRepository.getFavoriteLocationListPage(pageable, email);
 
         //then
         assertThat(favoriteListResponsePage.getContent().get(0).getName()).isEqualTo("西門町");

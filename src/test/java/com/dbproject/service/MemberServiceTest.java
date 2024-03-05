@@ -1,16 +1,16 @@
 package com.dbproject.service;
 
 import com.dbproject.api.comment.Comment;
-import com.dbproject.api.comment.repository.CommentJpaRepository;
+import com.dbproject.api.comment.repository.CommentRepository;
 import com.dbproject.api.location.Location;
-import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.MemberService;
 import com.dbproject.exception.DuplicateUpdateMemberAddressException;
 import com.dbproject.exception.DuplicateUpdateMemberNameException;
-import com.dbproject.api.member.RegisterFormDto;
+import com.dbproject.api.member.dto.RegisterFormDto;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.api.myPage.UpdateProfileRequest;
+import com.dbproject.api.member.dto.UpdateProfileRequest;
 import javassist.bytecode.DuplicateMemberException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +41,7 @@ class MemberServiceTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private CommentJpaRepository commentRepository;
+    private CommentRepository commentRepository;
 
     @Autowired
     private LocationRepository locationRepository;

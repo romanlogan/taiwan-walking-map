@@ -1,12 +1,13 @@
 package com.dbproject.web.friend;
 
 import com.dbproject.api.ApiResponse;
-import com.dbproject.api.friend.AcceptAddFriendRequest;
-import com.dbproject.api.friend.AddFriendRequest;
-import com.dbproject.api.friend.FriendListResponse;
-import com.dbproject.api.friend.FriendService;
-import com.dbproject.api.friend.friendRequest.RejectFriendRequest;
-import com.dbproject.api.friend.friendRequest.RequestFriendListDto;
+import com.dbproject.api.friend.dto.AcceptAddFriendRequest;
+import com.dbproject.api.friend.dto.AddFriendRequest;
+import com.dbproject.api.friend.dto.FriendListResponse;
+import com.dbproject.api.friend.service.FriendService;
+import com.dbproject.api.friend.service.FriendServiceImpl;
+import com.dbproject.api.friend.friendRequest.dto.RejectFriendRequest;
+import com.dbproject.api.friend.friendRequest.dto.RequestFriendListDto;
 import com.dbproject.api.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

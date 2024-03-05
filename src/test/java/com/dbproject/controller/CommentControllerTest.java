@@ -1,10 +1,10 @@
 package com.dbproject.controller;
 
-import com.dbproject.api.comment.CreateCommentRequest;
+import com.dbproject.api.comment.dto.CreateCommentRequest;
 import com.dbproject.api.comment.dto.DeleteCommentRequest;
 import com.dbproject.api.comment.dto.UpdateCommentRequest;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.api.comment.CommentService;
+import com.dbproject.api.comment.service.CommentServiceImpl;
 import com.dbproject.api.member.MemberService;
 import com.dbproject.web.comment.CommentController;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,8 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.List;
 
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -35,7 +33,7 @@ class CommentControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CommentService commentService;
+    private CommentServiceImpl commentService;
 
     @MockBean
     private MemberService memberService;

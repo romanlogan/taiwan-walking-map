@@ -74,7 +74,7 @@
             var param = JSON.stringify(paramData);
 
             $.ajax({
-                url      : "/memo/updateMemo",
+                url      : "/favorite/updateMemo",
                 type     : "PUT",
                 contentType : "application/json",
                 data     : param,
@@ -110,7 +110,7 @@
                 center: { lat: 25.043561, lng: 121.556668 }
             });
 
-            var locations = [[${locationList.content}]];
+            var locations = [[${locationList.getFavoriteListResponsePage().getContent()}]];
 
 
             locations.forEach(location => {
@@ -234,7 +234,7 @@
 
 <!--        <form role="form" method="get" th:object="${locationList}">-->
 
-            <div class="InvitedHangOutBox" th:each="location, status: ${locationList.getContent()}">
+            <div class="InvitedHangOutBox" th:each="location, status: ${locationList.getFavoriteListResponsePage().getContent()}">
 
 <!--                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>-->
                 <button class="updateMemo" data-toggle="modal" data-target="#myModal1">Memo</button>
@@ -296,21 +296,21 @@
             </div>
 
 
-            <div th:with="start=${(locationList.number/maxPage)*maxPage + 1}, end=(${(locationList.totalPages == 0) ? 1 : (start + (maxPage - 1) < locationList.totalPages ? start + (maxPage - 1) : locationList.totalPages)})" >
+            <div th:with="start=${(locationList.getFavoriteListResponsePage().number/maxPage)*maxPage + 1}, end=(${(locationList.getFavoriteListResponsePage().totalPages == 0) ? 1 : (start + (maxPage - 1) < locationList.getFavoriteListResponsePage().totalPages ? start + (maxPage - 1) : locationList.getFavoriteListResponsePage().totalPages)})" >
                 <ul class="pagination justify-content-center">
 
-                    <li class="page-item" th:classappend="${locationList.first}?'disabled'">
-                        <a th:onclick="'javascript:page(' + ${locationList.number - 1} + ')'" aria-label='Previous' class="page-link">
+                    <li class="page-item" th:classappend="${locationList.getFavoriteListResponsePage().first}?'disabled'">
+                        <a th:onclick="'javascript:page(' + ${locationList.getFavoriteListResponsePage().number - 1} + ')'" aria-label='Previous' class="page-link">
                             <span aria-hidden='true'>Previous</span>
                         </a>
                     </li>
 
-                    <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${locationList.number eq page-1}?'active':''">
+                    <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${locationList.getFavoriteListResponsePage().number eq page-1}?'active':''">
                         <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
                     </li>
 
-                    <li class="page-item" th:classappend="${locationList.last}?'disabled'">
-                        <a th:onclick="'javascript:page(' + ${locationList.number + 1} + ')'" aria-label='Next' class="page-link">
+                    <li class="page-item" th:classappend="${locationList.getFavoriteListResponsePage().last}?'disabled'">
+                        <a th:onclick="'javascript:page(' + ${locationList.getFavoriteListResponsePage().number + 1} + ')'" aria-label='Next' class="page-link">
                             <span aria-hidden='true'>Next</span>
                         </a>
                     </li>

@@ -1,12 +1,12 @@
 package com.dbproject.web.comment;
 
 import com.dbproject.api.ApiResponse;
-import com.dbproject.api.comment.CommentService;
-import com.dbproject.api.comment.CreateCommentRequest;
+import com.dbproject.api.comment.service.CommentService;
+import com.dbproject.api.comment.dto.CreateCommentRequest;
 import com.dbproject.api.comment.dto.DeleteCommentRequest;
 import com.dbproject.api.comment.dto.UpdateCommentRequest;
+import com.dbproject.binding.CheckBindingResult;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -34,22 +34,27 @@ public class CommentController {
 
 //        개인적으로 처리
 //        오류가 2개 이상일때 append 로 붙이면 어떻게 검증하지 ?
-        if (bindingResult.hasErrors()) {
+//        if (bindingResult.hasErrors()) {
+//
+//            List<String> messageList = new ArrayList<>();
+//            List<Object> dataList = new ArrayList<>();
+//            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+//            for (FieldError fieldError : fieldErrors) {
+//                dataList.add(fieldError.getRejectedValue());
+//                messageList.add(fieldError.getDefaultMessage());
+//            }
+//
+//
+//            return new ResponseEntity(ApiResponse.of(
+//                    HttpStatus.BAD_REQUEST,
+//                    messageList,
+//                    dataList
+//            ),HttpStatus.OK);
+//        }
 
-            List<String> messageList = new ArrayList<>();
-            List<Object> dataList = new ArrayList<>();
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            for (FieldError fieldError : fieldErrors) {
-                dataList.add(fieldError.getRejectedValue());
-                messageList.add(fieldError.getDefaultMessage());
-            }
-
-
-            return new ResponseEntity(ApiResponse.of(
-                    HttpStatus.BAD_REQUEST,
-                    messageList,
-                    dataList
-            ),HttpStatus.OK);
+        ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
+        if (responseEntity != null) {
+            return responseEntity;
         }
 
 
@@ -70,22 +75,26 @@ public class CommentController {
                                         Principal principal) {
 
         // 댓글 수정시 request 에 binding error 가 있으면 다시 data 를 반환하여 문제가 있는 data 를 사용자가 볼수있
-        if (bindingResult.hasErrors()) {
-
-            List<String> messageList = new ArrayList<>();
-            List<Object> dataList = new ArrayList<>();
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            for (FieldError fieldError : fieldErrors) {
-                dataList.add(fieldError.getRejectedValue());
-                messageList.add(fieldError.getDefaultMessage());
-            }
-
-
-            return new ResponseEntity(ApiResponse.of(
-                    HttpStatus.BAD_REQUEST,
-                    messageList,
-                    dataList
-            ),HttpStatus.OK);
+//        if (bindingResult.hasErrors()) {
+//
+//            List<String> messageList = new ArrayList<>();
+//            List<Object> dataList = new ArrayList<>();
+//            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+//            for (FieldError fieldError : fieldErrors) {
+//                dataList.add(fieldError.getRejectedValue());
+//                messageList.add(fieldError.getDefaultMessage());
+//            }
+//
+//
+//            return new ResponseEntity(ApiResponse.of(
+//                    HttpStatus.BAD_REQUEST,
+//                    messageList,
+//                    dataList
+//            ),HttpStatus.OK);
+//        }
+        ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
+        if (responseEntity != null) {
+            return responseEntity;
         }
 
 
@@ -99,23 +108,23 @@ public class CommentController {
                                         BindingResult bindingResult,
                                         Principal principal) {
 
-        if (bindingResult.hasErrors()) {
-
-            List<String> messageList = new ArrayList<>();
-            List<Object> dataList = new ArrayList<>();
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            for (FieldError fieldError : fieldErrors) {
-                dataList.add(fieldError.getRejectedValue());
-                messageList.add(fieldError.getDefaultMessage());
-            }
-
-
-            return new ResponseEntity(ApiResponse.of(
-                    HttpStatus.BAD_REQUEST,
-                    messageList,
-                    dataList
-            ),HttpStatus.BAD_REQUEST);
-        }
+//        if (bindingResult.hasErrors()) {
+//
+//            List<String> messageList = new ArrayList<>();
+//            List<Object> dataList = new ArrayList<>();
+//            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+//            for (FieldError fieldError : fieldErrors) {
+//                dataList.add(fieldError.getRejectedValue());
+//                messageList.add(fieldError.getDefaultMessage());
+//            }
+//
+//
+//            return new ResponseEntity(ApiResponse.of(
+//                    HttpStatus.BAD_REQUEST,
+//                    messageList,
+//                    dataList
+//            ),HttpStatus.BAD_REQUEST);
+//        }
 
 
         commentService.deleteComment(deleteCommentRequest.getCommentId());

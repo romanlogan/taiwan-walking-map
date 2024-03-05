@@ -2,7 +2,12 @@ package com.dbproject.web.location;
 
 
 import com.dbproject.api.explore.ExploreService;
-import com.dbproject.api.location.*;
+import com.dbproject.api.location.dto.LocationDtlResponse;
+import com.dbproject.api.location.dto.RecLocationListRequest;
+import com.dbproject.api.location.dto.RecLocationListResponse;
+import com.dbproject.api.location.dto.SearchByCityDto;
+import com.dbproject.api.location.service.LocationService;
+import com.dbproject.api.location.service.LocationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -24,6 +29,7 @@ public class LocationController {
 
     @Value("${google.maps.api.key}")
     private String googleMapsApiKey;
+
     private final LocationService locationService;
 
     private final ExploreService exploreService;

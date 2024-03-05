@@ -2,8 +2,8 @@ package com.dbproject.web.myPage;
 
 import com.dbproject.api.member.MemberService;
 import com.dbproject.api.member.memberImg.MemberImgService;
-import com.dbproject.api.myPage.MyProfileDto;
-import com.dbproject.api.myPage.UpdateProfileRequest;
+import com.dbproject.api.member.dto.MyProfileDto;
+import com.dbproject.api.member.dto.UpdateProfileRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

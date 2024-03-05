@@ -1,6 +1,6 @@
 package com.dbproject.api.schedule.dto;
 
-import com.dbproject.api.myPage.hangOut.hangOut.HangOut;
+import com.dbproject.api.hangOut.hangOut.HangOut;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

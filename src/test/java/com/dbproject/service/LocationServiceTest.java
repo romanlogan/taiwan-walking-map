@@ -1,17 +1,17 @@
 package com.dbproject.service;
 
 import com.dbproject.api.friend.Friend;
-import com.dbproject.api.friend.FriendRepository;
-import com.dbproject.api.location.LocationService;
-import com.dbproject.api.location.LocationDtlResponse;
-import com.dbproject.api.member.RegisterFormDto;
+import com.dbproject.api.friend.repository.FriendRepository;
+import com.dbproject.api.location.service.LocationServiceImpl;
+import com.dbproject.api.location.dto.LocationDtlResponse;
+import com.dbproject.api.member.dto.RegisterFormDto;
 import com.dbproject.api.comment.Comment;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
-import com.dbproject.api.comment.repository.CommentJpaRepository;
-import com.dbproject.api.favorite.FavoriteRepository;
-import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.comment.repository.CommentRepository;
+import com.dbproject.api.favorite.repository.FavoriteRepository;
+import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,10 +42,10 @@ class LocationServiceTest {
     private LocationRepository locationRepository;
 
     @Autowired
-    private LocationService locationService;
+    private LocationServiceImpl locationService;
 
     @Autowired
-    private CommentJpaRepository commentRepository;
+    private CommentRepository commentRepository;
 
     @Autowired
     private FriendRepository friendRepository;

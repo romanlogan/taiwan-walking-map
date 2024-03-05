@@ -1,10 +1,10 @@
 package com.dbproject.web.friend;
 
-import com.dbproject.api.friend.AcceptAddFriendRequest;
-import com.dbproject.api.friend.AddFriendRequest;
-import com.dbproject.api.friend.FriendService;
-import com.dbproject.api.friend.friendRequest.RejectFriendRequest;
-import com.dbproject.api.friend.friendRequest.RequestFriendListDto;
+import com.dbproject.api.friend.dto.AcceptAddFriendRequest;
+import com.dbproject.api.friend.dto.AddFriendRequest;
+import com.dbproject.api.friend.service.FriendServiceImpl;
+import com.dbproject.api.friend.friendRequest.dto.RejectFriendRequest;
+import com.dbproject.api.friend.friendRequest.dto.RequestFriendListDto;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.MemberService;
 import com.dbproject.constant.FriendRequestStatus;
@@ -50,7 +50,7 @@ class FriendControllerTest {
     private MemberRepository memberRepository;
 
     @MockBean
-    private FriendService friendService;
+    private FriendServiceImpl friendService;
 
     @DisplayName("친구 요청을 저장합니다.")
     @Test

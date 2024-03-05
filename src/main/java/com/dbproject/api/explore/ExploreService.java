@@ -9,7 +9,7 @@ import com.dbproject.api.route.RouteService;
 import com.dbproject.api.route.RouteLocationDto;
 import com.dbproject.api.city.CityImgRepository;
 import com.dbproject.api.city.CityRepository;
-import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.location.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

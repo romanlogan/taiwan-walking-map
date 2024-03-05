@@ -1,23 +1,22 @@
 package com.dbproject.api.myPage.hangOut;
 
 import com.dbproject.api.favorite.FavoriteLocation;
-import com.dbproject.api.favorite.FavoriteRepository;
+import com.dbproject.api.favorite.repository.FavoriteRepository;
 import com.dbproject.api.location.Location;
-import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.api.member.RegisterFormDto;
-import com.dbproject.api.myPage.hangOut.hangOut.HangOut;
-import com.dbproject.api.myPage.hangOut.hangOut.HangOutRepository;
-import com.dbproject.api.myPage.hangOut.hangOut.HangOutService;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOut;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRepository;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRequest;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutService;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.AcceptInvitedHangOutRequest;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InviteHangOutFromLocRequest;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.InvitedHangOutResponse;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.RejectInvitedHangOutRequest;
+import com.dbproject.api.member.dto.RegisterFormDto;
+import com.dbproject.api.hangOut.hangOut.HangOut;
+import com.dbproject.api.hangOut.hangOut.repository.HangOutRepository;
+import com.dbproject.api.hangOut.inviteHangOut.InviteHangOut;
+import com.dbproject.api.hangOut.inviteHangOut.repository.InviteHangOutRepository;
+import com.dbproject.api.hangOut.inviteHangOut.dto.InviteHangOutRequest;
+import com.dbproject.api.hangOut.inviteHangOut.service.InviteHangOutServiceImpl;
+import com.dbproject.api.hangOut.inviteHangOut.dto.AcceptInvitedHangOutRequest;
+import com.dbproject.api.hangOut.inviteHangOut.dto.InviteHangOutFromLocRequest;
+import com.dbproject.api.hangOut.inviteHangOut.dto.InvitedHangOutResponse;
+import com.dbproject.api.hangOut.inviteHangOut.dto.RejectInvitedHangOutRequest;
 import com.dbproject.constant.InviteHangOutStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +34,6 @@ import java.util.Optional;
 import static com.dbproject.constant.InviteHangOutStatus.REJECTED;
 import static com.dbproject.constant.InviteHangOutStatus.WAITING;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.in;
 
 
 @SpringBootTest
@@ -59,7 +57,7 @@ class InviteHangOutServiceTest {
     private InviteHangOutRepository inviteHangOutRepository;
 
     @Autowired
-    private InviteHangOutService inviteHangOutService;
+    private InviteHangOutServiceImpl inviteHangOutService;
 
     @Autowired
     private HangOutRepository hangOutRepository;

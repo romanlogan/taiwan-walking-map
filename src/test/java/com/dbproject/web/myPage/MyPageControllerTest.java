@@ -4,13 +4,11 @@ import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.MemberService;
 import com.dbproject.api.member.memberImg.MemberImgRepository;
 import com.dbproject.api.member.memberImg.MemberImgService;
-import com.dbproject.api.myPage.UpdateProfileRequest;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutService;
-import com.dbproject.web.hangOut.HangOutController;
+import com.dbproject.api.member.dto.UpdateProfileRequest;
+import com.dbproject.api.hangOut.inviteHangOut.service.InviteHangOutServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -45,7 +43,7 @@ class MyPageControllerTest {
     private MemberImgService memberImgService;
 
     @MockBean
-    private InviteHangOutService inviteHangOutService;
+    private InviteHangOutServiceImpl inviteHangOutService;
 
     @DisplayName("회원의 회원 정보를 가져옵니다.")
     @Test

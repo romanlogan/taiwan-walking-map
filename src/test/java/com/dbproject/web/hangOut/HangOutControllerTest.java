@@ -1,12 +1,10 @@
 package com.dbproject.web.hangOut;
 
+import com.dbproject.api.hangOut.inviteHangOut.dto.*;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.MemberService;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutRequest;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.InviteHangOutService;
-import com.dbproject.api.myPage.hangOut.inviteHangOut.dto.*;
-import com.dbproject.web.friend.FriendController;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.dbproject.api.hangOut.inviteHangOut.dto.InviteHangOutRequest;
+import com.dbproject.api.hangOut.inviteHangOut.service.InviteHangOutServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,7 +42,7 @@ class HangOutControllerTest {
     private MemberRepository memberRepository;
 
     @MockBean
-    private InviteHangOutService inviteHangOutService;
+    private InviteHangOutServiceImpl inviteHangOutService;
 
     @DisplayName("친구 리스트 에서 온 HangOut 요청을 저장합니다")
     @Test

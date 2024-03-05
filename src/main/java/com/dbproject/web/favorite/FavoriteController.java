@@ -1,11 +1,14 @@
 package com.dbproject.web.favorite;
 
 import com.dbproject.api.ApiResponse;
-import com.dbproject.api.favorite.AddFavoriteLocationRequest;
-import com.dbproject.api.favorite.DeleteFavoriteLocationRequest;
-import com.dbproject.api.favorite.FavoriteListResponse;
+import com.dbproject.api.favorite.dto.AddFavoriteLocationRequest;
+import com.dbproject.api.favorite.dto.DeleteFavoriteLocationRequest;
+import com.dbproject.api.favorite.dto.FavoriteLocationList;
+import com.dbproject.api.favorite.dto.FavoriteLocationListResponse;
+import com.dbproject.api.favorite.service.FavoriteService;
+import com.dbproject.api.favorite.dto.UpdateMemoRequest;
+import com.dbproject.binding.CheckBindingResult;
 import com.dbproject.exception.DuplicateFavoriteLocationException;
-import com.dbproject.api.favorite.FavoriteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -13,16 +16,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,26 +43,11 @@ public class FavoriteController {
             BindingResult bindingResult,
             Principal principal) {
 
-//        if (principal == null) {
-//            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
-//        }
-
-        if (bindingResult.hasErrors()) {
-
-            List<String> messageList = new ArrayList<>();
-            List<Object> dataList = new ArrayList<>();
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            for (FieldError fieldError : fieldErrors) {
-                dataList.add(fieldError.getRejectedValue());
-                messageList.add(fieldError.getDefaultMessage());
-            }
-
-            return new ResponseEntity(ApiResponse.of(
-                    HttpStatus.BAD_REQUEST,
-                    messageList,
-                    dataList
-            ),HttpStatus.OK);
+        ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
+        if (responseEntity != null) {
+            return responseEntity;
         }
+
 
         String email = principal.getName();
         Long favoriteId;
@@ -101,9 +86,10 @@ public class FavoriteController {
         Pageable pageable = PageRequest.of(page , size );
         String email = principal.getName();
 
-        Page<FavoriteListResponse> favoriteListResponsePage = favoriteService.getFavoriteLocationList(pageable, email);
-//
-        model.addAttribute("locationList", favoriteListResponsePage);
+        Page<FavoriteLocationList> favoriteListResponsePage = favoriteService.getFavoriteLocationList(pageable, email);
+        FavoriteLocationListResponse response = new FavoriteLocationListResponse(favoriteListResponsePage);
+
+        model.addAttribute("locationList", response);
         model.addAttribute("maxPage", 5);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
@@ -134,27 +120,47 @@ public class FavoriteController {
 //            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
 //        }
 
-        if (bindingResult.hasErrors()) {
+//        if (bindingResult.hasErrors()) {
+//
+//            List<String> messageList = new ArrayList<>();
+//            List<Object> dataList = new ArrayList<>();
+//            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+//            for (FieldError fieldError : fieldErrors) {
+//                dataList.add(fieldError.getRejectedValue());
+//                messageList.add(fieldError.getDefaultMessage());
+//            }
+//
+////          오류 데이터를 다시 보낼 필요가 없으므로 success 로 유도할 필요 없으므로 BAD_REQUEST
+//            return new ResponseEntity(ApiResponse.of(
+//                    HttpStatus.BAD_REQUEST,
+//                    messageList,
+//                    dataList
+//            ),HttpStatus.BAD_REQUEST);
+//        }
 
-            List<String> messageList = new ArrayList<>();
-            List<Object> dataList = new ArrayList<>();
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            for (FieldError fieldError : fieldErrors) {
-                dataList.add(fieldError.getRejectedValue());
-                messageList.add(fieldError.getDefaultMessage());
-            }
-
-//          오류 데이터를 다시 보낼 필요가 없으므로 success 로 유도할 필요 없으므로 BAD_REQUEST
-            return new ResponseEntity(ApiResponse.of(
-                    HttpStatus.BAD_REQUEST,
-                    messageList,
-                    dataList
-            ),HttpStatus.BAD_REQUEST);
+        ResponseEntity responseEntity = CheckBindingResult.induceErrorInAjax(bindingResult);
+        if (responseEntity != null) {
+            return responseEntity;
         }
 
         favoriteService.deleteFavoriteLocation(deleteFavoriteLocationRequest.getFavoriteLocationId());
 
         return new ResponseEntity(1L,HttpStatus.OK);
+    }
+
+    @PutMapping("/updateMemo")
+    public ResponseEntity updateMemo(@Valid @RequestBody UpdateMemoRequest updateMemoRequest,
+                                     BindingResult bindingResult,
+                                     Principal principal) {
+
+        ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
+        if (responseEntity != null) {
+            return responseEntity;
+        }
+
+        Long id = favoriteService.updateMemo(updateMemoRequest);
+
+        return new ResponseEntity(id, HttpStatus.OK);
     }
 
 }

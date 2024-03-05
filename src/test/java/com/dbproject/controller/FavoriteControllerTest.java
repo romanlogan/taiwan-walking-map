@@ -1,12 +1,13 @@
 package com.dbproject.controller;
 
-import com.dbproject.api.favorite.AddFavoriteLocationRequest;
-import com.dbproject.api.favorite.DeleteFavoriteLocationRequest;
-import com.dbproject.api.favorite.FavoriteRepository;
-import com.dbproject.api.favorite.FavoriteService;
+import com.dbproject.api.favorite.dto.AddFavoriteLocationRequest;
+import com.dbproject.api.favorite.dto.DeleteFavoriteLocationRequest;
+import com.dbproject.api.favorite.dto.FavoriteLocationList;
+import com.dbproject.api.favorite.repository.FavoriteRepository;
+import com.dbproject.api.favorite.service.FavoriteServiceImpl;
 import com.dbproject.api.member.MemberService;
+import com.dbproject.api.favorite.dto.UpdateMemoRequest;
 import com.dbproject.web.favorite.FavoriteController;
-import com.dbproject.api.favorite.FavoriteListResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -47,7 +48,7 @@ class FavoriteControllerTest {
     private MemberService memberService;
 
     @MockBean
-    private FavoriteService favoriteService;
+    private FavoriteServiceImpl favoriteService;
 
     @MockBean
     private FavoriteRepository favoriteRepository;
@@ -182,11 +183,11 @@ class FavoriteControllerTest {
         //given
         Pageable pageable = PageRequest.of(0, 5 );
 
-        FavoriteListResponse favoriteListResponse = new FavoriteListResponse("C1_379000000A_001572", "西門町");
-        List<FavoriteListResponse> list = new ArrayList<>();
+        FavoriteLocationList favoriteListResponse = new FavoriteLocationList("C1_379000000A_001572", "西門町");
+        List<FavoriteLocationList> list = new ArrayList<>();
         list.add(favoriteListResponse);
 
-        Page<FavoriteListResponse> page = new PageImpl<>(list, pageable, 1);
+        Page<FavoriteLocationList> page = new PageImpl<>(list, pageable, 1);
         Mockito.when(favoriteService.getFavoriteLocationList(pageable, "qwer@qwer.com")).thenReturn(page);
 
 
@@ -210,11 +211,11 @@ class FavoriteControllerTest {
         //given
         Pageable pageable = PageRequest.of(0, 5 );
 
-        FavoriteListResponse favoriteListResponse = new FavoriteListResponse("C1_379000000A_001572", "西門町");
-        List<FavoriteListResponse> list = new ArrayList<>();
+        FavoriteLocationList favoriteListResponse = new FavoriteLocationList("C1_379000000A_001572", "西門町");
+        List<FavoriteLocationList> list = new ArrayList<>();
         list.add(favoriteListResponse);
 
-        Page<FavoriteListResponse> page = new PageImpl<>(list, pageable, 1);
+        Page<FavoriteLocationList> page = new PageImpl<>(list, pageable, 1);
         Mockito.when(favoriteService.getFavoriteLocationList(pageable, "qwer@qwer.com")).thenReturn(page);
 
         //when  //then
@@ -316,6 +317,70 @@ class FavoriteControllerTest {
                 .andExpect(jsonPath("$.dataList", Matchers.hasItems(0)));
     }
 
+    @DisplayName("등록된 즐겨찾기 장소의 메모를 변경한다")
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    void updateMemo() throws Exception {
 
+        //given
+        UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(1, "memo1");
+
+        //when  //then
+        mockMvc.perform(MockMvcRequestBuilders.put("/favorite/updateMemo")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(updateMemoRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("비 로그인 유저가 메모 수정에 접근시 UNAUTHORIZED 를 반환")
+    @Test
+    void updateMemoWithoutLogin() throws Exception{
+        //given
+
+        Integer favoriteLocationId = 1;
+        String memo = "memo 1";
+
+        UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(favoriteLocationId, memo);
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.put("/favorite/updateMemo")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(updateMemoRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @DisplayName("즐겨찾기 장소 id 가 null 이면 BadRequest 를 반환")
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    void favoriteLocationIdCanNotBlank2() throws Exception{
+        //given
+
+        Integer favoriteLocationId = null;
+        String memo = "memo 1";
+
+        UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(favoriteLocationId, memo);
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.put("/favorite/updateMemo")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(updateMemoRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.messageList", Matchers.hasItems("favoriteLocationId值是必要")))
+                .andExpect(jsonPath("$.dataList", Matchers.hasItems(nullValue()))) ;
+    }
 
 }

@@ -1,9 +1,9 @@
 package com.dbproject.repository;
 
-import com.dbproject.api.favorite.FavoriteRepository;
-import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.favorite.repository.FavoriteRepository;
+import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.api.member.RegisterFormDto;
+import com.dbproject.api.member.dto.RegisterFormDto;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;

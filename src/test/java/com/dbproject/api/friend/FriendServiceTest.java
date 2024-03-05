@@ -1,17 +1,21 @@
 package com.dbproject.api.friend;
 
 import com.dbproject.api.favorite.FavoriteLocation;
-import com.dbproject.api.favorite.FavoriteRepository;
+import com.dbproject.api.favorite.repository.FavoriteRepository;
+import com.dbproject.api.friend.dto.AcceptAddFriendRequest;
+import com.dbproject.api.friend.dto.AddFriendRequest;
+import com.dbproject.api.friend.repository.FriendRepository;
+import com.dbproject.api.friend.service.FriendServiceImpl;
 import com.dbproject.api.friend.friendRequest.FriendRequest;
-import com.dbproject.api.friend.friendRequest.FriendRequestRepository;
+import com.dbproject.api.friend.friendRequest.repository.FriendRequestRepository;
 import com.dbproject.api.location.Location;
-import com.dbproject.api.location.LocationRepository;
+import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.constant.FriendRequestStatus;
 import com.dbproject.exception.DuplicateFriendRequestException;
-import com.dbproject.api.friend.friendRequest.RejectFriendRequest;
-import com.dbproject.api.member.RegisterFormDto;
+import com.dbproject.api.friend.friendRequest.dto.RejectFriendRequest;
+import com.dbproject.api.member.dto.RegisterFormDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +26,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -44,7 +47,7 @@ class FriendServiceTest {
     private FriendRequestRepository friendRequestRepository;
 
     @Autowired
-    private FriendService friendService;
+    private FriendServiceImpl friendService;
 
     @Autowired
     private FriendRepository friendRepository;
