@@ -45,7 +45,7 @@ class CommentControllerTest {
     private MemberRepository memberRepository;
 
 
-    @DisplayName("신규 댓글을 등록한다")
+    @DisplayName("add new comment")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void saveComment() throws Exception {

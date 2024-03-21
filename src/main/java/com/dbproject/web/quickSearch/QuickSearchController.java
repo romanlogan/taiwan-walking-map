@@ -43,6 +43,7 @@ public class QuickSearchController {
 
         QuickSearchResponse quickSearchResultDto = quickSearchService.getQuickSearchPage(fastSearchDto,pageable);
 
+
 //        if( dto = null){
 //            model.addAttribute("errorMessage", "");
 //            return "errorPage"

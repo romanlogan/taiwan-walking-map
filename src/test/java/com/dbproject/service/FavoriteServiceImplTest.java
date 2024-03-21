@@ -207,7 +207,5 @@ class FavoriteServiceImplTest {
         FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
         assertThat(favoriteLocation.getMemo()).isEqualTo("updated memo");
         assertThat(favoriteLocation.getLocation().getName()).isEqualTo("西門町");
-
-
     }
 }

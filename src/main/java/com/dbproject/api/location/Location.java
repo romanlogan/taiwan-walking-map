@@ -1,5 +1,7 @@
 package com.dbproject.api.location;
 
+import com.dbproject.api.invitePlan.InvitePlan;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -90,6 +92,13 @@ public class Location {
     private String keyword;
 
     private String changeTime;
+
+    @ManyToOne
+    @JoinColumn(name = "invite_plan_id")
+    private InvitePlan invitePlan;
+
+//    @OneToMany(mappedBy = "location")
+//    private List<PlanLocation> planList;      //일대다 단방향대신 다대일 양방향을 사용하기 위해 추가 , Location 에 외래키 추가 필요
 
     public LocationPicture getLocationPictureMethod() {
         return this.locationPicture;

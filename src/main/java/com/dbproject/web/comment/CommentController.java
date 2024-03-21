@@ -57,8 +57,6 @@ public class CommentController {
             return responseEntity;
         }
 
-
-
         commentService.checkDuplicateCreateComment(createCommentRequest,principal.getName());
         Long commentId = commentService.createComment(createCommentRequest, principal.getName());
 
