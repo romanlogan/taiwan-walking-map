@@ -8,6 +8,7 @@ import com.dbproject.api.favorite.dto.FavoriteLocationListResponse;
 import com.dbproject.api.favorite.service.FavoriteService;
 import com.dbproject.api.favorite.dto.UpdateMemoRequest;
 import com.dbproject.binding.CheckBindingResult;
+import com.dbproject.binding.ErrorDetail;
 import com.dbproject.exception.DuplicateFavoriteLocationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +24,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -43,11 +46,10 @@ public class FavoriteController {
             BindingResult bindingResult,
             Principal principal) {
 
-        ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
-        if (responseEntity != null) {
+        if(bindingResult.hasErrors()){
+            ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
             return responseEntity;
         }
-
 
         String email = principal.getName();
         Long favoriteId;
@@ -56,19 +58,25 @@ public class FavoriteController {
             favoriteId = favoriteService.addFavoriteList(addFavoriteLocationRequest, email);
         } catch (DuplicateFavoriteLocationException e) {
 
+
+            Map<String, ErrorDetail> errorMap = new HashMap<>();
+            ErrorDetail errorDetail = new ErrorDetail(null,e.getMessage());
+            errorMap.put("DuplicateFavoriteLocationException", errorDetail);
+
 //            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
             return new ResponseEntity(ApiResponse.of(
                     HttpStatus.BAD_REQUEST,
-                    List.of(e.getMessage()),
-                    null
+                    null,
+                    errorMap
+//                    List.of(e.getMessage())
             ), HttpStatus.BAD_REQUEST);
         }
 
 
         return new ResponseEntity(ApiResponse.of(
                 HttpStatus.OK,
-                null,
-                List.of(favoriteId)
+                List.of(favoriteId),
+                null
         ),  HttpStatus.OK);
     }
 
@@ -138,14 +146,19 @@ public class FavoriteController {
 //            ),HttpStatus.BAD_REQUEST);
 //        }
 
-        ResponseEntity responseEntity = CheckBindingResult.induceErrorInAjax(bindingResult);
-        if (responseEntity != null) {
+        if(bindingResult.hasErrors()){
+            ResponseEntity responseEntity = CheckBindingResult.induceErrorInAjax(bindingResult);
+
             return responseEntity;
         }
 
         favoriteService.deleteFavoriteLocation(deleteFavoriteLocationRequest.getFavoriteLocationId());
 
-        return new ResponseEntity(1L,HttpStatus.OK);
+        return new ResponseEntity(ApiResponse.of(
+                HttpStatus.OK,
+                List.of(1L),
+                null
+        ),  HttpStatus.OK);
     }
 
     @PutMapping("/updateMemo")
@@ -153,14 +166,19 @@ public class FavoriteController {
                                      BindingResult bindingResult,
                                      Principal principal) {
 
-        ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
-        if (responseEntity != null) {
+        if(bindingResult.hasErrors()){
+            ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
             return responseEntity;
         }
 
+
         Long id = favoriteService.updateMemo(updateMemoRequest);
 
-        return new ResponseEntity(id, HttpStatus.OK);
+        return new ResponseEntity(ApiResponse.of(
+                HttpStatus.OK,
+                List.of(id),
+                null
+        ),  HttpStatus.OK);
     }
 
 }

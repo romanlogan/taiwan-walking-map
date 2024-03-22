@@ -153,9 +153,8 @@ class InvitePlanControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("name值是必要"))
-//                .andExpect(jsonPath("$.dataList[0]").value(nullValue()))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(nullValue())));
+                .andExpect(jsonPath("$.errorMap.name.message").value("name值是必要"))
+                .andExpect(jsonPath("$.errorMap.name.rejectedValue", nullValue()));
     }
 
 
@@ -179,9 +178,8 @@ class InvitePlanControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("name值是必要"))
-//                .andExpect(jsonPath("$.dataList[0]").value(nullValue()))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems("    ")));
+                .andExpect(jsonPath("$.errorMap.name.message").value("name值是必要"))
+                .andExpect(jsonPath("$.errorMap.name.rejectedValue").value("    "));
     }
 
     @DisplayName("invite朋友參加Plan時name值不能超過50個字")
@@ -204,9 +202,8 @@ class InvitePlanControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("name值是必要1到50個字"))
-//                .andExpect(jsonPath("$.dataList[0]").value(nullValue()))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems("abcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcde")));
+                .andExpect(jsonPath("$.errorMap.name.message").value("name值是必要1到50個字"))
+                .andExpect(jsonPath("$.errorMap.name.rejectedValue").value("abcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcde"));
     }
 
     @DisplayName("invite朋友參加Plan時planPeriod值不能null")
@@ -229,9 +226,9 @@ class InvitePlanControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("planPeriod值是必要"))
-//                .andExpect(jsonPath("$.dataList[0]").value(nullValue()))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(nullValue())));
+                .andExpect(jsonPath("$.errorMap.planPeriod.message").value("planPeriod值是必要"))
+                .andExpect(jsonPath("$.errorMap.planPeriod.rejectedValue").value(nullValue()));
+
     }
 
     @DisplayName("invite朋友參加Plan時supply不能超過1000個字")
@@ -268,9 +265,8 @@ class InvitePlanControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("supply值只能最多1000個字"))
-//                .andExpect(jsonPath("$.dataList[0]").value(nullValue()))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems("The standard Lorem Ipsum passage, used since the 1500s\n" +
+                .andExpect(jsonPath("$.errorMap.supply.message").value("supply值只能最多1000個字"))
+                .andExpect(jsonPath("$.errorMap.supply.rejectedValue").value("The standard Lorem Ipsum passage, used since the 1500s\n" +
                         "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\"\n" +
                         "\n" +
                         "Section 1.10.32 of \"de Finibus Bonorum et Malorum\", written by Cicero in 45 BC\n" +
@@ -283,7 +279,7 @@ class InvitePlanControllerTest {
                         "\"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.\"\n" +
                         "\n" +
                         "1914 translation by H. Rackham\n" +
-                        "\"On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains.\"")));
+                        "\"On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains.\""));
     }
 
     @DisplayName("invite朋友參加Plan時departDate值不能null")
@@ -306,9 +302,9 @@ class InvitePlanControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("departDate值是必要"))
-//                .andExpect(jsonPath("$.dataList[0]").value(nullValue()))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(nullValue())));
+                .andExpect(jsonPath("$.errorMap.departDate.message").value("departDate值是必要"))
+                .andExpect(jsonPath("$.errorMap.departDate.rejectedValue").value(nullValue()));
+
     }
 
     private InvitePlanRequest createRequestWithNullDepartDate(String name, PlanPeriod planPeriod, String supply, int year, int month, int day) {
@@ -318,6 +314,63 @@ class InvitePlanControllerTest {
         InvitePlanRequest request = new InvitePlanRequest(name, planPeriod, supply, departDate, arriveDate);
 
         return request;
+    }
+
+
+    @DisplayName("invite朋友參加Plan時如果DepartDate是Null和Name是Blank的話，會return 400 Error")
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    void inviteWithNullDepartDateAndNullName() throws Exception {
+        //given
+        InvitePlanRequest request = createRequestWithNullDepartDate("   ", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024, 3, 20);
+        setInvitePlanMemberRequestList(request);
+        setInvitePlanLocationRequestList(request);
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.post("/plan/invite")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.errorMap.departDate.message").value("departDate值是必要"))
+                .andExpect(jsonPath("$.errorMap.name.message").value("name值是必要"))
+
+                .andExpect(jsonPath("$.errorMap.departDate.rejectedValue").value(nullValue()))
+                .andExpect(jsonPath("$.errorMap.name.rejectedValue").value("   "));
+
+    }
+
+    @DisplayName("invite朋友參加Plan時如果DepartDate是Null和Name是Blank和NullPlanPeriod的話，會return 400 Error")
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    void inviteWithNullDepartDateAndNullNameAndNullPlanPeriod() throws Exception {
+        //given
+        InvitePlanRequest request = createRequestWithNullDepartDate("   ", null, "hair dryer, slipper, brush", 2024, 3, 20);
+        setInvitePlanMemberRequestList(request);
+        setInvitePlanLocationRequestList(request);
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.post("/plan/invite")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.errorMap.departDate.message").value("departDate值是必要"))
+                .andExpect(jsonPath("$.errorMap.name.message").value("name值是必要"))
+                .andExpect(jsonPath("$.errorMap.planPeriod.message").value("planPeriod值是必要"))
+                .andExpect(jsonPath("$.errorMap.departDate.rejectedValue").value(nullValue()))
+                .andExpect(jsonPath("$.errorMap.planPeriod.rejectedValue").value(nullValue()))
+                .andExpect(jsonPath("$.errorMap.name.rejectedValue").value("   "));
     }
 
 }

@@ -52,8 +52,8 @@ public class CommentController {
 //            ),HttpStatus.OK);
 //        }
 
-        ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
-        if (responseEntity != null) {
+        if(bindingResult.hasErrors()){
+            ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
             return responseEntity;
         }
 
@@ -62,8 +62,8 @@ public class CommentController {
 
         return new ResponseEntity(ApiResponse.of(
                 HttpStatus.OK,
-                null,
-                List.of(commentId)
+                List.of(commentId),
+                null
         ), HttpStatus.OK);
     }
 
@@ -90,8 +90,8 @@ public class CommentController {
 //                    dataList
 //            ),HttpStatus.OK);
 //        }
-        ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
-        if (responseEntity != null) {
+        if(bindingResult.hasErrors()){
+            ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
             return responseEntity;
         }
 
@@ -123,6 +123,11 @@ public class CommentController {
 //                    dataList
 //            ),HttpStatus.BAD_REQUEST);
 //        }
+
+        if(bindingResult.hasErrors()){
+            ResponseEntity responseEntity = CheckBindingResult.induceErrorInAjax(bindingResult);
+            return responseEntity;
+        }
 
 
         commentService.deleteComment(deleteCommentRequest.getCommentId());

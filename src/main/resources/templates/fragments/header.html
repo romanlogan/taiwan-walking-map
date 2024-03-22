@@ -56,6 +56,11 @@
           일정 보기
         </a>
       </span>
+      <span sec:authorize="isAuthenticated()">
+        <a href="/plan" class="nav-link">
+          Plan 만들기
+        </a>
+      </span>
     </div>
   </nav>
 

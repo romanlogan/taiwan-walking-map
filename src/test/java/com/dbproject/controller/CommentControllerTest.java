@@ -119,8 +119,8 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("locationId要20個字"))
-                .andExpect(jsonPath("$.dataList").value(" "));
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"));
+//                .andExpect(jsonPath("$.dataList").value(" "));
     }
 
     @DisplayName("save comment時如果Request裡locationId只有19個字，就return Bad_Request Error")

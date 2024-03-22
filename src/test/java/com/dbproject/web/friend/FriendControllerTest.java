@@ -259,7 +259,6 @@ class FriendControllerTest {
     void acceptAddFriendRequestCanNotWithNullFriendRequestId() throws Exception{
         //given
 
-        String friendRequestId = null;
         AcceptAddFriendRequest acceptAddFriendRequest = new AcceptAddFriendRequest(null);
 
         //when

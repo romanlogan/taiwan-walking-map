@@ -9,6 +9,7 @@ import com.dbproject.api.friend.service.FriendServiceImpl;
 import com.dbproject.api.friend.friendRequest.dto.RejectFriendRequest;
 import com.dbproject.api.friend.friendRequest.dto.RequestFriendListDto;
 import com.dbproject.api.member.MemberRepository;
+import com.dbproject.binding.CheckBindingResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,28 +46,19 @@ public class FriendController {
 //        }
 
         // 바인딩 에러
-        if (bindingResult.hasErrors()) {
-
-            List<String> messageList = new ArrayList<>();
-            List<Object> dataList = new ArrayList<>();
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            for (FieldError fieldError : fieldErrors) {
-                dataList.add(fieldError.getRejectedValue());
-                messageList.add(fieldError.getDefaultMessage());
-            }
-
-            return new ResponseEntity(ApiResponse.of(
-                    HttpStatus.BAD_REQUEST,
-                    messageList,
-                    dataList
-            ),HttpStatus.OK);
+        if(bindingResult.hasErrors()){
+            ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
+            return responseEntity;
         }
-
 
 //        친구 이메일 존재하는지 ? 없으면 다시 화면으로 돌려주고 없다고 표시
         Long requesterId = friendService.saveFriendRequest(addFriendRequest, principal.getName());
 
-        return new ResponseEntity(requesterId, HttpStatus.OK);
+        return new ResponseEntity(ApiResponse.of(
+                HttpStatus.OK,
+                List.of(requesterId),
+                null
+        ),  HttpStatus.OK);
     }
 
     @GetMapping(value = {"/requestFriendList", "/requestFriendList/{page}"})
@@ -86,8 +78,13 @@ public class FriendController {
 
 
     @PostMapping("/acceptAddFriend")
-    public ResponseEntity acceptAddFriendRequest(@Valid @RequestBody AcceptAddFriendRequest acceptAddFriendRequest) {
+    public ResponseEntity acceptAddFriendRequest(@Valid @RequestBody AcceptAddFriendRequest acceptAddFriendRequest,
+                                                 BindingResult bindingResult) {
 
+        if(bindingResult.hasErrors()){
+            ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
+            return responseEntity;
+        }
 //        if (principal == null) {
 //            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
 //        }
