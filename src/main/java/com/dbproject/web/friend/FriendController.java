@@ -134,7 +134,7 @@ public class FriendController {
                                 Model model) {
 
         String email = principal.getName();
-        FriendListResponse friendListResponse = friendService.getFriendList( email);
+        FriendListResponse friendListResponse = friendService.getFriendList(email);
 
         model.addAttribute("friendListResponse", friendListResponse);
 

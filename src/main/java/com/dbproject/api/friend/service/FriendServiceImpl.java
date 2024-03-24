@@ -123,7 +123,6 @@ public class FriendServiceImpl implements FriendService{
     //        애초에 페이징쿼리 날릴떄는 즐겨찾기 리스트를 가져올수 없다
 
         List<FriendDto> friendDtoList = getFriendDtoList(email);
-
         List<FavoriteLocationDto> favoriteLocationDtoList = getFavoriteLocationDtoList(email);
 
         return FriendListResponse.createFriendListResponse(friendDtoList, favoriteLocationDtoList);

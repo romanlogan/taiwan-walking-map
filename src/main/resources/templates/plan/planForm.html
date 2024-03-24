@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        .fieldError {
+            color: #bd2130;
+        }
+
+
+        .left-half {
+            float: left;
+            width: 50%;
+        }
+
+        /* 오른쪽 절반 스타일 */
+        .right-half {
+            float: right;
+            width: 50%;
+        }
+
+
+        /*.InvitedHangOutBox{*/
+        /*  margin: 20px;*/
+        /*  padding: 10px;*/
+        /*  width: 680px;*/
+        /*  height: 110px;*/
+        /*  background-color: #fff; !* 배경색 지정 *!*/
+        /*  border-radius: 8px; !* 테두리를 둥글게 만듭니다. *!*/
+        /*  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); !* 그림자 효과 추가 *!*/
+        /*}*/
+
+        .checkableFriendBox{
+
+            margin: 20px;
+            padding: 10px;
+            width: 650px;
+            height: 110px;
+            background-color: #fff; /* 배경색 지정 */
+            border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 그림자 효과 추가 */
+        }
+
+        .checkableLocationBox{
+
+            margin: 20px;
+            padding: 10px;
+            width: 340px;
+            height: 110px;
+            background-color: #fff; /* 배경색 지정 */
+            border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 그림자 효과 추가 */
+        }
+
+        #locationChecker{
+            display: inline;
+        }
+
+        #friendChecker{
+            display: inline;
+        }
+
+
+        .locationBoxImg{
+            float : left;
+            width : 90px;
+            height : 90px;
+        }
+
+        .locationTextBox{
+            float: right;
+            width: 150px; /* 텍스트를 표시할 요소의 너비를 지정합니다. */
+            height: 90px;
+            white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 합니다. */
+            overflow: hidden; /* 넘치는 부분은 숨김 처리합니다. */
+            text-overflow: ellipsis; /* 넘치는 텍스트에 '...'을 추가하여 표시합니다. */
+
+        }
+
+        .locationText {
+            margin-bottom: 0;
+
+        }
+
+
+    </style>
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            var errorMessage = [[${errorMessage}]];
+            if(errorMessage != null){
+                alert(errorMessage);
+            }
+        });
+
+        function calculateSelectedFriend(){
+            var checkboxes = document.getElementsByClassName('friendCheckBox');
+            var checkedFriendEmailList = [];
+
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    checkedFriendEmailList.push(checkboxes[i].value);
+                }
+            }
+
+            console.log('calculateSelectedFriend -> checkedFriendEmailList :', checkedFriendEmailList);
+
+            selectFriend(checkedFriendEmailList)
+        }
+
+        function selectFriend(checkedFriendEmailList){
+
+
+            console.log('selectFriend -> checkedFriendEmailList :', checkedFriendEmailList);
+
+            const selectedBox = document.getElementById("selectedFriendList");
+
+            for (var i = 0; i < checkedFriendEmailList.length; i++) {
+
+                const listItem = document.createElement('div');
+
+                listItem.className = 'selectedFriendBox';
+                listItem.innerHTML = `<p>${checkedFriendEmailList[i]}</p>`;
+
+                selectedBox.appendChild(listItem);
+
+                console.log("checkedFriendEmailList.value : " + checkedFriendEmailList[i]);
+            }
+        }
+    </script>
+
+</th:block>
+
+<div layout:fragment="content">
+
+    <div class="container">
+        <div>
+            <div>
+                이름 : <input id="name" type="text" >
+            </div>
+
+            <div>
+                여행 기간 :
+                <select id="planPeriod"name="planPeriod">
+                    <option value="DAYTRIP">당일</option>
+                    <option value="LONGTRIP">당일X</option>
+                </select>
+            </div>
+
+            <div>
+                준비물 : <input id="supply" type="text">
+            </div>
+
+            <div>
+                출발 날짜 : <input id="departDate" type="date" >
+                종료 날짜 : <input id="arriveDate" type="date" >
+            </div>
+
+            <div id="selectedFriendList">
+
+            </div>
+            <div id="selectedLocationList">
+
+            </div>
+
+            <div>
+<!--            location 찾는법 -> 검색으로 찾기 , 즐겨찾기에서 찾기 -->
+                <button type="button" data-toggle="modal" data-target="#selectLocationModal">장소 선택</button>
+                <button type="button" data-toggle="modal" data-target="#selectFriendModal">친구 선택</button>
+            </div>
+
+
+            <div class="modal fade" id="selectLocationModal" tabindex="-1" role="dialog" aria-labelledby="selectLocationModalLabel">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="selectLocationModalLabel">장소 선택</h4>
+                        </div>
+                        <div class="modal-body">
+                            <!-- 모달 창 내의 데이터 입력 폼 -->
+
+                            <!--                왼쪽 오른쪽으로 나눠서 map 찾기처럼 왼쪽에는 리스트 오른쪽에는 메시지 -->
+                            <!--                아니면 첫번째 모달은 리스트에서 선택하고 버튼으로 두번째 모달로 이동해서 두번째 모달에서 메시지를 적을수 잇게-->
+                            <!--                  check box 로 선택 가능-->
+
+                            <div class="left-half">
+                                <div class="checkableLocationBox" th:each="favoriteList, status: ${friendListResponse.getFavoriteLocationList()}">
+
+                                    <input id="locationChecker" type="checkbox" th:value="${favoriteList.id}">
+                                    <!--                          체크박스-->
+                                    <div th:if="${#strings.isEmpty(favoriteList.picture1)}">
+                                        <img class = "locationBoxImg" src="/img/noImg.jpg">
+                                    </div>
+                                    <div th:unless="${#strings.isEmpty(favoriteList.picture1)}">
+                                        <img class = "locationBoxImg" th:src="${favoriteList.picture1}">
+                                    </div>
+                                    <div class="locationTextBox">
+                                        <p class="locationText">[[${favoriteList.name}]]</p>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="right-half">
+                            </div>
+
+                            <button id="selectLocationBtn" onclick="inviteHangOut(this.value)" type="button" class="btn btn-primary" data-dismiss="modal">확인</button>
+                        </div>
+                        <div class="modal-footer">
+                            <!--                location.favoriteLocationId-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="selectFriendModal" tabindex="-1" role="dialog" aria-labelledby="selectFriendModalLabel">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="selectFriendModalLabel">친구 선택</h4>
+                        </div>
+                        <div class="modal-body">
+
+
+                                <div class="checkableFriendBox" th:each="friendDto, status: ${friendListResponse.getFriendDtoList()}">
+
+                                    <div class="left-half">
+                                        <input id="friendChecker" class="friendCheckBox"  type="checkbox" th:value="${friendDto.friendEmail}">
+                                        <!--                          체크박스-->
+                                        <div th:if="${#strings.isEmpty(friendDto.friendImgUrl)}">
+                                            <img class = "locationBoxImg" src="/img/noImg.jpg">
+                                        </div>
+                                        <div th:unless="${#strings.isEmpty(friendDto.friendImgUrl)}">
+                                            <img class = "locationBoxImg" th:src="${friendDto.friendImgUrl}">
+                                        </div>
+                                        <div class="locationTextBox">
+                                            <p class="locationText">[[${friendDto.friendName}]]</p>
+                                        </div>
+                                    </div>
+                                    <div class="right-half">
+                                        <input id="friendSupply" type="text">
+                                    </div>
+                                    <div class="clear"></div>
+
+                                </div>
+
+
+<!--                            <button id="selectFriendBtn" th:value="${friendDto.friendEmail}" onclick="inviteHangOut(this.value)" type="button" class="btn btn-primary" data-dismiss="modal">요청 보내기</button>-->
+                            <button id="selectFriendBtn" onclick="calculateSelectedFriend()" type="button" class="btn btn-primary" data-dismiss="modal">확인</button>
+                        </div>
+                        <div class="modal-footer">
+                            <!--                location.favoriteLocationId-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</html>
