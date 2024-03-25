@@ -3,6 +3,11 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout1}">
 
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
     <style>
@@ -100,7 +105,42 @@
             }
         });
 
-        function calculateSelectedFriend(){
+        function checkSelectedLocation(){
+            var checkboxes = document.getElementsByClassName('locationCheckBox');
+            var checkedLocationList = [];
+
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    checkedLocationList.push(checkboxes[i].value);
+                }
+            }
+
+            console.log('checkSelectedLocation -> checkedLocationList :', checkedLocationList);
+
+            selectLocation(checkedLocationList)
+        }
+
+        function selectLocation(checkedLocationList){
+
+
+            console.log('selectFriend -> checkedFriendEmailList :', checkedLocationList);
+
+            const selectedBox = document.getElementById("selectedLocationList");
+
+            for (var i = 0; i < checkedLocationList.length; i++) {
+
+                const listItem = document.createElement('div');
+
+                listItem.className = 'selectedLocationBox';
+                listItem.innerHTML = `${checkedLocationList[i]}`;
+
+                selectedBox.appendChild(listItem);
+
+                console.log("checkedLocationList.value : " + checkedLocationList[i]);
+            }
+        }
+
+        function checkSelectedFriend(){
             var checkboxes = document.getElementsByClassName('friendCheckBox');
             var checkedFriendEmailList = [];
 
@@ -127,12 +167,88 @@
                 const listItem = document.createElement('div');
 
                 listItem.className = 'selectedFriendBox';
-                listItem.innerHTML = `<p>${checkedFriendEmailList[i]}</p>`;
+                listItem.innerHTML = `${checkedFriendEmailList[i]}`;
 
                 selectedBox.appendChild(listItem);
 
                 console.log("checkedFriendEmailList.value : " + checkedFriendEmailList[i]);
             }
+        }
+
+        function sendInvite() {
+
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            var invitePlanMemberList = [];
+            var invitePlanMemberEmailList = document.getElementsByClassName("selectedFriendBox");
+            for (var i = 0; i < invitePlanMemberEmailList.length; i++) {
+
+                const InvitePlanMemberRequest = {
+                    friendEmail: invitePlanMemberEmailList[i].innerHTML
+                };
+
+                invitePlanMemberList.push(InvitePlanMemberRequest);
+                // invitePlanMemberList.push(invitePlanMemberEmailList[i].innerHTML);
+            }
+            console.log(invitePlanMemberList);
+
+
+            var invitePlanLocation = [];
+            var invitePlanLocationList = document.getElementsByClassName("selectedLocationBox");
+            for (var i = 0; i < invitePlanLocationList.length; i++) {
+
+                const InvitePlanLocationRequest = {
+                    favoriteLocationId : invitePlanLocationList[i].innerHTML
+                };
+
+                invitePlanLocation.push(InvitePlanLocationRequest);
+                // invitePlanLocation.push(invitePlanLocationList[i].innerHTML);
+            }
+            console.log(invitePlanLocation);
+
+            var paramData = {
+                name : document.getElementById("name").value,
+                planPeriod : document.getElementById("planPeriod").value,
+                supply : document.getElementById("supply").value,
+                departDate : document.getElementById("departDate").value,
+                arriveDate : document.getElementById("arriveDate").value,
+                invitePlanMemberRequestList : invitePlanMemberList,
+                invitePlanLocationRequestList : invitePlanLocation
+            };
+
+            var param = JSON.stringify(paramData);
+
+            $.ajax({
+                url      : "/plan/invite",
+                type     : "POST",
+                contentType : "application/json",
+                data     : param,
+                beforeSend : function(xhr){
+                    /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                cache   : false,
+                success  : function(result, status){
+                    alert("초대 신청이 성공되었습니다.");
+                    location.href='/';
+
+                },
+                error : function(jqXHR, status, error, request){
+
+                    console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+
+                    if(jqXHR.status == '401'){
+                        alert('로그인 후 이용해주세요');
+                        location.href='/members/login';
+                    } else{
+                        alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
+                        // alert(jqXHR.responseText);
+                    }
+                }
+            });
+
         }
     </script>
 
@@ -176,6 +292,8 @@
                 <button type="button" data-toggle="modal" data-target="#selectFriendModal">친구 선택</button>
             </div>
 
+            <button id="sendInvite" type="button" onclick="sendInvite()">요청 보내기</button>
+
 
             <div class="modal fade" id="selectLocationModal" tabindex="-1" role="dialog" aria-labelledby="selectLocationModalLabel">
                 <div class="modal-dialog modal-lg">
@@ -190,28 +308,23 @@
                             <!--                아니면 첫번째 모달은 리스트에서 선택하고 버튼으로 두번째 모달로 이동해서 두번째 모달에서 메시지를 적을수 잇게-->
                             <!--                  check box 로 선택 가능-->
 
-                            <div class="left-half">
-                                <div class="checkableLocationBox" th:each="favoriteList, status: ${friendListResponse.getFavoriteLocationList()}">
+                                <div class="checkableLocationBox" th:each="favoriteLocation, status: ${friendListResponse.getFavoriteLocationList()}">
 
-                                    <input id="locationChecker" type="checkbox" th:value="${favoriteList.id}">
+                                    <input id="locationChecker" class="locationCheckBox" type="checkbox" th:value="${favoriteLocation.id}">
                                     <!--                          체크박스-->
-                                    <div th:if="${#strings.isEmpty(favoriteList.picture1)}">
+                                    <div th:if="${#strings.isEmpty(favoriteLocation.picture1)}">
                                         <img class = "locationBoxImg" src="/img/noImg.jpg">
                                     </div>
-                                    <div th:unless="${#strings.isEmpty(favoriteList.picture1)}">
-                                        <img class = "locationBoxImg" th:src="${favoriteList.picture1}">
+                                    <div th:unless="${#strings.isEmpty(favoriteLocation.picture1)}">
+                                        <img class = "locationBoxImg" th:src="${favoriteLocation.picture1}">
                                     </div>
                                     <div class="locationTextBox">
-                                        <p class="locationText">[[${favoriteList.name}]]</p>
+                                        <p class="locationText">[[${favoriteLocation.name}]]</p>
                                     </div>
 
-                                </div>
                             </div>
 
-                            <div class="right-half">
-                            </div>
-
-                            <button id="selectLocationBtn" onclick="inviteHangOut(this.value)" type="button" class="btn btn-primary" data-dismiss="modal">확인</button>
+                            <button id="selectLocationBtn" onclick="checkSelectedLocation()" type="button" class="btn btn-primary" data-dismiss="modal">확인</button>
                         </div>
                         <div class="modal-footer">
                             <!--                location.favoriteLocationId-->
@@ -253,7 +366,7 @@
 
 
 <!--                            <button id="selectFriendBtn" th:value="${friendDto.friendEmail}" onclick="inviteHangOut(this.value)" type="button" class="btn btn-primary" data-dismiss="modal">요청 보내기</button>-->
-                            <button id="selectFriendBtn" onclick="calculateSelectedFriend()" type="button" class="btn btn-primary" data-dismiss="modal">확인</button>
+                            <button id="selectFriendBtn" onclick="checkSelectedFriend()" type="button" class="btn btn-primary" data-dismiss="modal">확인</button>
                         </div>
                         <div class="modal-footer">
                             <!--                location.favoriteLocationId-->

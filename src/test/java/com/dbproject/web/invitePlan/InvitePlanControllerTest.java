@@ -65,9 +65,9 @@ class InvitePlanControllerTest {
 
     public void setInvitePlanLocationRequestList(InvitePlanRequest request) {
         List<InvitePlanLocationRequest> invitePlanLocationRequestList = new ArrayList<>();
-        InvitePlanLocationRequest invitePlanLocationRequest1 = new InvitePlanLocationRequest("C1_379000000A_001572");
-        InvitePlanLocationRequest invitePlanLocationRequest2 = new InvitePlanLocationRequest("C1_379000000A_001573");
-        InvitePlanLocationRequest invitePlanLocationRequest3 = new InvitePlanLocationRequest("C1_379000000A_001574");
+        InvitePlanLocationRequest invitePlanLocationRequest1 = new InvitePlanLocationRequest(1);
+        InvitePlanLocationRequest invitePlanLocationRequest2 = new InvitePlanLocationRequest(2);
+        InvitePlanLocationRequest invitePlanLocationRequest3 = new InvitePlanLocationRequest(3);
         invitePlanLocationRequestList.add(invitePlanLocationRequest1);
         invitePlanLocationRequestList.add(invitePlanLocationRequest2);
         invitePlanLocationRequestList.add(invitePlanLocationRequest3);

@@ -8,13 +8,13 @@ import lombok.Setter;
 public class InvitePlanMemberRequest {
 
     private String friendEmail;
-    private String friendSupply;
+//    private String friendSupply;
 
     public InvitePlanMemberRequest() {
     }
 
     public InvitePlanMemberRequest(String friendEmail, String friendSupply) {
         this.friendEmail = friendEmail;
-        this.friendSupply = friendSupply;
+//        this.friendSupply = friendSupply;
     }
 }

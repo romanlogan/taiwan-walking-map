@@ -1,6 +1,7 @@
 package com.dbproject.api.invitePlan.service;
 
 import com.dbproject.api.favorite.FavoriteLocation;
+import com.dbproject.api.favorite.repository.FavoriteRepository;
 import com.dbproject.api.invitePlan.InvitePlan;
 import com.dbproject.api.invitePlan.dto.InvitePlanLocationRequest;
 import com.dbproject.api.invitePlan.dto.InvitePlanRequest;
@@ -8,6 +9,7 @@ import com.dbproject.api.invitePlan.invitePlanMember.dto.InvitePlanMemberRequest
 import com.dbproject.api.invitePlan.invitePlanMember.repository.InvitePlanMemberRepository;
 import com.dbproject.api.invitePlan.repository.InvitePlanRepository;
 import com.dbproject.api.location.Location;
+import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.dto.RegisterFormDto;
@@ -43,6 +45,12 @@ class InvitePlanServiceImplTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private LocationRepository locationRepository;
+
+    @Autowired
+    private FavoriteRepository favoriteRepository;
 
     @Autowired
     private InvitePlanService invitePlanService;
@@ -84,6 +92,25 @@ class InvitePlanServiceImplTest {
 
         Member member3 = Member.createMember(registerFormDto3, passwordEncoder);
         memberRepository.save(member3);
+
+
+        String ximending = "C1_379000000A_001572";
+        Location location = locationRepository.findByLocationId(ximending);
+        String memo = "메모 1 입니다.";
+        FavoriteLocation favoriteLocation = new FavoriteLocation(member2, location, memo);
+        favoriteRepository.save(favoriteLocation);
+
+        String taipei101 = "C1_379000000A_000217";
+        Location location2 = locationRepository.findByLocationId(taipei101);
+        String memo2 = "메모 1 입니다.";
+        FavoriteLocation favoriteLocation2 = new FavoriteLocation(member2, location2, memo2);
+        favoriteRepository.save(favoriteLocation2);
+
+        String taipeidixiajie = "C1_379000000A_001591";
+        Location location3 = locationRepository.findByLocationId(taipeidixiajie);
+        String memo3 = "메모 1 입니다.";
+        FavoriteLocation favoriteLocation3 = new FavoriteLocation(member2, location3, memo3);
+        favoriteRepository.save(favoriteLocation3);
     }
 
     public void setInvitePlanMemberRequestList(InvitePlanRequest request){
@@ -96,10 +123,13 @@ class InvitePlanServiceImplTest {
     }
 
     public void setInvitePlanLocationRequestList(InvitePlanRequest request) {
+
+        List<FavoriteLocation> favoriteLocationList = favoriteRepository.findByMemberEmail("asdf@asdf.com");
+
         List<InvitePlanLocationRequest> invitePlanLocationRequestList = new ArrayList<>();
-        InvitePlanLocationRequest invitePlanLocationRequest1 = new InvitePlanLocationRequest("C1_379000000A_001572");
-        InvitePlanLocationRequest invitePlanLocationRequest2 = new InvitePlanLocationRequest("C1_379000000A_001573");
-        InvitePlanLocationRequest invitePlanLocationRequest3 = new InvitePlanLocationRequest("C1_379000000A_001574");
+        InvitePlanLocationRequest invitePlanLocationRequest1 = new InvitePlanLocationRequest(Math.toIntExact(favoriteLocationList.get(0).getId()));
+        InvitePlanLocationRequest invitePlanLocationRequest2 = new InvitePlanLocationRequest(Math.toIntExact(favoriteLocationList.get(1).getId()));
+        InvitePlanLocationRequest invitePlanLocationRequest3 = new InvitePlanLocationRequest(Math.toIntExact(favoriteLocationList.get(2).getId()));
         invitePlanLocationRequestList.add(invitePlanLocationRequest1);
         invitePlanLocationRequestList.add(invitePlanLocationRequest2);
         invitePlanLocationRequestList.add(invitePlanLocationRequest3);
@@ -138,16 +168,16 @@ class InvitePlanServiceImplTest {
         assertThat(invitePlan.getPeriod()).isEqualTo(PlanPeriod.LONGTRIP);
         assertThat(invitePlan.getInviteFriendList().size()).isEqualTo(2);
         assertThat(invitePlan.getInviteFriendList().get(0).getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
-        assertThat(invitePlan.getInviteFriendList().get(0).getSupply()).isEqualTo("computer");
+//        assertThat(invitePlan.getInviteFriendList().get(0).getSupply()).isEqualTo("computer");
         assertThat(invitePlan.getInviteFriendList().get(0).getInvitePlanStatus()).isEqualTo(InvitePlanStatus.WAITING);
         assertThat(invitePlan.getInviteFriendList().get(1).getMember().getEmail()).isEqualTo("yunni@yunni.com");
-        assertThat(invitePlan.getInviteFriendList().get(1).getSupply()).isEqualTo("ipad");
+//        assertThat(invitePlan.getInviteFriendList().get(1).getSupply()).isEqualTo("ipad");
         assertThat(invitePlan.getInviteFriendList().get(1).getInvitePlanStatus()).isEqualTo(InvitePlanStatus.WAITING);
 
         assertThat(invitePlan.getLocationList().size()).isEqualTo(3);
         assertThat(invitePlan.getLocationList().get(0).getName()).isEqualTo("西門町");
-        assertThat(invitePlan.getLocationList().get(1).getName()).isEqualTo("信義商圈");
-        assertThat(invitePlan.getLocationList().get(2).getName()).isEqualTo("台北市建國假日玉市");
+        assertThat(invitePlan.getLocationList().get(1).getName()).isEqualTo("台北101");
+        assertThat(invitePlan.getLocationList().get(2).getName()).isEqualTo("台北地下街");
 
     }
 

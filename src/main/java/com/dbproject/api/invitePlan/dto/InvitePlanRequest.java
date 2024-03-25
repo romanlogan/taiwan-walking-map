@@ -49,4 +49,17 @@ public class InvitePlanRequest {
         this.departDate = departDate;
         this.arriveDate = arriveDate;
     }
+
+    @Override
+    public String toString() {
+        return "InvitePlanRequest{" +
+                "name='" + name + '\'' +
+                ", planPeriod=" + planPeriod +
+                ", supply='" + supply + '\'' +
+                ", departDate=" + departDate +
+                ", arriveDate=" + arriveDate +
+                ",\n invitePlanMemberRequestList=" + invitePlanMemberRequestList.get(0).getFriendEmail() +
+                ", invitePlanLocationRequestList=" + invitePlanLocationRequestList.get(0).getFavoriteLocationId()  +
+                '}';
+    }
 }

@@ -49,9 +49,9 @@ public class InvitePlan extends BaseEntity {
 //    @OneToMany(mappedBy = "plan")
 //    private List<PlanLocation> locationList;
 
-
     public InvitePlan() {
     }
+
     @Builder
     public InvitePlan(String name, PlanPeriod period, String supply, LocalDate departDate, LocalDate arriveDate) {
         this.name = name;
@@ -62,6 +62,17 @@ public class InvitePlan extends BaseEntity {
     }
 
     public static InvitePlan createInvitePlan(InvitePlanRequest request) {
+
+        return InvitePlan.builder()
+                .name(request.getName())
+                .period(request.getPlanPeriod())
+                .supply(request.getSupply())
+                .departDate(request.getDepartDate())
+                .arriveDate(request.getArriveDate())
+                .build();
+    }
+
+    public static InvitePlan createInvitePlanWithSetList(InvitePlanRequest request) {
 
         return InvitePlan.builder()
                 .name(request.getName())

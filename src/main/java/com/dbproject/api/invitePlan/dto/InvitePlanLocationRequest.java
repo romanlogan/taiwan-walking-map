@@ -7,12 +7,13 @@ import lombok.Setter;
 @Setter
 public class InvitePlanLocationRequest {
 
-    private String locationId;
+    private Integer favoriteLocationId;
+
 
     public InvitePlanLocationRequest() {
     }
 
-    public InvitePlanLocationRequest(String locationId) {
-        this.locationId = locationId;
+    public InvitePlanLocationRequest(Integer favoriteLocationId) {
+        this.favoriteLocationId = favoriteLocationId;
     }
 }

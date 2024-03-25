@@ -47,6 +47,9 @@ public class InvitePlanController {
     public ResponseEntity invite(@Valid @RequestBody InvitePlanRequest request,
                                  BindingResult bindingResult) {
 
+        System.out.println("------------------------------------------------------------------");
+        System.out.println(request.toString());
+
         if(bindingResult.hasErrors()){
             ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
             return responseEntity;
@@ -60,4 +63,33 @@ public class InvitePlanController {
                 null
         ), HttpStatus.OK);
     }
+
+//    @GetMapping("/invitedList")
+//    public String getInvitedList(Principal principal, Model model) {
+//
+//
+//        String email = principal.getName();
+//
+//        invitePlanService.getInvitedList(email);
+//
+//    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

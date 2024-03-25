@@ -22,6 +22,7 @@ public class InvitePlanMember extends BaseEntity {
     @Column(name = "invite_plan_member_id")
     private Long id;
 
+    @Column(name = "supply")
     private String supply;      //누가 가져가야할지 정해진 준비
 
     @Enumerated(EnumType.STRING)
@@ -51,6 +52,15 @@ public class InvitePlanMember extends BaseEntity {
 
         return InvitePlanMember.builder()
                 .supply(supply)
+                .invitePlanStatus(InvitePlanStatus.WAITING)
+                .invitePlan(invitePlan)
+                .member(member)
+                .build();
+    }
+
+    public static InvitePlanMember createInvitePlanMemberWithoutSupply(Member member, InvitePlan invitePlan) {
+
+        return InvitePlanMember.builder()
                 .invitePlanStatus(InvitePlanStatus.WAITING)
                 .invitePlan(invitePlan)
                 .member(member)
