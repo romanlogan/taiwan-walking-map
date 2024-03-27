@@ -90,7 +90,7 @@ public class InvitePlanServiceImpl implements InvitePlanService {
         // fetch 조인 필요
         List<InvitePlanMember> invitedPlanMemberList = invitePlanMemberRepository.getInvitedPlanMemberListByEmail(email);
         InvitedPlanListResponse response = new InvitedPlanListResponse();
-
+        List<InvitePlanDto> invitePlanDtoList = new ArrayList<>();
 
         // 1. 요청받은 plan 목록
         for (InvitePlanMember invitePlanMember : invitedPlanMemberList) {
@@ -102,7 +102,7 @@ public class InvitePlanServiceImpl implements InvitePlanService {
                     invitePlan.getPeriod(),
                     invitePlan.getSupply(),
                     invitePlan.getDepartDate(),
-                    invitePlan.getDepartDate()
+                    invitePlan.getArriveDate()
             );
 
             //3. plan 의 멤버 리스트
@@ -125,11 +125,13 @@ public class InvitePlanServiceImpl implements InvitePlanService {
                 locationDtoList.add(locationDto);
             }
 
+            invitePlanDto.setLocationDtoList(locationDtoList);
 
+            invitePlanDtoList.add(invitePlanDto);
         }
 
+        response.setInvitePlanDtoList(invitePlanDtoList);
 
-
-        return null;
+        return response;
     }
 }

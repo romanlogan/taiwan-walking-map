@@ -118,35 +118,33 @@ class InvitePlanMemberRepositoryTest {
     }
 
 
-    public void setInvitePlanMemberRequestList(InvitePlanRequest request){
+    public void setInvitePlanMemberRequestList(InvitePlanRequest request, List<String> friendEmailList){
+
         List<InvitePlanMemberRequest> invitePlanMemberRequestList = new ArrayList<>();
-        InvitePlanMemberRequest invitePlanMemberRequest1 = new InvitePlanMemberRequest("zxcv@zxcv.com","computer");
-        InvitePlanMemberRequest invitePlanMemberRequest2 = new InvitePlanMemberRequest("yunni@yunni.com","ipad");
-        invitePlanMemberRequestList.add(invitePlanMemberRequest1);
-        invitePlanMemberRequestList.add(invitePlanMemberRequest2);
+        for (String friendEmail : friendEmailList) {
+            InvitePlanMemberRequest invitePlanMemberRequest = new InvitePlanMemberRequest(friendEmail);
+            invitePlanMemberRequestList.add(invitePlanMemberRequest);
+        }
         request.setInvitePlanMemberRequestList(invitePlanMemberRequestList);
     }
 
     public void setInvitePlanLocationRequestList(InvitePlanRequest request) {
 
         List<FavoriteLocation> favoriteLocationList = favoriteRepository.findByMemberEmail("asdf@asdf.com");
-
         List<InvitePlanLocationRequest> invitePlanLocationRequestList = new ArrayList<>();
-        InvitePlanLocationRequest invitePlanLocationRequest1 = new InvitePlanLocationRequest(Math.toIntExact(favoriteLocationList.get(0).getId()));
-        InvitePlanLocationRequest invitePlanLocationRequest2 = new InvitePlanLocationRequest(Math.toIntExact(favoriteLocationList.get(1).getId()));
-        InvitePlanLocationRequest invitePlanLocationRequest3 = new InvitePlanLocationRequest(Math.toIntExact(favoriteLocationList.get(2).getId()));
-        invitePlanLocationRequestList.add(invitePlanLocationRequest1);
-        invitePlanLocationRequestList.add(invitePlanLocationRequest2);
-        invitePlanLocationRequestList.add(invitePlanLocationRequest3);
+
+        for (FavoriteLocation favoriteLocation : favoriteLocationList) {
+
+            InvitePlanLocationRequest invitePlanLocationRequest = new InvitePlanLocationRequest(Math.toIntExact(favoriteLocation.getId()));
+            invitePlanLocationRequestList.add(invitePlanLocationRequest);
+        }
+
         request.setInvitePlanLocationRequestList(invitePlanLocationRequestList);
     }
 
     public InvitePlanRequest createRequest(String name, PlanPeriod planPeriod, String supply ,LocalDate departDate, Integer tripDay) {
-//        String name = "lee's 3 days tainan trip";
-//        PlanPeriod planPeriod = PlanPeriod.LONGTRIP;
-//        String supply = "hair dryer, slipper, brush";
-//        LocalDate departDate = LocalDate.of(2024, 3,20);
-        LocalDate arriveDate = LocalDate.of(departDate.getYear(), departDate.getMonthValue(), departDate.getDayOfMonth() + tripDay);
+
+        LocalDate arriveDate = LocalDate.of(departDate.getYear(), departDate.getMonthValue(), departDate.getDayOfMonth() + tripDay - 1);
         InvitePlanRequest request = new InvitePlanRequest(name, planPeriod, supply, departDate, arriveDate);
 
         return request;
@@ -186,61 +184,58 @@ class InvitePlanMemberRepositoryTest {
         savedInvitePlan.setLocationList(locationList);
     }
 
-    @DisplayName("email 로 초대받은 Plan 목록을 가져옵니다.")
-    @Test
-    void getInvitedPlanMemberListByEmail(){
-        //given
-        Member son = memberRepository.findByEmail("zxcv@zxcv.com");
-        Member yunni = memberRepository.findByEmail("yunni@yunni.com");
+    public void saveInvitePlan(String name, PlanPeriod planPeriod, String supply, int year, int month, int day, int tripDay, List<String> friendEmailList) {
 
-        // create Request
-        LocalDate departDate = LocalDate.of(2024, 3,20);
-        LocalDate departDate2 = LocalDate.of(2024, 6,20);
-        InvitePlanRequest request = createRequest("lee's 3 days tainan trip",
-                PlanPeriod.LONGTRIP,
-                "hair dryer, slipper, brush",
+        LocalDate departDate = LocalDate.of(year, month,day);
+
+        InvitePlanRequest request = createRequest(name,
+                planPeriod,
+                supply,
                 departDate,
-                3);
-        setInvitePlanMemberRequestList(request);
+                tripDay);
+        setInvitePlanMemberRequestList(request,friendEmailList);
         setInvitePlanLocationRequestList(request);
-
-        InvitePlanRequest request2 = createRequest("lee's 7 days japan trip",
-                PlanPeriod.LONGTRIP,
-                "computer, ipad",
-                departDate2,
-                7);
-        setInvitePlanMemberRequestList(request2);
-        setInvitePlanLocationRequestList(request2);
-
 
         InvitePlan invitePlan = InvitePlan.createInvitePlan(request);
         InvitePlan saveInvitePlan = invitePlanRepository.save(invitePlan);
         setInvitePlanMemberList(saveInvitePlan,request);
         setLocationList(saveInvitePlan,request);
+    }
 
-        InvitePlan invitePlan2 = InvitePlan.createInvitePlan(request2);
-        InvitePlan saveInvitePlan2 = invitePlanRepository.save(invitePlan2);
-        setInvitePlanMemberList(saveInvitePlan2,request2);
-        setLocationList(saveInvitePlan2,request2);
+    @DisplayName("email 로 초대받은 Plan 목록을 가져옵니다.")
+    @Test
+    void getInvitedPlanMemberListByEmail(){
+        //given
+        List<String> friendEmailList = new ArrayList<>();
+        friendEmailList.add("zxcv@zxcv.com");
+        friendEmailList.add("yunni@yunni.com");
 
-        InvitePlanMember invitePlanMember = InvitePlanMember.createInvitePlanMemberWithoutSupply(son, saveInvitePlan);
-        InvitePlanMember invitePlanMember2 = InvitePlanMember.createInvitePlanMemberWithoutSupply(yunni, saveInvitePlan);
-        InvitePlanMember invitePlanMember3 = InvitePlanMember.createInvitePlanMemberWithoutSupply(son, saveInvitePlan2);
-        InvitePlanMember invitePlanMember4 = InvitePlanMember.createInvitePlanMemberWithoutSupply(yunni, saveInvitePlan2);
-        invitePlanMemberRepository.save(invitePlanMember);
-        invitePlanMemberRepository.save(invitePlanMember2);
-        invitePlanMemberRepository.save(invitePlanMember3);
-        invitePlanMemberRepository.save(invitePlanMember4);
+        List<String> friendEmailList2 = new ArrayList<>();
+        friendEmailList2.add("zxcv@zxcv.com");
+        friendEmailList2.add("yunni@yunni.com");
+
+        // create Request
+        saveInvitePlan("lee's 3 days tainan trip",
+                PlanPeriod.LONGTRIP,
+                "hair dryer, slipper, brush",
+                2024,3,20, 3,
+                friendEmailList);
+
+        saveInvitePlan("lee's 7 days japan trip",
+                PlanPeriod.LONGTRIP,
+                "computer, ipad",
+                2024,6,20, 7,
+                friendEmailList2);
 
         //when
         List<InvitePlanMember> invitedPlanMemberList = invitePlanMemberRepository.getInvitedPlanMemberListByEmail("yunni@yunni.com");
 
         //then
-        assertThat(invitedPlanMemberList.size()).isEqualTo(4);      //son 2 + yunni 2
+        assertThat(invitedPlanMemberList.size()).isEqualTo(2);
         assertThat(invitedPlanMemberList.get(0).getInvitePlan().getName()).isEqualTo("lee's 3 days tainan trip");
         assertThat(invitedPlanMemberList.get(0).getInvitePlan().getPeriod()).isEqualTo(PlanPeriod.LONGTRIP);
         assertThat(invitedPlanMemberList.get(0).getInvitePlan().getDepartDate()).isEqualTo(LocalDate.of(2024,3,20));
-        assertThat(invitedPlanMemberList.get(0).getInvitePlan().getArriveDate()).isEqualTo(LocalDate.of(2024,3,23));
+        assertThat(invitedPlanMemberList.get(0).getInvitePlan().getArriveDate()).isEqualTo(LocalDate.of(2024,3,22));
         assertThat(invitedPlanMemberList.get(0).getInvitePlan().getInviteFriendList().size()).isEqualTo(2);
 //        assertThat(invitedPlanMemberList.get(0).getInvitePlan().getCreatedBy()).isEqualTo("asdf@asdf.com");       //plan 작성자를 created by 를 사용했더니 test 코드에서 작성자 검증이 안됨
         assertThat(invitedPlanMemberList.get(0).getInvitePlan().getInviteFriendList().get(0).getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
@@ -248,7 +243,7 @@ class InvitePlanMemberRepositoryTest {
         assertThat(invitedPlanMemberList.get(1).getInvitePlan().getName()).isEqualTo("lee's 7 days japan trip");
         assertThat(invitedPlanMemberList.get(1).getInvitePlan().getPeriod()).isEqualTo(PlanPeriod.LONGTRIP);
         assertThat(invitedPlanMemberList.get(1).getInvitePlan().getDepartDate()).isEqualTo(LocalDate.of(2024,6,20));
-        assertThat(invitedPlanMemberList.get(1).getInvitePlan().getArriveDate()).isEqualTo(LocalDate.of(2024,6,27));
+        assertThat(invitedPlanMemberList.get(1).getInvitePlan().getArriveDate()).isEqualTo(LocalDate.of(2024,6,26));
         assertThat(invitedPlanMemberList.get(1).getInvitePlan().getInviteFriendList().size()).isEqualTo(2);
         assertThat(invitedPlanMemberList.get(1).getInvitePlan().getInviteFriendList().get(0).getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
         assertThat(invitedPlanMemberList.get(1).getInvitePlan().getInviteFriendList().get(1).getMember().getEmail()).isEqualTo("yunni@yunni.com");
