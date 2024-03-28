@@ -194,7 +194,7 @@ class InvitePlanServiceImplTest {
         return request;
     }
 
-    public void saveInvitePlan(String name, PlanPeriod planPeriod, String supply, int year, int month, int day, int tripDay, List<String> friendEmailList) {
+    public void saveInvitePlan(String name, PlanPeriod planPeriod, String supply, int year, int month, int day, int tripDay, List<String> friendEmailList,Member requester) {
 
         LocalDate departDate = LocalDate.of(year, month,day);
 
@@ -206,7 +206,7 @@ class InvitePlanServiceImplTest {
         setInvitePlanMemberRequestList(request,friendEmailList);
         setInvitePlanLocationRequestList(request);
 
-        InvitePlan invitePlan = InvitePlan.createInvitePlan(request);
+        InvitePlan invitePlan = InvitePlan.createInvitePlan(request,requester);
         InvitePlan saveInvitePlan = invitePlanRepository.save(invitePlan);
         setInvitePlanMemberList(saveInvitePlan,request);
         setLocationList(saveInvitePlan,request);
@@ -230,7 +230,7 @@ class InvitePlanServiceImplTest {
         setInvitePlanLocationRequestList(request);
 
         //when
-        Long invitePlanId = invitePlanService.invitePlan(request);
+        Long invitePlanId = invitePlanService.invitePlan(request,"asdf@asdf.com");
 
         //then
         Optional<InvitePlan> savedInvitePlan = invitePlanRepository.findById(invitePlanId);
@@ -240,6 +240,7 @@ class InvitePlanServiceImplTest {
         assertThat(invitePlan.getDepartDate()).isEqualTo("2024-03-20");
         assertThat(invitePlan.getArriveDate()).isEqualTo("2024-03-22");
         assertThat(invitePlan.getPeriod()).isEqualTo(PlanPeriod.LONGTRIP);
+        assertThat(invitePlan.getRequester().getEmail()).isEqualTo("asdf@asdf.com");
         assertThat(invitePlan.getInviteFriendList().size()).isEqualTo(2);
         assertThat(invitePlan.getInviteFriendList().get(0).getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
 //        assertThat(invitePlan.getInviteFriendList().get(0).getSupply()).isEqualTo("computer");
@@ -266,18 +267,22 @@ class InvitePlanServiceImplTest {
         friendEmailList2.add("zxcv@zxcv.com");
         friendEmailList2.add("yunni@yunni.com");
 
+        Member requester = memberRepository.findByEmail("asdf@asdf.com");
         // create Request
         saveInvitePlan("lee's 3 days tainan trip",
                 PlanPeriod.LONGTRIP,
                 "hair dryer, slipper, brush",
                 2024,3,20, 3,
-                friendEmailList);
+                friendEmailList,
+                requester
+                );
 
         saveInvitePlan("lee's 7 days japan trip",
                 PlanPeriod.LONGTRIP,
                 "computer, ipad",
                 2024,6,20, 7,
-                friendEmailList2);
+                friendEmailList2,
+                requester);
 
         //when
         InvitedPlanListResponse response = invitePlanService.getInvitedList("yunni@yunni.com");
@@ -291,6 +296,8 @@ class InvitePlanServiceImplTest {
         assertThat(response.getInvitePlanDtoList().get(0).getInvitePlanMemberDtoList().size()).isEqualTo(2);
         assertThat(response.getInvitePlanDtoList().get(0).getInvitePlanMemberDtoList().get(0).getEmail()).isEqualTo("zxcv@zxcv.com");
         assertThat(response.getInvitePlanDtoList().get(0).getInvitePlanMemberDtoList().get(1).getEmail()).isEqualTo("yunni@yunni.com");
+        assertThat(response.getInvitePlanDtoList().get(0).getRequesterEmail()).isEqualTo("asdf@asdf.com");
+        assertThat(response.getInvitePlanDtoList().get(0).getRequesterName()).isEqualTo("이병민");
         assertThat(response.getInvitePlanDtoList().get(1).getName()).isEqualTo("lee's 7 days japan trip");
         assertThat(response.getInvitePlanDtoList().get(1).getPeriod()).isEqualTo(PlanPeriod.LONGTRIP);
         assertThat(response.getInvitePlanDtoList().get(1).getDepartDate()).isEqualTo(LocalDate.of(2024,6,20));
@@ -298,6 +305,8 @@ class InvitePlanServiceImplTest {
         assertThat(response.getInvitePlanDtoList().get(1).getInvitePlanMemberDtoList().size()).isEqualTo(2);
         assertThat(response.getInvitePlanDtoList().get(1).getInvitePlanMemberDtoList().get(0).getEmail()).isEqualTo("zxcv@zxcv.com");
         assertThat(response.getInvitePlanDtoList().get(1).getInvitePlanMemberDtoList().get(1).getEmail()).isEqualTo("yunni@yunni.com");
+        assertThat(response.getInvitePlanDtoList().get(1).getRequesterEmail()).isEqualTo("asdf@asdf.com");
+        assertThat(response.getInvitePlanDtoList().get(1).getRequesterName()).isEqualTo("이병민");
 
      }
 

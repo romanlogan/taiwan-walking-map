@@ -33,10 +33,11 @@ public class InvitePlanServiceImpl implements InvitePlanService {
     private final InvitePlanMemberRepository invitePlanMemberRepository;
     private final FavoriteRepository favoriteRepository;
 
-    public Long invitePlan(InvitePlanRequest request) {
+    public Long invitePlan(InvitePlanRequest request,String email) {
 
+        Member requester = memberRepository.findByEmail(email);
         //0. InvitePlan 생성
-        InvitePlan invitePlan = InvitePlan.createInvitePlan(request);
+        InvitePlan invitePlan = InvitePlan.createInvitePlan(request,requester);
         //1.InvitePlan 저장
         InvitePlan savedInvitePlan = invitePlanRepository.save(invitePlan);
 
@@ -97,12 +98,18 @@ public class InvitePlanServiceImpl implements InvitePlanService {
 
             //2. plan 의 정보
             InvitePlan invitePlan = invitePlanMember.getInvitePlan();
+            //요청자 정보
+//            Member requester = memberRepository.findByEmail(invitePlan.getRequester().getEmail());
 
-            InvitePlanDto invitePlanDto = new InvitePlanDto(invitePlan.getName(),
+            InvitePlanDto invitePlanDto = new InvitePlanDto(
+                    invitePlan.getId(),
+                    invitePlan.getName(),
                     invitePlan.getPeriod(),
                     invitePlan.getSupply(),
                     invitePlan.getDepartDate(),
-                    invitePlan.getArriveDate()
+                    invitePlan.getArriveDate(),
+                    invitePlan.getRequester().getEmail(),
+                    invitePlan.getRequester().getName()
             );
 
             //3. plan 의 멤버 리스트

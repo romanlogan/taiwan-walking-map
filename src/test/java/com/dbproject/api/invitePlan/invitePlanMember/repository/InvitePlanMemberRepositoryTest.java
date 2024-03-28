@@ -184,7 +184,7 @@ class InvitePlanMemberRepositoryTest {
         savedInvitePlan.setLocationList(locationList);
     }
 
-    public void saveInvitePlan(String name, PlanPeriod planPeriod, String supply, int year, int month, int day, int tripDay, List<String> friendEmailList) {
+    public void saveInvitePlan(String name, PlanPeriod planPeriod, String supply, int year, int month, int day, int tripDay, List<String> friendEmailList,Member requester) {
 
         LocalDate departDate = LocalDate.of(year, month,day);
 
@@ -196,7 +196,7 @@ class InvitePlanMemberRepositoryTest {
         setInvitePlanMemberRequestList(request,friendEmailList);
         setInvitePlanLocationRequestList(request);
 
-        InvitePlan invitePlan = InvitePlan.createInvitePlan(request);
+        InvitePlan invitePlan = InvitePlan.createInvitePlan(request,requester);
         InvitePlan saveInvitePlan = invitePlanRepository.save(invitePlan);
         setInvitePlanMemberList(saveInvitePlan,request);
         setLocationList(saveInvitePlan,request);
@@ -214,18 +214,24 @@ class InvitePlanMemberRepositoryTest {
         friendEmailList2.add("zxcv@zxcv.com");
         friendEmailList2.add("yunni@yunni.com");
 
+        Member requester = memberRepository.findByEmail("asdf@asdf.com");
+
         // create Request
         saveInvitePlan("lee's 3 days tainan trip",
                 PlanPeriod.LONGTRIP,
                 "hair dryer, slipper, brush",
                 2024,3,20, 3,
-                friendEmailList);
+                friendEmailList,
+                requester
+                );
 
         saveInvitePlan("lee's 7 days japan trip",
                 PlanPeriod.LONGTRIP,
                 "computer, ipad",
                 2024,6,20, 7,
-                friendEmailList2);
+                friendEmailList2,
+                requester
+                );
 
         //when
         List<InvitePlanMember> invitedPlanMemberList = invitePlanMemberRepository.getInvitedPlanMemberListByEmail("yunni@yunni.com");
@@ -237,7 +243,7 @@ class InvitePlanMemberRepositoryTest {
         assertThat(invitedPlanMemberList.get(0).getInvitePlan().getDepartDate()).isEqualTo(LocalDate.of(2024,3,20));
         assertThat(invitedPlanMemberList.get(0).getInvitePlan().getArriveDate()).isEqualTo(LocalDate.of(2024,3,22));
         assertThat(invitedPlanMemberList.get(0).getInvitePlan().getInviteFriendList().size()).isEqualTo(2);
-//        assertThat(invitedPlanMemberList.get(0).getInvitePlan().getCreatedBy()).isEqualTo("asdf@asdf.com");       //plan 작성자를 created by 를 사용했더니 test 코드에서 작성자 검증이 안됨
+        assertThat(invitedPlanMemberList.get(0).getInvitePlan().getRequester().getEmail()).isEqualTo("asdf@asdf.com");       //plan 작성자를 created by 를 사용했더니 test 코드에서 작성자 검증이 안됨
         assertThat(invitedPlanMemberList.get(0).getInvitePlan().getInviteFriendList().get(0).getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
         assertThat(invitedPlanMemberList.get(0).getInvitePlan().getInviteFriendList().get(1).getMember().getEmail()).isEqualTo("yunni@yunni.com");
         assertThat(invitedPlanMemberList.get(1).getInvitePlan().getName()).isEqualTo("lee's 7 days japan trip");

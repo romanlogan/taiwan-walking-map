@@ -14,11 +14,15 @@ import java.util.List;
 @Setter
 public class InvitePlanDto {
 
+    private Long id;
     private String name;
     private PlanPeriod period;
     private String supply;
     private LocalDate departDate;
     private LocalDate arriveDate;
+    private String requesterEmail;
+    private String requesterName;
+
 
 
 //    List<FriendDto> friendDtoList = new ArrayList<>();
@@ -30,11 +34,15 @@ public class InvitePlanDto {
     public InvitePlanDto() {
     }
 
-    public InvitePlanDto(String name, PlanPeriod period, String supply, LocalDate departDate, LocalDate arriveDate) {
+    public InvitePlanDto(Long id,String name, PlanPeriod period, String supply, LocalDate departDate, LocalDate arriveDate,String requesterEmail, String requesterName) {
+        this.id = id;
         this.name = name;
         this.period = period;
         this.supply = supply;
         this.departDate = departDate;
         this.arriveDate = arriveDate;
+        this.requesterEmail = requesterEmail;
+        this.requesterName = requesterName;
+
     }
 }

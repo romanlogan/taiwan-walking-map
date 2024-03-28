@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+
+    <script th:inline="javascript">
+
+
+
+    </script>
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <link rel="stylesheet" href="/css/myPage/sidebar/sidebar.css"/>
+    <style>
+        .left-half {
+            float: left;
+            width: 50%;
+        }
+
+        /* 오른쪽 절반 스타일 */
+        .right-half {
+            float: right;
+            width: 50%;
+        }
+
+        .InvitedHangOutBox{
+            margin: 20px;
+            padding: 10px;
+            width: 550px;
+            height: 230px;
+            background-color: #fff; /* 배경색 지정 */
+            border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 그림자 효과 추가 */
+        }
+
+        .hangOutImgBox{
+            float : left;
+        }
+
+        .hangOutImg{
+            width : 200px;
+            height : 200px;
+        }
+
+        .hangOutTextBox{
+            margin-left: 10px;
+            float: left;
+            width: 200px;
+            height: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .hangOutBtnBox{
+            float: right;
+            width: 80px;
+            height: 200px;
+        }
+
+
+        .locationText {
+            margin-bottom: 0;
+
+        }
+
+
+        .clear{
+            both: clear;
+        }
+
+        #showLocationDtlBtnBox {
+            background: none;
+            border: none;
+            padding: 0;
+            font: inherit;
+            cursor: pointer;
+            outline: inherit;
+        }
+
+
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+
+
+    <div class="container">
+        <div class="sidebar">
+            <ul>
+                <li><a href="/myPage/profile">myProfile</a></li>
+                <li><a href="/myPage/requestFriendList">받은 친구 요청</a></li>
+                <li><a href="/myPage/friendList">친구 목록</a></li>
+                <li><a href="/hangOut/invitedList">받은 약속 초대 리스트</a></li>              <!-- 필요에 따라 메뉴 항목 추가 -->
+                <li><a href="/plan/invitedList">받은 Plan 초대 리스트</a></li>
+                <!--                내가 만든 Plan 과 초대를 받은 plan 을 따로 검색 가능하게 -->
+                <li><a href="/plan/list">나의 Plan 리스트</a></li>
+            </ul>
+        </div>
+        <div class="left-half">
+
+            <div class="InvitedHangOutBox" th:each="plan, status: ${response.getInvitePlanDtoList()}">
+
+                <div class="hangOutTextBox">
+                    plan 이름 : <div th:text="${plan.getName()}" class="fs24 font-weight-bold updatable"></div>
+                    요청자 이름 : <div th:text="${plan.getRequesterName()}" class="fs24 font-weight-bold updatable"></div>
+
+                    <div th:if="${plan.getPeriod() == T(com.dbproject.constant.PlanPeriod).DAYTRIP}">
+                        날짜  : <div th:text="${plan.getDepartDate()}" class="fs24 font-weight-bold updatable"></div>
+                    </div>
+                    <div th:if="${plan.getPeriod() == T(com.dbproject.constant.PlanPeriod).LONGTRIP}">
+                        출발 날짜  : <div th:text="${plan.getDepartDate()}" class="fs24 font-weight-bold updatable"></div>
+                        도착 날짜  : <div th:text="${plan.getArriveDate()}" class="fs24 font-weight-bold updatable"></div>
+                    </div>
+                </div>
+
+                <div class="hangOutBtnBox">
+                    <button type="button" class="acceptBtn" th:value="${plan.id}" onclick="acceptInvitedPlan(this.value)">초대 수락</button>
+                    <button type="button" class="rejectBtn" th:value="${plan.id}" onclick="rejectInvitedPlan(this.value)">초대 거절</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="right-half">
+
+        </div>
+
+
+
+    </div>
+</div>
+</html>

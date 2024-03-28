@@ -4,6 +4,7 @@ import com.dbproject.api.baseEntity.BaseEntity;
 import com.dbproject.api.invitePlan.dto.InvitePlanRequest;
 import com.dbproject.api.invitePlan.invitePlanMember.InvitePlanMember;
 import com.dbproject.api.location.Location;
+import com.dbproject.api.member.Member;
 import com.dbproject.constant.PlanPeriod;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,6 +34,10 @@ public class InvitePlan extends BaseEntity {
 //    아직 누가 할지 정해지지 않은 준비물
     private String supply;      //나중에 분배 가능하게 변경하기
 
+    @OneToOne
+    @JoinColumn(name = "member_email")
+    private Member requester;
+
     @Column(name = "depart_date")
     private LocalDate departDate;
 
@@ -53,15 +58,16 @@ public class InvitePlan extends BaseEntity {
     }
 
     @Builder
-    public InvitePlan(String name, PlanPeriod period, String supply, LocalDate departDate, LocalDate arriveDate) {
+    public InvitePlan(String name, PlanPeriod period, String supply, LocalDate departDate, LocalDate arriveDate, Member requester) {
         this.name = name;
         this.period = period;
         this.supply = supply;
         this.departDate = departDate;
         this.arriveDate = arriveDate;
+        this.requester = requester;
     }
 
-    public static InvitePlan createInvitePlan(InvitePlanRequest request) {
+    public static InvitePlan createInvitePlan(InvitePlanRequest request,Member requester) {
 
         return InvitePlan.builder()
                 .name(request.getName())
@@ -69,6 +75,7 @@ public class InvitePlan extends BaseEntity {
                 .supply(request.getSupply())
                 .departDate(request.getDepartDate())
                 .arriveDate(request.getArriveDate())
+                .requester(requester)
                 .build();
     }
 

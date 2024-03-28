@@ -36,6 +36,8 @@ public class InvitePlanRequest {
 //    @JsonFormat(pattern = "YYYY-MM-DD")
     private LocalDate arriveDate;
 
+//    private String requesterEmail;
+
     private List<InvitePlanMemberRequest> invitePlanMemberRequestList = new ArrayList<>();
     private List<InvitePlanLocationRequest> invitePlanLocationRequestList = new ArrayList<>();
 

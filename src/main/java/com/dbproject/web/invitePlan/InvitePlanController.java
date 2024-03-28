@@ -5,6 +5,7 @@ import com.dbproject.api.favorite.dto.FavoriteLocationDto;
 import com.dbproject.api.friend.dto.FriendListResponse;
 import com.dbproject.api.friend.service.FriendService;
 import com.dbproject.api.invitePlan.dto.InvitePlanRequest;
+import com.dbproject.api.invitePlan.dto.InvitedPlanListResponse;
 import com.dbproject.api.invitePlan.service.InvitePlanService;
 import com.dbproject.binding.CheckBindingResult;
 import lombok.RequiredArgsConstructor;
@@ -45,17 +46,20 @@ public class InvitePlanController {
 
     @PostMapping("/invite")
     public ResponseEntity invite(@Valid @RequestBody InvitePlanRequest request,
-                                 BindingResult bindingResult) {
+                                 BindingResult bindingResult,
+                                 Principal principal) {
 
         System.out.println("------------------------------------------------------------------");
         System.out.println(request.toString());
+
+        String email = principal.getName();
 
         if(bindingResult.hasErrors()){
             ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
             return responseEntity;
         }
 
-        Long invitePlanId = invitePlanService.invitePlan(request);
+        Long invitePlanId = invitePlanService.invitePlan(request,email);
 
         return new ResponseEntity(ApiResponse.of(
                 HttpStatus.OK,
@@ -64,15 +68,17 @@ public class InvitePlanController {
         ), HttpStatus.OK);
     }
 
-//    @GetMapping("/invitedList")
-//    public String getInvitedList(Principal principal, Model model) {
-//
-//
-//        String email = principal.getName();
-//
-//        invitePlanService.getInvitedList(email);
-//
-//    }
+    @GetMapping("/invitedList")
+    public String getInvitedList(Principal principal, Model model) {
+
+        String email = principal.getName();
+        InvitedPlanListResponse response = invitePlanService.getInvitedList(email);
+
+        model.addAttribute("response", response);
+
+        return "plan/invitedPlanList";
+
+    }
 }
 
 
