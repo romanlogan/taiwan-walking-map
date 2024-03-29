@@ -13,6 +13,7 @@ import com.dbproject.api.location.dto.LocationDto;
 import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
+import com.dbproject.constant.InvitePlanStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -140,5 +141,28 @@ public class InvitePlanServiceImpl implements InvitePlanService {
         response.setInvitePlanDtoList(invitePlanDtoList);
 
         return response;
+    }
+
+    @Override
+    public Long accept(AcceptInvitedPlanRequest request, String email) {
+
+//        1. Accept 상태로 바꾸기 (언제 삭제를 할까 ? 바로 or 일정 기간 후)
+        InvitePlanMember invitePlanMember = invitePlanMemberRepository.getByIdAndEmail(Long.valueOf(request.getPlanId()), email);
+        invitePlanMember.setInvitePlanStatus(InvitePlanStatus.ACCEPTED);
+
+//        2. Plan 에 추가
+
+
+//        새로운 Plan id 를 return
+        return invitePlanMember.getId();
+    }
+
+    @Override
+    public Long reject(RejectInvitePlanRequest request, String email) {
+
+        InvitePlanMember invitePlanMember = invitePlanMemberRepository.getByIdAndEmail(Long.valueOf(request.getPlanId()), email);
+        invitePlanMember.setInvitePlanStatus(InvitePlanStatus.REJECTED);
+
+        return invitePlanMember.getId();
     }
 }

@@ -16,5 +16,9 @@ public interface InvitePlanMemberRepository extends JpaRepository<InvitePlanMemb
     List<InvitePlanMember> getInvitedPlanMemberListByEmail(String email);
 
 
+    @Query("select ipm from InvitePlanMember ipm" +
+            " where ipm.invitePlan.id = :id" +
+            " and ipm.member.email = :email")
+    InvitePlanMember getByIdAndEmail(Long id, String email);
 
 }
