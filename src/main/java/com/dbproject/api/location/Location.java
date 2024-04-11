@@ -2,6 +2,10 @@ package com.dbproject.api.location;
 
 import com.dbproject.api.invitePlan.InvitePlan;
 
+import com.dbproject.exception.CommentCountLessThanOrEqualZeroException;
+import com.dbproject.exception.CommentCountNullException;
+import com.dbproject.exception.FavoriteCountLessThanOrEqualZeroException;
+import com.dbproject.exception.FavoriteCountNullException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +24,10 @@ public class Location {
 
     // 댓글 개수
     private Integer commentCount;
+
+    // 즐겨찾기 개수
+    private Integer favoriteCount;
+
 
     private String zone;
 
@@ -110,6 +118,37 @@ public class Location {
             this.commentCount = 1;
         }else{
             this.commentCount++;
+        }
+    }
+
+    public void decreaseCommentCount() {
+
+        if (this.getCommentCount() == null) {
+            throw new CommentCountNullException("현재 댓글 개수가 null 입니다 (delete)");
+        } else if (this.getCommentCount() <= 0) {
+            throw new CommentCountLessThanOrEqualZeroException("현재 댓글 개수가 0 이하입니다 (delete)");
+        } else{
+            this.commentCount--;
+        }
+    }
+
+    public void increaseFavoriteCount() {
+
+        if (this.getFavoriteCount() == null) {
+            this.favoriteCount = 1;
+        }else{
+            this.favoriteCount++;
+        }
+    }
+
+    public void decreaseFavoriteCount() {
+
+        if (this.getFavoriteCount() == null) {
+            throw new FavoriteCountNullException("현재 즐겨찾기 개수가 null 입니다 (delete)");
+        } else if (this.getFavoriteCount() <= 0) {
+            throw new FavoriteCountLessThanOrEqualZeroException("현재 즐겨찾기 개수가 0 이하입니다 (delete)");
+        } else{
+            this.favoriteCount--;
         }
     }
 }

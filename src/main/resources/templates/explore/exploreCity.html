@@ -57,64 +57,18 @@
 
 <th:block layout:fragment="css">
     <style>
-        #navbar{
-            background-color:  #0d6efd;
-        }
 
-        /*Links inside the navbar *!*/
-        #navbar a {
-            float: left;
-            font-size: 16px;
-            color: white;
-            text-align: center;
-            padding: 16px;
-            text-decoration: none;
-        }
-
-        .dropbtn {
-            background-color: inherit;
-            color: white;
-            padding: 16px;
-            font-size: 16px;
-            border: none;
-        }
-
-        /* The container <div> - needed to position the dropdown content */
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        /* Dropdown Content (Hidden by Default) */
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f1f1f1;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-
-        /* Links inside the dropdown */
-        .dropdown-content a {
-            color: white;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-
-        /* Change color of dropdown links on hover */
-        .dropdown-content a:hover {background-color: #ddd;}
-
-        /* Show the dropdown menu on hover */
-        .dropdown:hover .dropdown-content {display: block;}
-
-
-
-
-        .bigContainer{
+        .container{
             margin-top: 30px;
+            margin-left: 150px;
+            margin-right: 150px;
         }
+
+        .content{
+            margin-left: 0;
+            margin-right: 0;
+        }
+
 
         .left-half {
             float: left;
@@ -130,28 +84,52 @@
             overflow: hidden;
         }
 
-        #imgContainer{
+        #imgBox{
+            /*padding-bottom: 100px;*/
             width: 100%; /* 부모 요소 너비의 100%를 차지하도록 설정 */
-            height: 100%; /* 부모 요소 높이의 100%를 차지하도록 설정 */
+            height: 600px; /* 부모 요소 높이의 100%를 차지하도록 설정 */
             overflow: hidden; /* 내부 컨텐츠가 넘치는 경우 숨김 처리 */
             /* 부모 요소의 position을 상대적(relative)로 설정하여 하위 요소들을 위치시킴 */
             position: relative;
+
+            /*display: flex;*/
+            /*justify-content: center;*/
+            /*align-items: center;*/
         }
 
         #cityImg{
-            width: 100%; /* 이미지의 너비를 부모 요소의 100%로 설정하여 가로폭 꽉 차게 함 */
-            height: 450px; /* 이미지의 높이를 자동으로 조정하여 비율 유지 */
-            display: block; /* 인라인 요소의 특성 제거 */
-            position: absolute; /* 이미지를 부모 요소 기준으로 절대 위치 지정 */
-            top: 0; /* 부모 요소 상단에 위치 */
-            left: 0; /* 부모 요소 좌측에 위치 */
+            /*position:absolute;*/
+            height: 500px;
+            width: 100%;
+            /*left: 0;*/
+            /*top: 0;*/
+            /* 투명도 */
+            /*background-color: rgba(0,0,0,0.3);*/
             object-fit: cover;
-            border-radius: 10px 0px 0px 10px;
+        }
+
+        #flexBox{
+            display: flex;
+            justify-content: center;
+        }
+
+        #cityNameBox{
+            top: 350px;
+            position: absolute;
+            width: 300px;
+            height: 150px;
+            background-color: rgba(0,0,0,0.7);;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /*z-index: -1;*/
         }
 
         #cityName{
-            color : white;
 
+            color:white;
+            font-size: 5rem;
         }
 
         #cityDetail{
@@ -162,10 +140,6 @@
             clear:both;
         }
 
-        #content{
-            margin-left: 150px;
-            margin-right: 150px;
-        }
 
         .card{
             border-radius: 10px 10px 10px 10px;
@@ -294,34 +268,29 @@
 <!--        </div>-->
 <!--    </nav>-->
 <!--    -->
-
-    <div id="content">
-
-        <h1>[[${cityDto.cityName}]]</h1>
-
-        <div>
-            <div id="left-half" class="left-half">
-                <div id="imgContainer">
-                    <div class="overlay">
-                        <th:block th:each="img, status: ${cityDto.getCityImgList()}">
-                            <img id="cityImg" th:src="${img.imgUrl}" class="card-img-top" >
-                            <h1 id="cityName">[[${cityDto.cityName}]]</h1>
-                        </th:block>
-                    </div>
+        <div id="imgBox">
+            <div id="flexBox">
+                <div id="cityNameBox">
+                    <h1 id="cityName">[[${cityDto.cityName}]]</h1>
                 </div>
             </div>
 
-            <div id="right-half" class="right-half">
-
-                <div id="map" style="width:100%; height: 450px;"></div>
+            <div class="overlay">
+                <th:block th:each="img, status: ${cityDto.getCityImgList()}">
+                    <img id="cityImg" th:src="${img.imgUrl}">
+                </th:block>
             </div>
         </div>
 
-        <div id="cityDetail">
 
-        </div>
+<!--        <div id="cityDetail">-->
 
-        <div class="bigContainer">
+<!--        </div>-->
+
+
+        <div id="map" style="width:100%; height: 450px;"></div>
+
+        <div class="container">
             <input id="cityNameValue" type="hidden" th:value="${cityDto.getCityName()}">
 
             <br>
@@ -431,6 +400,6 @@
                 </div>
             </div>
         </div>
-    </div>
+
 </div>
 </html>

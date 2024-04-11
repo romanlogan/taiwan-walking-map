@@ -169,17 +169,26 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
     }
 
 
-    private OrderSpecifier<String> orderByOrderType(String orderType) {
+    private OrderSpecifier orderByOrderType(String orderType) {
 
         if (orderType.equals("name")) {
 
             return QLocation.location.name.asc();
+
         }else if (orderType.equals("id")) {
 
             return QLocation.location.locationId.asc();
-        }
 
+        }else if (orderType.equals("comment")) {
+
+            return com.dbproject.api.location.QLocation.location.commentCount.desc();
+        }else if (orderType.equals("favorite")) {
+
+//            2개 이상의 조건으로 order by 하려면 ?
+            return com.dbproject.api.location.QLocation.location.favoriteCount.desc();
+        }
         return null;
+
     }
 
     private BooleanExpression searchPicCond(String picCond) {

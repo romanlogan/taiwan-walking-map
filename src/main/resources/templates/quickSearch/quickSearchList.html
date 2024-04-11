@@ -80,22 +80,23 @@
 
                 $("#quickSearchInputBtn").on("click", function () {
 
-                    var searchQuery = document.getElementById('quickSearchQuery').value;
-                    var searchCity = document.getElementById('quickSearchCity').value;
-                    var searchTown = document.getElementById('quickSearchTown').value;
-                    var orderType = document.getElementById('orderType').value;
+                    let searchQuery = document.getElementById('quickSearchQuery').value;
+                    let searchCity = document.getElementById('quickSearchCity').value;
+                    let searchTown = document.getElementById('quickSearchTown').value;
 
-                    var openTimeCondElem = document.getElementById('openTimeCond');
-                    var feeCondElem = document.getElementById('feeCond');
-                    var picCondElem = document.getElementById('picCond');
+                    let orderType = "name";
+
+                    let openTimeCondElem = document.getElementById('openTimeCond');
+                    let feeCondElem = document.getElementById('feeCond');
+                    let picCondElem = document.getElementById('picCond');
 
                     if (searchTown == '선택안함') {
                         searchTown="";
                     }
 
-                    var openTimeCond
-                    var feeCond
-                    var picCond
+                    let openTimeCond
+                    let feeCond
+                    let picCond
 
                     if(openTimeCondElem.checked){
                         openTimeCond = true;
@@ -114,7 +115,7 @@
                     }else{
                         picCond = "";
                     }
-                    console.log(orderType);
+
                     console.log(openTimeCond);
                     console.log(feeCond);
                     console.log(picCond);
@@ -129,7 +130,7 @@
 
                             console.log("quickSearchLocationDtoList : " + data.quickSearchLocationDtoList);     //r검색 결과에 따라 개수가 변경 되기는
                             console.log("quickSearchLocationDtoList[0] : " + data.quickSearchLocationDtoList[0]);     //r검색 결과에 따라 개수가 변경 되기는
-                            console.log("quickSearchLocationDtoList[0].name : " + data.quickSearchLocationDtoList[0].name);     //r검색 결과에 따라 개수가 변경 되기는
+                            // console.log("quickSearchLocationDtoList[0].name : " + data.quickSearchLocationDtoList[0].name);     //r검색 결과에 따라 개수가 변경 되기는
 
 
                             //검색시 town 이름이 유지가 안됨 , 계속 마지막에 페이지가 리로드 되는 문제
@@ -143,13 +144,8 @@
                                 showedLocationList[i].parentNode.removeChild(showedLocationList[i]);
                             }
 
-                            console.log("data.length : " + data.length);
-                            console.log("data.quickSearchLocationDtoList.length : " + data.quickSearchLocationDtoList.length);
-
                             for (var i = 0; i < data.quickSearchLocationDtoList.length; i++) {
                                 // selectTown.append('<option selected value="' + town + '">' + town + '</option>');
-                                console.log(i);
-                                console.log("data loop start ");
                                 const listItem = document.createElement('div');
                                 listItem.className = "InvitedHangOutBox";
 
@@ -184,6 +180,18 @@
 
                                 locationList.appendChild(listItem);
                             }
+
+
+                            const searchedInfoBox = document.getElementById('searchedInfoBox');
+                            searchedInfoBox.innerHTML = `
+                                <input id="searchedQuery" type="hidden" value="${searchQuery}">
+                                <input id="searchedCity" type="hidden" value="${searchCity}">
+                                <input id="searchedTown" type="hidden" value="${searchTown}">
+                                <input id="searchedopenTimeCond" type="hidden" value="${openTimeCond}">
+                                <input id="searchedfeeCond" type="hidden" value="${feeCond}">
+                                <input id="searchedpicCond" type="hidden" value="${picCond}">
+                            `;
+
 
 
                             // var selectedTown = [[${quickSearchListResponse.getSelectedTown()}]];
@@ -224,6 +232,9 @@
                 });
             });
 
+            // function quickSearch(orderCondition){
+
+
             function findCityList() {
 
                 var cityNameList = [[${quickSearchListResponse.getCityNameList()}]];
@@ -259,6 +270,133 @@
                 //마지막에 선택안함 하나 더 추가
                 selectTown.append('<option value="noSelected">선택안함</option>');
                 selectTown.trigger("change");
+            }
+
+            function orderFilter(type){
+
+                let searchQuery = document.getElementById('searchedQuery').value;
+                let searchCity = document.getElementById('searchedCity').value;
+                let searchTown = document.getElementById('searchedTown').value;
+
+                let orderType = type;
+
+                let openTimeCond = document.getElementById('searchedOpenTimeCond');
+                let feeCond = document.getElementById('searchedFeeCond');
+                let picCond = document.getElementById('searchedPicCond');
+
+                // if (searchTown == '선택안함') {
+                //     searchTown="";
+                // }
+
+
+                // if(openTimeCondElem.checked){
+                //     openTimeCond = true;
+                // }else{
+                //     openTimeCond = "";
+                // }
+                //
+                // if(feeCondElem.checked){
+                //     feeCond = true;
+                // }else{
+                //     feeCond = "";
+                // }
+                //
+                // if(picCondElem.checked){
+                //     picCond = true;
+                // }else{
+                //     picCond = "";
+                // }
+
+                console.log("openTimeCond : " + openTimeCond);
+                console.log("feeCond : " + feeCond);
+                console.log("picCond : " + picCond);
+                console.log(searchTown);
+
+                $.ajax({
+                    url      : "/quickSearch/newList?searchQuery=" + searchQuery + "&searchCity=" + searchCity + "&searchTown=" + searchTown + "&orderType=" + orderType + "&openTimeCond=" + openTimeCond + "&feeCond=" + feeCond + "&picCond=" + picCond,
+                    type     : "GET",
+                    dataType: "json" ,
+                    success  : function(data, status){
+                        console.log("success")
+
+                        console.log("quickSearchLocationDtoList : " + data.quickSearchLocationDtoList);     //r검색 결과에 따라 개수가 변경 되기는
+                        console.log("quickSearchLocationDtoList[0] : " + data.quickSearchLocationDtoList[0]);     //r검색 결과에 따라 개수가 변경 되기는
+                        // console.log("quickSearchLocationDtoList[0].name : " + data.quickSearchLocationDtoList[0].name);     //r검색 결과에 따라 개수가 변경 되기는
+
+
+                        //검색시 town 이름이 유지가 안됨 , 계속 마지막에 페이지가 리로드 되는 문제
+                        // 그렇다면 리로드 되게 하지말고 quickSearchListResponse 를 반납하
+                        const locationList = document.getElementById('changeLocationBox');
+
+                        const showedLocationList = document.querySelectorAll('.InvitedHangOutBox');
+                        // locationList.empty();
+                        for(var i=0; i<showedLocationList.length; i++) {
+                            // locationList[i].innerHTML = '';
+                            showedLocationList[i].parentNode.removeChild(showedLocationList[i]);
+                        }
+
+                        for (var i = 0; i < data.quickSearchLocationDtoList.length; i++) {
+                            // selectTown.append('<option selected value="' + town + '">' + town + '</option>');
+                            const listItem = document.createElement('div');
+                            listItem.className = "InvitedHangOutBox";
+
+                            //th:if 를 해결하려면 ?
+                            listItem.innerHTML = `
+                                    <a href="/location/${data.quickSearchLocationDtoList[i].locationId}" class="text-dark">
+                                        <img class = "locationBoxImg" src="${data.quickSearchLocationDtoList[i].picture1}">
+                                        <div class="locationTextBox">
+                                            <p class="locationText"> ${data.quickSearchLocationDtoList[i].name}</p>
+
+                                            <div th:if="${data.quickSearchLocationDtoList[i].address != null}">
+                                                <p class="locationText"> address : ${data.quickSearchLocationDtoList[i].address}</p>
+                                            </div>
+
+                                            <div th:if="${data.quickSearchLocationDtoList[i].openTime != null}">
+                                                <p class="locationText"> open time : ${data.quickSearchLocationDtoList[i].openTime}</p>
+                                            </div>
+
+                                            <div th:if="${data.quickSearchLocationDtoList[i].ticketInfo != null}">
+                                                <p class="locationText"> Fee Info : ${data.quickSearchLocationDtoList[i].ticketInfo}</p>
+                                            </div>
+
+                                            <div th:if="${data.quickSearchLocationDtoList[i].website != null}">
+                                                <p class="locationText"> Website Url : ${data.quickSearchLocationDtoList[i].website}</p>
+                                            </div>
+
+                                            <div th:if="${data.quickSearchLocationDtoList[i].tel != null}">
+                                                <p class="locationText"> Tel : ${data.quickSearchLocationDtoList[i].tel}</p>
+                                            </div>
+                                        </div>
+                                    </a>`;
+
+                            locationList.appendChild(listItem);
+                        }
+
+
+                        // const searchedInfoBox = document.getElementById('searchedInfoBox');
+                        // searchedInfoBox.innerHTML = `
+                        //         <input id="searchedQuery" type="hidden" value="${searchQuery}">
+                        //         <input id="searchedCity" type="hidden" value="${searchCity}">
+                        //         <input id="searchedTown" type="hidden" value="${searchTown}">
+                        //         <input id="searchedOpenTimeCond" type="hidden" value="${openTimeCond}">
+                        //         <input id="searchedFeeCond" type="hidden" value="${feeCond}">
+                        //         <input id="searchedPicCond" type="hidden" value="${picCond}">
+                        //     `;
+                    },
+                    cache   : false,
+                    error : function(jqXHR, status, error, request){
+
+                        console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
+
+                        if(jqXHR.status == '401'){
+                            alert('로그인 후 이용해주세요');
+                            location.href='/members/login';
+                        } else{
+                            alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
+                            // alert(jqXHR.responseText);
+                        }
+                    }
+                });
             }
 
 
@@ -379,6 +517,22 @@
                 height: 50vh;
             }
 
+            #orderTypeBox{
+
+            }
+
+            .orderFilterBtn{
+                height: 50px;
+                width: 120px;
+                /* background-color: #011126; */
+                background-color: white;
+                color: #011126;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+            }
+
         </style>
 
 </th:block>
@@ -430,12 +584,12 @@
             <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #d9d9d9;"></i>
         </button>
 
-        <select id="orderType" name="orderType">
-            <option value="name">이름순</option>
-            <option value="comment">댓글순</option>
-            <option value="favorite">즐겨찾기 개수순</option>
-            <option value="recommend">추천순</option>
-        </select>
+<!--        <select id="orderType" name="orderType">-->
+<!--            <option value="name">이름순</option>   -->
+<!--            <option value="comment">댓글순</option>-->
+<!--            <option value="favorite">즐겨찾기 개수순</option>-->
+<!--            <option value="recommend">추천순</option>-->
+<!--        </select>-->
         <br>
 
         <div>
@@ -461,6 +615,20 @@
 
 
 <div id="right-half" class="right-half">
+    <div id="searchedInfoBox"></div>
+<!--    <input type="hidden" id="SearchCity" th:value="${fastSearchDto.getSearchCity()}"/>-->
+    <div id="orderTypeBox">
+<!--        <select id="orderType" name="orderType">-->
+<!--            <option value="name">이름순</option>-->
+<!--            <option value="comment">댓글순</option>-->
+<!--            <option value="favorite">즐겨찾기 개수순</option>-->
+<!--            <option value="recommend">추천순</option>-->
+<!--        </select>-->
+        <button id="orderByName" class="orderFilterBtn" onclick="orderFilter('name')">이름순</button>
+        <button id="orderByComment" class="orderFilterBtn" onclick="orderFilter('comment')">댓글순</button>
+        <button id="orderByFavorite" class="orderFilterBtn" onclick="orderFilter('favorite')">즐겨찾기개수순</button>
+    </div>
+
     <div id="changeLocationBox">
         <div th:each="location, status: ${quickSearchListResponse.getQuickSearchLocationDtoList()}">
             <div class="InvitedHangOutBox">

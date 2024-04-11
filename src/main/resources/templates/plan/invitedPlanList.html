@@ -14,7 +14,6 @@
 
     <script th:inline="javascript">
 
-
         function acceptInvitedPlan(planId){
 
             var token = $("meta[name='_csrf']").attr("content");
@@ -29,7 +28,7 @@
             var param = JSON.stringify(paramData);
 
             $.ajax({
-                url      : "/plan/acceptInvitedPlan",
+                url      : "/plan/accept",
                 type     : "POST",
                 cache   : false,
                 contentType : "application/json",

@@ -59,6 +59,8 @@ public class CommentServiceImpl implements CommentService{
         Optional<Comment> optionalComment = commentRepository.findById(Long.valueOf(commentId));
         if (optionalComment.isPresent()) {
             Comment comment = optionalComment.get();
+            Location location = comment.getLocation();
+            location.decreaseCommentCount();
             commentRepository.delete(comment);
         }
 

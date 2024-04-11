@@ -37,6 +37,7 @@ public class FavoriteServiceImpl implements FavoriteService{
 
         FavoriteLocation favoriteLocation = FavoriteLocation.createFavoriteLocation(member, location, addFavoriteLocationRequest.getMemo());
         favoriteRepository.save(favoriteLocation);
+        location.increaseFavoriteCount();
 
         return favoriteLocation.getId();
     }
@@ -60,6 +61,10 @@ public class FavoriteServiceImpl implements FavoriteService{
         //중복 체크
         Long id = Long.valueOf(favoriteLocationId);
         FavoriteLocation favoriteLocation = favoriteRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        //decrease count
+        Location location = favoriteLocation.getLocation();
+        location.decreaseFavoriteCount();
 
         favoriteRepository.delete(favoriteLocation);
     }

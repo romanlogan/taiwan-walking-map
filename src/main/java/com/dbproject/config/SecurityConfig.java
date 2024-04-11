@@ -55,6 +55,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))
                 .logoutSuccessUrl("/");
 
+
+
         http.httpBasic();
 
         http.authorizeRequests()
@@ -68,6 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 
+//    매개변수에 AuthenticationManagerBuilder 를 가지고 있으면 인증 관련 절
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
