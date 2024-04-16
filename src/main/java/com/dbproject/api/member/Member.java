@@ -4,6 +4,7 @@ import com.dbproject.api.baseEntity.BaseEntity;
 import com.dbproject.api.friend.Friend;
 import com.dbproject.api.member.dto.RegisterFormDto;
 import com.dbproject.api.invitePlan.invitePlanMember.InvitePlanMember;
+import com.dbproject.api.plan.PlanMember;
 import com.dbproject.constant.Role;
 import com.dbproject.api.favorite.FavoriteLocation;
 import lombok.Builder;
@@ -72,6 +73,9 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<InvitePlanMember> invitedPlanList;
+
+    @OneToMany(mappedBy = "member")
+    private List<PlanMember> planList;
 
 //    @OneToMany
 //    private List<Member> friend;

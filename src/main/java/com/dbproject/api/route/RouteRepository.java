@@ -5,11 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface RouteRepository extends JpaRepository<Route, Integer> {
+public interface RouteRepository extends JpaRepository<Route, Long> {
 
 
 
-    List<Route> findByPostalAddressCity(String PostalAddressCity);
+//    List<Route> findByPostalAddressCity(String PostalAddressCity);
 
-    Route findRouteById(Integer Id);
+//    Route findRouteById(Integer Id);
 }

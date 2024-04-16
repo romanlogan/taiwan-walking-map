@@ -17,17 +17,17 @@ public class RouteController {
     private String googleMapsApiKey;
     private final RouteService routeService;
 
-    @GetMapping("/route/{routeNum}")
-    public String getRouteDtl(@PathVariable("routeNum") String routeNum,
-                              Model model) {
-
-        Integer routeId = Integer.parseInt(routeNum);
-        RouteDtlDto routeDtlDto = routeService.getRouteDtl(routeId);
-
-        model.addAttribute("routeDtlDto", routeDtlDto);
-        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
-        return "route/routeDtl";
-    }
+//    @GetMapping("/route/{routeNum}")
+//    public String getRouteDtl(@PathVariable("routeNum") String routeNum,
+//                              Model model) {
+//
+//        Integer routeId = Integer.parseInt(routeNum);
+//        RouteDtlDto routeDtlDto = routeService.getRouteDtl(routeId);
+//
+//        model.addAttribute("routeDtlDto", routeDtlDto);
+//        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
+//        return "route/routeDtl";
+//    }
 }
 
 

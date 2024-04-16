@@ -1,12 +1,14 @@
 package com.dbproject.api.route;
 
 
+import com.dbproject.api.location.Location;
+import com.dbproject.api.member.Member;
+import com.dbproject.api.plan.Plan;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "route")
@@ -15,11 +17,22 @@ import javax.persistence.Table;
 public class Route {
 
     @Id
-    private Integer id;
-    private String postalAddressCity;
-    private String startPoint;
-    private String wayPoint1;
-    private String wayPoint2;
-    private String arrivePoint;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "route_id")
+    private Long id;
+
+//    private String region;
+//    private String startPoint;
+//    private String wayPoint1;
+//    private String wayPoint2;
+//    private String arrivePoint;
+
+    @OneToMany(mappedBy = "route")
+    private List<Location> locationList;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_id")
+    private Plan plan;    //plan 추가
+
 
 }

@@ -1,6 +1,7 @@
 package com.dbproject.api.explore;
 
 
+import com.dbproject.api.city.City;
 import com.dbproject.api.city.CityImg;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.route.RouteDto;
@@ -18,8 +19,8 @@ public class CityDto {
 
     private String cityName;
     private String cityDetail;
-    private BigDecimal PositionLat;
-    private BigDecimal PositionLon;
+    private BigDecimal positionLat;
+    private BigDecimal positionLon;
     private List<CityImg> cityImgList = new ArrayList<>();
     private List<Location> locationList = new ArrayList<>();
 
@@ -45,5 +46,13 @@ public class CityDto {
                 ", locationList=" + locationList +
                 ", routeDtoList=" + routeDtoList +
                 '}';
+    }
+
+
+    public void setCityInfo(City city){
+        this.cityName = city.getPostalAddressCity();
+        this.cityDetail = city.getCityDetail();
+        this.positionLat = city.getPositionLat();
+        this.positionLon = city.getPositionLon();
     }
 }

@@ -131,6 +131,15 @@
             color:white;
             font-size: 5rem;
         }
+        #map {
+            width: 300px;
+            height: 300px;
+            position: absolute;
+            top: 100px;
+            left: 1000px;
+            border-radius: 30px;
+        }
+
 
         #cityDetail{
             margin-top: 30px;
@@ -280,6 +289,7 @@
                     <img id="cityImg" th:src="${img.imgUrl}">
                 </th:block>
             </div>
+            <div id="map"></div>
         </div>
 
 
@@ -288,7 +298,7 @@
 <!--        </div>-->
 
 
-        <div id="map" style="width:100%; height: 450px;"></div>
+
 
         <div class="container">
             <input id="cityNameValue" type="hidden" th:value="${cityDto.getCityName()}">

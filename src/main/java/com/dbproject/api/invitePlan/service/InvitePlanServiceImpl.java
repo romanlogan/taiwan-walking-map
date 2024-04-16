@@ -13,6 +13,7 @@ import com.dbproject.api.location.dto.LocationDto;
 import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
+import com.dbproject.api.plan.Plan;
 import com.dbproject.constant.InvitePlanStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -151,7 +152,8 @@ public class InvitePlanServiceImpl implements InvitePlanService {
         invitePlanMember.setInvitePlanStatus(InvitePlanStatus.ACCEPTED);
 
 //        2. Plan 에 추가
-
+        InvitePlan invitePlan = invitePlanMember.getInvitePlan();
+        Plan plan = Plan.createPlan(invitePlan);
 
 //        새로운 Plan id 를 return
         return invitePlanMember.getId();

@@ -20,10 +20,11 @@ public class FavoriteLocationDto {
     private String address;
     private String region;
     private String picture1;
-
+    private String longitude;
+    private String latitude;
 
     @Builder
-    private FavoriteLocationDto(Long id, String memo, String locationId, String name, String address, String region, String picture1) {
+    public FavoriteLocationDto(Long id, String memo, String locationId, String name, String address, String region, String picture1, String longitude, String latitude) {
         this.id = id;
         this.memo = memo;
         this.locationId = locationId;
@@ -31,6 +32,8 @@ public class FavoriteLocationDto {
         this.address = address;
         this.region = region;
         this.picture1 = picture1;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public static FavoriteLocationDto of(FavoriteLocation favoriteLocation) {
@@ -43,6 +46,9 @@ public class FavoriteLocationDto {
                 .address(favoriteLocation.getLocation().getAddress())
                 .region(favoriteLocation.getLocation().getRegion())
                 .picture1(favoriteLocation.getLocation().getLocationPicture().getPicture1())
+                .longitude(favoriteLocation.getLocation().getLongitude())
+                .latitude(favoriteLocation.getLocation().getLatitude())
                 .build();
     }
+
 }

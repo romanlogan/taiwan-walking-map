@@ -20,8 +20,6 @@ public class ApiResponse<T> {
 
 
 
-
-
     public ApiResponse(HttpStatus status, List<T> dataList, Map<String, ErrorDetail> errorMap ) {
         this.code = status.value();
         this.status = status;

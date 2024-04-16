@@ -5,6 +5,7 @@ import com.dbproject.api.invitePlan.dto.InvitePlanRequest;
 import com.dbproject.api.invitePlan.invitePlanMember.InvitePlanMember;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
+import com.dbproject.api.route.Route;
 import com.dbproject.constant.PlanPeriod;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,6 +51,10 @@ public class InvitePlan extends BaseEntity {
 
     @OneToMany(mappedBy = "invitePlan")
     private List<Location> locationList;
+
+//    @OneToOne
+//    @JoinColumn(name = "route_id")
+//    private Route route;
 
 //    @OneToMany(mappedBy = "plan")
 //    private List<PlanLocation> locationList;
