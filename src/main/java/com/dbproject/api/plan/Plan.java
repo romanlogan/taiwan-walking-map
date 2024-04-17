@@ -55,10 +55,12 @@ public class Plan extends BaseEntity {
 
 
 
+
     public static Plan createPlan(InvitePlan invitePlan) {
 
 //        어떻게 invitePlan 의 LocationList 를 route 로 바꿀것인가
 //        1. invitePlan 의 locationList를 아에 Route 로 변경
 //        2. loop 돌리기로 될까
+
     }
 }

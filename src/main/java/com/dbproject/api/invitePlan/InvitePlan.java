@@ -49,8 +49,13 @@ public class InvitePlan extends BaseEntity {
 //    @JoinColumn(name = )
     private List<InvitePlanMember> InviteFriendList;        //다대다 양방향, 외래키는 many 쪽에 있으므로 여기는 mappedby
 
+//    @OneToMany(mappedBy = "invitePlan")
+//    private List<Location> locationList;
+
+    //    1일차 , 2일차 등등이 있으므로 List
     @OneToMany(mappedBy = "invitePlan")
-    private List<Location> locationList;
+    private List<Route> route;
+
 
 //    @OneToOne
 //    @JoinColumn(name = "route_id")

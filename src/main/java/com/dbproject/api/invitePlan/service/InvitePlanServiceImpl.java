@@ -14,6 +14,7 @@ import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.plan.Plan;
+import com.dbproject.api.route.Route;
 import com.dbproject.constant.InvitePlanStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -55,17 +56,25 @@ public class InvitePlanServiceImpl implements InvitePlanService {
 
     public void setLocationList(InvitePlan savedInvitePlan, InvitePlanRequest request) {
 
-        List<Location> locationList = new ArrayList<>();
-        for (InvitePlanLocationRequest locationRequest : request.getInvitePlanLocationRequestList()) {
-            //            fetch 조인으로 바꿀 필요
-            Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
-            FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
-            Location location = favoriteLocation.getLocation();
+        List<Route> routeList = new ArrayList<>();
 
-//            Location location = locationRepository.findByLocationId();       //savedInvitePlan 이 id 가 0인데 이 아이디가 0인 savedInvitePlan 을 찾아르 수 없다
-            locationList.add(location);
+        for (InvitePlanRouteRequest routeRequest : request.getInvitePlanRouteRequestList()) {
+
+
+
         }
-        savedInvitePlan.setLocationList(locationList);
+
+//        List<Location> locationList = new ArrayList<>();
+//        for (InvitePlanLocationRequest locationRequest : request.getInvitePlanLocationRequestList()) {
+//            //            fetch 조인으로 바꿀 필요
+//            Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
+//            FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
+//            Location location = favoriteLocation.getLocation();
+//
+////            Location location = locationRepository.findByLocationId();       //savedInvitePlan 이 id 가 0인데 이 아이디가 0인 savedInvitePlan 을 찾아르 수 없다
+//            locationList.add(location);
+//        }
+//        savedInvitePlan.setLocationList(locationList);
     }
 
 

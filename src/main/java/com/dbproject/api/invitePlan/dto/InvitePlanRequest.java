@@ -39,7 +39,8 @@ public class InvitePlanRequest {
 //    private String requesterEmail;
 
     private List<InvitePlanMemberRequest> invitePlanMemberRequestList = new ArrayList<>();
-    private List<InvitePlanLocationRequest> invitePlanLocationRequestList = new ArrayList<>();
+
+    private List<InvitePlanRouteRequest> invitePlanRouteRequestList = new ArrayList<>();
 
     public InvitePlanRequest() {
     }
@@ -61,7 +62,6 @@ public class InvitePlanRequest {
                 ", departDate=" + departDate +
                 ", arriveDate=" + arriveDate +
                 ",\n invitePlanMemberRequestList=" + invitePlanMemberRequestList.get(0).getFriendEmail() +
-                ", invitePlanLocationRequestList=" + invitePlanLocationRequestList.get(0).getFavoriteLocationId()  +
                 '}';
     }
 }
