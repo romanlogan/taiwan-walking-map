@@ -15,6 +15,7 @@ import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.plan.Plan;
 import com.dbproject.api.route.Route;
+import com.dbproject.api.route.RouteDto;
 import com.dbproject.constant.InvitePlanStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class InvitePlanServiceImpl implements InvitePlanService {
         InvitePlan savedInvitePlan = invitePlanRepository.save(invitePlan);
 
         //2. locationList 생성 및 InvitePlan 에 저장
-        setLocationList(savedInvitePlan, request);
+        setRouteList(savedInvitePlan, request);
 
         //3. InvitePlanMemberList 생성 및 InvitePlan 에 저장
         setInvitePlanMemberList(savedInvitePlan,request);
@@ -54,14 +55,26 @@ public class InvitePlanServiceImpl implements InvitePlanService {
     }
 
 
-    public void setLocationList(InvitePlan savedInvitePlan, InvitePlanRequest request) {
+    public void setRouteList(InvitePlan savedInvitePlan, InvitePlanRequest request) {
 
         List<Route> routeList = new ArrayList<>();
 
+//        2일 이상의 여행에서는 루트도 2개 이상
         for (InvitePlanRouteRequest routeRequest : request.getInvitePlanRouteRequestList()) {
 
+            Route route = Route.createRoute(routeRequest);
+            List<Location> locationList = new ArrayList<>();
 
+            for (InvitePlanLocationRequest locationRequest : routeRequest.getLocationRequestList()) {
 
+                Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
+                FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
+                Location location = favoriteLocation.getLocation();
+                locationList.add(location);
+            }
+
+            route.setLocationList(locationList);
+            routeList.add(route);
         }
 
 //        List<Location> locationList = new ArrayList<>();
@@ -100,50 +113,19 @@ public class InvitePlanServiceImpl implements InvitePlanService {
     public InvitedPlanListResponse getInvitedList(String email) {
 
         // fetch 조인 필요
-        List<InvitePlanMember> invitedPlanMemberList = invitePlanMemberRepository.getInvitedPlanMemberListByEmail(email);
         InvitedPlanListResponse response = new InvitedPlanListResponse();
         List<InvitePlanDto> invitePlanDtoList = new ArrayList<>();
 
-        // 1. 요청받은 plan 목록
+
+        List<InvitePlanMember> invitedPlanMemberList = invitePlanMemberRepository.getInvitedPlanMemberListByEmail(email);
+        // 1. 유저의 요청받은 plan 목록
         for (InvitePlanMember invitePlanMember : invitedPlanMemberList) {
 
-            //2. plan 의 정보
             InvitePlan invitePlan = invitePlanMember.getInvitePlan();
-            //요청자 정보
-//            Member requester = memberRepository.findByEmail(invitePlan.getRequester().getEmail());
 
-            InvitePlanDto invitePlanDto = new InvitePlanDto(
-                    invitePlan.getId(),
-                    invitePlan.getName(),
-                    invitePlan.getPeriod(),
-                    invitePlan.getSupply(),
-                    invitePlan.getDepartDate(),
-                    invitePlan.getArriveDate(),
-                    invitePlan.getRequester().getEmail(),
-                    invitePlan.getRequester().getName()
-            );
-
-            //3. plan 의 멤버 리스트
-//            Member member = invitePlanMember.getMember();
-            List<InvitePlanMemberDto> invitePlanMemberDtoList = new ArrayList<>();
-            List<InvitePlanMember> invitePlanMemberList = invitePlan.getInviteFriendList();
-            for (InvitePlanMember planMember : invitePlanMemberList) {
-
-                InvitePlanMemberDto invitePlanMemberDto = InvitePlanMemberDto.of(planMember.getMember());
-                invitePlanMemberDtoList.add(invitePlanMemberDto);
-            }
-
-            invitePlanDto.setInvitePlanMemberDtoList(invitePlanMemberDtoList);
-
-            List<LocationDto> locationDtoList = new ArrayList<>();
-            List<Location> locationList = invitePlan.getLocationList();
-            for (Location location : locationList) {
-
-                LocationDto locationDto = LocationDto.of(location);
-                locationDtoList.add(locationDto);
-            }
-
-            invitePlanDto.setLocationDtoList(locationDtoList);
+            InvitePlanDto invitePlanDto = InvitePlanDto.of(invitePlan);
+            invitePlanDto.setInvitePlanMemberDtoList(getInvitePlanMemberDtoList(invitePlan));
+            invitePlanDto.setRouteDtoList(getRouteDtoList(invitePlan));
 
             invitePlanDtoList.add(invitePlanDto);
         }
@@ -153,16 +135,52 @@ public class InvitePlanServiceImpl implements InvitePlanService {
         return response;
     }
 
+    private List<RouteDto> getRouteDtoList(InvitePlan invitePlan) {
+
+        List<RouteDto> routeDtoList = new ArrayList<>();
+        for (Route route : invitePlan.getRouteList()) {
+
+            RouteDto routeDto = RouteDto.createRouteDto(route);
+            routeDto.setLocationList(getLocationDtoList(route));
+        }
+
+    }
+
+    private static List<LocationDto> getLocationDtoList(Route route) {
+        List<LocationDto> locationDtoList = new ArrayList<>();
+        List<Location> locationList = route.getLocationList();
+
+        for (Location location : locationList) {
+
+            LocationDto locationDto = LocationDto.of(location);
+            locationDtoList.add(locationDto);
+        }
+        return locationDtoList;
+    }
+
+    private static List<InvitePlanMemberDto> getInvitePlanMemberDtoList(InvitePlan invitePlan) {
+        List<InvitePlanMemberDto> invitePlanMemberDtoList = new ArrayList<>();
+        List<InvitePlanMember> invitePlanMemberList = invitePlan.getInviteFriendList();
+        for (InvitePlanMember planMember : invitePlanMemberList) {
+
+            InvitePlanMemberDto invitePlanMemberDto = InvitePlanMemberDto.of(planMember.getMember());
+            invitePlanMemberDtoList.add(invitePlanMemberDto);
+        }
+        return invitePlanMemberDtoList;
+    }
+
     @Override
     public Long accept(AcceptInvitedPlanRequest request, String email) {
 
 //        1. Accept 상태로 바꾸기 (언제 삭제를 할까 ? 바로 or 일정 기간 후)
-        InvitePlanMember invitePlanMember = invitePlanMemberRepository.getByIdAndEmail(Long.valueOf(request.getPlanId()), email);
+        InvitePlanMember invitePlanMember = invitePlanMemberRepository.getByIdAndEmail(Long.valueOf(request.getInvitedPlanId()), email);
         invitePlanMember.setInvitePlanStatus(InvitePlanStatus.ACCEPTED);
 
 //        2. Plan 에 추가
         InvitePlan invitePlan = invitePlanMember.getInvitePlan();
         Plan plan = Plan.createPlan(invitePlan);
+
+
 
 //        새로운 Plan id 를 return
         return invitePlanMember.getId();

@@ -2,10 +2,12 @@ package com.dbproject.api.route;
 
 
 import com.dbproject.api.invitePlan.InvitePlan;
+import com.dbproject.api.invitePlan.dto.InvitePlanRouteRequest;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.plan.Plan;
 import com.dbproject.constant.RouteStatus;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -50,6 +52,21 @@ public class Route {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invite_plan_id")
     private InvitePlan invitePlan;
+
+
+    @Builder
+    public Route(Integer day, RouteStatus routeStatus) {
+        this.day = day;
+        this.routeStatus = routeStatus;
+    }
+
+    public static Route createRoute(InvitePlanRouteRequest routeRequest) {
+
+        return Route.builder()
+                .day(routeRequest.getDay())
+                .routeStatus(RouteStatus.INVITEPLAN)
+                .build();
+    }
 
 
 }

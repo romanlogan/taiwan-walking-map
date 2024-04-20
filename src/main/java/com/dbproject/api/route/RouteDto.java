@@ -1,4 +1,8 @@
 package com.dbproject.api.route;
+import com.dbproject.api.location.Location;
+import com.dbproject.api.location.dto.LocationDto;
+import com.dbproject.constant.RouteStatus;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,25 +13,25 @@ import java.util.List;
 @Setter
 public class RouteDto {
 
-    private Integer routeNum;
+    private Long id;
+    private Integer day;
+    private RouteStatus routeStatus;
 
-//    private List<RouteLocationDto> routeLocationDtoList = new ArrayList<>();
+    private List<LocationDto> locationList = new ArrayList<>();
 
-    private String startPointName;
-    private String startPointImgUrl;
-    private String startPointDescribe;
+    @Builder
+    public RouteDto(Long id, Integer day, RouteStatus routeStatus) {
+        this.id = id;
+        this.day = day;
+        this.routeStatus = routeStatus;
+    }
 
-    private String wayPoint1Name;
-    private String wayPoint1ImgUrl;
-    private String wayPoint1Describe;
+    public static RouteDto createRouteDto(Route route) {
 
-    private String wayPoint2Name;
-    private String wayPoint2ImgUrl;
-    private String wayPoint2Describe;
-
-    private String arrivePointName;
-    private String arrivePointImgUrl;
-    private String arrivePointDescribe;
-
-
+        return RouteDto.builder()
+                .id(route.getId())
+                .day(route.getDay())
+                .routeStatus(route.getRouteStatus())
+                .build();
+    }
 }

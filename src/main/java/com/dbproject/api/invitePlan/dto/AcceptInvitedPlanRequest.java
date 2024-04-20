@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 public class AcceptInvitedPlanRequest {
 
-    Integer planId;
+    Integer invitedPlanId;
 }

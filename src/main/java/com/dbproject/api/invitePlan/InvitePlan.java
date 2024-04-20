@@ -3,7 +3,6 @@ package com.dbproject.api.invitePlan;
 import com.dbproject.api.baseEntity.BaseEntity;
 import com.dbproject.api.invitePlan.dto.InvitePlanRequest;
 import com.dbproject.api.invitePlan.invitePlanMember.InvitePlanMember;
-import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.route.Route;
 import com.dbproject.constant.PlanPeriod;
@@ -54,7 +53,7 @@ public class InvitePlan extends BaseEntity {
 
     //    1일차 , 2일차 등등이 있으므로 List
     @OneToMany(mappedBy = "invitePlan")
-    private List<Route> route;
+    private List<Route> routeList;
 
 
 //    @OneToOne
