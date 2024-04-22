@@ -14,6 +14,7 @@ import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.plan.Plan;
+import com.dbproject.api.plan.PlanMember;
 import com.dbproject.api.route.Route;
 import com.dbproject.api.route.RouteDto;
 import com.dbproject.constant.InvitePlanStatus;
@@ -63,33 +64,26 @@ public class InvitePlanServiceImpl implements InvitePlanService {
         for (InvitePlanRouteRequest routeRequest : request.getInvitePlanRouteRequestList()) {
 
             Route route = Route.createRoute(routeRequest);
-            List<Location> locationList = new ArrayList<>();
 
-            for (InvitePlanLocationRequest locationRequest : routeRequest.getLocationRequestList()) {
-
-                Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
-                FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
-                Location location = favoriteLocation.getLocation();
-                locationList.add(location);
-            }
-
-            route.setLocationList(locationList);
+            route.setLocationList(getLocationList(routeRequest));
             routeList.add(route);
         }
 
-//        List<Location> locationList = new ArrayList<>();
-//        for (InvitePlanLocationRequest locationRequest : request.getInvitePlanLocationRequestList()) {
-//            //            fetch 조인으로 바꿀 필요
-//            Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
-//            FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
-//            Location location = favoriteLocation.getLocation();
-//
-////            Location location = locationRepository.findByLocationId();       //savedInvitePlan 이 id 가 0인데 이 아이디가 0인 savedInvitePlan 을 찾아르 수 없다
-//            locationList.add(location);
-//        }
-//        savedInvitePlan.setLocationList(locationList);
+        savedInvitePlan.setRouteList(routeList);
     }
 
+    private List<Location> getLocationList(InvitePlanRouteRequest routeRequest) {
+
+        List<Location> locationList = new ArrayList<>();
+        for (InvitePlanLocationRequest locationRequest : routeRequest.getLocationRequestList()) {
+
+            Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
+            FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
+            Location location = favoriteLocation.getLocation();
+            locationList.add(location);
+        }
+        return locationList;
+    }
 
 
     public void setInvitePlanMemberList(InvitePlan savedInvitePlan, InvitePlanRequest request){
@@ -142,8 +136,11 @@ public class InvitePlanServiceImpl implements InvitePlanService {
 
             RouteDto routeDto = RouteDto.createRouteDto(route);
             routeDto.setLocationList(getLocationDtoList(route));
+
+            routeDtoList.add(routeDto);
         }
 
+        return routeDtoList;
     }
 
     private static List<LocationDto> getLocationDtoList(Route route) {
@@ -179,11 +176,22 @@ public class InvitePlanServiceImpl implements InvitePlanService {
 //        2. Plan 에 추가
         InvitePlan invitePlan = invitePlanMember.getInvitePlan();
         Plan plan = Plan.createPlan(invitePlan);
-
+        plan.setPlanMemberList(getPlanMemberList(invitePlan, plan));
 
 
 //        새로운 Plan id 를 return
         return invitePlanMember.getId();
+    }
+
+    private static List<PlanMember> getPlanMemberList(InvitePlan invitePlan, Plan plan) {
+        List<InvitePlanMember> inviteFriendList = invitePlan.getInviteFriendList();
+        List<PlanMember> planMemberList = new ArrayList<>();
+        for (InvitePlanMember member : inviteFriendList) {
+
+            PlanMember planMember = PlanMember.createPlanMember(member, plan);
+            planMemberList.add(planMember);
+        }
+        return planMemberList;
     }
 
     @Override

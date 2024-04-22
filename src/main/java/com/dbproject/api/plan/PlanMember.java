@@ -1,7 +1,9 @@
 package com.dbproject.api.plan;
 
 import com.dbproject.api.baseEntity.BaseEntity;
+import com.dbproject.api.invitePlan.invitePlanMember.InvitePlanMember;
 import com.dbproject.api.member.Member;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,6 +32,22 @@ public class PlanMember extends BaseEntity {
     @JoinColumn(name = "member_email")
     private Member member;
 
+    public PlanMember() {
+    }
 
+    @Builder
+    public PlanMember(String supply, Plan plan, Member member) {
+        this.supply = supply;
+        this.plan = plan;
+        this.member = member;
+    }
 
+    public static PlanMember createPlanMember(InvitePlanMember invitePlanMember,Plan plan) {
+
+        return PlanMember.builder()
+                .supply(invitePlanMember.getSupply())
+                .plan(plan)
+                .member(invitePlanMember.getMember())
+                .build();
+    }
 }

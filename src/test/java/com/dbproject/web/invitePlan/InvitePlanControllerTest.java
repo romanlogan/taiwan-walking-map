@@ -1,18 +1,15 @@
 package com.dbproject.web.invitePlan;
 
+import com.dbproject.api.friend.service.FriendService;
 import com.dbproject.api.invitePlan.dto.InvitePlanLocationRequest;
 import com.dbproject.api.invitePlan.dto.InvitePlanRequest;
+import com.dbproject.api.invitePlan.dto.InvitePlanRouteRequest;
 import com.dbproject.api.invitePlan.invitePlanMember.dto.InvitePlanMemberRequest;
 import com.dbproject.api.invitePlan.service.InvitePlanService;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.MemberService;
 import com.dbproject.constant.PlanPeriod;
-import com.dbproject.web.comment.CommentController;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -52,7 +48,8 @@ class InvitePlanControllerTest {
     @MockBean
     private InvitePlanService invitePlanService;
 
-
+    @MockBean
+    private FriendService friendService;
 
     public void setInvitePlanMemberRequestList(InvitePlanRequest request){
         List<InvitePlanMemberRequest> invitePlanMemberRequestList = new ArrayList<>();
@@ -63,18 +60,29 @@ class InvitePlanControllerTest {
         request.setInvitePlanMemberRequestList(invitePlanMemberRequestList);
     }
 
-    public void setInvitePlanLocationRequestList(InvitePlanRequest request) {
-        List<InvitePlanLocationRequest> invitePlanLocationRequestList = new ArrayList<>();
-        InvitePlanLocationRequest invitePlanLocationRequest1 = new InvitePlanLocationRequest(1);
-        InvitePlanLocationRequest invitePlanLocationRequest2 = new InvitePlanLocationRequest(2);
-        InvitePlanLocationRequest invitePlanLocationRequest3 = new InvitePlanLocationRequest(3);
-        invitePlanLocationRequestList.add(invitePlanLocationRequest1);
-        invitePlanLocationRequestList.add(invitePlanLocationRequest2);
-        invitePlanLocationRequestList.add(invitePlanLocationRequest3);
-        request.setInvitePlanLocationRequestList(invitePlanLocationRequestList);
+    public void setInvitePlanRouteRequestList(InvitePlanRequest request) {
+        List<InvitePlanRouteRequest> invitePlanRouteRequestList = new ArrayList<>();
+
+        InvitePlanRouteRequest invitePlanRouteRequest = new InvitePlanRouteRequest(1);
+        invitePlanRouteRequest.setLocationRequestList(getInvitePlanLocationRequestList());
+
+        invitePlanRouteRequestList.add(invitePlanRouteRequest);
+        request.setInvitePlanRouteRequestList(invitePlanRouteRequestList);
     }
 
-//    @BeforeEach
+    private static List<InvitePlanLocationRequest> getInvitePlanLocationRequestList() {
+        List<InvitePlanLocationRequest> invitePlanLocationRequestList = new ArrayList<>();
+
+        for (int i = 1; i <= 3; i++) {
+
+            InvitePlanLocationRequest invitePlanLocationRequest = new InvitePlanLocationRequest(i);
+            invitePlanLocationRequestList.add(invitePlanLocationRequest);
+        }
+
+        return invitePlanLocationRequestList;
+    }
+
+    //    @BeforeEach
 //    LocalDate.of() 가 스태틱이여서 ? 3개 로 돌렸더니 3월60 일이 계속 나온다 ?
     public InvitePlanRequest createRequest(String name, PlanPeriod planPeriod, String supply,int year, int month, int day) {
 
@@ -100,7 +108,7 @@ class InvitePlanControllerTest {
 
         InvitePlanRequest request = createRequest("lee's 3 days tainan trip", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024, 3, 20);
         setInvitePlanMemberRequestList(request);
-        setInvitePlanLocationRequestList(request);
+        setInvitePlanRouteRequestList(request);
 
         //when
         //then
@@ -120,7 +128,7 @@ class InvitePlanControllerTest {
         //given
         InvitePlanRequest request = createRequest("lee's 3 days tainan trip", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024, 3, 20);
         setInvitePlanMemberRequestList(request);
-        setInvitePlanLocationRequestList(request);
+        setInvitePlanRouteRequestList(request);
 
         //when
         //then
@@ -140,7 +148,7 @@ class InvitePlanControllerTest {
         //given
         InvitePlanRequest request = createRequest(null, PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024, 3, 20);
         setInvitePlanMemberRequestList(request);
-        setInvitePlanLocationRequestList(request);
+        setInvitePlanRouteRequestList(request);
 
         //when
         //then
@@ -165,7 +173,7 @@ class InvitePlanControllerTest {
         //given
         InvitePlanRequest request = createRequest("    ", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024, 3, 20);
         setInvitePlanMemberRequestList(request);
-        setInvitePlanLocationRequestList(request);
+        setInvitePlanRouteRequestList(request);
 
         //when
         //then
@@ -189,7 +197,7 @@ class InvitePlanControllerTest {
         //given
         InvitePlanRequest request = createRequest("abcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcde", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024, 3, 20);
         setInvitePlanMemberRequestList(request);
-        setInvitePlanLocationRequestList(request);
+        setInvitePlanRouteRequestList(request);
 
         //when
         //then
@@ -213,7 +221,7 @@ class InvitePlanControllerTest {
         //given
         InvitePlanRequest request = createRequest("lee's 3 days tainan trip", null, "hair dryer, slipper, brush", 2024, 3, 20);
         setInvitePlanMemberRequestList(request);
-        setInvitePlanLocationRequestList(request);
+        setInvitePlanRouteRequestList(request);
 
         //when
         //then
@@ -252,7 +260,7 @@ class InvitePlanControllerTest {
                 "\"On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains.\"",
                 2024, 3, 20);
         setInvitePlanMemberRequestList(request);
-        setInvitePlanLocationRequestList(request);
+        setInvitePlanRouteRequestList(request);
 
         //when
         //then
@@ -289,7 +297,7 @@ class InvitePlanControllerTest {
         //given
         InvitePlanRequest request = createRequestWithNullDepartDate("lee's 3 days tainan trip", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024, 3, 20);
         setInvitePlanMemberRequestList(request);
-        setInvitePlanLocationRequestList(request);
+        setInvitePlanRouteRequestList(request);
 
         //when
         //then
@@ -324,7 +332,7 @@ class InvitePlanControllerTest {
         //given
         InvitePlanRequest request = createRequestWithNullDepartDate("   ", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024, 3, 20);
         setInvitePlanMemberRequestList(request);
-        setInvitePlanLocationRequestList(request);
+        setInvitePlanRouteRequestList(request);
 
         //when
         //then
@@ -352,7 +360,7 @@ class InvitePlanControllerTest {
         //given
         InvitePlanRequest request = createRequestWithNullDepartDate("   ", null, "hair dryer, slipper, brush", 2024, 3, 20);
         setInvitePlanMemberRequestList(request);
-        setInvitePlanLocationRequestList(request);
+        setInvitePlanRouteRequestList(request);
 
         //when
         //then

@@ -7,6 +7,7 @@ import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.route.Route;
 import com.dbproject.constant.PlanPeriod;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -54,13 +55,31 @@ public class Plan extends BaseEntity {
     private List<Route> route;
 
 
+    public Plan() {
+    }
 
+    @Builder
+    public Plan(String name, PlanPeriod period, String supply, Member requester, LocalDate departDate, LocalDate arriveDate, List<Route> route) {
+        this.name = name;
+        this.period = period;
+        this.supply = supply;
+        this.requester = requester;
+        this.departDate = departDate;
+        this.arriveDate = arriveDate;
+        this.route = route;
+    }
 
     public static Plan createPlan(InvitePlan invitePlan) {
 
-//        어떻게 invitePlan 의 LocationList 를 route 로 바꿀것인가
-//        1. invitePlan 의 locationList를 아에 Route 로 변경
-//        2. loop 돌리기로 될까
+        return Plan.builder()
+                .name(invitePlan.getName())
+                .period(invitePlan.getPeriod())
+                .supply(invitePlan.getSupply())
+                .requester(invitePlan.getRequester())
+                .departDate(invitePlan.getDepartDate())
+                .arriveDate(invitePlan.getArriveDate())
+                .route(invitePlan.getRouteList())
+                .build();
 
     }
 }

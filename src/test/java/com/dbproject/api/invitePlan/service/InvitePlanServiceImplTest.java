@@ -5,6 +5,7 @@ import com.dbproject.api.favorite.repository.FavoriteRepository;
 import com.dbproject.api.invitePlan.InvitePlan;
 import com.dbproject.api.invitePlan.dto.InvitePlanLocationRequest;
 import com.dbproject.api.invitePlan.dto.InvitePlanRequest;
+import com.dbproject.api.invitePlan.dto.InvitePlanRouteRequest;
 import com.dbproject.api.invitePlan.dto.InvitedPlanListResponse;
 import com.dbproject.api.invitePlan.invitePlanMember.InvitePlanMember;
 import com.dbproject.api.invitePlan.invitePlanMember.dto.InvitePlanMemberRequest;
@@ -15,8 +16,10 @@ import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.dto.RegisterFormDto;
+import com.dbproject.api.route.Route;
 import com.dbproject.constant.InvitePlanStatus;
 import com.dbproject.constant.PlanPeriod;
+import com.dbproject.constant.RouteStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,14 +29,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.PushBuilder;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
@@ -125,18 +126,27 @@ class InvitePlanServiceImplTest {
         request.setInvitePlanMemberRequestList(invitePlanMemberRequestList);
     }
 
-    public void setInvitePlanLocationRequestList(InvitePlanRequest request) {
+    public void setInvitePlanRouteRequestList(InvitePlanRequest request) {
 
-        List<FavoriteLocation> favoriteLocationList = favoriteRepository.findByMemberEmail("asdf@asdf.com");
+        List<InvitePlanRouteRequest> invitePlanRouteRequestList = new ArrayList<>();
+
+        InvitePlanRouteRequest invitePlanRouteRequest = new InvitePlanRouteRequest(1);
+        invitePlanRouteRequest.setLocationRequestList(getInvitePlanLocationRequestList());
+
+        invitePlanRouteRequestList.add(invitePlanRouteRequest);
+        request.setInvitePlanRouteRequestList(invitePlanRouteRequestList);
+    }
+
+    private List<InvitePlanLocationRequest> getInvitePlanLocationRequestList() {
         List<InvitePlanLocationRequest> invitePlanLocationRequestList = new ArrayList<>();
-
+        List<FavoriteLocation> favoriteLocationList = favoriteRepository.findByMemberEmail("asdf@asdf.com");
         for (FavoriteLocation favoriteLocation : favoriteLocationList) {
 
             InvitePlanLocationRequest invitePlanLocationRequest = new InvitePlanLocationRequest(Math.toIntExact(favoriteLocation.getId()));
             invitePlanLocationRequestList.add(invitePlanLocationRequest);
         }
 
-        request.setInvitePlanLocationRequestList(invitePlanLocationRequestList);
+        return invitePlanLocationRequestList;
     }
 
 
@@ -157,21 +167,34 @@ class InvitePlanServiceImplTest {
         savedInvitePlan.setInviteFriendList(invitePlanMemberList);
     }
 
+// 테스트 코드에서 많은 클래스의 메서드 중복을 처리하는 법 ?
 
+    public void setRouteList(InvitePlan savedInvitePlan, InvitePlanRequest request) {
 
-    public void setLocationList(InvitePlan savedInvitePlan, InvitePlanRequest request) {
+        List<Route> routeList = new ArrayList<>();
+
+        for (InvitePlanRouteRequest routeRequest : request.getInvitePlanRouteRequestList()) {
+            Route route = new Route(1, RouteStatus.INVITEPLAN);
+            route.setLocationList(getLocationList(routeRequest));
+
+            routeList.add(route);
+
+        }
+        savedInvitePlan.setRouteList(routeList);
+    }
+
+    private List<Location> getLocationList(InvitePlanRouteRequest routeRequest) {
 
         List<Location> locationList = new ArrayList<>();
-        for (InvitePlanLocationRequest locationRequest : request.getInvitePlanLocationRequestList()) {
+        for (InvitePlanLocationRequest locationRequest : routeRequest.getLocationRequestList()) {
+
             //            fetch 조인으로 바꿀 필요
             Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
             FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
             Location location = favoriteLocation.getLocation();
-
-//            Location location = locationRepository.findByLocationId();       //savedInvitePlan 이 id 가 0인데 이 아이디가 0인 savedInvitePlan 을 찾아르 수 없다
             locationList.add(location);
         }
-        savedInvitePlan.setLocationList(locationList);
+        return locationList;
     }
 
 
@@ -204,12 +227,12 @@ class InvitePlanServiceImplTest {
                 departDate,
                 tripDay);
         setInvitePlanMemberRequestList(request,friendEmailList);
-        setInvitePlanLocationRequestList(request);
+        setInvitePlanRouteRequestList(request);
 
         InvitePlan invitePlan = InvitePlan.createInvitePlan(request,requester);
         InvitePlan saveInvitePlan = invitePlanRepository.save(invitePlan);
         setInvitePlanMemberList(saveInvitePlan,request);
-        setLocationList(saveInvitePlan,request);
+        setRouteList(saveInvitePlan,request);
     }
 
     @DisplayName("製作plan，邀請朋友參加plan")
@@ -227,7 +250,7 @@ class InvitePlanServiceImplTest {
                 departDate,
                 3);
         setInvitePlanMemberRequestList(request,friendEmailList);
-        setInvitePlanLocationRequestList(request);
+        setInvitePlanRouteRequestList(request);
 
         //when
         Long invitePlanId = invitePlanService.invitePlan(request,"asdf@asdf.com");
@@ -249,10 +272,11 @@ class InvitePlanServiceImplTest {
 //        assertThat(invitePlan.getInviteFriendList().get(1).getSupply()).isEqualTo("ipad");
         assertThat(invitePlan.getInviteFriendList().get(1).getInvitePlanStatus()).isEqualTo(InvitePlanStatus.WAITING);
 
-        assertThat(invitePlan.getLocationList().size()).isEqualTo(3);
-        assertThat(invitePlan.getLocationList().get(0).getName()).isEqualTo("西門町");
-        assertThat(invitePlan.getLocationList().get(1).getName()).isEqualTo("台北101");
-        assertThat(invitePlan.getLocationList().get(2).getName()).isEqualTo("台北地下街");
+        assertThat(invitePlan.getRouteList().get(0).getDay()).isEqualTo(1);
+        assertThat(invitePlan.getRouteList().get(0).getLocationList().size()).isEqualTo(3);
+        assertThat(invitePlan.getRouteList().get(0).getLocationList().get(0).getName()).isEqualTo("西門町");
+        assertThat(invitePlan.getRouteList().get(0).getLocationList().get(1).getName()).isEqualTo("台北101");
+        assertThat(invitePlan.getRouteList().get(0).getLocationList().get(2).getName()).isEqualTo("台北地下街");
     }
 
     @DisplayName("return受到邀請的PlanList")
@@ -307,6 +331,12 @@ class InvitePlanServiceImplTest {
         assertThat(response.getInvitePlanDtoList().get(1).getInvitePlanMemberDtoList().get(1).getEmail()).isEqualTo("yunni@yunni.com");
         assertThat(response.getInvitePlanDtoList().get(1).getRequesterEmail()).isEqualTo("asdf@asdf.com");
         assertThat(response.getInvitePlanDtoList().get(1).getRequesterName()).isEqualTo("이병민");
+        assertThat(response.getInvitePlanDtoList().get(1).getRouteDtoList().get(0).getRouteStatus()).isEqualTo(RouteStatus.INVITEPLAN);
+        assertThat(response.getInvitePlanDtoList().get(1).getRouteDtoList().get(0).getDay()).isEqualTo(1);
+        assertThat(response.getInvitePlanDtoList().get(1).getRouteDtoList().get(0).getLocationList().size()).isEqualTo(3);
+        assertThat(response.getInvitePlanDtoList().get(1).getRouteDtoList().get(0).getLocationList().get(0).getName()).isEqualTo("西門町");
+        assertThat(response.getInvitePlanDtoList().get(1).getRouteDtoList().get(0).getLocationList().get(1).getName()).isEqualTo("台北101");
+        assertThat(response.getInvitePlanDtoList().get(1).getRouteDtoList().get(0).getLocationList().get(2).getName()).isEqualTo("台北地下街");
 
      }
 
