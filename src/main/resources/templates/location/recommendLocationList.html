@@ -102,6 +102,63 @@
             both: clear;
         }
 
+
+        #fastSearchForm{
+            /*display: flex;*/
+            /*justify-content: center; !* 가로 방향으로 가운데 정렬 *!*/
+            /*align-items: center; !* 세로 방향으로 가운데 정렬 *!*/
+            margin-top: 15px;
+            margin-bottom: 100px;
+            margin-left: 15px;
+            margin-right: 15px;
+            height: 10rem;
+
+        }
+
+
+        #fastSearchCity{
+            margin-left: 30px;
+            width: 70px;
+            height: 40px;
+        }
+
+
+
+
+        #quickSearchQuery {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            margin-left: 10px;
+            width: 250px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border: none;
+            border-radius: 10px;
+            /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        }
+
+        #quickSearchInputBtn{
+            background-color: white;
+            border: 1px solid lightgray ;
+            border-radius: 50%;
+
+            padding: 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        }
+
+        #map{
+            margin-top: 1rem;
+            margin-left: 2.5rem;
+            margin-right: 1.5rem;
+            width: 90%;
+            height: 50vh;
+        }
     </style>
 </th:block>
 
@@ -177,7 +234,52 @@
     </div>
 
     <div class="right-half">
-        <div id="map" style="width: 100%; height: 95vh;"></div>
+
+        <div id="fastSearchForm">
+
+            <label for="quickSearchCity">Select City:</label>
+            <select id="quickSearchCity" name="quickSearchCity">
+            </select>
+
+            <label for="quickSearchTown">Select Town:</label>
+            <select id="quickSearchTown" name="quickSearchTown">
+            </select>
+
+<!--            <input id="quickSearchQuery" th:value="${fastSearchDto.getSearchQuery()}" type="search" name="search" />-->
+
+                <input id="emptyQuickSearchQuery" type="search" name="search" />
+                <input id="quickSearchQuery" th:value="${searchByCityDto.searchQuery}" type="search" name="search" />
+
+            <button id="quickSearchInputBtn" class="search-btn" type="submit">
+                <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #d9d9d9;"></i>
+            </button>
+
+            <!--        <select id="orderType" name="orderType">-->
+            <!--            <option value="name">이름순</option>   -->
+            <!--            <option value="comment">댓글순</option>-->
+            <!--            <option value="favorite">즐겨찾기 개수순</option>-->
+            <!--            <option value="recommend">추천순</option>-->
+            <!--        </select>-->
+            <br>
+
+            <div>
+                <label for="openTimeCond">개방 시간이 있는 장소만 검색</label>
+                <input type="checkbox" id="openTimeCond" name="openTimeCond">
+            </div>
+            <div>
+                <label for="feeCond">가격 정보가 있는 장소만 검색</label>
+                <input type="checkbox" id="feeCond" name="feeCond">
+            </div>
+            <div>
+                <label for="picCond">사진이 있는 장소만 검색</label>
+                <input type="checkbox" id="picCond" name="picCond">
+            </div>
+        </div>
+
+        <div id="mapBox">
+            <!--        마우스가 올려져 있는 장소만 지도에 표시 해주기 -->
+            <div id="map"></div>
+        </div>
     </div>
 </div>
 

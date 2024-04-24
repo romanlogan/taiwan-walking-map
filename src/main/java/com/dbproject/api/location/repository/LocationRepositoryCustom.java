@@ -1,6 +1,7 @@
 package com.dbproject.api.location.repository;
 
 import com.dbproject.api.location.Location;
+import com.dbproject.api.location.dto.LocationDto;
 import com.dbproject.api.location.dto.RecLocationListRequest;
 import com.dbproject.api.location.dto.RecLocationListResponse;
 import com.dbproject.api.quickSearch.dto.FastSearchDto;
@@ -21,4 +22,5 @@ public interface LocationRepositoryCustom {
 
     List<QuickSearchLocationDto> getLocationListByCond(QuickSearchFormRequest quickSearchFormRequest,
                                                        Pageable pageable);
+    List<LocationDto> findTop10RecommendLocationList(String region);
 }

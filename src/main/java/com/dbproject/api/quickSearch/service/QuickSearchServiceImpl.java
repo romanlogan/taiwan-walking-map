@@ -57,12 +57,9 @@ public class QuickSearchServiceImpl implements QuickSearchService{
 
 
         QuickSearchListResponse quickSearchListResponse = new QuickSearchListResponse();
-        quickSearchListResponse.setSelectedTown(quickSearchFormRequest.getSearchTown());
 
-        //장소 리스트 찾기
-//        findLocationList(quickSearchListResponse, quickSearchFormRequest.getSearchQuery(), quickSearchFormRequest.getSearchCity(), pageable);
+        quickSearchListResponse.setSelectedTown(quickSearchFormRequest.getSearchTown());
         findLocationListByCond(quickSearchListResponse, quickSearchFormRequest, pageable);
-        //선택된 도시 의 정보를 가져온다
         findCityDtl(quickSearchListResponse, quickSearchFormRequest.getSearchCity());
         findCityList(quickSearchListResponse);
         findTownList(quickSearchListResponse, quickSearchFormRequest.getSearchCity());

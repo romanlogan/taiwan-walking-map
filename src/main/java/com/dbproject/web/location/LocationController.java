@@ -75,8 +75,8 @@ public class LocationController {
         Page<RecLocationListResponse> locationList = locationService.getLocationPageByCity(request, pageable);
 
         model.addAttribute("locationList", locationList);
-        model.addAttribute("maxPage", 5);
         model.addAttribute("searchByCityDto", searchByCityDto);
+        model.addAttribute("maxPage", 5);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
         return "/location/recommendLocationList";

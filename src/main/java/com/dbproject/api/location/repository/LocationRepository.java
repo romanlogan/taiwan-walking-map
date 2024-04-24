@@ -38,4 +38,9 @@ public interface LocationRepository extends JpaRepository<Location, String>, Loc
             " order by l.town asc")
     List<String> findTownListByRegion(@Param("region") String region);
 
+//    @Query("select l from Location l" +
+//            " where l.region = :region" +
+//            " and l.favoriteCount")
+//    List<Location> findRecommendLocationListTop10(String region);
+
 }

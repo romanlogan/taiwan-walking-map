@@ -16,6 +16,8 @@ public class SearchByCityDto {
 
     private LocalDate arriveDate;
 
+    private String searchQuery;
+
     public SearchByCityDto() {
     }
 

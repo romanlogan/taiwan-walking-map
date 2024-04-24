@@ -60,8 +60,9 @@
 
         .container{
             margin-top: 30px;
-            margin-left: 150px;
-            margin-right: 150px;
+            margin-left: 0;
+            margin-right: 0;
+            width: 100%;
         }
 
         .content{
@@ -149,10 +150,31 @@
             clear:both;
         }
 
+        .owl-carousel {
+            width: 90rem;
+            height: 500px;
+            margin-top: 1rem;
+            /*margin-left: 4rem;*/
+            /* margin-right: 30px;   */
+            /* width: ;
+              height: 10rem; */
+            /* margin: 0 auto; */
+        }
+
+        .locationContainer{
+            width: 100%;
+        }
+
+        .owl-item{
+
+        }
 
         .card{
+            /*margin-left: 1rem;*/
+            /*margin-right: 1rem;*/
+            width: 300px;
             border-radius: 10px 10px 10px 10px;
-            overflow: hidden;
+            /*overflow: hidden;*/
         }
 
         #locMoreInfo{
@@ -303,21 +325,18 @@
         <div class="container">
             <input id="cityNameValue" type="hidden" th:value="${cityDto.getCityName()}">
 
-            <br>
-            <br>
-            <br>
             <div>
                 <h3> recommended spot </h3>
             <!--여기 문제 없음-->
               <div id="locationContainer">
-                <div class="col py-3">
+                <div class="owl-carousel owl-theme">
                   <!--        아이템 출력-->
-                  <div class="row">
-                    <th:block th:each="location, status: ${cityDto.getLocationList()}">
-                      <div class="col-md-3 margin">
+<!--                  <div class="row">-->
+                    <th:block  th:each="location, status: ${cityDto.getLocationDtoList()}">
+                        <div class="item">
                         <div class="card">
                           <a th:href="'/location/' +${location.locationId}" class="text-dark">
-                            <img th:src="${location.getLocationPicture().getPicture1()}" class="card-img-top" height="200">
+                            <img th:src="${location.picture1}" class="card-img-top" height="200">
                             <div class="recommandCard-body">
                               <h4 class="card-text">[[${location.name}]]</h4>
                                 <div th:if="${location.address != null}">
@@ -335,9 +354,9 @@
                             </div>
                           </a>
                         </div>
-                      </div>
+                        </div>
                     </th:block>
-                  </div>
+<!--                  </div>-->
                 </div>
               </div>
                 <button id="locMoreInfo" type="button" class="btn btn-primary" >看多一點 </button>

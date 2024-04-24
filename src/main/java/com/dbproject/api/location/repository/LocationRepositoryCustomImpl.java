@@ -1,12 +1,15 @@
 package com.dbproject.api.location.repository;
 
 import com.dbproject.api.location.Location;
+import com.dbproject.api.location.QLocation;
 import com.dbproject.api.location.QRecLocationListResponse;
+import com.dbproject.api.location.dto.LocationDto;
+import com.dbproject.api.location.dto.QLocationDto;
 import com.dbproject.api.location.dto.RecLocationListRequest;
 import com.dbproject.api.location.dto.RecLocationListResponse;
 import com.dbproject.api.quickSearch.dto.QQuickSearchLocationDto;
 import com.dbproject.api.quickSearch.dto.QuickSearchFormRequest;
-import com.dbproject.entity.QLocation;
+//import com.dbproject.entity.QLocation;
 import com.dbproject.api.quickSearch.dto.FastSearchDto;
 import com.dbproject.api.quickSearch.dto.QuickSearchLocationDto;
 import com.querydsl.core.types.OrderSpecifier;
@@ -168,6 +171,42 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
         return quickSearchLocationDtoList;
     }
 
+    @Override
+    public List<LocationDto> findTop10RecommendLocationList(String region){
+
+        QLocation location = QLocation.location;
+
+
+        return queryFactory
+                .select(
+                        new QLocationDto(
+                                location.locationId,
+                                location.name,
+                                location.commentCount,
+                                location.tolDescribe,
+                                location.description,
+                                location.tel,
+                                location.address,
+                                location.region,
+                                location.town,
+                                location.travellingInfo,
+                                location.openTime,
+                                location.longitude,
+                                location.latitude,
+                                location.website,
+                                location.parkingInfo,
+                                location.ticketInfo,
+                                location.remarks,
+                                location.locationPicture.picture1
+                        )
+                )
+                .from(location)
+                .where(QLocation.location.region.eq(region))
+                .orderBy(QLocation.location.favoriteCount.desc())        //1등부터 10등까지
+                .limit(10)
+                .fetch();
+    }
+//
 
     private OrderSpecifier orderByOrderType(String orderType) {
 

@@ -2,6 +2,7 @@ package com.dbproject.api.location.dto;
 
 
 import com.dbproject.api.location.Location;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
@@ -40,6 +41,7 @@ public class LocationDto {
     public LocationDto() {
     }
 
+    @QueryProjection
     public LocationDto(String locationId, String name, Integer commentCount, String tolDescribe, String description, String tel, String address, String region, String town, String travellingInfo, String openTime, String longitude, String latitude, String website, String parkingInfo, String ticketInfo, String remarks, String picture1) {
         this.locationId = locationId;
         this.name = name;
