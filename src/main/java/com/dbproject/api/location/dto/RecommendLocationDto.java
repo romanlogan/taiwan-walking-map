@@ -4,13 +4,12 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.domain.Page;
 
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class RecLocationListResponse {
+public class RecommendLocationDto {
 
     private String locationId;
     private String picture1;
@@ -24,7 +23,7 @@ public class RecLocationListResponse {
     private String longitude;
 
     @QueryProjection
-    public RecLocationListResponse(String locationId, String picture1, String name, String address, String openTime, String ticketInfo, String website, String tel, String latitude, String longitude) {
+    public RecommendLocationDto(String locationId, String picture1, String name, String address, String openTime, String ticketInfo, String website, String tel, String latitude, String longitude) {
         this.locationId = locationId;
         this.picture1 = picture1;
         this.name = name;

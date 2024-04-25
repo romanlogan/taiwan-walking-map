@@ -6,7 +6,7 @@ import com.dbproject.api.location.QRecLocationListResponse;
 import com.dbproject.api.location.dto.LocationDto;
 import com.dbproject.api.location.dto.QLocationDto;
 import com.dbproject.api.location.dto.RecLocationListRequest;
-import com.dbproject.api.location.dto.RecLocationListResponse;
+import com.dbproject.api.location.dto.RecommendLocationDto;
 import com.dbproject.api.quickSearch.dto.QQuickSearchLocationDto;
 import com.dbproject.api.quickSearch.dto.QuickSearchFormRequest;
 //import com.dbproject.entity.QLocation;
@@ -33,12 +33,12 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
     }
 
     @Override
-    public Page<RecLocationListResponse> getLocationPageByCity(RecLocationListRequest request, Pageable pageable){
+    public Page<RecommendLocationDto> getLocationPageByCity(RecLocationListRequest request, Pageable pageable){
 
         QLocation location = QLocation.location;
 
 
-        List<RecLocationListResponse> content = queryFactory
+        List<RecommendLocationDto> content = queryFactory
                 .select(
                         new QRecLocationListResponse(
                                 location.locationId,
@@ -54,7 +54,9 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
                         )
                 )
                 .from(location)
-                .where(QLocation.location.region.eq(request.getSearchArrival()))
+                .where(searchByRegion(request),
+                        searchNameByQuery(request.getSearchQuery()),
+                        searchByTown(request))
                 .orderBy(QLocation.location.locationId.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -63,11 +65,23 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
         long total = queryFactory
                 .select(Wildcard.count)
                 .from(QLocation.location)
-                .where(QLocation.location.region.eq(request.getSearchArrival()))
+                .where(searchByRegion(request),
+                        searchNameByQuery(request.getSearchQuery()),
+                        searchByTown(request))
                 .fetchOne()
                 ;
 
         return new PageImpl<>(content, pageable, total);
+    }
+
+    private static BooleanExpression searchByRegion(RecLocationListRequest request) {
+        return QLocation.location.region.eq(request.getSearchArrival());
+    }
+
+    private static BooleanExpression searchByTown(RecLocationListRequest request) {
+        return QLocation.location.town.like("%"+ request.getSearchTown()+"%");
+
+//        return QLocation.location.name.like("%" + searchQuery + "%");
     }
 
     @Override

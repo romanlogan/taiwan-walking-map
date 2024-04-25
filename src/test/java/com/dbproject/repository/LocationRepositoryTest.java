@@ -4,7 +4,7 @@ import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.quickSearch.dto.FastSearchDto;
 import com.dbproject.api.quickSearch.dto.QuickSearchLocationDto;
 import com.dbproject.api.location.dto.RecLocationListRequest;
-import com.dbproject.api.location.dto.RecLocationListResponse;
+import com.dbproject.api.location.dto.RecommendLocationDto;
 import com.dbproject.api.location.Location;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -118,8 +118,8 @@ class LocationRepositoryTest {
         RecLocationListRequest request = new RecLocationListRequest(city);
 
         //when
-        Page<RecLocationListResponse> locationListPage = locationRepository.getLocationPageByCity(request, pageable);
-        List<RecLocationListResponse> pageContent = locationListPage.getContent();
+        Page<RecommendLocationDto> locationListPage = locationRepository.getLocationPageByCity(request, pageable);
+        List<RecommendLocationDto> pageContent = locationListPage.getContent();
 
         //then
         assertThat(locationListPage.getTotalPages()).isEqualTo(90);

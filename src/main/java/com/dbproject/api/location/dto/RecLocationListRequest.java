@@ -14,6 +14,10 @@ public class RecLocationListRequest {
     @NotNull
     private String searchArrival;
 
+    private String searchQuery;
+
+    private String searchTown;
+
     public RecLocationListRequest() {
     }
 

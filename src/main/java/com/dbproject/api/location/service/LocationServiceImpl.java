@@ -1,5 +1,6 @@
 package com.dbproject.api.location.service;
 
+import com.dbproject.api.city.CityRepository;
 import com.dbproject.api.comment.Comment;
 import com.dbproject.api.comment.dto.CommentDto;
 import com.dbproject.api.favorite.FavoriteLocation;
@@ -9,14 +10,13 @@ import com.dbproject.api.friend.Friend;
 import com.dbproject.api.friend.dto.FriendDto;
 import com.dbproject.api.friend.repository.FriendRepository;
 import com.dbproject.api.location.Location;
-import com.dbproject.api.location.dto.RecLocationListRequest;
-import com.dbproject.api.location.dto.RecLocationListResponse;
-import com.dbproject.api.location.dto.LocationDtlResponse;
+import com.dbproject.api.location.dto.*;
 import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.memberImg.MemberImg;
 import com.dbproject.api.member.memberImg.MemberImgRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.loader.custom.RootReturn;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,6 +37,7 @@ public class LocationServiceImpl implements LocationService {
     private final MemberImgRepository memberImgRepository;
     private final MemberRepository memberRepository;
     private final FriendRepository friendRepository;
+
 
 
     // ----------------비 로그인 유저가 장소 디테일을 볼때-----------------
@@ -122,10 +123,13 @@ public class LocationServiceImpl implements LocationService {
 
     }
 
-    public Page<RecLocationListResponse> getLocationPageByCity(RecLocationListRequest request, Pageable pageable) {
+    public RecommendLocationListResponse getRecommendLocationListResponse(RecLocationListRequest request, Pageable pageable) {
 
-        Page<RecLocationListResponse> locationList = locationRepository.getLocationPageByCity(request, pageable);
 
-        return locationList;
+        Page<RecommendLocationDto> locationList = locationRepository.getLocationPageByCity(request, pageable);
+        SearchConditionDto searchConditionDto = new SearchConditionDto(request.getSearchArrival(), request.getSearchQuery(), request.getSearchTown());
+        List<String> townList = locationRepository.findTownListByRegion(request.getSearchArrival());
+
+        return new RecommendLocationListResponse(locationList, searchConditionDto,townList);
     }
 }

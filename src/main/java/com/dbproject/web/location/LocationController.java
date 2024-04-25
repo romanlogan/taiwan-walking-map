@@ -4,13 +4,10 @@ package com.dbproject.web.location;
 import com.dbproject.api.explore.ExploreService;
 import com.dbproject.api.location.dto.LocationDtlResponse;
 import com.dbproject.api.location.dto.RecLocationListRequest;
-import com.dbproject.api.location.dto.RecLocationListResponse;
-import com.dbproject.api.location.dto.SearchByCityDto;
+import com.dbproject.api.location.dto.RecommendLocationListResponse;
 import com.dbproject.api.location.service.LocationService;
-import com.dbproject.api.location.service.LocationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -70,12 +67,11 @@ public class LocationController {
 
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5 );
 
-        SearchByCityDto searchByCityDto = new SearchByCityDto(request.getSearchArrival());
+        RecommendLocationListResponse response = locationService.getRecommendLocationListResponse(request, pageable);
 
-        Page<RecLocationListResponse> locationList = locationService.getLocationPageByCity(request, pageable);
-
-        model.addAttribute("locationList", locationList);
-        model.addAttribute("searchByCityDto", searchByCityDto);
+//        model.addAttribute("locationList", locationList);
+//        model.addAttribute("searchConditionDto", searchConditionDto);
+        model.addAttribute("response", response);
         model.addAttribute("maxPage", 5);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 

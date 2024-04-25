@@ -354,18 +354,71 @@
 
 <th:block layout:fragment="css">
   <style>
+    #container{
 
+    }
 
-    #content{
-      padding-left: 50px;
-      padding-right: 50px;
+    #cityNameBox{
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #cityName{
+      font-size: 2.5rem;
     }
 
     #locationName{
       margin-top: 30px;
       margin-bottom: 30px;
+    }
+
+    #mainBox{
+      position: relative;
+    }
+
+    #imgBox{
+      top: 1rem;
+      left: 14rem;
+      position: absolute;
+      width: 500px;
+      height: 450px;
+      overflow: hidden;
+      z-index: 1;
+      box-shadow: rgba(0, 0, 0, 0.7) 0px 5px 15px;
+    }
+
+
+    .locationImg{
+      width: 500px;
+      height: 500px;
+      object-fit: cover;
+      /*border-radius: 10px;*/
+    }
+
+    #descBox{
+      padding-left: 100px;
+      top: 5rem;
+      left: 40rem;
+      position: absolute;
+      height: 500px;
+      width: 700px;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+      overflow: auto;
+      background-color: white;
+    }
+    #map{
+      position: absolute;
+      top: 23rem;
+      left: 5rem;
+
+      width: 500px;
+      height: 500px;
 
     }
+
 
     .left-half {
       float: left;
@@ -410,31 +463,7 @@
       display: inline-block;
     }
 
-    #imgBox{
-      height: 500px;
-      width: 800px;
-      padding-left: 50px;
-      overflow: hidden;
-      background-position: center;
-      background-size: cover;
-      background-repeat: no-repeat;
-    }
 
-    .locationImg{
-      /*object-fit: cover;*/
-      width: 100%;
-      height: 100%;
-      border-radius: 10px;
-
-    }
-
-    #descBox{
-      padding : 10px;
-      height: 500px;
-      width: 500px;
-      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-      overflow: auto;
-    }
 
 
     .savedCommentMemberBox{
@@ -533,18 +562,78 @@
 
   <input id="locationId" type="hidden" th:value="${locationDtlResponse.id}">
 
-  <section id="content">
-    <h1 id="locationName">[[${locationDtlResponse.name}]]</h1>
+  <section id="container">
+
+    <div id="cityNameBox">
+      <h1 id="cityName">[[${locationDtlResponse.region}]]</h1>
+    </div>
+
+    <div id="mainBox">
+      <div id="imgBox">
+        <div th:if="${#strings.isEmpty(locationDtlResponse.picture1)}">
+          <img class = "locationImg" src="/img/noImg.jpg">
+        </div>
+        <div th:unless="${#strings.isEmpty(locationDtlResponse.picture1)}">
+          <img class = "locationImg" th:src="${locationDtlResponse.picture1}">
+        </div>
+      </div>
+
+      <div id="descBox">
+
+        <h1 id="locationName">[[${locationDtlResponse.name}]]</h1>
+
+        <h4 id="introduce">說明</h4>
+
+        <p>[[${locationDtlResponse.tolDescribe}]]</p>
+
+        <div th:if="${locationDtlResponse.address != null}">
+          <p class="locationText"> address : [[${locationDtlResponse.address}]]</p>
+        </div>
+
+        <div th:if="${locationDtlResponse.openTime != null}">
+          <p class="locationText"> open time : [[${locationDtlResponse.openTime}]]</p>
+        </div>
+
+        <div th:if="${locationDtlResponse.ticketInfo != null}">
+          <p class="locationText"> Fee Info : [[${locationDtlResponse.ticketInfo}]]</p>
+        </div>
+
+        <div th:if="${locationDtlResponse.website != null}">
+          <p class="locationText"> Website Url : [[${locationDtlResponse.website}]]</p>
+        </div>
+
+        <div th:if="${locationDtlResponse.tel != null}">
+          <p class="locationText"> Tel : [[${locationDtlResponse.tel}]]</p>
+        </div>
+
+        <div th:if="${locationDtlResponse.remarks != null}">
+          <p class="locationText"> remark : [[${locationDtlResponse.remarks}]]</p>
+        </div>
+
+        <div th:if="${locationDtlResponse.travellingInfo != null}">
+          <p class="locationText"> traffic_Info : [[${locationDtlResponse.travellingInfo}]]</p>
+        </div>
+
+        <div th:if="${locationDtlResponse.parkingInfo != null}">
+          <p class="locationText"> parking_info : [[${locationDtlResponse.parkingInfo}]]</p>
+        </div>
+      </div>
+
+      <div id="map"></div>
+    </div>
 
 
-<!--  즐겨찾기  -->
+
+
+    <!--  즐겨찾기  -->
     <div th:if="${locationDtlResponse.isSaved()}">
       <button id="addedFavoriteBtn"><i class="fa-thin fa-star" style="color: #ffdd00;"></i>이미 저장된 장소입니다.</button>
     </div>
     <div th:unless="${locationDtlResponse.isSaved()}">
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addFavoriteModal"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>
     </div>
-
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hangOutModal">약속 잡기</button>
+    <button type="button" data-toggle="modal" data-target="#commentModal">댓글 작성</button>
     <!-- 모달 창 -->
     <div class="modal fade" id="addFavoriteModal" tabindex="-1" role="dialog" aria-labelledby="addFavoriteModalLabel">
       <div class="modal-dialog">
@@ -570,7 +659,6 @@
 
 
 <!--  약속 잡기 -->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hangOutModal">약속 잡기</button>
     <!-- 모달 창 -->
     <div class="modal fade" id="hangOutModal" tabindex="-1" role="dialog" aria-labelledby="hangOutModalLabel">
       <div class="modal-dialog modal-lg">
@@ -631,68 +719,6 @@
         </div>
       </div>
     </div>
-
-
-    <div class="left-half">
-      <div id="descBox">
-        <h4 id="introduce">說明</h4>
-
-        <p>[[${locationDtlResponse.tolDescribe}]]</p>
-
-        <div th:if="${locationDtlResponse.address != null}">
-          <p class="locationText"> address : [[${locationDtlResponse.address}]]</p>
-        </div>
-
-        <div th:if="${locationDtlResponse.openTime != null}">
-          <p class="locationText"> open time : [[${locationDtlResponse.openTime}]]</p>
-        </div>
-
-        <div th:if="${locationDtlResponse.ticketInfo != null}">
-          <p class="locationText"> Fee Info : [[${locationDtlResponse.ticketInfo}]]</p>
-        </div>
-
-        <div th:if="${locationDtlResponse.website != null}">
-          <p class="locationText"> Website Url : [[${locationDtlResponse.website}]]</p>
-        </div>
-
-        <div th:if="${locationDtlResponse.tel != null}">
-          <p class="locationText"> Tel : [[${locationDtlResponse.tel}]]</p>
-        </div>
-
-        <div th:if="${locationDtlResponse.remarks != null}">
-          <p class="locationText"> remark : [[${locationDtlResponse.remarks}]]</p>
-        </div>
-
-        <div th:if="${locationDtlResponse.travellingInfo != null}">
-          <p class="locationText"> traffic_Info : [[${locationDtlResponse.travellingInfo}]]</p>
-        </div>
-
-        <div th:if="${locationDtlResponse.parkingInfo != null}">
-          <p class="locationText"> parking_info : [[${locationDtlResponse.parkingInfo}]]</p>
-        </div>
-
-        <div id="map" style="width:100%; height: 450px;"></div>
-      </div>
-    </div>
-
-    <div class="right-half">
-      <div id="imgBox">
-        <div th:if="${#strings.isEmpty(locationDtlResponse.picture1)}">
-          <img class = "locationImg" src="/img/noImg.jpg">
-        </div>
-        <div th:unless="${#strings.isEmpty(locationDtlResponse.picture1)}">
-          <img class = "locationImg" th:src="${locationDtlResponse.picture1}">
-        </div>
-      </div>
-    </div>
-
-    <div class="clear"></div>
-
-
-<!--            댓   글      기    능            -->
-
-    <button type="button" data-toggle="modal" data-target="#commentModal">댓글 작성</button>
-
 
     <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel">
       <div class="modal-dialog">

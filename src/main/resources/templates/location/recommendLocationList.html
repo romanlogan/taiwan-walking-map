@@ -10,6 +10,25 @@
 
     <script th:inline="javascript">
 
+        $(document).ready(function() {
+
+            var townNameList = [[${response.getTownList()}]];
+
+            var selectTown = $("#quickSearchTown");
+            selectTown.empty();
+
+            $.each(townNameList, function(index, town) {
+
+                selectTown.append('<option value="' + town + '">' + town + '</option>');
+            });
+
+            //마지막에 선택안함 하나 더 추가
+            selectTown.append('<option value="noSelected">선택안함</option>');
+            selectTown.trigger("change");
+
+        });
+
+
         var map;
         var marker;
 
@@ -19,7 +38,7 @@
                 center: { lat: 25.043561, lng: 121.556668 }
             });
 
-            var locations = [[${locationList.content}]];
+            var locations = [[${response.getLocationDtoPage.content}]];
 
 
             locations.forEach(location => {
@@ -44,6 +63,17 @@
 
             location.href = "/recommendLocationList/"+ page + "?searchArrival=" + searchArrival;
         }
+
+        function searchByQuery(){
+
+            var searchArrival = $("#cityTypeArriveCity").val();
+            var searchQuery = $("#savedQuickSearchQuery").val();
+            var searchTown = $("#quickSearchTown").val();
+
+            location.href = "/recommendLocationList/0?searchArrival=" + searchArrival + "&searchQuery=" + searchQuery + "&searchTown=" + searchTown;
+        }
+
+
 
     </script>
 </th:block>
@@ -138,7 +168,7 @@
             box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
         }
 
-        #quickSearchInputBtn{
+        #searchBtn{
             background-color: white;
             border: 1px solid lightgray ;
             border-radius: 50%;
@@ -164,14 +194,14 @@
 
 <div layout:fragment="content">
 
-    <input type="hidden" id="cityTypeArriveCity" th:value="${searchByCityDto.getArriveCity()}"/>
+    <input type="hidden" id="cityTypeArriveCity" th:value="${response.searchConditionDto.getArriveCity()}"/>
 <!--    <input type="date" id="cityTypeDepartDate" th:value="${searchByCityDto.getDepartDate()}"/>-->
 <!--    <input type="date" id="cityTypeArriveDate" th:value="${searchByCityDto.getArriveDate()}"/>-->
 
     <div class="left-half">
 
         <form role="form" method="get" th:object="${locationList}">
-            <div class="InvitedHangOutBox" th:each="location, status: ${locationList.getContent()}">
+            <div class="InvitedHangOutBox" th:each="location, status: ${response.locationDtoPage.getContent()}">
                 <a th:href="'/location/' +${location.locationId}" class="text-dark">
 
                     <div th:if="${#strings.isEmpty(location.getPicture1())}">
@@ -210,21 +240,21 @@
             </div>
 
 
-            <div th:with="start=${(locationList.number/maxPage)*maxPage + 1}, end=(${(locationList.totalPages == 0) ? 1 : (start + (maxPage - 1) < locationList.totalPages ? start + (maxPage - 1) : locationList.totalPages)})" >
+            <div th:with="start=${(response.locationDtoPage.number/maxPage)*maxPage + 1}, end=(${(response.locationDtoPage.totalPages == 0) ? 1 : (start + (maxPage - 1) < response.locationDtoPage.totalPages ? start + (maxPage - 1) : response.locationDtoPage.totalPages)})" >
                 <ul class="pagination justify-content-center">
 
-                    <li class="page-item" th:classappend="${locationList.first}?'disabled'">
-                        <a th:onclick="'javascript:page(' + ${locationList.number - 1} + ')'" aria-label='Previous' class="page-link">
+                    <li class="page-item" th:classappend="${response.locationDtoPage.first}?'disabled'">
+                        <a th:onclick="'javascript:page(' + ${response.locationDtoPage.number - 1} + ')'" aria-label='Previous' class="page-link">
                             <span aria-hidden='true'>Previous</span>
                         </a>
                     </li>
 
-                    <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${locationList.number eq page-1}?'active':''">
+                    <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${response.locationDtoPage.number eq page-1}?'active':''">
                         <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
                     </li>
 
-                    <li class="page-item" th:classappend="${locationList.last}?'disabled'">
-                        <a th:onclick="'javascript:page(' + ${locationList.number + 1} + ')'" aria-label='Next' class="page-link">
+                    <li class="page-item" th:classappend="${response.locationDtoPage.last}?'disabled'">
+                        <a th:onclick="'javascript:page(' + ${response.locationDtoPage.number + 1} + ')'" aria-label='Next' class="page-link">
                             <span aria-hidden='true'>Next</span>
                         </a>
                     </li>
@@ -237,9 +267,9 @@
 
         <div id="fastSearchForm">
 
-            <label for="quickSearchCity">Select City:</label>
-            <select id="quickSearchCity" name="quickSearchCity">
-            </select>
+<!--            <label for="quickSearchCity">Select City:</label>-->
+<!--            <select id="quickSearchCity" name="quickSearchCity">-->
+<!--            </select>-->
 
             <label for="quickSearchTown">Select Town:</label>
             <select id="quickSearchTown" name="quickSearchTown">
@@ -247,10 +277,13 @@
 
 <!--            <input id="quickSearchQuery" th:value="${fastSearchDto.getSearchQuery()}" type="search" name="search" />-->
 
-                <input id="emptyQuickSearchQuery" type="search" name="search" />
-                <input id="quickSearchQuery" th:value="${searchByCityDto.searchQuery}" type="search" name="search" />
+<!--                <input id="emptyQuickSearchQuery" type="search" name="search" />-->
 
-            <button id="quickSearchInputBtn" class="search-btn" type="submit">
+<!--                <input id="savedQuickSearchQuery" th:value="${searchByCityDto.searchQuery}" type="search" name="search" />-->
+<!--                <input id="quickSearchQuery" type="search" name="search" />-->
+            <input id="savedQuickSearchQuery" th:value="${response.searchConditionDto.searchQuery}" type="search" name="search" />
+
+            <button id="searchBtn" class="search-btn" type="submit" onclick="searchByQuery()">
                 <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #d9d9d9;"></i>
             </button>
 
@@ -260,20 +293,20 @@
             <!--            <option value="favorite">즐겨찾기 개수순</option>-->
             <!--            <option value="recommend">추천순</option>-->
             <!--        </select>-->
-            <br>
+<!--            <br>-->
 
-            <div>
-                <label for="openTimeCond">개방 시간이 있는 장소만 검색</label>
-                <input type="checkbox" id="openTimeCond" name="openTimeCond">
-            </div>
-            <div>
-                <label for="feeCond">가격 정보가 있는 장소만 검색</label>
-                <input type="checkbox" id="feeCond" name="feeCond">
-            </div>
-            <div>
-                <label for="picCond">사진이 있는 장소만 검색</label>
-                <input type="checkbox" id="picCond" name="picCond">
-            </div>
+<!--            <div>-->
+<!--                <label for="openTimeCond">개방 시간이 있는 장소만 검색</label>-->
+<!--                <input type="checkbox" id="openTimeCond" name="openTimeCond">-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <label for="feeCond">가격 정보가 있는 장소만 검색</label>-->
+<!--                <input type="checkbox" id="feeCond" name="feeCond">-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <label for="picCond">사진이 있는 장소만 검색</label>-->
+<!--                <input type="checkbox" id="picCond" name="picCond">-->
+<!--            </div>-->
         </div>
 
         <div id="mapBox">

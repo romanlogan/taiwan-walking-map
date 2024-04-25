@@ -21,6 +21,7 @@ public class LocationDtlResponse {
     private String name;
     private String tolDescribe;
     private String address;
+    private String region;
     private String openTime;
     private String ticketInfo;
     private String website;
@@ -49,11 +50,12 @@ public class LocationDtlResponse {
 
 
     @Builder
-    public LocationDtlResponse(String id, String name, String tolDescribe, String address, String openTime, String ticketInfo, String website, String tel, String remarks, String travellingInfo, String parkingInfo, String picture1, String longitude, String latitude) {
+    public LocationDtlResponse(String id, String name, String tolDescribe, String address, String region,String openTime, String ticketInfo, String website, String tel, String remarks, String travellingInfo, String parkingInfo, String picture1, String longitude, String latitude) {
         this.id = id;
         this.name = name;
         this.tolDescribe = tolDescribe;
         this.address = address;
+        this.region = region;
         this.openTime = openTime;
         this.ticketInfo = ticketInfo;
         this.website = website;
@@ -73,6 +75,7 @@ public class LocationDtlResponse {
                 .name(location.getName())
                 .tolDescribe(location.getTolDescribe())
                 .address(location.getAddress())
+                .region(location.getRegion())
                 .openTime(location.getOpenTime())
                 .ticketInfo(location.getTicketInfo())
                 .website(location.getWebsite())
