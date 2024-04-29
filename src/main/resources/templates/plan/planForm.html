@@ -250,6 +250,31 @@
             });
 
         }
+
+        function showBasicInfo(){
+
+            //이전 등록 내용을 삭제하고 처음부터 다시 작성 (friend , location 포함)
+
+            //1. 이전 등록 내용 삭제
+
+            //2. info view 를 show 로 변경 나머지는 안보이게
+        }
+
+        function calculateDateDiff(){
+            // 두 날짜 생성
+            var date1 = document.getElementById("departDate").val();
+            var date2 = document.getElementById("arriveDate").val();
+
+// 밀리초로 변환 후 빼기
+            var diffInMilliseconds = date1 - date2;
+
+// 밀리초를 일로 변환
+            var diffInDays = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24));
+
+            console.log(diffInDays); // 두 날짜 간의 일수 출력
+            document.getElementById("dateDiffVal").value = diffInDays;
+
+        }
     </script>
 
 </th:block>
@@ -257,7 +282,17 @@
 <div layout:fragment="content">
 
     <div class="container">
-        <div>
+
+        <div class="sidebar">
+            <ul>
+                <li><a href="../main.html">홈으로 돌아가기</a></li>
+                <li><button id="showBasicInfoBtn" onclick="showBasicInfo()">기본 정보 입력</button></li>
+                <li><button id="showSelectFriendBtn" onclick="showSelectFriend()">친구 선택</button></li>
+                <li><button id="showSelectLocationBtn" onclick="showSelectLocation()">장소 선택</button></li>
+            </ul>
+        </div>
+
+        <div id="basicInfoView">
             <div>
                 이름 : <input id="name" type="text" >
             </div>
@@ -279,102 +314,76 @@
                 종료 날짜 : <input id="arriveDate" type="date" >
             </div>
 
+            <input id="dateDiffVal" type="hidden">
+
+            <button id="calculateDateDiffBtn" onclick="calculateDateDiff()"></button>
+<!--            <div>-->
+<!--&lt;!&ndash;            location 찾는법 -> 검색으로 찾기 , 즐겨찾기에서 찾기 &ndash;&gt;-->
+<!--                <button type="button" data-toggle="modal" data-target="#selectLocationModal">장소 선택</button>-->
+<!--                <button type="button" data-toggle="modal" data-target="#selectFriendModal">친구 선택</button>-->
+<!--            </div>-->
+
+        </div>
+        <div id="selectFriendView">
+
             <div id="selectedFriendList">
 
             </div>
+
+            <div class="checkableFriendBox" th:each="friendDto, status: ${friendListResponse.getFriendDtoList()}">
+
+                <div class="left-half">
+                    <input id="friendChecker" class="friendCheckBox"  type="checkbox" th:value="${friendDto.friendEmail}">
+                    <!--                          체크박스-->
+                    <div th:if="${#strings.isEmpty(friendDto.friendImgUrl)}">
+                        <img class = "locationBoxImg" src="/img/noImg.jpg">
+                    </div>
+                    <div th:unless="${#strings.isEmpty(friendDto.friendImgUrl)}">
+                        <img class = "locationBoxImg" th:src="${friendDto.friendImgUrl}">
+                    </div>
+                    <div class="locationTextBox">
+                        <p class="locationText">[[${friendDto.friendName}]]</p>
+                    </div>
+                </div>
+                <div class="right-half">
+                    <input id="friendSupply" type="text">
+                </div>
+                <div class="clear"></div>
+
+            </div>
+
+
+            <!--                            <button id="selectFriendBtn" th:value="${friendDto.friendEmail}" onclick="inviteHangOut(this.value)" type="button" class="btn btn-primary" data-dismiss="modal">요청 보내기</button>-->
+            <button id="selectFriendBtn" onclick="checkSelectedFriend()" type="button" class="btn btn-primary" data-dismiss="modal">확인</button>
+        </div>
+
+        <div id="selectLocationView">
+
             <div id="selectedLocationList">
 
             </div>
 
-            <div>
-<!--            location 찾는법 -> 검색으로 찾기 , 즐겨찾기에서 찾기 -->
-                <button type="button" data-toggle="modal" data-target="#selectLocationModal">장소 선택</button>
-                <button type="button" data-toggle="modal" data-target="#selectFriendModal">친구 선택</button>
+            <div class="checkableLocationBox" th:each="i : ${#numbers.sequence(1, 8)}">
+
+                <input type="hidden" th:value="${i}">
+
+                <div class="checkableLocationBox" th:each="favoriteLocation, status: ${friendListResponse.getFavoriteLocationList()}">
+                    <input id="locationChecker" class="locationCheckBox" type="checkbox" th:value="${favoriteLocation.id}">
+                    <!--                          체크박스-->
+                    <div th:if="${#strings.isEmpty(favoriteLocation.picture1)}">
+                        <img class = "locationBoxImg" src="/img/noImg.jpg">
+                    </div>
+                    <div th:unless="${#strings.isEmpty(favoriteLocation.picture1)}">
+                        <img class = "locationBoxImg" th:src="${favoriteLocation.picture1}">
+                    </div>
+                    <div class="locationTextBox">
+                        <p class="locationText">[[${favoriteLocation.name}]]</p>
+                    </div>
+                </div>
             </div>
 
+            <button id="selectLocationBtn" onclick="checkSelectedLocation()" type="button" class="btn btn-primary" data-dismiss="modal">확인</button>
             <button id="sendInvite" type="button" onclick="sendInvite()">요청 보내기</button>
-
-
-            <div class="modal fade" id="selectLocationModal" tabindex="-1" role="dialog" aria-labelledby="selectLocationModalLabel">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="selectLocationModalLabel">장소 선택</h4>
-                        </div>
-                        <div class="modal-body">
-                            <!-- 모달 창 내의 데이터 입력 폼 -->
-
-                            <!--                왼쪽 오른쪽으로 나눠서 map 찾기처럼 왼쪽에는 리스트 오른쪽에는 메시지 -->
-                            <!--                아니면 첫번째 모달은 리스트에서 선택하고 버튼으로 두번째 모달로 이동해서 두번째 모달에서 메시지를 적을수 잇게-->
-                            <!--                  check box 로 선택 가능-->
-
-                                <div class="checkableLocationBox" th:each="favoriteLocation, status: ${friendListResponse.getFavoriteLocationList()}">
-
-                                    <input id="locationChecker" class="locationCheckBox" type="checkbox" th:value="${favoriteLocation.id}">
-                                    <!--                          체크박스-->
-                                    <div th:if="${#strings.isEmpty(favoriteLocation.picture1)}">
-                                        <img class = "locationBoxImg" src="/img/noImg.jpg">
-                                    </div>
-                                    <div th:unless="${#strings.isEmpty(favoriteLocation.picture1)}">
-                                        <img class = "locationBoxImg" th:src="${favoriteLocation.picture1}">
-                                    </div>
-                                    <div class="locationTextBox">
-                                        <p class="locationText">[[${favoriteLocation.name}]]</p>
-                                    </div>
-
-                            </div>
-
-                            <button id="selectLocationBtn" onclick="checkSelectedLocation()" type="button" class="btn btn-primary" data-dismiss="modal">확인</button>
-                        </div>
-                        <div class="modal-footer">
-                            <!--                location.favoriteLocationId-->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="selectFriendModal" tabindex="-1" role="dialog" aria-labelledby="selectFriendModalLabel">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="selectFriendModalLabel">친구 선택</h4>
-                        </div>
-                        <div class="modal-body">
-
-
-                                <div class="checkableFriendBox" th:each="friendDto, status: ${friendListResponse.getFriendDtoList()}">
-
-                                    <div class="left-half">
-                                        <input id="friendChecker" class="friendCheckBox"  type="checkbox" th:value="${friendDto.friendEmail}">
-                                        <!--                          체크박스-->
-                                        <div th:if="${#strings.isEmpty(friendDto.friendImgUrl)}">
-                                            <img class = "locationBoxImg" src="/img/noImg.jpg">
-                                        </div>
-                                        <div th:unless="${#strings.isEmpty(friendDto.friendImgUrl)}">
-                                            <img class = "locationBoxImg" th:src="${friendDto.friendImgUrl}">
-                                        </div>
-                                        <div class="locationTextBox">
-                                            <p class="locationText">[[${friendDto.friendName}]]</p>
-                                        </div>
-                                    </div>
-                                    <div class="right-half">
-                                        <input id="friendSupply" type="text">
-                                    </div>
-                                    <div class="clear"></div>
-
-                                </div>
-
-
-<!--                            <button id="selectFriendBtn" th:value="${friendDto.friendEmail}" onclick="inviteHangOut(this.value)" type="button" class="btn btn-primary" data-dismiss="modal">요청 보내기</button>-->
-                            <button id="selectFriendBtn" onclick="checkSelectedFriend()" type="button" class="btn btn-primary" data-dismiss="modal">확인</button>
-                        </div>
-                        <div class="modal-footer">
-                            <!--                location.favoriteLocationId-->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 </div>

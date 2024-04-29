@@ -13,6 +13,7 @@ public class InvitePlanRouteRequest {
 
     private Integer day;
 
+//    하루에 최대 10곳 선택 가능
     private List<InvitePlanLocationRequest> locationRequestList = new ArrayList<>();
 
 

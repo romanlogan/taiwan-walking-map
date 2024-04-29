@@ -17,14 +17,16 @@
             var selectTown = $("#quickSearchTown");
             selectTown.empty();
 
+            selectTown.append('<option value="noSelected">선택안함</option>');
             $.each(townNameList, function(index, town) {
 
                 selectTown.append('<option value="' + town + '">' + town + '</option>');
             });
 
-            //마지막에 선택안함 하나 더 추가
-            selectTown.append('<option value="noSelected">선택안함</option>');
             selectTown.trigger("change");
+
+            var selectedTown = [[${response.getSearchConditionDto().getSearchTown()}]];
+            selectOptionWithValue(selectedTown);
 
         });
 
@@ -53,15 +55,35 @@
                     title: 'Marker Title' // 마커에 표시될 제목
                 });
             });
-
         }
 
+        function selectOptionWithValue(value) {
+            var selectElement = document.getElementById("quickSearchTown");
+            for (var i = 0; i < selectElement.options.length; i++) {
+                if (selectElement.options[i].value === value) {
+                    selectElement.selectedIndex = i;
+                    break;
+                }
+            }
+        }
 
         function page(page) {
 
-            var searchArrival = $("#cityTypeArriveCity").val();
 
-            location.href = "/recommendLocationList/"+ page + "?searchArrival=" + searchArrival;
+
+            var searchArrival = $("#cityTypeArriveCity").val();
+            var searchQuery = $("#savedQuickSearchQuery").val();
+            var searchTown = $("#quickSearchTown").val();
+
+            if (savedTown == null) {        //
+
+            }
+
+            if (searchTown == "noSelected") {
+                searchTown="";
+            }
+
+            location.href = "/recommendLocationList/"+ page + "?searchArrival=" + searchArrival + "&searchQuery=" + searchQuery + "&searchTown=" + searchTown;
         }
 
         function searchByQuery(){
@@ -69,6 +91,10 @@
             var searchArrival = $("#cityTypeArriveCity").val();
             var searchQuery = $("#savedQuickSearchQuery").val();
             var searchTown = $("#quickSearchTown").val();
+
+            if (searchTown == "noSelected") {
+                searchTown="";
+            }
 
             location.href = "/recommendLocationList/0?searchArrival=" + searchArrival + "&searchQuery=" + searchQuery + "&searchTown=" + searchTown;
         }
@@ -267,10 +293,7 @@
 
         <div id="fastSearchForm">
 
-<!--            <label for="quickSearchCity">Select City:</label>-->
-<!--            <select id="quickSearchCity" name="quickSearchCity">-->
-<!--            </select>-->
-
+            <input type="hidden" id="savedTown" th:value="${response.getSearchConditionDto().getSearchTown()}"/>
             <label for="quickSearchTown">Select Town:</label>
             <select id="quickSearchTown" name="quickSearchTown">
             </select>
