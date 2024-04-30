@@ -36,8 +36,6 @@ public class ExploreController {
 
     @GetMapping("/exploreCity")
     public String exploreCity(
-//            @RequestParam("searchArrival") @NotBlank(message = "도시 이름은 필수 값 입니다.") String cityName,
-//            BindingResult bindingResult,
             @RequestParam("searchArrival") String cityName,
             Model model) {
 

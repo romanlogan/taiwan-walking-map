@@ -17,6 +17,9 @@ import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.dto.RegisterFormDto;
 import com.dbproject.api.route.Route;
+import com.dbproject.api.route.RouteRepository;
+import com.dbproject.api.routeLocation.RouteLocation;
+import com.dbproject.api.routeLocation.repository.RouteLocationRepository;
 import com.dbproject.constant.InvitePlanStatus;
 import com.dbproject.constant.PlanPeriod;
 import com.dbproject.constant.RouteStatus;
@@ -63,6 +66,13 @@ class InvitePlanServiceImplTest {
 
     @Autowired
     private InvitePlanMemberRepository invitePlanMemberRepository;
+
+    @Autowired
+    private RouteLocationRepository routeLocationRepository;
+
+    @Autowired
+    private RouteRepository routeRepository;
+
 
 
 
@@ -138,8 +148,10 @@ class InvitePlanServiceImplTest {
     }
 
     private List<InvitePlanLocationRequest> getInvitePlanLocationRequestList() {
+
         List<InvitePlanLocationRequest> invitePlanLocationRequestList = new ArrayList<>();
         List<FavoriteLocation> favoriteLocationList = favoriteRepository.findByMemberEmail("asdf@asdf.com");
+
         for (FavoriteLocation favoriteLocation : favoriteLocationList) {
 
             InvitePlanLocationRequest invitePlanLocationRequest = new InvitePlanLocationRequest(Math.toIntExact(favoriteLocation.getId()));
@@ -173,28 +185,45 @@ class InvitePlanServiceImplTest {
 
         List<Route> routeList = new ArrayList<>();
 
+//        2일 이상의 여행에서는 루트도 2개 이상
         for (InvitePlanRouteRequest routeRequest : request.getInvitePlanRouteRequestList()) {
-            Route route = new Route(1, RouteStatus.INVITEPLAN);
-            route.setLocationList(getLocationList(routeRequest));
 
-            routeList.add(route);
+            Route route = Route.createRoute(routeRequest);
+//            route 를 저장해서 id 가 있는 route 를 넘기기
+            Route savedRoute = routeRepository.save(route);
+
+
+            savedRoute.setRouteLocationList(getRouteLocationList(routeRequest,savedRoute));
+            routeList.add(savedRoute);
 
         }
+
         savedInvitePlan.setRouteList(routeList);
     }
 
-    private List<Location> getLocationList(InvitePlanRouteRequest routeRequest) {
+    private List<RouteLocation> getRouteLocationList(InvitePlanRouteRequest routeRequest, Route route) {
 
-        List<Location> locationList = new ArrayList<>();
+        List<RouteLocation> routeLocationList = new ArrayList<>();
         for (InvitePlanLocationRequest locationRequest : routeRequest.getLocationRequestList()) {
 
-            //            fetch 조인으로 바꿀 필요
-            Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
-            FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
-            Location location = favoriteLocation.getLocation();
-            locationList.add(location);
+            Location location = getLocationFromRequest(locationRequest);
+
+            RouteLocation routeLocation = RouteLocation.createRouteLocation(route, location);
+            RouteLocation savedRouteLocation = routeLocationRepository.save(routeLocation);
+
+
+            routeLocationList.add(savedRouteLocation);
         }
-        return locationList;
+
+        return routeLocationList;
+    }
+
+
+    private Location getLocationFromRequest(InvitePlanLocationRequest locationRequest) {
+        Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
+        FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
+        Location location = favoriteLocation.getLocation();
+        return location;
     }
 
 
@@ -273,10 +302,10 @@ class InvitePlanServiceImplTest {
         assertThat(invitePlan.getInviteFriendList().get(1).getInvitePlanStatus()).isEqualTo(InvitePlanStatus.WAITING);
 
         assertThat(invitePlan.getRouteList().get(0).getDay()).isEqualTo(1);
-        assertThat(invitePlan.getRouteList().get(0).getLocationList().size()).isEqualTo(3);
-        assertThat(invitePlan.getRouteList().get(0).getLocationList().get(0).getName()).isEqualTo("西門町");
-        assertThat(invitePlan.getRouteList().get(0).getLocationList().get(1).getName()).isEqualTo("台北101");
-        assertThat(invitePlan.getRouteList().get(0).getLocationList().get(2).getName()).isEqualTo("台北地下街");
+        assertThat(invitePlan.getRouteList().get(0).getRouteLocationList().size()).isEqualTo(3);
+        assertThat(invitePlan.getRouteList().get(0).getRouteLocationList().get(0).getLocation().getName()).isEqualTo("西門町");
+        assertThat(invitePlan.getRouteList().get(0).getRouteLocationList().get(1).getLocation().getName()).isEqualTo("台北101");
+        assertThat(invitePlan.getRouteList().get(0).getRouteLocationList().get(2).getLocation().getName()).isEqualTo("台北地下街");
     }
 
     @DisplayName("return受到邀請的PlanList")
@@ -322,6 +351,9 @@ class InvitePlanServiceImplTest {
         assertThat(response.getInvitePlanDtoList().get(0).getInvitePlanMemberDtoList().get(1).getEmail()).isEqualTo("yunni@yunni.com");
         assertThat(response.getInvitePlanDtoList().get(0).getRequesterEmail()).isEqualTo("asdf@asdf.com");
         assertThat(response.getInvitePlanDtoList().get(0).getRequesterName()).isEqualTo("이병민");
+        assertThat(response.getInvitePlanDtoList().get(0).getRouteDtoList().get(0).getLocationList().get(0).getName()).isEqualTo("西門町");
+        assertThat(response.getInvitePlanDtoList().get(0).getRouteDtoList().get(0).getLocationList().get(1).getName()).isEqualTo("台北101");
+        assertThat(response.getInvitePlanDtoList().get(0).getRouteDtoList().get(0).getLocationList().get(2).getName()).isEqualTo("台北地下街");
         assertThat(response.getInvitePlanDtoList().get(1).getName()).isEqualTo("lee's 7 days japan trip");
         assertThat(response.getInvitePlanDtoList().get(1).getPeriod()).isEqualTo(PlanPeriod.LONGTRIP);
         assertThat(response.getInvitePlanDtoList().get(1).getDepartDate()).isEqualTo(LocalDate.of(2024,6,20));

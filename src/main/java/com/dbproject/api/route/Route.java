@@ -6,6 +6,8 @@ import com.dbproject.api.invitePlan.dto.InvitePlanRouteRequest;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.plan.Plan;
+import com.dbproject.api.plan.PlanMember;
+import com.dbproject.api.routeLocation.RouteLocation;
 import com.dbproject.constant.RouteStatus;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,9 +42,6 @@ public class Route {
     @Column(name = "status")
     private RouteStatus routeStatus;
 
-    @OneToMany(mappedBy = "route")
-    private List<Location> locationList;
-
     //default null
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id")
@@ -53,6 +52,12 @@ public class Route {
     @JoinColumn(name = "invite_plan_id")
     private InvitePlan invitePlan;
 
+    @OneToMany(mappedBy = "route")
+    private List<RouteLocation> routeLocationList;        //다대다 양방향, 외래키는 many 쪽에 있으므로 여기는 mappedby
+
+
+    public Route() {
+    }
 
     @Builder
     public Route(Integer day, RouteStatus routeStatus) {

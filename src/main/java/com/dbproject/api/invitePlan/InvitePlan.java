@@ -5,6 +5,7 @@ import com.dbproject.api.invitePlan.dto.InvitePlanRequest;
 import com.dbproject.api.invitePlan.invitePlanMember.InvitePlanMember;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.route.Route;
+import com.dbproject.constant.InvitePlanStatus;
 import com.dbproject.constant.PlanPeriod;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +27,12 @@ public class InvitePlan extends BaseEntity {
     private Long id;
 
     private String name;
+
+    private String region;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private InvitePlanStatus invitePlanStatus;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "period")
@@ -67,9 +74,10 @@ public class InvitePlan extends BaseEntity {
     }
 
     @Builder
-    public InvitePlan(String name, PlanPeriod period, String supply, LocalDate departDate, LocalDate arriveDate, Member requester) {
+    public InvitePlan(String name, PlanPeriod period,InvitePlanStatus status, String supply, LocalDate departDate, LocalDate arriveDate, Member requester) {
         this.name = name;
         this.period = period;
+        this.invitePlanStatus = status;
         this.supply = supply;
         this.departDate = departDate;
         this.arriveDate = arriveDate;
@@ -81,6 +89,7 @@ public class InvitePlan extends BaseEntity {
         return InvitePlan.builder()
                 .name(request.getName())
                 .period(request.getPlanPeriod())
+                .status(InvitePlanStatus.WAITING)
                 .supply(request.getSupply())
                 .departDate(request.getDepartDate())
                 .arriveDate(request.getArriveDate())

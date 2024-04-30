@@ -55,7 +55,7 @@ public class ExploreService {
         setRecommendLocationList(cityName, cityDto);       // 즐겨찾기가 많은 4곳으로 변경하기
 
         // route 추가
-
+        //여기 하기전에 먼저 invitePlan 을 Plan 으로 바꾸는 부분부터 수정하기
 
         return cityDto;
     }

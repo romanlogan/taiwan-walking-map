@@ -17,6 +17,9 @@ import com.dbproject.api.plan.Plan;
 import com.dbproject.api.plan.PlanMember;
 import com.dbproject.api.route.Route;
 import com.dbproject.api.route.RouteDto;
+import com.dbproject.api.route.RouteRepository;
+import com.dbproject.api.routeLocation.RouteLocation;
+import com.dbproject.api.routeLocation.repository.RouteLocationRepository;
 import com.dbproject.constant.InvitePlanStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,8 @@ public class InvitePlanServiceImpl implements InvitePlanService {
     private final LocationRepository locationRepository;
     private final InvitePlanMemberRepository invitePlanMemberRepository;
     private final FavoriteRepository favoriteRepository;
+    private final RouteLocationRepository routeLocationRepository;
+    private final RouteRepository routeRepository;
 
     public Long invitePlan(InvitePlanRequest request,String email) {
 
@@ -64,25 +69,39 @@ public class InvitePlanServiceImpl implements InvitePlanService {
         for (InvitePlanRouteRequest routeRequest : request.getInvitePlanRouteRequestList()) {
 
             Route route = Route.createRoute(routeRequest);
+//            route 를 저장해서 id 가 있는 route 를 넘기기
+            Route savedRoute = routeRepository.save(route);
 
-            route.setLocationList(getLocationList(routeRequest));
-            routeList.add(route);
+
+            savedRoute.setRouteLocationList(getRouteLocationList(routeRequest,savedRoute));
+            routeList.add(savedRoute);
         }
 
         savedInvitePlan.setRouteList(routeList);
     }
 
-    private List<Location> getLocationList(InvitePlanRouteRequest routeRequest) {
+    private List<RouteLocation> getRouteLocationList(InvitePlanRouteRequest routeRequest, Route savedRoute) {
 
-        List<Location> locationList = new ArrayList<>();
+        List<RouteLocation> routeLocationList = new ArrayList<>();
         for (InvitePlanLocationRequest locationRequest : routeRequest.getLocationRequestList()) {
 
-            Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
-            FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
-            Location location = favoriteLocation.getLocation();
-            locationList.add(location);
+            Location location = getLocationFromRequest(locationRequest);
+
+            RouteLocation routeLocation = RouteLocation.createRouteLocation(savedRoute, location);
+            RouteLocation savedRouteLocation = routeLocationRepository.save(routeLocation);
+
+
+            routeLocationList.add(savedRouteLocation);
         }
-        return locationList;
+
+        return routeLocationList;
+    }
+
+    private Location getLocationFromRequest(InvitePlanLocationRequest locationRequest) {
+        Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
+        FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
+        Location location = favoriteLocation.getLocation();
+        return location;
     }
 
 
@@ -145,11 +164,11 @@ public class InvitePlanServiceImpl implements InvitePlanService {
 
     private static List<LocationDto> getLocationDtoList(Route route) {
         List<LocationDto> locationDtoList = new ArrayList<>();
-        List<Location> locationList = route.getLocationList();
+        List<RouteLocation> routeLocationList = route.getRouteLocationList();
 
-        for (Location location : locationList) {
+        for (RouteLocation routeLocation : routeLocationList) {
 
-            LocationDto locationDto = LocationDto.of(location);
+            LocationDto locationDto = LocationDto.of(routeLocation.getLocation());
             locationDtoList.add(locationDto);
         }
         return locationDtoList;
@@ -173,10 +192,20 @@ public class InvitePlanServiceImpl implements InvitePlanService {
         InvitePlanMember invitePlanMember = invitePlanMemberRepository.getByIdAndEmail(Long.valueOf(request.getInvitedPlanId()), email);
         invitePlanMember.setInvitePlanStatus(InvitePlanStatus.ACCEPTED);
 
-//        2. Plan 에 추가
+//        2-1) 친구 1명이라도 먼저 accept 를 하면 invitePlan 을 Plan 으로 바꾸기
         InvitePlan invitePlan = invitePlanMember.getInvitePlan();
+
+//       Plan 이 생성되어 있지 않은 경우 (가장 먼저 요청을 수락한 경우 )
+        if(){
+
+        }
+
         Plan plan = Plan.createPlan(invitePlan);
         plan.setPlanMemberList(getPlanMemberList(invitePlan, plan));
+
+
+//       이미 Plan 이 생성되어 있는 경우
+
 
 
 //        새로운 Plan id 를 return

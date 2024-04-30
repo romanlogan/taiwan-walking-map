@@ -21,18 +21,15 @@ import java.util.List;
 @Setter
 public class Plan extends BaseEntity {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="plan_id")
     private Long id;
-
     private String name;
-
+    private String region;
     @Enumerated(EnumType.STRING)
     @Column(name = "period")
     private PlanPeriod period;
-
     //    아직 누가 할지 정해지지 않은 준비물
     private String supply;      //나중에 분배 가능하게 변경하기
 
@@ -59,8 +56,9 @@ public class Plan extends BaseEntity {
     }
 
     @Builder
-    public Plan(String name, PlanPeriod period, String supply, Member requester, LocalDate departDate, LocalDate arriveDate, List<Route> route) {
+    public Plan(String name,String region, PlanPeriod period, String supply, Member requester, LocalDate departDate, LocalDate arriveDate, List<Route> route) {
         this.name = name;
+        this.region = region;
         this.period = period;
         this.supply = supply;
         this.requester = requester;
@@ -73,6 +71,7 @@ public class Plan extends BaseEntity {
 
         return Plan.builder()
                 .name(invitePlan.getName())
+                .region(invitePlan.getRegion())
                 .period(invitePlan.getPeriod())
                 .supply(invitePlan.getSupply())
                 .requester(invitePlan.getRequester())

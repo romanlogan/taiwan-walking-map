@@ -15,6 +15,8 @@ import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.dto.RegisterFormDto;
 import com.dbproject.api.route.Route;
+import com.dbproject.api.routeLocation.RouteLocation;
+import com.dbproject.api.routeLocation.repository.RouteLocationRepository;
 import com.dbproject.constant.PlanPeriod;
 import com.dbproject.constant.RouteStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,6 +58,9 @@ class InvitePlanMemberRepositoryTest {
 
     @Autowired
     private InvitePlanMemberRepository invitePlanMemberRepository;
+
+    @Autowired
+    private RouteLocationRepository routeLocationRepository;
 
 
 
@@ -143,8 +148,10 @@ class InvitePlanMemberRepositoryTest {
     }
 
     private List<InvitePlanLocationRequest> getInvitePlanLocationRequestList() {
+
         List<InvitePlanLocationRequest> invitePlanLocationRequestList = new ArrayList<>();
         List<FavoriteLocation> favoriteLocationList = favoriteRepository.findByMemberEmail("asdf@asdf.com");
+
         for (FavoriteLocation favoriteLocation : favoriteLocationList) {
 
             InvitePlanLocationRequest invitePlanLocationRequest = new InvitePlanLocationRequest(Math.toIntExact(favoriteLocation.getId()));
@@ -184,25 +191,41 @@ class InvitePlanMemberRepositoryTest {
 
         List<Route> routeList = new ArrayList<>();
 
+//        2일 이상의 여행에서는 루트도 2개 이상
         for (InvitePlanRouteRequest routeRequest : request.getInvitePlanRouteRequestList()) {
-            Route route = new Route(1, RouteStatus.INVITEPLAN);
-            route.setLocationList(getLocationList(routeRequest));
 
+            Route route = Route.createRoute(routeRequest);
+
+            route.setRouteLocationList(getRouteLocationList(routeRequest,route));
+            routeList.add(route);
         }
+
         savedInvitePlan.setRouteList(routeList);
     }
 
-    private List<Location> getLocationList(InvitePlanRouteRequest routeRequest) {
-        List<Location> locationList = new ArrayList<>();
+    private List<RouteLocation> getRouteLocationList(InvitePlanRouteRequest routeRequest, Route route) {
+
+        List<RouteLocation> routeLocationList = new ArrayList<>();
         for (InvitePlanLocationRequest locationRequest : routeRequest.getLocationRequestList()) {
 
-            //            fetch 조인으로 바꿀 필요
-            Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
-            FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
-            Location location = favoriteLocation.getLocation();
-            locationList.add(location);
+            Location location = getLocationFromRequest(locationRequest);
+
+            RouteLocation routeLocation = RouteLocation.createRouteLocation(route, location);
+            RouteLocation savedRouteLocation = routeLocationRepository.save(routeLocation);
+
+
+            routeLocationList.add(savedRouteLocation);
         }
-        return locationList;
+
+        return routeLocationList;
+    }
+
+
+    private Location getLocationFromRequest(InvitePlanLocationRequest locationRequest) {
+        Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
+        FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
+        Location location = favoriteLocation.getLocation();
+        return location;
     }
 
     public Long saveInvitePlan(String name, PlanPeriod planPeriod, String supply, int year, int month, int day, int tripDay, List<String> friendEmailList,Member requester) {
