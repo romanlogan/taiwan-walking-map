@@ -1,10 +1,7 @@
 package com.dbproject.api.invitePlan.service;
 
 
-import com.dbproject.api.invitePlan.dto.AcceptInvitedPlanRequest;
-import com.dbproject.api.invitePlan.dto.InvitePlanRequest;
-import com.dbproject.api.invitePlan.dto.InvitedPlanListResponse;
-import com.dbproject.api.invitePlan.dto.RejectInvitePlanRequest;
+import com.dbproject.api.invitePlan.dto.*;
 
 public interface InvitePlanService {
 
@@ -15,4 +12,11 @@ public interface InvitePlanService {
     Long accept(AcceptInvitedPlanRequest request,String email);
 
     Long reject(RejectInvitePlanRequest request, String email);
+
+    SentInvitePlanListResponse getSentInviteList(String email);
+
+    GetInvitePlanResponse getInvitePlanDtl(Integer id);
+
+
+
 }

@@ -1,8 +1,9 @@
-package com.dbproject.api.plan;
+package com.dbproject.api.planMember;
 
 import com.dbproject.api.baseEntity.BaseEntity;
 import com.dbproject.api.invitePlan.invitePlanMember.InvitePlanMember;
 import com.dbproject.api.member.Member;
+import com.dbproject.api.plan.Plan;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

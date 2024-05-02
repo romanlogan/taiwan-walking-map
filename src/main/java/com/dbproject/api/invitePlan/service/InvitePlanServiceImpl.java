@@ -14,13 +14,16 @@ import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.plan.Plan;
-import com.dbproject.api.plan.PlanMember;
+import com.dbproject.api.plan.repository.PlanRepository;
+import com.dbproject.api.planMember.PlanMember;
+import com.dbproject.api.planMember.repository.PlanMemberRepository;
 import com.dbproject.api.route.Route;
 import com.dbproject.api.route.RouteDto;
 import com.dbproject.api.route.RouteRepository;
 import com.dbproject.api.routeLocation.RouteLocation;
 import com.dbproject.api.routeLocation.repository.RouteLocationRepository;
 import com.dbproject.constant.InvitePlanStatus;
+import com.dbproject.exception.InvitePlanNotExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +45,8 @@ public class InvitePlanServiceImpl implements InvitePlanService {
     private final FavoriteRepository favoriteRepository;
     private final RouteLocationRepository routeLocationRepository;
     private final RouteRepository routeRepository;
+    private final PlanMemberRepository planMemberRepository;
+    private final PlanRepository planRepository;
 
     public Long invitePlan(InvitePlanRequest request,String email) {
 
@@ -190,27 +195,32 @@ public class InvitePlanServiceImpl implements InvitePlanService {
 
 //        1. Accept 상태로 바꾸기 (언제 삭제를 할까 ? 바로 or 일정 기간 후)
         InvitePlanMember invitePlanMember = invitePlanMemberRepository.getByIdAndEmail(Long.valueOf(request.getInvitedPlanId()), email);
-        invitePlanMember.setInvitePlanStatus(InvitePlanStatus.ACCEPTED);
+        invitePlanMember.setInvitePlanStatus(InvitePlanStatus.ACCEPTED);        //나중에 InvitePlan 정보를 볼때 status 를 보고 요청 상태의 진행 상황을 확인 가능
 
-//        2-1) 친구 1명이라도 먼저 accept 를 하면 invitePlan 을 Plan 으로 바꾸기
         InvitePlan invitePlan = invitePlanMember.getInvitePlan();
 
-//       Plan 이 생성되어 있지 않은 경우 (가장 먼저 요청을 수락한 경우 )
-        if(){
+        //     Plan 이 생성되어 있지 않은 경우 (가장 먼저 요청을 수락한 경우 )
+        if(invitePlan.getInvitePlanStatus().equals(InvitePlanStatus.WAITING)){
 
+//          친구 1명이라도 먼저 accept 를 하면 invitePlan 을 Plan 으로 바꾸기
+            invitePlan.setInvitePlanStatus(InvitePlanStatus.ACCEPTED);
+            Plan plan = Plan.createPlan(invitePlan);
+            PlanMember savedPlanMember = planMemberRepository.save(PlanMember.createPlanMember(invitePlanMember, plan));
+            plan.addPlanMember(savedPlanMember);
+            planRepository.save(plan);
+
+        } else if (invitePlan.getInvitePlanStatus().equals(InvitePlanStatus.ACCEPTED)) {
+//            이미 Plan 이 생성되어 있는 경우
+//            invitePlan 으로 먼저 Plan 을 찾아야한다 (방법 - plan 에 invitePlan 외래키를 넣는것 ? )
+            Plan plan = planRepository.findByInvitePlan(invitePlan);
+//            그 Plan 에다가 PlanMemberr 를 추가
+            PlanMember savedPlanMember = planMemberRepository.save(PlanMember.createPlanMember(invitePlanMember, plan));
+            plan.addPlanMember(savedPlanMember);
         }
-
-        Plan plan = Plan.createPlan(invitePlan);
-        plan.setPlanMemberList(getPlanMemberList(invitePlan, plan));
-
-
-//       이미 Plan 이 생성되어 있는 경우
-
-
-
 //        새로운 Plan id 를 return
         return invitePlanMember.getId();
     }
+
 
     private static List<PlanMember> getPlanMemberList(InvitePlan invitePlan, Plan plan) {
         List<InvitePlanMember> inviteFriendList = invitePlan.getInviteFriendList();
@@ -231,4 +241,43 @@ public class InvitePlanServiceImpl implements InvitePlanService {
 
         return invitePlanMember.getId();
     }
+
+    @Override
+    public SentInvitePlanListResponse getSentInviteList(String email) {
+
+        SentInvitePlanListResponse response = new SentInvitePlanListResponse();
+
+        Member requester = memberRepository.findByEmail(email);
+        List<InvitePlan> invitePlanList = invitePlanRepository.findByRequester(requester);
+
+        List<InvitePlanDto> invitePlanDtoList = new ArrayList<>();
+//        dto 로 변
+        for (InvitePlan invitePlan : invitePlanList) {
+
+            InvitePlanDto invitePlanDto = InvitePlanDto.of(invitePlan);
+            invitePlanDto.setInvitePlanMemberDtoList(getInvitePlanMemberDtoList(invitePlan));
+            invitePlanDto.setRouteDtoList(getRouteDtoList(invitePlan));
+
+            invitePlanDtoList.add(invitePlanDto);
+        }
+
+        response.setInvitePlanDtoList(invitePlanDtoList);
+
+        return response;
+    }
+
+    @Override
+    public GetInvitePlanResponse getInvitePlanDtl(Integer id) {
+
+        Optional<InvitePlan> optionalInvitePlan = invitePlanRepository.findById(Long.valueOf(id));
+        if (optionalInvitePlan.isEmpty()) {
+            throw new InvitePlanNotExistException("InvitePlan 이 존재하지 않습니다.");
+        }
+
+        InvitePlan invitePlan = optionalInvitePlan.get();
+        InvitePlanDto invitePlanDto = InvitePlanDto.of(invitePlan);
+
+        return GetInvitePlanResponse.createResponse(invitePlanDto);
+    }
+
 }

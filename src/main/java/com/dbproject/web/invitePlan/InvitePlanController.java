@@ -5,10 +5,7 @@ import com.dbproject.api.favorite.dto.FavoriteLocationDto;
 import com.dbproject.api.friend.dto.FriendListResponse;
 import com.dbproject.api.friend.service.FriendService;
 import com.dbproject.api.invitePlan.InvitePlan;
-import com.dbproject.api.invitePlan.dto.AcceptInvitedPlanRequest;
-import com.dbproject.api.invitePlan.dto.InvitePlanRequest;
-import com.dbproject.api.invitePlan.dto.InvitedPlanListResponse;
-import com.dbproject.api.invitePlan.dto.RejectInvitePlanRequest;
+import com.dbproject.api.invitePlan.dto.*;
 import com.dbproject.api.invitePlan.repository.InvitePlanRepository;
 import com.dbproject.api.invitePlan.service.InvitePlanService;
 import com.dbproject.api.location.Location;
@@ -24,10 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.kerberos.KerberosTicket;
 import javax.validation.Valid;
@@ -43,9 +37,6 @@ public class InvitePlanController {
 
     private final InvitePlanService invitePlanService;
     private final FriendService friendService;
-
-
-
 
     private final RouteLocationRepository routeLocationRepository;
 
@@ -151,9 +142,27 @@ public class InvitePlanController {
 
             }
         }
+    }
 
+    @GetMapping("/sentInviteList")
+    public String getSentInviteList(Principal principal, Model model) {
 
+        String email = principal.getName();
+        SentInvitePlanListResponse response = invitePlanService.getSentInviteList(email);
 
+        model.addAttribute("response", response);
+
+        return "plan/sentInviteList";
+    }
+
+    @GetMapping("/invitePlan/{id}")
+    public String getInvitePlanDtl(@PathVariable Integer id, Model model) {
+
+        GetInvitePlanResponse response = invitePlanService.getInvitePlanDtl(id);
+
+        model.addAttribute("response", response);
+
+        return "plan/invitePlanDtl";
     }
 }
 

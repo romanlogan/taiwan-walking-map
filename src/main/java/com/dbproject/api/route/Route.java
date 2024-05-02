@@ -3,10 +3,7 @@ package com.dbproject.api.route;
 
 import com.dbproject.api.invitePlan.InvitePlan;
 import com.dbproject.api.invitePlan.dto.InvitePlanRouteRequest;
-import com.dbproject.api.location.Location;
-import com.dbproject.api.member.Member;
 import com.dbproject.api.plan.Plan;
-import com.dbproject.api.plan.PlanMember;
 import com.dbproject.api.routeLocation.RouteLocation;
 import com.dbproject.constant.RouteStatus;
 import lombok.Builder;

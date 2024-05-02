@@ -2,9 +2,8 @@ package com.dbproject.api.plan;
 
 import com.dbproject.api.baseEntity.BaseEntity;
 import com.dbproject.api.invitePlan.InvitePlan;
-import com.dbproject.api.invitePlan.invitePlanMember.InvitePlanMember;
-import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
+import com.dbproject.api.planMember.PlanMember;
 import com.dbproject.api.route.Route;
 import com.dbproject.constant.PlanPeriod;
 import lombok.Builder;
@@ -13,6 +12,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -45,11 +45,16 @@ public class Plan extends BaseEntity {
 
     @OneToMany(mappedBy = "plan")
 //    @JoinColumn(name = )
-    private List<PlanMember> planMemberList;        //다대다 양방향, 외래키는 many 쪽에 있으므로 여기는 mappedby
+    private List<PlanMember> planMemberList = new ArrayList<>();        //다대다 양방향, 외래키는 many 쪽에 있으므로 여기는 mappedby
 
 //    1일차 , 2일차 등등이 있으므로 List
     @OneToMany(mappedBy = "plan")
     private List<Route> route;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invite_plan_id")
+    private InvitePlan invitePlan;
+
 
 
     public Plan() {
@@ -79,6 +84,11 @@ public class Plan extends BaseEntity {
                 .arriveDate(invitePlan.getArriveDate())
                 .route(invitePlan.getRouteList())
                 .build();
+    }
+
+    public void addPlanMember(PlanMember planMember) {
+
+        this.planMemberList.add(planMember);
 
     }
 }
