@@ -270,13 +270,29 @@ public class InvitePlanServiceImpl implements InvitePlanService {
     public GetInvitePlanResponse getInvitePlanDtl(Integer id) {
 
         Optional<InvitePlan> optionalInvitePlan = invitePlanRepository.findById(Long.valueOf(id));
+
         if (optionalInvitePlan.isEmpty()) {
             throw new InvitePlanNotExistException("InvitePlan 이 존재하지 않습니다.");
         }
 
         InvitePlan invitePlan = optionalInvitePlan.get();
+
         InvitePlanDto invitePlanDto = InvitePlanDto.of(invitePlan);
 
+        List<InvitePlanMemberDto> invitePlanMemberDtoList = new ArrayList<>();
+        List<InvitePlanMember> invitePlanMemberList = invitePlan.getInviteFriendList();
+        for (InvitePlanMember invitePlanMember : invitePlanMemberList) {
+
+            InvitePlanMemberDto invitePlanMemberDto = InvitePlanMemberDto.from(invitePlanMember);
+            invitePlanMemberDtoList.add(invitePlanMemberDto);
+        }
+
+        invitePlanDto.setInvitePlanMemberDtoList(invitePlanMemberDtoList);
+
+        List<Route> routeList = invitePlan.getRouteList();
+
+
+//        invitePlanDto.setRouteDtoList();
         return GetInvitePlanResponse.createResponse(invitePlanDto);
     }
 

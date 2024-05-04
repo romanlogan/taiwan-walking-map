@@ -2,6 +2,8 @@ package com.dbproject.api.invitePlan.dto;
 
 import com.dbproject.api.invitePlan.invitePlanMember.InvitePlanMember;
 import com.dbproject.api.member.Member;
+import com.dbproject.constant.InvitePlanStatus;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +11,6 @@ import org.modelmapper.ModelMapper;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class InvitePlanMemberDto {
 
     private String email;
@@ -17,18 +18,41 @@ public class InvitePlanMemberDto {
     private String nickName;
     private Integer gender;
 
+    private InvitePlanStatus invitePlanStatus;
+
+    private String supply;      //누가 가져가야할지 정해진 준비
+
+
     private static ModelMapper mapper = new ModelMapper();
 
     public static InvitePlanMemberDto of(Member member) {
 
         return mapper.map(member, InvitePlanMemberDto.class);
-
     }
 
-    public InvitePlanMemberDto(String email, String name, String nickName, Integer gender) {
+    public InvitePlanMemberDto() {
+    }
+
+    @Builder
+    public InvitePlanMemberDto(String email, String name, String nickName, Integer gender, InvitePlanStatus invitePlanStatus, String supply) {
         this.email = email;
         this.name = name;
         this.nickName = nickName;
         this.gender = gender;
+        this.invitePlanStatus = invitePlanStatus;
+        this.supply = supply;
+    }
+
+    public static InvitePlanMemberDto from(InvitePlanMember invitePlanMember) {
+
+        return InvitePlanMemberDto.builder()
+                .email(invitePlanMember.getMember().getEmail())
+                .name(invitePlanMember.getMember().getName())
+                .nickName(invitePlanMember.getMember().getNickName())
+                .gender(invitePlanMember.getMember().getGender())
+                .invitePlanStatus(invitePlanMember.getInvitePlanStatus())
+                .supply(invitePlanMember.getSupply())
+                .build();
+
     }
 }

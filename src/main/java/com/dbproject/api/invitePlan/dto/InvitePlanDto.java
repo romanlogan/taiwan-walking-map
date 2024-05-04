@@ -41,6 +41,7 @@ public class InvitePlanDto {
     public InvitePlanDto() {
     }
 
+
     @Builder
     public InvitePlanDto(Long id,String name, PlanPeriod period, String supply, LocalDate departDate, LocalDate arriveDate,String requesterEmail, String requesterName) {
         this.id = id;

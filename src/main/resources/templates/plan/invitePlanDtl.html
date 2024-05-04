@@ -27,8 +27,32 @@
 <div layout:fragment="content">
 
     <div id="container">
+
+<!--        invitePlan 내용-->
         <div>
-            <h1>[[${response.getInvitePlanDto.getName()}]]</h1>
+            <h1>[[${response.getInvitePlanDto().getName()}]]</h1>
+        </div>
+
+<!--        친구 내용-->
+        <div>
+            <div th:each="member, status: ${response.getInvitePlanDto().getInvitePlanMemberDtoList()}">
+                <div th:text="${member.getName()}"></div>
+                <div th:text="${member.getEmail()}"></div>
+                <h6>[[${member.getName()}]]</h6>
+                <h6>[[${member.getEmail()}]]</h6>
+
+            </div>
+        </div>
+
+<!--        route 내용-->
+        <div>
+            <div th:each="route, status: ${response.getInvitePlanDto().getRouteDtoList()}">
+                <div th:text="${route.getDay()}"></div>
+                <div th:each="location, status: ${route.getLocationList()}">
+                    <div th:text="${location.getName()}"></div>
+                    <div th:text="${location.getAddress()}"></div>
+                </div>
+            </div>
         </div>
     </div>
 
