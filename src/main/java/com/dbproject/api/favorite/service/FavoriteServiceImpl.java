@@ -35,7 +35,7 @@ public class FavoriteServiceImpl implements FavoriteService{
 
         checkDuplicateFavoriteLocation(addFavoriteLocationRequest.getLocationId(), email);
 
-        FavoriteLocation favoriteLocation = FavoriteLocation.createFavoriteLocation(member, location, addFavoriteLocationRequest.getMemo());
+        FavoriteLocation favoriteLocation = FavoriteLocation.of(member, location, addFavoriteLocationRequest.getMemo());
         favoriteRepository.save(favoriteLocation);
         location.increaseFavoriteCount();
 

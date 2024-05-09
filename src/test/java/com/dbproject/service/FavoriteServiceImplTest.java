@@ -105,7 +105,7 @@ class FavoriteServiceImplTest {
         String memo = "메모 1 입니다.";
         Member member = memberRepository.findByEmail(email);
         Location location = locationRepository.findByLocationId(locationId);
-        FavoriteLocation favoriteLocation = FavoriteLocation.createFavoriteLocation(member, location, memo);
+        FavoriteLocation favoriteLocation = FavoriteLocation.of(member, location, memo);
         favoriteRepository.save(favoriteLocation);
         return favoriteLocation.getId();
     }

@@ -21,7 +21,6 @@ import java.util.List;
 @Table(name = "member")
 @Getter
 @Setter
-@NoArgsConstructor
 public class Member extends BaseEntity {
 
 //    @Id
@@ -92,6 +91,9 @@ public class Member extends BaseEntity {
 //    @OneToMany(mappedBy = "respondent")
 //    private List<FriendRequest> beRequestedFriend;
 
+
+    public Member() {
+    }
 
     @Builder
     public Member(String email, String name, String password, String address, String nickName, String phoneNumber, LocalDate dateOfBirth, Integer gender, Boolean acceptReceiveAdvertising, Role role) {

@@ -147,7 +147,7 @@ class InviteHangOutServiceTest {
 
 
         // 1. 유니가 장소를 즐겨찾기에 추가
-        FavoriteLocation favoriteLocation = FavoriteLocation.createFavoriteLocation(friend, location, memo);
+        FavoriteLocation favoriteLocation = FavoriteLocation.of(friend, location, memo);
         FavoriteLocation savedFavoriteLocation = favoriteRepository.save(favoriteLocation);
 
         // 2. 즐겨찾기에 추가된 장소를 나에게 초대
@@ -185,7 +185,7 @@ class InviteHangOutServiceTest {
 
 
         // 1. 유니가 장소를 즐겨찾기에 추가
-        FavoriteLocation favoriteLocation = FavoriteLocation.createFavoriteLocation(friend, location, memo);
+        FavoriteLocation favoriteLocation = FavoriteLocation.of(friend, location, memo);
         FavoriteLocation savedFavoriteLocation = favoriteRepository.save(favoriteLocation);
 
         // 2. 즐겨찾기에 추가된 장소를 나에게 초대

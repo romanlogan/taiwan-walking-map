@@ -40,7 +40,7 @@ public class FavoriteLocation extends BaseEntity {
         this.memo = memo;
     }
 
-    public static FavoriteLocation createFavoriteLocation(Member member, Location location, String memo) {
+    public static FavoriteLocation of(Member member, Location location, String memo) {
 
         return FavoriteLocation.builder()
                 .location(location)

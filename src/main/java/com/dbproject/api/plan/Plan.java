@@ -82,7 +82,7 @@ public class Plan extends BaseEntity {
                 .requester(invitePlan.getRequester())
                 .departDate(invitePlan.getDepartDate())
                 .arriveDate(invitePlan.getArriveDate())
-                .route(invitePlan.getRouteList())
+                .route(invitePlan.getRoutes())
                 .build();
     }
 

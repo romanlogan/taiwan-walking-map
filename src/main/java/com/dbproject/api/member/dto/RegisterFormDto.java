@@ -1,6 +1,7 @@
 package com.dbproject.api.member.dto;
 
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -62,4 +63,31 @@ public class RegisterFormDto {
                 ", acceptReceiveAdvertising=" + acceptReceiveAdvertising +
                 '}';
     }
+
+    public RegisterFormDto() {
+    }
+
+    @Builder
+    public RegisterFormDto(String email, String name, String password, String address, String phoneNumber, LocalDate dateOfBirth, Integer gender, Boolean acceptReceiveAdvertising) {
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.acceptReceiveAdvertising = acceptReceiveAdvertising;
+    }
+
+    public static RegisterFormDto createForTest(String name, String address, String email, String password) {
+
+        return RegisterFormDto.builder()
+                .name(name)
+                .address(address)
+                .email(email)
+                .password(password)
+                .build();
+
+    }
+
 }

@@ -18,7 +18,6 @@ import com.dbproject.api.route.Route;
 import com.dbproject.api.routeLocation.RouteLocation;
 import com.dbproject.api.routeLocation.repository.RouteLocationRepository;
 import com.dbproject.constant.PlanPeriod;
-import com.dbproject.constant.RouteStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +33,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.in;
 
 @SpringBootTest
 @Transactional
@@ -133,7 +131,7 @@ class InvitePlanMemberRepositoryTest {
             InvitePlanMemberRequest invitePlanMemberRequest = new InvitePlanMemberRequest(friendEmail);
             invitePlanMemberRequestList.add(invitePlanMemberRequest);
         }
-        request.setInvitePlanMemberRequestList(invitePlanMemberRequestList);
+        request.setMemberList(invitePlanMemberRequestList);
     }
 
     public void setInvitePlanRouteRequestList(InvitePlanRequest request) {
@@ -144,7 +142,7 @@ class InvitePlanMemberRepositoryTest {
         invitePlanRouteRequest.setLocationRequestList(getInvitePlanLocationRequestList());
 
         invitePlanRouteRequestList.add(invitePlanRouteRequest);
-        request.setInvitePlanRouteRequestList(invitePlanRouteRequestList);
+        request.setRouteList(invitePlanRouteRequestList);
     }
 
     private List<InvitePlanLocationRequest> getInvitePlanLocationRequestList() {
@@ -171,19 +169,19 @@ class InvitePlanMemberRepositoryTest {
 
     public void setInvitePlanMemberList(InvitePlan savedInvitePlan, InvitePlanRequest request){
         List<InvitePlanMember> invitePlanMemberList = new ArrayList<>();
-        for (InvitePlanMemberRequest memberRequest: request.getInvitePlanMemberRequestList()) {
+        for (InvitePlanMemberRequest memberRequest: request.getMemberList()) {
             //0.Member 찾기
             String email = memberRequest.getFriendEmail();
             Member member = memberRepository.findByEmail(email);
 
             //1. InvitePlanMember 생성 및 저장
-            InvitePlanMember invitePlanMember = InvitePlanMember.createInvitePlanMemberWithoutSupply(member, savedInvitePlan);
+            InvitePlanMember invitePlanMember = InvitePlanMember.createWithoutSupply(member, savedInvitePlan);
             invitePlanMemberRepository.save(invitePlanMember);
 
             //2. InvitePlanMemberList 에 InvitePlanMember  추가
             invitePlanMemberList.add(invitePlanMember);
         }
-        savedInvitePlan.setInviteFriendList(invitePlanMemberList);
+        savedInvitePlan.setMembers(invitePlanMemberList);
     }
 
 
@@ -192,7 +190,7 @@ class InvitePlanMemberRepositoryTest {
         List<Route> routeList = new ArrayList<>();
 
 //        2일 이상의 여행에서는 루트도 2개 이상
-        for (InvitePlanRouteRequest routeRequest : request.getInvitePlanRouteRequestList()) {
+        for (InvitePlanRouteRequest routeRequest : request.getRouteList()) {
 
             Route route = Route.createRoute(routeRequest);
 
@@ -200,7 +198,7 @@ class InvitePlanMemberRepositoryTest {
             routeList.add(route);
         }
 
-        savedInvitePlan.setRouteList(routeList);
+        savedInvitePlan.setRoutes(routeList);
     }
 
     private List<RouteLocation> getRouteLocationList(InvitePlanRouteRequest routeRequest, Route route) {
@@ -288,17 +286,17 @@ class InvitePlanMemberRepositoryTest {
         assertThat(invitedPlanMemberList.get(0).getInvitePlan().getPeriod()).isEqualTo(PlanPeriod.LONGTRIP);
         assertThat(invitedPlanMemberList.get(0).getInvitePlan().getDepartDate()).isEqualTo(LocalDate.of(2024,3,20));
         assertThat(invitedPlanMemberList.get(0).getInvitePlan().getArriveDate()).isEqualTo(LocalDate.of(2024,3,22));
-        assertThat(invitedPlanMemberList.get(0).getInvitePlan().getInviteFriendList().size()).isEqualTo(2);
+        assertThat(invitedPlanMemberList.get(0).getInvitePlan().getMembers().size()).isEqualTo(2);
         assertThat(invitedPlanMemberList.get(0).getInvitePlan().getRequester().getEmail()).isEqualTo("asdf@asdf.com");       //plan 작성자를 created by 를 사용했더니 test 코드에서 작성자 검증이 안됨
-        assertThat(invitedPlanMemberList.get(0).getInvitePlan().getInviteFriendList().get(0).getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
-        assertThat(invitedPlanMemberList.get(0).getInvitePlan().getInviteFriendList().get(1).getMember().getEmail()).isEqualTo("yunni@yunni.com");
+        assertThat(invitedPlanMemberList.get(0).getInvitePlan().getMembers().get(0).getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
+        assertThat(invitedPlanMemberList.get(0).getInvitePlan().getMembers().get(1).getMember().getEmail()).isEqualTo("yunni@yunni.com");
         assertThat(invitedPlanMemberList.get(1).getInvitePlan().getName()).isEqualTo("lee's 7 days japan trip");
         assertThat(invitedPlanMemberList.get(1).getInvitePlan().getPeriod()).isEqualTo(PlanPeriod.LONGTRIP);
         assertThat(invitedPlanMemberList.get(1).getInvitePlan().getDepartDate()).isEqualTo(LocalDate.of(2024,6,20));
         assertThat(invitedPlanMemberList.get(1).getInvitePlan().getArriveDate()).isEqualTo(LocalDate.of(2024,6,26));
-        assertThat(invitedPlanMemberList.get(1).getInvitePlan().getInviteFriendList().size()).isEqualTo(2);
-        assertThat(invitedPlanMemberList.get(1).getInvitePlan().getInviteFriendList().get(0).getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
-        assertThat(invitedPlanMemberList.get(1).getInvitePlan().getInviteFriendList().get(1).getMember().getEmail()).isEqualTo("yunni@yunni.com");
+        assertThat(invitedPlanMemberList.get(1).getInvitePlan().getMembers().size()).isEqualTo(2);
+        assertThat(invitedPlanMemberList.get(1).getInvitePlan().getMembers().get(0).getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
+        assertThat(invitedPlanMemberList.get(1).getInvitePlan().getMembers().get(1).getMember().getEmail()).isEqualTo("yunni@yunni.com");
     }
 
     @DisplayName("planId 와 email 로 그 회원의 invitePlanMember 를 가져온다")
@@ -339,7 +337,7 @@ class InvitePlanMemberRepositoryTest {
         assertThat(invitePlanMember.getMember().getEmail()).isEqualTo("yunni@yunni.com");
         assertThat(invitePlanMember.getInvitePlan().getName()).isEqualTo("lee's 7 days japan trip");
         assertThat(invitePlanMember.getInvitePlan().getDepartDate()).isEqualTo(LocalDate.of(2024,6,20));
-        assertThat(invitePlanMember.getInvitePlan().getInviteFriendList().size()).isEqualTo(2);
+        assertThat(invitePlanMember.getInvitePlan().getMembers().size()).isEqualTo(2);
 
      }
 }

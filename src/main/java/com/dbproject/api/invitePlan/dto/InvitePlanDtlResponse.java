@@ -6,21 +6,21 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class GetInvitePlanResponse {
+public class InvitePlanDtlResponse {
 
     private InvitePlanDto invitePlanDto;
 
-    public GetInvitePlanResponse() {
+    public InvitePlanDtlResponse() {
     }
 
     @Builder
-    public GetInvitePlanResponse(InvitePlanDto invitePlanDto) {
+    public InvitePlanDtlResponse(InvitePlanDto invitePlanDto) {
         this.invitePlanDto = invitePlanDto;
     }
 
-    public static GetInvitePlanResponse createResponse(InvitePlanDto invitePlanDto) {
+    public static InvitePlanDtlResponse createResponse(InvitePlanDto invitePlanDto) {
 
-        return GetInvitePlanResponse.builder()
+        return InvitePlanDtlResponse.builder()
                 .invitePlanDto(invitePlanDto)
                 .build();
     }

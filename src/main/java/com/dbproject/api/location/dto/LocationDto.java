@@ -33,7 +33,7 @@ public class LocationDto {
 
     private static ModelMapper mapper = new ModelMapper();
 
-    public static LocationDto of(Location location) {
+    public static LocationDto from(Location location) {
 
         return mapper.map(location, LocationDto.class);
     }

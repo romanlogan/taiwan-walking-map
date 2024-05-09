@@ -58,7 +58,7 @@ public class InvitePlanMember extends BaseEntity {
                 .build();
     }
 
-    public static InvitePlanMember createInvitePlanMemberWithoutSupply(Member member, InvitePlan invitePlan) {
+    public static InvitePlanMember createWithoutSupply(Member member, InvitePlan invitePlan) {
 
         return InvitePlanMember.builder()
                 .invitePlanStatus(InvitePlanStatus.WAITING)

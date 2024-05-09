@@ -15,7 +15,7 @@ public interface InvitePlanService {
 
     SentInvitePlanListResponse getSentInviteList(String email);
 
-    GetInvitePlanResponse getInvitePlanDtl(Integer id);
+    InvitePlanDtlResponse getInvitePlanDtl(Integer id);
 
 
 

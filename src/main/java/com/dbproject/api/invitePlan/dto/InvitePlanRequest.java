@@ -1,12 +1,12 @@
 package com.dbproject.api.invitePlan.dto;
 
+import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.invitePlan.invitePlanMember.dto.InvitePlanMemberRequest;
 import com.dbproject.constant.PlanPeriod;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -38,19 +38,33 @@ public class InvitePlanRequest {
 
 //    private String requesterEmail;
 
-    private List<InvitePlanMemberRequest> invitePlanMemberRequestList = new ArrayList<>();
+    private List<InvitePlanMemberRequest> memberList = new ArrayList<>();
 
-    private List<InvitePlanRouteRequest> invitePlanRouteRequestList = new ArrayList<>();
+    private List<InvitePlanRouteRequest> routeList = new ArrayList<>();
 
     public InvitePlanRequest() {
     }
 
+    @Builder
     public InvitePlanRequest(String name, PlanPeriod planPeriod, String supply, LocalDate departDate, LocalDate arriveDate) {
         this.name = name;
         this.planPeriod = planPeriod;
         this.supply = supply;
         this.departDate = departDate;
         this.arriveDate = arriveDate;
+    }
+
+    public static InvitePlanRequest of(String name, PlanPeriod planPeriod, String supply, LocalDate departDate, Integer tripDay) {
+
+        LocalDate arriveDate = LocalDate.of(departDate.getYear(), departDate.getMonthValue(), departDate.getDayOfMonth() + tripDay - 1);
+
+        return InvitePlanRequest.builder()
+                .name(name)
+                .planPeriod(planPeriod)
+                .supply(supply)
+                .departDate(departDate)
+                .arriveDate(arriveDate)
+                .build();
     }
 
     @Override
@@ -61,7 +75,60 @@ public class InvitePlanRequest {
                 ", supply='" + supply + '\'' +
                 ", departDate=" + departDate +
                 ", arriveDate=" + arriveDate +
-                ",\n invitePlanMemberRequestList=" + invitePlanMemberRequestList.get(0).getFriendEmail() +
+                ",\n invitePlanMemberRequestList=" + memberList.get(0).getFriendEmail() +
                 '}';
     }
+
+//    public static InvitePlanRequest createForTest(String name, PlanPeriod planPeriod, String supply, LocalDate departDate, Integer tripDay, List<String> friendEmailList) {
+//
+//        InvitePlanRequest invitePlanRequest = InvitePlanRequest.of(
+//                name,
+//                planPeriod,
+//                supply,
+//                departDate,
+//                3);
+//
+//
+//        invitePlanRequest.setMemberListForTest(invitePlanRequest,friendEmailList);
+//        invitePlanRequest.setRouteListForTest(invitePlanRequest);
+//    }
+//
+//    public void setMemberListForTest(InvitePlanRequest invitePlanRequest, List<String> friendEmailList){
+//
+//        List<InvitePlanMemberRequest> requestList = new ArrayList<>();
+//
+//        for (String friendEmail : friendEmailList) {
+//            InvitePlanMemberRequest request = new InvitePlanMemberRequest(friendEmail);
+//            requestList.add(request);
+//        }
+//        invitePlanRequest.setMemberList(requestList);
+//    }
+//
+//    public void setRouteListForTest(InvitePlanRequest invitePlanRequest) {
+//
+//        List<InvitePlanRouteRequest> routeRequestList = new ArrayList<>();
+//
+//        InvitePlanRouteRequest routeRequest = new InvitePlanRouteRequest(1);
+//        routeRequest.setLocationRequestList(getInvitePlanLocationRequestList());
+//
+//        routeRequestList.add(routeRequest);
+//        invitePlanRequest.setRouteList(routeRequestList);
+//    }
+//
+//    private List<InvitePlanLocationRequest> getInvitePlanLocationRequestList() {
+//
+//        List<InvitePlanLocationRequest> invitePlanLocationRequestList = new ArrayList<>();
+
+//    여기 리포지토리를 찾는 부분이 문제
+//        List<FavoriteLocation> favoriteLocationList = favoriteRepository.findByMemberEmail("asdf@asdf.com");
+//
+//        for (FavoriteLocation favoriteLocation : favoriteLocationList) {
+//
+//            InvitePlanLocationRequest invitePlanLocationRequest = new InvitePlanLocationRequest(Math.toIntExact(favoriteLocation.getId()));
+//            invitePlanLocationRequestList.add(invitePlanLocationRequest);
+//        }
+//
+//        return invitePlanLocationRequestList;
+//    }
+
 }

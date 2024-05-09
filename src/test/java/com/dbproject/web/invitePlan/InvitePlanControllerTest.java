@@ -57,7 +57,7 @@ class InvitePlanControllerTest {
         InvitePlanMemberRequest invitePlanMemberRequest2 = new InvitePlanMemberRequest("yunni@yunni.com","ipad");
         invitePlanMemberRequestList.add(invitePlanMemberRequest1);
         invitePlanMemberRequestList.add(invitePlanMemberRequest2);
-        request.setInvitePlanMemberRequestList(invitePlanMemberRequestList);
+        request.setMemberList(invitePlanMemberRequestList);
     }
 
     public void setInvitePlanRouteRequestList(InvitePlanRequest request) {
@@ -67,7 +67,7 @@ class InvitePlanControllerTest {
         invitePlanRouteRequest.setLocationRequestList(getInvitePlanLocationRequestList());
 
         invitePlanRouteRequestList.add(invitePlanRouteRequest);
-        request.setInvitePlanRouteRequestList(invitePlanRouteRequestList);
+        request.setRouteList(invitePlanRouteRequestList);
     }
 
     private static List<InvitePlanLocationRequest> getInvitePlanLocationRequestList() {
