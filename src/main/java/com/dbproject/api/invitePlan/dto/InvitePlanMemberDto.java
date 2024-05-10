@@ -5,7 +5,6 @@ import com.dbproject.api.member.Member;
 import com.dbproject.constant.InvitePlanStatus;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 
@@ -50,7 +49,7 @@ public class InvitePlanMemberDto {
                 .name(invitePlanMember.getMember().getName())
                 .nickName(invitePlanMember.getMember().getNickName())
                 .gender(invitePlanMember.getMember().getGender())
-                .invitePlanStatus(invitePlanMember.getInvitePlanStatus())
+                .invitePlanStatus(invitePlanMember.getStatus())
                 .supply(invitePlanMember.getSupply())
                 .build();
 

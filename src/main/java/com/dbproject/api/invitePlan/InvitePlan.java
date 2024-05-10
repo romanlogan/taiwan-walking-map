@@ -89,7 +89,7 @@ public class InvitePlan extends BaseEntity {
         this.requester = requester;
     }
 
-    public static InvitePlan createInvitePlan(InvitePlanRequest request,Member requester) {
+    public static InvitePlan createFrom(InvitePlanRequest request, Member requester) {
 
         return InvitePlan.builder()
                 .name(request.getName())
@@ -113,4 +113,15 @@ public class InvitePlan extends BaseEntity {
                 .build();
     }
 
+    public boolean isStatusWaiting(){
+        return this.getInvitePlanStatus().equals(InvitePlanStatus.WAITING);
+    }
+
+    public boolean isStatusAccepted(){
+        return this.getInvitePlanStatus().equals(InvitePlanStatus.ACCEPTED);
+    }
+
+    public boolean isStatusRejected(){
+        return this.getInvitePlanStatus().equals(InvitePlanStatus.REJECTED);
+    }
 }

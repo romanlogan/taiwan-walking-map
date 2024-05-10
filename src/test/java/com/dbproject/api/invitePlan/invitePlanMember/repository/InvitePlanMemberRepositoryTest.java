@@ -238,7 +238,7 @@ class InvitePlanMemberRepositoryTest {
         setInvitePlanMemberRequestList(request,friendEmailList);
         setInvitePlanRouteRequestList(request);
 
-        InvitePlan invitePlan = InvitePlan.createInvitePlan(request,requester);
+        InvitePlan invitePlan = InvitePlan.createFrom(request,requester);
         InvitePlan saveInvitePlan = invitePlanRepository.save(invitePlan);
         setInvitePlanMemberList(saveInvitePlan,request);
         setRouteList(saveInvitePlan,request);

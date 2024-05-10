@@ -27,7 +27,7 @@ public class InvitePlanMember extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private InvitePlanStatus invitePlanStatus;
+    private InvitePlanStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)      //plan 과 매핑
     @JoinColumn(name = "invite_plan_id")
@@ -41,9 +41,9 @@ public class InvitePlanMember extends BaseEntity {
     }
 
     @Builder
-    public InvitePlanMember(String supply, InvitePlanStatus invitePlanStatus, InvitePlan invitePlan, Member member) {
+    public InvitePlanMember(String supply, InvitePlanStatus status, InvitePlan invitePlan, Member member) {
         this.supply = supply;
-        this.invitePlanStatus = invitePlanStatus;
+        this.status = status;
         this.invitePlan = invitePlan;
         this.member = member;
     }
@@ -52,7 +52,7 @@ public class InvitePlanMember extends BaseEntity {
 
         return InvitePlanMember.builder()
                 .supply(supply)
-                .invitePlanStatus(InvitePlanStatus.WAITING)
+                .status(InvitePlanStatus.WAITING)
                 .invitePlan(invitePlan)
                 .member(member)
                 .build();
@@ -61,9 +61,21 @@ public class InvitePlanMember extends BaseEntity {
     public static InvitePlanMember createWithoutSupply(Member member, InvitePlan invitePlan) {
 
         return InvitePlanMember.builder()
-                .invitePlanStatus(InvitePlanStatus.WAITING)
+                .status(InvitePlanStatus.WAITING)
                 .invitePlan(invitePlan)
                 .member(member)
                 .build();
+    }
+
+    public boolean isStatusWaiting(){
+        return this.getStatus().equals(InvitePlanStatus.WAITING);
+    }
+
+    public boolean isStatusAccepted(){
+        return this.getStatus().equals(InvitePlanStatus.ACCEPTED);
+    }
+
+    public boolean isStatusRejected(){
+        return this.getStatus().equals(InvitePlanStatus.REJECTED);
     }
 }

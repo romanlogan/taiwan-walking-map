@@ -61,7 +61,7 @@ public class Plan extends BaseEntity {
     }
 
     @Builder
-    public Plan(String name,String region, PlanPeriod period, String supply, Member requester, LocalDate departDate, LocalDate arriveDate, List<Route> route) {
+    public Plan(String name,String region, PlanPeriod period, String supply, Member requester, LocalDate departDate, LocalDate arriveDate, List<Route> route,InvitePlan invitePlan) {
         this.name = name;
         this.region = region;
         this.period = period;
@@ -70,6 +70,7 @@ public class Plan extends BaseEntity {
         this.departDate = departDate;
         this.arriveDate = arriveDate;
         this.route = route;
+        this.invitePlan = invitePlan;
     }
 
     public static Plan createPlan(InvitePlan invitePlan) {
@@ -83,6 +84,7 @@ public class Plan extends BaseEntity {
                 .departDate(invitePlan.getDepartDate())
                 .arriveDate(invitePlan.getArriveDate())
                 .route(invitePlan.getRoutes())
+                .invitePlan(invitePlan)
                 .build();
     }
 

@@ -51,18 +51,88 @@ public class InvitePlanServiceImpl implements InvitePlanService {
 
 //
     @Override
-    public Long invitePlan(InvitePlanRequest request,String email) {
+    public Long invitePlan(InvitePlanRequest request,String requesterEmail) {
 
-        InvitePlan savedInvitePlan = getSavedInvitePlan(request, email);
+        InvitePlan savedInvitePlan = getSavedInvitePlan(request, requesterEmail);
 
         //request 를 그대로 보내면 메서드가 각 reqeust 에 종속되므로 request 를 다른 dto 로 변환하여 보내기
-
-
-        savedInvitePlan.setRoutes(getRouteList(request));
-        savedInvitePlan.setMembers(getInvitePlanMemberList(savedInvitePlan,request));
+        setMemberListTo(savedInvitePlan, request);
+        setRouteListTo(savedInvitePlan, request);
 
         return savedInvitePlan.getId();
     }
+
+
+    public void setMemberListTo(InvitePlan savedInvitePlan, InvitePlanRequest request){
+
+        List<InvitePlanMember> members = new ArrayList<>();
+
+        for (InvitePlanMemberRequest memberRequest: request.getMemberList()) {
+
+            createAndSaveAndAddMemberFromRequest(savedInvitePlan, members, memberRequest);
+        }
+        savedInvitePlan.setMembers(members);
+    }
+
+    private void createAndSaveAndAddMemberFromRequest(InvitePlan savedInvitePlan, List<InvitePlanMember> members, InvitePlanMemberRequest memberRequest) {
+        //0.Member 찾기
+        Member member = memberRepository.findByEmail(memberRequest.getFriendEmail());
+        //1. InvitePlanMember 생성 및 저장
+        InvitePlanMember invitePlanMember = createAndSaveInvitePlanMember(savedInvitePlan, member);
+        //2. InvitePlanMemberList 에 InvitePlanMember  추가
+        members.add(invitePlanMember);
+    }
+
+    private InvitePlanMember createAndSaveInvitePlanMember(InvitePlan savedInvitePlan, Member member) {
+        InvitePlanMember invitePlanMember = InvitePlanMember.createWithoutSupply(member, savedInvitePlan);
+        invitePlanMemberRepository.save(invitePlanMember);
+        return invitePlanMember;
+    }
+
+    public void setRouteListTo(InvitePlan savedInvitePlan, InvitePlanRequest request) {
+
+        List<Route> routeList = new ArrayList<>();
+
+//        2일 이상의 여행에서는 루트도 2개 이상
+        for (InvitePlanRouteRequest routeRequest : request.getRouteList()) {
+
+            //            route 를 저장해서 id 가 있는 route 를 넘기기
+            Route savedRoute = routeRepository.save(Route.createRoute(routeRequest));
+
+
+            savedRoute.setRouteLocationList(getRouteLocationList(routeRequest,savedRoute));
+            routeList.add(savedRoute);
+        }
+
+        savedInvitePlan.setRoutes(routeList);
+    }
+
+    private List<RouteLocation> getRouteLocationList(InvitePlanRouteRequest routeRequest, Route route) {
+
+        List<RouteLocation> routeLocationList = new ArrayList<>();
+
+        for (InvitePlanLocationRequest locationRequest : routeRequest.getLocationRequestList()) {
+
+            Location location = getLocationFromRequest(locationRequest);
+
+            RouteLocation routeLocation = RouteLocation.createRouteLocation(route, location);
+            routeLocationList.add(routeLocationRepository.save(routeLocation));
+        }
+
+        return routeLocationList;
+    }
+
+    private Location getLocationFromRequest(InvitePlanLocationRequest locationRequest) {
+        Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
+        return optionalFavoriteLocation.get().getLocation();
+    }
+
+    private InvitePlan getSavedInvitePlan(InvitePlanRequest request, String email) {
+
+        //id 가 존재하는 InvitePlan 을 위해 InvitePlan 생성 및 저장
+        return invitePlanRepository.save(InvitePlan.createFrom(request, memberRepository.findByEmail(email)));
+    }
+
 
     @Override
     public InvitedPlanListResponse getInvitedList(String email) {
@@ -74,10 +144,10 @@ public class InvitePlanServiceImpl implements InvitePlanService {
     }
 
     private List<InvitePlanDto> getInvitePlanDtosBy(String email) {
-        
+
         List<InvitePlanDto> invitePlanDtos = new ArrayList<>();
         addInvitePlanDtoTo(invitePlanDtos, email);
-        
+
         return invitePlanDtos;
     }
 
@@ -107,39 +177,77 @@ public class InvitePlanServiceImpl implements InvitePlanService {
 
 //        1. Accept 상태로 바꾸기 (언제 삭제를 할까 ? 바로 or 일정 기간 후)
         InvitePlanMember invitePlanMember = invitePlanMemberRepository.getByIdAndEmail(Long.valueOf(request.getInvitedPlanId()), email);
-        invitePlanMember.setInvitePlanStatus(InvitePlanStatus.ACCEPTED);        //나중에 InvitePlan 정보를 볼때 status 를 보고 요청 상태의 진행 상황을 확인 가능
+        invitePlanMember.setStatus(InvitePlanStatus.ACCEPTED);        //나중에 InvitePlan 정보를 볼때 status 를 보고 요청 상태의 진행 상황을 확인 가능
 
         InvitePlan invitePlan = invitePlanMember.getInvitePlan();
 
-        //     Plan 이 생성되어 있지 않은 경우 (가장 먼저 요청을 수락한 경우 )
-        if(invitePlan.getInvitePlanStatus().equals(InvitePlanStatus.WAITING)){
+        if(invitePlan.isStatusWaiting()){
+            //     Plan 이 생성되어 있지 않은 경우 (가장 먼저 요청을 수락한 경우 )
+//          친구 1명이라도 먼저 accept 를 하면
+//          1. invitePlan stats 를 accept 로 변경
+            setStatusToAcceptWhenFriendAcceptPlan(invitePlan);
 
-//          친구 1명이라도 먼저 accept 를 하면 invitePlan 을 Plan 으로 바꾸기
-            invitePlan.setInvitePlanStatus(InvitePlanStatus.ACCEPTED);
-            Plan plan = Plan.createPlan(invitePlan);
-            PlanMember savedPlanMember = planMemberRepository.save(PlanMember.createPlanMember(invitePlanMember, plan));
-            plan.addPlanMember(savedPlanMember);
-            planRepository.save(plan);
+//          2. invitePlan 으로 Plan 을 생성
+            Plan plan = createAndSavePlanFrom(invitePlan);
+            createPlanMemberAndAddTo(plan,invitePlanMember);
 
-        } else if (invitePlan.getInvitePlanStatus().equals(InvitePlanStatus.ACCEPTED)) {
+        } else if (invitePlan.isStatusAccepted()) {
 //            이미 Plan 이 생성되어 있는 경우
-//            invitePlan 으로 먼저 Plan 을 찾아야한다 (방법 - plan 에 invitePlan 외래키를 넣는것 ? )
             Plan plan = planRepository.findByInvitePlan(invitePlan);
-//            그 Plan 에다가 PlanMemberr 를 추가
-            PlanMember savedPlanMember = planMemberRepository.save(PlanMember.createPlanMember(invitePlanMember, plan));
-            plan.addPlanMember(savedPlanMember);
+            createPlanMemberAndAddTo(plan,invitePlanMember);
         }
-//        새로운 Plan id 를 return
+
         return invitePlanMember.getId();
+    }
+
+    private void createPlanMemberAndAddTo(Plan plan, InvitePlanMember invitePlanMember) {
+        PlanMember planMember = planMemberRepository.save(PlanMember.createPlanMember(invitePlanMember, plan));
+        plan.addPlanMember(planMember);
+    }
+
+    private static void setStatusToAcceptWhenFriendAcceptPlan(InvitePlan invitePlan) {
+        invitePlan.setInvitePlanStatus(InvitePlanStatus.ACCEPTED);
+    }
+
+    private Plan createAndSavePlanFrom(InvitePlan invitePlan) {
+        Plan plan = Plan.createPlan(invitePlan);
+        planRepository.save(plan);
+        return plan;
     }
 
     @Override
     public Long reject(RejectInvitePlanRequest request, String email) {
 
-        InvitePlanMember invitePlanMember = invitePlanMemberRepository.getByIdAndEmail(Long.valueOf(request.getPlanId()), email);
-        invitePlanMember.setInvitePlanStatus(InvitePlanStatus.REJECTED);
+//        1. watting - 아무도 아직 수락, 거절을 안함
+//        2. accepted - 최소 한명은 이미 수락함
+//        3. rejected - 만약 모든 member 가 거절하면 rejected ?
+
+        InvitePlanMember invitePlanMember = invitePlanMemberRepository.getByIdAndEmail(Long.valueOf(request.getInvitePlanId()), email);
+        invitePlanMember.setStatus(InvitePlanStatus.REJECTED);
+
+        InvitePlan invitePlan = invitePlanMember.getInvitePlan();
+        List<InvitePlanMember> members = invitePlan.getMembers();
+
+        changeStatusToRejected(invitePlan, members);
 
         return invitePlanMember.getId();
+    }
+
+    private static void changeStatusToRejected(InvitePlan invitePlan, List<InvitePlanMember> members) {
+        int count = 0;
+        for (InvitePlanMember member : members) {
+            if (memberStatusIsWaitingOrAccepted(member)) {
+                count++;
+            }
+        }
+
+        if (count == 0) {
+            invitePlan.setInvitePlanStatus(InvitePlanStatus.REJECTED);
+        }
+    }
+
+    private static boolean memberStatusIsWaitingOrAccepted(InvitePlanMember member) {
+        return member.isStatusWaiting() || member.isStatusAccepted();
     }
 
     @Override
@@ -155,7 +263,6 @@ public class InvitePlanServiceImpl implements InvitePlanService {
         for (InvitePlan invitePlan : invitePlanList) {
 
             InvitePlanDto invitePlanDto = createInvitePlanDtoFrom(invitePlan);
-
             invitePlanDtoList.add(invitePlanDto);
         }
 
@@ -200,77 +307,9 @@ public class InvitePlanServiceImpl implements InvitePlanService {
 
 
 
-    private InvitePlan getSavedInvitePlan(InvitePlanRequest request, String email) {
-
-        //id 가 존재하는 InvitePlan 을 위해 InvitePlan 생성 및 저장
-        return invitePlanRepository.save(InvitePlan.createInvitePlan(request, memberRepository.findByEmail(email)));
-    }
-
-    public List<Route> getRouteList(InvitePlanRequest request) {
-
-        List<Route> routeList = new ArrayList<>();
-
-//        2일 이상의 여행에서는 루트도 2개 이상
-        for (InvitePlanRouteRequest routeRequest : request.getRouteList()) {
-
-//            route 를 먼저 저장해서 id 가 있는 route 를 만든다
-            Route savedRoute = getSavedRoute(routeRequest);
-            savedRoute.setRouteLocationList(getRouteLocationList(routeRequest,savedRoute));
-
-            routeList.add(savedRoute);
-        }
-
-        return routeList;
-    }
-
     private Route getSavedRoute(InvitePlanRouteRequest routeRequest) {
         Route route = Route.createRoute(routeRequest);
         return routeRepository.save(route);
-    }
-
-    private List<RouteLocation> getRouteLocationList(InvitePlanRouteRequest routeRequest, Route savedRoute) {
-
-        List<RouteLocation> routeLocationList = new ArrayList<>();
-
-        for (InvitePlanLocationRequest locationRequest : routeRequest.getLocationRequestList()) {
-
-            Location location = getLocationFromRequest(locationRequest);
-            routeLocationList.add(getSavedRouteLocation(savedRoute, location));
-        }
-
-        return routeLocationList;
-    }
-
-    private RouteLocation getSavedRouteLocation(Route savedRoute, Location location) {
-        RouteLocation routeLocation = RouteLocation.createRouteLocation(savedRoute, location);
-        RouteLocation savedRouteLocation = routeLocationRepository.save(routeLocation);
-        return savedRouteLocation;
-    }
-
-    private Location getLocationFromRequest(InvitePlanLocationRequest locationRequest) {
-        Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(locationRequest.getFavoriteLocationId()));
-        FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
-        Location location = favoriteLocation.getLocation();
-        return location;
-    }
-
-
-    public List<InvitePlanMember> getInvitePlanMemberList(InvitePlan savedInvitePlan,InvitePlanRequest request){
-        List<InvitePlanMember> invitePlanMemberList = new ArrayList<>();
-        for (InvitePlanMemberRequest memberRequest: request.getMemberList()) {
-            //0.Member 찾기
-            String email = memberRequest.getFriendEmail();
-            Member member = memberRepository.findByEmail(email);
-
-            //1. InvitePlanMember 생성 및 저장
-            InvitePlanMember invitePlanMember = InvitePlanMember.createWithoutSupply(member, savedInvitePlan);
-            invitePlanMemberRepository.save(invitePlanMember);
-
-            //2. InvitePlanMemberList 에 InvitePlanMember  추가
-            invitePlanMemberList.add(invitePlanMember);
-        }
-
-        return invitePlanMemberList;
     }
 
     private List<RouteDto> getRouteDtoList(InvitePlan invitePlan) {

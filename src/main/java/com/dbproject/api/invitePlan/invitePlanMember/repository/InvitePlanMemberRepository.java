@@ -12,7 +12,7 @@ public interface InvitePlanMemberRepository extends JpaRepository<InvitePlanMemb
 //    초대받은 Plan 목록을 가져온다 (내가 만든 Plan 은 없음)
     @Query("select ipm from InvitePlanMember ipm" +
             " where ipm.member.email = :email" +
-            " and ipm.invitePlanStatus = com.dbproject.constant.InvitePlanStatus.WAITING")
+            " and ipm.status = com.dbproject.constant.InvitePlanStatus.WAITING")
     List<InvitePlanMember> getInvitedPlanMemberListByEmail(String email);
 
 

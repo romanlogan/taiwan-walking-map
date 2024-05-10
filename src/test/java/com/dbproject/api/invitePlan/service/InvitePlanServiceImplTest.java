@@ -3,10 +3,7 @@ package com.dbproject.api.invitePlan.service;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.favorite.repository.FavoriteRepository;
 import com.dbproject.api.invitePlan.InvitePlan;
-import com.dbproject.api.invitePlan.dto.InvitePlanLocationRequest;
-import com.dbproject.api.invitePlan.dto.InvitePlanRequest;
-import com.dbproject.api.invitePlan.dto.InvitePlanRouteRequest;
-import com.dbproject.api.invitePlan.dto.InvitedPlanListResponse;
+import com.dbproject.api.invitePlan.dto.*;
 import com.dbproject.api.invitePlan.invitePlanMember.InvitePlanMember;
 import com.dbproject.api.invitePlan.invitePlanMember.dto.InvitePlanMemberRequest;
 import com.dbproject.api.invitePlan.invitePlanMember.repository.InvitePlanMemberRepository;
@@ -39,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.nullValue;
 
 
 @SpringBootTest
@@ -113,10 +111,10 @@ class InvitePlanServiceImplTest {
         assertThat(invitePlan.getMembers().size()).isEqualTo(2);
         assertThat(invitePlan.getMembers().get(0).getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
 //        assertThat(invitePlan.getInviteFriendList().get(0).getSupply()).isEqualTo("computer");
-        assertThat(invitePlan.getMembers().get(0).getInvitePlanStatus()).isEqualTo(InvitePlanStatus.WAITING);
+        assertThat(invitePlan.getMembers().get(0).getStatus()).isEqualTo(InvitePlanStatus.WAITING);
         assertThat(invitePlan.getMembers().get(1).getMember().getEmail()).isEqualTo("yunni@yunni.com");
 //        assertThat(invitePlan.getInviteFriendList().get(1).getSupply()).isEqualTo("ipad");
-        assertThat(invitePlan.getMembers().get(1).getInvitePlanStatus()).isEqualTo(InvitePlanStatus.WAITING);
+        assertThat(invitePlan.getMembers().get(1).getStatus()).isEqualTo(InvitePlanStatus.WAITING);
 
         assertThat(invitePlan.getRoutes().get(0).getDay()).isEqualTo(1);
         assertThat(invitePlan.getRoutes().get(0).getRouteLocationList().size()).isEqualTo(3);
@@ -298,7 +296,7 @@ class InvitePlanServiceImplTest {
     }
 
 
-    public void saveInvitePlan(String name, PlanPeriod planPeriod, String supply, int year, int month, int day, int tripDay, List<String> friendEmailList,Member requester) {
+    public Long saveInvitePlan(String name, PlanPeriod planPeriod, String supply, int year, int month, int day, int tripDay, List<String> friendEmailList,Member requester) {
 
         InvitePlanRequest request = getRequestFrom(name,
                 planPeriod,
@@ -308,14 +306,17 @@ class InvitePlanServiceImplTest {
                 friendEmailList);
 
 
-        saveInvitePlanFrom(request,requester);
+        Long id = saveInvitePlanFrom(request, requester);
+        return id;
     }
 
-    private void saveInvitePlanFrom(InvitePlanRequest request, Member requester) {
+    private Long saveInvitePlanFrom(InvitePlanRequest request, Member requester) {
 
-        InvitePlan savedInvitePlan = invitePlanRepository.save(InvitePlan.createInvitePlan(request, requester));
+        InvitePlan savedInvitePlan = invitePlanRepository.save(InvitePlan.createFrom(request, requester));
         setMemberListTo(savedInvitePlan, request);
         setRouteListTo(savedInvitePlan, request);
+
+        return savedInvitePlan.getId();
     }
 
     public InvitePlanRequest createRequest(String name, PlanPeriod planPeriod, String supply ,LocalDate departDate, Integer tripDay) {
@@ -329,5 +330,120 @@ class InvitePlanServiceImplTest {
     }
 
 
+    @DisplayName("accept the invitation")
+    @Test
+    void accept(){
+        //given
 
+        Long id = saveInvitePlan("lee's 3 days tainan trip", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024, 3, 20, 3, Arrays.asList("zxcv@zxcv.com", "yunni@yunni.com"), memberRepository.findByEmail("asdf@asdf.com"));
+        AcceptInvitedPlanRequest request = AcceptInvitedPlanRequest.create(Math.toIntExact(id));
+
+        //when
+        Long invitePlanMemberId = invitePlanService.accept(request, "yunni@yunni.com");
+
+        //then
+        InvitePlanMember member = invitePlanMemberRepository.findById(invitePlanMemberId).get();
+        assertAcceptInvitePlan(member);
+    }
+
+    private static void assertAcceptInvitePlan(InvitePlanMember member) {
+        assertThat(member.getStatus()).isEqualTo(InvitePlanStatus.ACCEPTED);
+        assertThat(member.getMember().getEmail()).isEqualTo("yunni@yunni.com");
+        assertThat(member.getInvitePlan().getInvitePlanStatus()).isEqualTo(InvitePlanStatus.ACCEPTED);
+        assertThat(member.getInvitePlan().getDepartDate()).isEqualTo(LocalDate.of(2024, 3, 20));
+        assertThat(member.getInvitePlan().getArriveDate()).isEqualTo(LocalDate.of(2024, 3, 22));
+//        assertThat(member.getInvitePlan().getRegion()).isEqualTo(nullValue());
+        assertThat(member.getInvitePlan().getName()).isEqualTo("lee's 3 days tainan trip");
+        assertThat(member.getInvitePlan().getRoutes().get(0).getRouteLocationList().get(0).getLocation().getName()).isEqualTo("西門町");
+        assertThat(member.getInvitePlan().getRoutes().get(0).getRouteLocationList().get(1).getLocation().getName()).isEqualTo("台北101");
+        assertThat(member.getInvitePlan().getRoutes().get(0).getRouteLocationList().get(2).getLocation().getName()).isEqualTo("台北地下街");
+        assertThat(member.getInvitePlan().getRequester().getEmail()).isEqualTo("asdf@asdf.com");
+        assertThat(member.getInvitePlan().getMembers().get(0).getMember().getEmail()).isEqualTo("zxcv@zxcv.com");
+        assertThat(member.getInvitePlan().getMembers().get(1).getMember().getEmail()).isEqualTo("yunni@yunni.com");
+    }
+
+    @DisplayName("reject the invitation")
+    @Test
+    void reject(){
+        //given
+
+        Long id = saveInvitePlan("lee's 3 days tainan trip", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024, 3, 20, 3, Arrays.asList("zxcv@zxcv.com", "yunni@yunni.com"), memberRepository.findByEmail("asdf@asdf.com"));
+        RejectInvitePlanRequest request = RejectInvitePlanRequest.create(Math.toIntExact(id));
+
+        //when
+        Long invitePlanMemberId = invitePlanService.reject(request, "yunni@yunni.com");
+
+        //then
+        InvitePlanMember member = invitePlanMemberRepository.findById(invitePlanMemberId).get();
+        assertThat(member.getStatus()).isEqualTo(InvitePlanStatus.REJECTED);
+    }
+
+    @DisplayName("when only one member reject invitation, invitePlan's status still stay in waiting")
+    @Test
+    void rejectOneMember(){
+        //given
+
+        Long id = saveInvitePlan("lee's 3 days tainan trip", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024, 3, 20, 3, Arrays.asList("zxcv@zxcv.com", "yunni@yunni.com"), memberRepository.findByEmail("asdf@asdf.com"));
+        RejectInvitePlanRequest request = RejectInvitePlanRequest.create(Math.toIntExact(id));
+
+        //when
+        Long invitePlanMemberId = invitePlanService.reject(request, "yunni@yunni.com");
+
+        //then
+        InvitePlanMember member = invitePlanMemberRepository.findById(invitePlanMemberId).get();
+        assertThat(member.getStatus()).isEqualTo(InvitePlanStatus.REJECTED);
+        assertThat(member.getInvitePlan().getInvitePlanStatus()).isEqualTo(InvitePlanStatus.WAITING);
+    }
+
+
+    @DisplayName("when all members reject invitation, invitePlan's status change to reject")
+    @Test
+    void rejectAllMember(){
+        //given
+
+        Long id = saveInvitePlan("lee's 3 days tainan trip", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024, 3, 20, 3, Arrays.asList("zxcv@zxcv.com", "yunni@yunni.com"), memberRepository.findByEmail("asdf@asdf.com"));
+        RejectInvitePlanRequest request = RejectInvitePlanRequest.create(Math.toIntExact(id));
+
+        //when
+        Long invitePlanMemberId = invitePlanService.reject(request, "yunni@yunni.com");
+        Long invitePlanMemberId2 = invitePlanService.reject(request, "zxcv@zxcv.com");
+
+        //then
+        InvitePlanMember member = invitePlanMemberRepository.findById(invitePlanMemberId).get();
+        assertThat(member.getStatus()).isEqualTo(InvitePlanStatus.REJECTED);
+        assertThat(member.getInvitePlan().getInvitePlanStatus()).isEqualTo(InvitePlanStatus.REJECTED);
+    }
+
+    @DisplayName("get user's sent invitePlan list")
+    @Test
+    void getSentInviteList(){
+
+        //given
+        saveInvitePlan("lee's 3 days tainan trip", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024,3,20, 3, Arrays.asList("zxcv@zxcv.com", "yunni@yunni.com"), memberRepository.findByEmail("asdf@asdf.com"));
+        saveInvitePlan("lee's 7 days japan trip", PlanPeriod.LONGTRIP, "computer, ipad", 2024,6,20, 7, Arrays.asList("yunni@yunni.com"), memberRepository.findByEmail("asdf@asdf.com"));
+        saveInvitePlan("lee's 5 days korea trip", PlanPeriod.LONGTRIP, "computer, ipad", 2024,5,20, 5, Arrays.asList("zxcv@zxcv.com", "yunni@yunni.com"), memberRepository.findByEmail("asdf@asdf.com"));
+
+        //when
+        SentInvitePlanListResponse response = invitePlanService.getSentInviteList("asdf@asdf.com");
+
+        //then
+        assertThat(response.getInvitePlanDtoList().size()).isEqualTo(3);
+        assertThat(response.getInvitePlanDtoList().get(0).getName()).isEqualTo("lee's 3 days tainan trip");
+        assertThat(response.getInvitePlanDtoList().get(1).getName()).isEqualTo("lee's 7 days japan trip");
+        assertThat(response.getInvitePlanDtoList().get(2).getName()).isEqualTo("lee's 5 days korea trip");
+    }
+
+    @DisplayName("get user's sent invitePlan list")
+    @Test
+    void getInvitePlanDtl(){
+
+        //given
+        saveInvitePlan("lee's 3 days tainan trip", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024,3,20, 3, Arrays.asList("zxcv@zxcv.com", "yunni@yunni.com"), memberRepository.findByEmail("asdf@asdf.com"));
+
+        //when
+
+
+        //then
+    }
 }
+
