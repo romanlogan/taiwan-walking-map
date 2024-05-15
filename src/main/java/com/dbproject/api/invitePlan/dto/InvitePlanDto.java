@@ -1,6 +1,7 @@
 package com.dbproject.api.invitePlan.dto;
 
 import com.dbproject.api.invitePlan.InvitePlan;
+import com.dbproject.api.invitePlan.invitePlanMember.InvitePlanMember;
 import com.dbproject.api.route.RouteDto;
 import com.dbproject.constant.PlanPeriod;
 import lombok.Builder;
@@ -24,9 +25,9 @@ public class InvitePlanDto {
     private String requesterEmail;
     private String requesterName;
 
-    List<InvitePlanMemberDto> invitePlanMemberDtoList = new ArrayList<>();
+    private List<InvitePlanMemberDto> invitePlanMemberDtoList = new ArrayList<>();
 
-    List<RouteDto> routeDtoList = new ArrayList<>();
+    private List<RouteDto> routeDtoList = new ArrayList<>();
 
     public InvitePlanDto() {
     }
@@ -57,4 +58,20 @@ public class InvitePlanDto {
                 .requesterName(invitePlan.getRequester().getName())
                 .build();
     }
+
+    public void setInvitePlanMemberDtoListBy(List<InvitePlanMember> invitePlanMemberList) {
+
+        List<InvitePlanMemberDto> invitePlanMemberDtoList = new ArrayList<>();
+
+        for (InvitePlanMember invitePlanMember : invitePlanMemberList) {
+
+            InvitePlanMemberDto invitePlanMemberDto = InvitePlanMemberDto.from(invitePlanMember);
+            invitePlanMemberDtoList.add(invitePlanMemberDto);
+        }
+
+        this.invitePlanMemberDtoList = invitePlanMemberDtoList;
+
+    }
+
+    public void setRouteDtoListBy()
 }

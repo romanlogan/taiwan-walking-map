@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.nullValue;
 
 
@@ -433,17 +434,38 @@ class InvitePlanServiceImplTest {
         assertThat(response.getInvitePlanDtoList().get(2).getName()).isEqualTo("lee's 5 days korea trip");
     }
 
-    @DisplayName("get user's sent invitePlan list")
+    @DisplayName("get InvitePlan's detail from invitePlanId")
     @Test
     void getInvitePlanDtl(){
 
         //given
-        saveInvitePlan("lee's 3 days tainan trip", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024,3,20, 3, Arrays.asList("zxcv@zxcv.com", "yunni@yunni.com"), memberRepository.findByEmail("asdf@asdf.com"));
+        Long id = saveInvitePlan("lee's 3 days tainan trip", PlanPeriod.LONGTRIP, "hair dryer, slipper, brush", 2024, 3, 20, 3, Arrays.asList("zxcv@zxcv.com", "yunni@yunni.com"), memberRepository.findByEmail("asdf@asdf.com"));
 
         //when
-
+        InvitePlanDtlResponse response = invitePlanService.getInvitePlanDtl(Math.toIntExact(id));
 
         //then
+        assertThat(response.getInvitePlanDto().getName()).isEqualTo("lee's 3 days tainan trip");
+        assertThat(response.getInvitePlanDto().getInvitePlanMemberDtoList().get(0).getEmail()).isEqualTo("zxcv@zxcv.com");
+        assertThat(response.getInvitePlanDto().getInvitePlanMemberDtoList().get(1).getEmail()).isEqualTo("yunni@yunni.com");
+        assertThat(response.getInvitePlanDto().getRouteDtoList().get(0).getLocationDtos().get(0).getName()).isEqualTo("西門町");
+        assertThat(response.getInvitePlanDto().getRouteDtoList().get(0).getLocationDtos().get(1).getName()).isEqualTo("台北101");
+        assertThat(response.getInvitePlanDto().getRouteDtoList().get(0).getLocationDtos().get(2).getName()).isEqualTo("台北地下街");
+
+
     }
+
+    @DisplayName("when get InvitePlan's detail with unsaved id , will throw InvitePlanNotExistException")
+    @Test
+    void getInvitePlanDtlWith(){
+
+        //given
+        //when
+        //then
+        assertThatThrownBy(() -> invitePlanService.getInvitePlanDtl(1))
+                .isInstanceOf(com.dbproject.exception.InvitePlanNotExistException.class)
+                .hasMessage("InvitePlan 이 존재하지 않습니다.");
+    }
+
 }
 

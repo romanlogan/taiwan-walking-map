@@ -276,41 +276,25 @@ public class InvitePlanServiceImpl implements InvitePlanService {
 
         Optional<InvitePlan> optionalInvitePlan = invitePlanRepository.findById(Long.valueOf(id));
 
-        if (optionalInvitePlan.isEmpty()) {
-            throw new InvitePlanNotExistException("InvitePlan 이 존재하지 않습니다.");
-        }
+        checkIsExistFor(optionalInvitePlan);
 
-        InvitePlan invitePlan = optionalInvitePlan.get();
+        InvitePlanDto invitePlanDto = InvitePlanDto.from(optionalInvitePlan.get());
 
-        InvitePlanDto invitePlanDto = InvitePlanDto.from(invitePlan);
+        List<InvitePlanMember> invitePlanMemberList = optionalInvitePlan.get().getMembers();
+        invitePlanDto.setInvitePlanMemberDtoListBy(invitePlanMemberList);
 
-        List<InvitePlanMemberDto> invitePlanMemberDtoList = new ArrayList<>();
-        List<InvitePlanMember> invitePlanMemberList = invitePlan.getMembers();
-
-        for (InvitePlanMember invitePlanMember : invitePlanMemberList) {
-
-            InvitePlanMemberDto invitePlanMemberDto = InvitePlanMemberDto.from(invitePlanMember);
-            invitePlanMemberDtoList.add(invitePlanMemberDto);
-        }
-
-        invitePlanDto.setInvitePlanMemberDtoList(invitePlanMemberDtoList);
-
-//         request 가 없어서 위의 메서드를 재사용할 수 없다 (메서드 잘못 설계한듯 하ㅏㄷ, 리팩토링 필요)
-
-        List<RouteDto> routeDtoList = RouteDto.createRouteDtosFrom(invitePlan.getRoutes());
+        List<RouteDto> routeDtoList = RouteDto.createRouteDtosFrom(optionalInvitePlan.get().getRoutes());
         invitePlanDto.setRouteDtoList(routeDtoList);
 
         return InvitePlanDtlResponse.createResponse(invitePlanDto);
     }
 
-
-
-
-
-    private Route getSavedRoute(InvitePlanRouteRequest routeRequest) {
-        Route route = Route.createRoute(routeRequest);
-        return routeRepository.save(route);
+    private static void checkIsExistFor(Optional<InvitePlan> optionalInvitePlan) {
+        if (optionalInvitePlan.isEmpty()) {
+            throw new InvitePlanNotExistException("InvitePlan 이 존재하지 않습니다.");
+        }
     }
+
 
     private List<RouteDto> getRouteDtoList(InvitePlan invitePlan) {
 
@@ -360,4 +344,9 @@ public class InvitePlanServiceImpl implements InvitePlanService {
         return planMemberList;
     }
 
+
+    private Route getSavedRoute(InvitePlanRouteRequest routeRequest) {
+        Route route = Route.createRoute(routeRequest);
+        return routeRepository.save(route);
+    }
 }
