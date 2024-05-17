@@ -64,6 +64,18 @@ class FavoriteServiceImplTest {
         memberRepository.save(member);
     }
 
+    @DisplayName("어떤 사용자도 즐겨찾기로 저장하지 않았으면 즐겨찾기 개수는 null 이다")
+    @Test
+    void CommentCountIsNullBeforeAddComment() {
+
+        //when
+        Location location = locationRepository.findByLocationId("C1_379000000A_001572");
+
+        //then
+        assertThat(location.getFavoriteCount()).isNull();
+    }
+
+
     @DisplayName("用locationId和email來，Location儲存在FavoriteList")
     @Test
     void addFavoriteList(){

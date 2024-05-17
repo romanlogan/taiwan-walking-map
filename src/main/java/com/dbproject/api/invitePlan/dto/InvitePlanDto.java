@@ -73,5 +73,4 @@ public class InvitePlanDto {
 
     }
 
-    public void setRouteDtoListBy()
 }

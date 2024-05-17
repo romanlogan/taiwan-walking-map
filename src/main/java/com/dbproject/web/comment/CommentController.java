@@ -6,6 +6,8 @@ import com.dbproject.api.comment.dto.CreateCommentRequest;
 import com.dbproject.api.comment.dto.DeleteCommentRequest;
 import com.dbproject.api.comment.dto.UpdateCommentRequest;
 import com.dbproject.binding.CheckBindingResult;
+import com.dbproject.exception.CommentNotExistException;
+import com.dbproject.exception.DuplicateCreateCommentException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,35 +32,20 @@ public class CommentController {
                                         BindingResult bindingResult,
                                         Principal principal) {
 
-//        모달창으로 넘어온 값은 모델로 다시 안보내줘도 될것같은데 ?
-
-//        개인적으로 처리
-//        오류가 2개 이상일때 append 로 붙이면 어떻게 검증하지 ?
-//        if (bindingResult.hasErrors()) {
-//
-//            List<String> messageList = new ArrayList<>();
-//            List<Object> dataList = new ArrayList<>();
-//            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-//            for (FieldError fieldError : fieldErrors) {
-//                dataList.add(fieldError.getRejectedValue());
-//                messageList.add(fieldError.getDefaultMessage());
-//            }
-//
-//
-//            return new ResponseEntity(ApiResponse.of(
-//                    HttpStatus.BAD_REQUEST,
-//                    messageList,
-//                    dataList
-//            ),HttpStatus.OK);
-//        }
-
         if(bindingResult.hasErrors()){
             ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
             return responseEntity;
         }
 
-        commentService.checkDuplicateCreateComment(createCommentRequest,principal.getName());
-        Long commentId = commentService.createComment(createCommentRequest, principal.getName());
+        Long commentId = null;
+
+        try {
+            commentId = commentService.createComment(createCommentRequest, principal.getName());
+        } catch (DuplicateCreateCommentException e) {
+            return null;
+        } catch (CommentNotExistException e) {
+            return null;
+        }
 
         return new ResponseEntity(ApiResponse.of(
                 HttpStatus.OK,
@@ -72,33 +59,23 @@ public class CommentController {
                                         BindingResult bindingResult,
                                         Principal principal) {
 
-        // 댓글 수정시 request 에 binding error 가 있으면 다시 data 를 반환하여 문제가 있는 data 를 사용자가 볼수있
-//        if (bindingResult.hasErrors()) {
-//
-//            List<String> messageList = new ArrayList<>();
-//            List<Object> dataList = new ArrayList<>();
-//            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-//            for (FieldError fieldError : fieldErrors) {
-//                dataList.add(fieldError.getRejectedValue());
-//                messageList.add(fieldError.getDefaultMessage());
-//            }
-//
-//
-//            return new ResponseEntity(ApiResponse.of(
-//                    HttpStatus.BAD_REQUEST,
-//                    messageList,
-//                    dataList
-//            ),HttpStatus.OK);
-//        }
         if(bindingResult.hasErrors()){
             ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
             return responseEntity;
         }
 
+        try {
+            commentService.updateComment(updateCommentRequest, principal.getName());
+        } catch (CommentNotExistException e) {
+            return null;
+        }
 
-        commentService.updateComment(updateCommentRequest, principal.getName());
-
-        return new ResponseEntity(1L, HttpStatus.OK);
+//        return new ResponseEntity(1L, HttpStatus.OK);
+        return new ResponseEntity(ApiResponse.of(
+                HttpStatus.OK,
+                null,
+                null
+        ), HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteComment")
@@ -106,32 +83,22 @@ public class CommentController {
                                         BindingResult bindingResult,
                                         Principal principal) {
 
-//        if (bindingResult.hasErrors()) {
-//
-//            List<String> messageList = new ArrayList<>();
-//            List<Object> dataList = new ArrayList<>();
-//            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-//            for (FieldError fieldError : fieldErrors) {
-//                dataList.add(fieldError.getRejectedValue());
-//                messageList.add(fieldError.getDefaultMessage());
-//            }
-//
-//
-//            return new ResponseEntity(ApiResponse.of(
-//                    HttpStatus.BAD_REQUEST,
-//                    messageList,
-//                    dataList
-//            ),HttpStatus.BAD_REQUEST);
-//        }
-
         if(bindingResult.hasErrors()){
             ResponseEntity responseEntity = CheckBindingResult.induceErrorInAjax(bindingResult);
             return responseEntity;
         }
 
+        try {
+            commentService.deleteComment(deleteCommentRequest);
+        } catch (CommentNotExistException e) {
+            return null;
+        }
 
-        commentService.deleteComment(deleteCommentRequest.getCommentId());
-
-        return new ResponseEntity(1L, HttpStatus.OK);
+//        return new ResponseEntity(1L, HttpStatus.OK);
+        return new ResponseEntity(ApiResponse.of(
+                HttpStatus.OK,
+                null,
+                null
+        ), HttpStatus.OK);
     }
 }

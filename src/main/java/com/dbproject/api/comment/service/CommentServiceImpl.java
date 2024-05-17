@@ -2,12 +2,13 @@ package com.dbproject.api.comment.service;
 
 import com.dbproject.api.comment.Comment;
 import com.dbproject.api.comment.dto.CreateCommentRequest;
+import com.dbproject.api.comment.dto.DeleteCommentRequest;
 import com.dbproject.api.comment.dto.UpdateCommentRequest;
 import com.dbproject.api.comment.repository.CommentRepository;
 import com.dbproject.api.location.Location;
-import com.dbproject.api.member.Member;
 import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.MemberRepository;
+import com.dbproject.exception.CommentNotExistException;
 import com.dbproject.exception.DuplicateCreateCommentException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,43 +27,76 @@ public class CommentServiceImpl implements CommentService{
 
 
 
-    public Long createComment(CreateCommentRequest createCommentRequest, String email) {
+    public Long createComment(CreateCommentRequest request, String email) {
 
-        Member member = memberRepository.findByEmail(email);
-        Location location = locationRepository.findByLocationId(createCommentRequest.getLocationId());
-        location.increaseCommentCount();
-        Comment comment = Comment.createComment(createCommentRequest.getContent(), member, location, createCommentRequest.getRate());
+        checkDuplicateCreateComment(request,email);
+        Comment comment = getCommentFrom(email, request.getContent(), request.getLocationId(), request.getRate());
 
         return commentRepository.save(comment).getId();
     }
 
 
-    // 아니면 댓글 작성과 평가 작업을 따로 분리 하게 되어 사용 안함
-    public void checkDuplicateCreateComment(CreateCommentRequest createCommentRequest, String email) {
+    private Comment getCommentFrom(String email, String content, String locationId, Integer rate) {
 
+        return Comment.create(content,
+                memberRepository.findByEmail(email),
+                locationRepository.findByLocationId(locationId),
+                rate);
+    }
+
+
+    public void checkDuplicateCreateComment(CreateCommentRequest createCommentRequest, String email) {
 
         Optional<Comment> optionalComment = commentRepository.findDuplicateComment(createCommentRequest.getLocationId(), email);
 
         if (optionalComment.isPresent()) {
-            throw new DuplicateCreateCommentException("이미 댓글을 생성했습니다");
+            throw new DuplicateCreateCommentException("이미 댓글을 생성했습니다.");
         }
     }
 
-    public void updateComment(UpdateCommentRequest updateCommentRequest, String email) {
+    public Long updateComment(UpdateCommentRequest request, String email) {
 
-        Comment savedComment = commentRepository.findByLocationIdAndEmail(updateCommentRequest.getLocationId(), email);
-        savedComment.updateComment(updateCommentRequest);
+        Comment comment = getCommentFrom(email, request.getLocationId());
+        checkCommentExist(comment);
+        comment.updateComment(request);
+
+        return comment.getId();
     }
 
-    public void deleteComment(Integer commentId) {
+    private Comment getCommentFrom(String email, String locationId) {
+        return commentRepository.findByLocationIdAndEmail(locationId, email);
+    }
 
-        Optional<Comment> optionalComment = commentRepository.findById(Long.valueOf(commentId));
+    private static void checkCommentExist(Comment savedComment) {
+
+        if (savedComment == null) {
+            throw new CommentNotExistException("댓글이 존재하지 않습니다.");
+        }
+    }
+
+    public void deleteComment(DeleteCommentRequest request) {
+
+        Optional<Comment> comment = getCommentFrom(request.getCommentId());
+        delete(comment);
+
+    }
+
+    private void delete(Optional<Comment> optionalComment) {
+
         if (optionalComment.isPresent()) {
             Comment comment = optionalComment.get();
-            Location location = comment.getLocation();
-            location.decreaseCommentCount();
+            comment.decreaseCommentCount();
             commentRepository.delete(comment);
         }
+    }
 
+    private Optional<Comment> getCommentFrom(Integer commentId) {
+
+        Optional<Comment> comment = commentRepository.findById(Long.valueOf(commentId));
+        if (comment.isEmpty()) {
+            throw new CommentNotExistException("댓글이 존재하지 않습니다.");
+        }
+
+        return comment;
     }
 }

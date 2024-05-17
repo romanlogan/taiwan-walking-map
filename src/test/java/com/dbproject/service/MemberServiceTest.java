@@ -171,7 +171,7 @@ class MemberServiceTest {
         String locationId = "C1_379000000A_001572";
         Location location = locationRepository.findByLocationId(locationId);
 
-        Comment comment = Comment.createComment(content, member, location,rating);
+        Comment comment = Comment.create(content, member, location,rating);
         return comment;
     }
 

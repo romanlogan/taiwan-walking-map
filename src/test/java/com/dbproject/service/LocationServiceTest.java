@@ -140,7 +140,7 @@ class LocationServiceTest {
         Member member = memberRepository.findByEmail(email);
         Location location = locationRepository.findByLocationId(locationId);
 
-        Comment comment = Comment.createComment(content, member, location, rating);
+        Comment comment = Comment.create(content, member, location, rating);
         commentRepository.save(comment);
     }
 

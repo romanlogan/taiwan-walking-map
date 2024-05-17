@@ -47,7 +47,9 @@ public class Comment extends BaseEntity {
 
     }
 
-    public static Comment createComment(String content, Member member, Location location, Integer rate) {
+    public static Comment create(String content, Member member, Location location, Integer rate) {
+
+        location.increaseCommentCount();
 
         return Comment.builder()
                 .content(content)
@@ -60,5 +62,10 @@ public class Comment extends BaseEntity {
     public void updateComment(UpdateCommentRequest updateCommentRequest) {
         this.content = updateCommentRequest.getContent();
         this.rate = updateCommentRequest.getRate();
+    }
+
+    public void decreaseCommentCount() {
+        Location location = this.getLocation();
+        location.decreaseCommentCount();
     }
 }

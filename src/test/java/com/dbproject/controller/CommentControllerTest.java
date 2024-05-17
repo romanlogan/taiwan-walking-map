@@ -82,6 +82,7 @@ class CommentControllerTest {
         CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content,rate);
 
         //when
+        //then
         mockMvc.perform(MockMvcRequestBuilders.post("/comment/createComment")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(createCommentRequest))
@@ -89,9 +90,6 @@ class CommentControllerTest {
                 )
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
-
-
-        //then
 
     }
 
@@ -146,8 +144,8 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("locationId要20個字"))
-                .andExpect(jsonPath("$.dataList").value("abcdeabcdeabcdeabcd"));
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcd"));
     }
 
 
@@ -174,8 +172,9 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("locationId要20個字"))
-                .andExpect(jsonPath("$.dataList").value("abcdeabcdeabcdeabcdea"));
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcdea"));
+
     }
 
 
@@ -202,8 +201,8 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("content值是必要"))
-                .andExpect(jsonPath("$.dataList").value(" "));
+                .andExpect(jsonPath("$.errorMap.content.message").value("content值是必要"))
+                .andExpect(jsonPath("$.errorMap.content.rejectedValue").value(" "));
     }
 
 
@@ -231,8 +230,8 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("content只能最多255字"))
-                .andExpect(jsonPath("$.dataList").value("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid"));
+                .andExpect(jsonPath("$.errorMap.content.message").value("content只能最多255字"))
+                .andExpect(jsonPath("$.errorMap.content.rejectedValue").value("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid"));
     }
 
     @DisplayName("save comment時Rate值是必要")
@@ -258,9 +257,9 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("rate值是必要"))
-//                .andExpect(jsonPath("$.dataList").value(List.of(nullValue())));
-                .andExpect(jsonPath("$.dataList[0]").value(nullValue()));
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate值是必要"))
+                .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(nullValue()));
+
     }
 
     @DisplayName("save comment時如果rate超過5，就return Bad_Request Error")
@@ -286,9 +285,8 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("rate只能從1點到五點的值"))
-//                .andExpect(jsonPath("$.dataList").value(List.of(nullValue())));
-                .andExpect(jsonPath("$.dataList").value(6));
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(6));
     }
 
 
@@ -315,9 +313,8 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("rate只能從1點到五點的值"))
-//                .andExpect(jsonPath("$.dataList").value(List.of(nullValue())));
-                .andExpect(jsonPath("$.dataList").value(0));
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(0));
     }
 
     @DisplayName("save comment時如果rate值是負數，就return Bad_Request Error")
@@ -343,9 +340,8 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("rate只能從1點到五點的值"))
-//                .andExpect(jsonPath("$.dataList").value(List.of(nullValue())));
-                .andExpect(jsonPath("$.dataList").value(-1));
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(-1));
     }
 
 
@@ -373,15 +369,19 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value(" "))
+                .andExpect(jsonPath("$.errorMap.content.message").value("content值是必要"))
+                .andExpect(jsonPath("$.errorMap.content.rejectedValue").value(" "));
 
-//                .andExpect(jsonPath("$.messageList").value(List.of("locationId要20個字","content值是必要")))
-//                .andExpect(jsonPath("$.messageList[0]").value("content值是必要")) //순서가 랜덤
-                .andExpect(jsonPath("$.messageList").isArray()) //순서가 랜덤
-                .andExpect(jsonPath("$.messageList", Matchers.hasSize(2))) //순서가 랜덤
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("locationId要20個字"))) //순서가 랜덤
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("content值是必要")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(" "))) ;//순서가 랜덤
-//                .andExpect(jsonPath("$.dataList").value(List.of(" ", " ")));
+////                .andExpect(jsonPath("$.messageList").value(List.of("locationId要20個字","content值是必要")))
+////                .andExpect(jsonPath("$.messageList[0]").value("content值是必要")) //순서가 랜덤
+//                .andExpect(jsonPath("$.messageList").isArray()) //순서가 랜덤
+//                .andExpect(jsonPath("$.messageList", Matchers.hasSize(2))) //순서가 랜덤
+//                .andExpect(jsonPath("$.messageList", Matchers.hasItems("locationId要20個字"))) //순서가 랜덤
+//                .andExpect(jsonPath("$.messageList", Matchers.hasItems("content值是必要")))
+//                .andExpect(jsonPath("$.dataList", Matchers.hasItems(" "))) ;//순서가 랜덤
+////                .andExpect(jsonPath("$.dataList").value(List.of(" ", " ")));
     }
 
 
@@ -409,12 +409,10 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").isArray())
-                .andExpect(jsonPath("$.messageList", Matchers.hasSize(2)))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("locationId要20個字")))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("rate只能從1點到五點的值")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems("abcdeabcdeabcdeabcd")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(6)));
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcd"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(6));
     }
 
     @DisplayName("save comment時locationId值要20字，rate值是從要1到5以內的值，content不能超過255個字")
@@ -440,14 +438,12 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").isArray())
-                .andExpect(jsonPath("$.messageList", Matchers.hasSize(3)))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("locationId要20個字")))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("rate只能從1點到五點的值")))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("content只能最多255字")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems("abcdeabcdeabcdeabcd")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(6)))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid")));
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcd"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(6))
+                .andExpect(jsonPath("$.errorMap.content.message").value("content只能最多255字"))
+                .andExpect(jsonPath("$.errorMap.content.rejectedValue").value("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid"));
     }
 
     /**
@@ -526,8 +522,9 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("locationId要20個字"))
-                .andExpect(jsonPath("$.dataList").value(" "));
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value(" "));
+
     }
 
     @DisplayName("update comment時如果Request裡locationId只有19個字，就return Bad_Request Error")
@@ -553,8 +550,9 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("locationId要20個字"))
-                .andExpect(jsonPath("$.dataList").value("abcdeabcdeabcdeabcd"));
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcd"));
+
     }
 
 
@@ -581,8 +579,8 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("locationId要20個字"))
-                .andExpect(jsonPath("$.dataList").value("abcdeabcdeabcdeabcdea"));
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcdea"));
     }
 
 
@@ -609,8 +607,8 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("content值是必要"))
-                .andExpect(jsonPath("$.dataList").value(" "));
+                .andExpect(jsonPath("$.errorMap.content.message").value("content值是必要"))
+                .andExpect(jsonPath("$.errorMap.content.rejectedValue").value(" "));
     }
 
 
@@ -638,8 +636,8 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("content只能最多255字"))
-                .andExpect(jsonPath("$.dataList").value("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid"));
+                .andExpect(jsonPath("$.errorMap.content.message").value("content只能最多255字"))
+                .andExpect(jsonPath("$.errorMap.content.rejectedValue").value("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid"));
     }
 
     @DisplayName("update comment時Rate值是必要")
@@ -665,9 +663,8 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("rate值是必要"))
-//                .andExpect(jsonPath("$.dataList").value(List.of(nullValue())));
-                .andExpect(jsonPath("$.dataList[0]").value(nullValue()));
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate值是必要"))
+                .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(nullValue()));
     }
 
     @DisplayName("update comment時如果rate超過5，就return Bad_Request Error")
@@ -693,9 +690,8 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("rate只能從1點到五點的值"))
-//                .andExpect(jsonPath("$.dataList").value(List.of(nullValue())));
-                .andExpect(jsonPath("$.dataList").value(6));
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(6));
     }
 
 
@@ -722,9 +718,9 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("rate只能從1點到五點的值"))
-//                .andExpect(jsonPath("$.dataList").value(List.of(nullValue())));
-                .andExpect(jsonPath("$.dataList").value(0));
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(0));
+
     }
 
     @DisplayName("update comment時如果rate值是負數，就return Bad_Request Error")
@@ -750,9 +746,8 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").value("rate只能從1點到五點的值"))
-//                .andExpect(jsonPath("$.dataList").value(List.of(nullValue())));
-                .andExpect(jsonPath("$.dataList").value(-1));
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(-1));
     }
 
 
@@ -780,11 +775,11 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").isArray())
-                .andExpect(jsonPath("$.messageList", Matchers.hasSize(2)))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("locationId要20個字")))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("content值是必要")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(" "))) ;
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value(" "))
+                .andExpect(jsonPath("$.errorMap.content.message").value("content值是必要"))
+                .andExpect(jsonPath("$.errorMap.content.rejectedValue").value(" "));
+
     }
 
 
@@ -812,12 +807,10 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").isArray())
-                .andExpect(jsonPath("$.messageList", Matchers.hasSize(2)))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("locationId要20個字")))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("rate只能從1點到五點的值")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems("abcdeabcdeabcdeabcd")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(6)));
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcd"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(6));
     }
 
     @DisplayName("update comment時locationId值要20字，rate值是從要1到5以內的值，content不能超過255個字")
@@ -843,14 +836,13 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList").isArray())
-                .andExpect(jsonPath("$.messageList", Matchers.hasSize(3)))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("locationId要20個字")))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("rate只能從1點到五點的值")))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("content只能最多255字")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems("abcdeabcdeabcdeabcd")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(6)))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid")));
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcd"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(6))
+                .andExpect(jsonPath("$.errorMap.content.message").value("content只能最多255字"))
+                .andExpect(jsonPath("$.errorMap.content.rejectedValue").value("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid"));
+
     }
 
 
@@ -892,8 +884,9 @@ class CommentControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("commentId不能低於1")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(0)));
+                .andExpect(jsonPath("$.errorMap.commentId.message").value("commentId不能低於1"))
+                .andExpect(jsonPath("$.errorMap.commentId.rejectedValue").value(0));
+
     }
 
     @DisplayName("未登入的使用者刪除comment時，return 401 UnAuthorization Error")

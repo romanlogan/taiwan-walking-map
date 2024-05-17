@@ -1,5 +1,6 @@
 package com.dbproject.api.comment.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -27,9 +28,19 @@ public class UpdateCommentRequest {
     public UpdateCommentRequest() {
     }
 
+    @Builder
     public UpdateCommentRequest(String locationId, String content, Integer rate) {
         this.locationId = locationId;
         this.content = content;
         this.rate = rate;
+    }
+
+    public static UpdateCommentRequest create(String locationId, String content, Integer rate) {
+
+        return UpdateCommentRequest.builder()
+                .locationId(locationId)
+                .content(content)
+                .rate(rate)
+                .build();
     }
 }

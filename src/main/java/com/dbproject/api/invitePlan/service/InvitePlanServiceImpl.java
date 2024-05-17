@@ -282,9 +282,7 @@ public class InvitePlanServiceImpl implements InvitePlanService {
 
         List<InvitePlanMember> invitePlanMemberList = optionalInvitePlan.get().getMembers();
         invitePlanDto.setInvitePlanMemberDtoListBy(invitePlanMemberList);
-
-        List<RouteDto> routeDtoList = RouteDto.createRouteDtosFrom(optionalInvitePlan.get().getRoutes());
-        invitePlanDto.setRouteDtoList(routeDtoList);
+        invitePlanDto.setRouteDtoList(RouteDto.createRouteDtosFrom(optionalInvitePlan.get().getRoutes()));
 
         return InvitePlanDtlResponse.createResponse(invitePlanDto);
     }
@@ -333,20 +331,4 @@ public class InvitePlanServiceImpl implements InvitePlanService {
         return invitePlanMemberDtoList;
     }
 
-    private static List<PlanMember> getPlanMemberList(InvitePlan invitePlan, Plan plan) {
-        List<InvitePlanMember> inviteFriendList = invitePlan.getMembers();
-        List<PlanMember> planMemberList = new ArrayList<>();
-        for (InvitePlanMember member : inviteFriendList) {
-
-            PlanMember planMember = PlanMember.createPlanMember(member, plan);
-            planMemberList.add(planMember);
-        }
-        return planMemberList;
-    }
-
-
-    private Route getSavedRoute(InvitePlanRouteRequest routeRequest) {
-        Route route = Route.createRoute(routeRequest);
-        return routeRepository.save(route);
-    }
 }

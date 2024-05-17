@@ -1,5 +1,6 @@
 package com.dbproject.api.comment.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +17,16 @@ public class DeleteCommentRequest {
     @Min(value = 1,message = "commentId不能低於1")
     private Integer commentId;
 
+    @Builder
     public DeleteCommentRequest(Integer commentId) {
         this.commentId = commentId;
     }
+
+    public static DeleteCommentRequest create(Integer commentId) {
+
+        return DeleteCommentRequest.builder()
+                .commentId(commentId)
+                .build();
+    }
+
 }
