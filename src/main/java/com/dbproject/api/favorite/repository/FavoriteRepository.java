@@ -16,19 +16,20 @@ public interface FavoriteRepository extends JpaRepository<FavoriteLocation, Long
 
 
     @Query("select fl from FavoriteLocation fl" +
-            " where fl.location.locationId = :locationId")
-    FavoriteLocation findByLocationId(@Param("locationId") String locationId);
+            " where fl.location.locationId = :locationId" +
+            " and fl.member.email = :email")
+    FavoriteLocation findByLocationIdAndEmail(@Param("locationId") String locationId, @Param("email") String email);
 
 
     @Query("select fl from FavoriteLocation fl"+
             " where fl.location.locationId = :locationId"+
             " and fl.member.email = :email")
-    FavoriteLocation duplicateFavoriteLocation(@Param("locationId") String locationId, @Param("email") String email);
+    FavoriteLocation findDuplicateFavoriteLocation(@Param("locationId") String locationId, @Param("email") String email);
 
     @Query("select fl from FavoriteLocation fl" +
             " where fl.member.email = :email" +
             " order by fl.location.name asc")
-    List<FavoriteLocation> getFavoriteLocationList(String email);
+    List<FavoriteLocation> findFavoriteLocationListByEmail(String email);
 
     @Query("select fl from FavoriteLocation fl" +
             " where fl.member.email = :email")

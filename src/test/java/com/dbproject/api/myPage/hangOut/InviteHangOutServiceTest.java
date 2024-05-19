@@ -107,7 +107,7 @@ class InviteHangOutServiceTest {
     void inviteHangOut() {
 
         //given
-        FavoriteLocation favoriteLocation = favoriteRepository.findByLocationId("C1_379000000A_001572");
+        FavoriteLocation favoriteLocation = favoriteRepository.findByLocationIdAndEmail("C1_379000000A_001572","asdf@asdf.com");
         LocalDateTime departDateTime = LocalDateTime.now();
         String message = "message 1";
         String friendEmail = "yunni@yunni.com";

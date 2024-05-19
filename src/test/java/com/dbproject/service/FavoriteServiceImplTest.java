@@ -1,8 +1,7 @@
 package com.dbproject.service;
 
-import com.dbproject.api.favorite.dto.FavoriteLocationList;
+import com.dbproject.api.favorite.dto.*;
 import com.dbproject.api.favorite.service.FavoriteServiceImpl;
-import com.dbproject.api.favorite.dto.AddFavoriteLocationRequest;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.dto.RegisterFormDto;
 import com.dbproject.api.favorite.FavoriteLocation;
@@ -10,8 +9,8 @@ import com.dbproject.api.member.Member;
 import com.dbproject.api.favorite.repository.FavoriteRepository;
 import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.MemberRepository;
-import com.dbproject.api.favorite.dto.UpdateMemoRequest;
 import com.dbproject.exception.DuplicateFavoriteLocationException;
+import com.dbproject.exception.FavoriteLocationNotExistException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,14 +53,10 @@ class FavoriteServiceImplTest {
     @BeforeEach
     void createMember() {
 
-        RegisterFormDto registerFormDto = new RegisterFormDto();
-        registerFormDto.setName("손흥민");
-        registerFormDto.setAddress("서울 강남구");
-        registerFormDto.setEmail("test@test.com");
-        registerFormDto.setPassword("1234");
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("이병민", "강원도 원주시", "asdf@asdf.com", "1234"), passwordEncoder));
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("손흥민", "서울 강남구", "zxcv@zxcv.com", "1234"), passwordEncoder));
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("장원유", "대만 산총구", "yunni@yunni.com", "1234"), passwordEncoder));
 
-        Member member = Member.createMember(registerFormDto, passwordEncoder);
-        memberRepository.save(member);
     }
 
     @DisplayName("어떤 사용자도 즐겨찾기로 저장하지 않았으면 즐겨찾기 개수는 null 이다")
@@ -80,35 +75,29 @@ class FavoriteServiceImplTest {
     @Test
     void addFavoriteList(){
         //given
-        String email = "test@test.com";
-        String locationId = "C1_379000000A_001572";
-        String memo = "메모 1 입니다.";
-        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(locationId, memo);
+        String email = "asdf@asdf.com";
+        AddFavoriteLocationRequest request = AddFavoriteLocationRequest.create("C1_379000000A_001572", "메모 1 입니다.");
 
         //when
-        favoriteService.addFavoriteList(addFavoriteLocationRequest, email);
+        Long id = favoriteService.addFavoriteList(request, email);
 
         //then
-        List<FavoriteLocation> favoriteLocationList = favoriteRepository.findAll();
-        assertThat(favoriteLocationList).hasSize(1);
-        assertThat(favoriteLocationList.get(0).getLocation().getName()).isEqualTo("西門町");
-        assertThat(favoriteLocationList.get(0).getMemo()).isEqualTo("메모 1 입니다.");
+        FavoriteLocation favoriteLocation = favoriteRepository.findById(id).get();
+        assertThat(favoriteLocation.getLocation().getName()).isEqualTo("西門町");
+        assertThat(favoriteLocation.getMember().getEmail()).isEqualTo("asdf@asdf.com");
+        assertThat(favoriteLocation.getMemo()).isEqualTo("메모 1 입니다.");
      }
 
     @DisplayName("儲存在FavoriteList時，如果已儲存過的地方，就return DuplicateFavoriteLocationException")
     @Test
     void addFavoriteListWithAddDuplicateFavoriteLocation(){
         //given
-
-        String email = "test@test.com";
-        String locationId = "C1_379000000A_001572";
-        String memo = "메모 1 입니다.";
-        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(locationId, memo);
-
-        addFavoriteLocation(email, locationId);
+        String email = "asdf@asdf.com";
+        AddFavoriteLocationRequest request = AddFavoriteLocationRequest.create("C1_379000000A_001572", "메모 1 입니다.");
+        favoriteService.addFavoriteList(request, email);
 
         //when //then
-        assertThatThrownBy(() -> favoriteService.addFavoriteList(addFavoriteLocationRequest, email))
+        assertThatThrownBy(() -> favoriteService.addFavoriteList(request, email))
                 .isInstanceOf(DuplicateFavoriteLocationException.class)
                 .hasMessage("이미 등록된 장소 입니다.");
     }
@@ -117,17 +106,22 @@ class FavoriteServiceImplTest {
         String memo = "메모 1 입니다.";
         Member member = memberRepository.findByEmail(email);
         Location location = locationRepository.findByLocationId(locationId);
+
         FavoriteLocation favoriteLocation = FavoriteLocation.of(member, location, memo);
         favoriteRepository.save(favoriteLocation);
+        location.increaseFavoriteCount();
+
         return favoriteLocation.getId();
     }
 
+
+//    getPage
 
     @DisplayName("儲存6個FavoriteLocation後，getFavoriteLocationListPage時，第一頁有5個FavoriteLocation")
     @Test
     void getFirstPageInFavoriteLocationListPageAfterAddSixFavoriteLocation(){
         //given
-        String email = "test@test.com";
+        String email = "asdf@asdf.com";
         addFavoriteLocation(email,"C1_379000000A_001571");
         addFavoriteLocation(email,"C1_379000000A_001572");
         addFavoriteLocation(email,"C1_379000000A_001573");
@@ -139,23 +133,25 @@ class FavoriteServiceImplTest {
         Pageable pageable = PageRequest.of(0, 5);
 
         //when
-        Page<FavoriteLocationList> favoriteLocationPage = favoriteService.getFavoriteLocationList(pageable, "test@test.com");
+        FavoriteLocationListResponse response = favoriteService.getFavoriteLocationList(pageable, email);
 
         //then
+        Page<FavoriteLocationList> favoriteLocationPage = response.getFavoriteListResponsePage();
         assertThat(favoriteLocationPage.getTotalElements()).isEqualTo(6);
         assertThat(favoriteLocationPage.getTotalPages()).isEqualTo(2);
         assertThat(favoriteLocationPage.getContent().size()).isEqualTo(5);
         assertThat(favoriteLocationPage.getContent().get(0).getLocationId()).isEqualTo("C1_379000000A_001571");
-        assertThat(favoriteLocationPage.getContent().get(0).getName()).isEqualTo("台北花市");
+        assertThat(favoriteLocationPage.getContent().get(1).getLocationId()).isEqualTo("C1_379000000A_001572");
+        assertThat(favoriteLocationPage.getContent().get(2).getLocationId()).isEqualTo("C1_379000000A_001573");
+        assertThat(favoriteLocationPage.getContent().get(3).getLocationId()).isEqualTo("C1_379000000A_001574");
         assertThat(favoriteLocationPage.getContent().get(4).getLocationId()).isEqualTo("C1_379000000A_001575");
-        assertThat(favoriteLocationPage.getContent().get(4).getName()).isEqualTo("光華玉市");
     }
 
     @DisplayName("儲存6個FavoriteLocation後，getFavoriteLocationListPage時，第二頁只有1個FavoriteLocation")
     @Test
     void getSecondPageInFavoriteLocationListPageAfterAddSixFavoriteLocation(){
         //given
-        String email = "test@test.com";
+        String email = "asdf@asdf.com";
         addFavoriteLocation(email,"C1_379000000A_001571");
         addFavoriteLocation(email,"C1_379000000A_001572");
         addFavoriteLocation(email,"C1_379000000A_001573");
@@ -167,7 +163,8 @@ class FavoriteServiceImplTest {
         Pageable pageable = PageRequest.of(1, 5);
 
         //when
-        Page<FavoriteLocationList> favoriteLocationPage = favoriteService.getFavoriteLocationList(pageable, "test@test.com");
+        FavoriteLocationListResponse response = favoriteService.getFavoriteLocationList(pageable, email);
+        Page<FavoriteLocationList> favoriteLocationPage = response.getFavoriteListResponsePage();
 
         //then
         assertThat(favoriteLocationPage.getTotalElements()).isEqualTo(6);
@@ -175,49 +172,92 @@ class FavoriteServiceImplTest {
         assertThat(favoriteLocationPage.getContent().size()).isEqualTo(1);
         assertThat(favoriteLocationPage.getContent().get(0).getLocationId()).isEqualTo("C1_379000000A_001577");
         assertThat(favoriteLocationPage.getContent().get(0).getName()).isEqualTo("建國假日花市");
-     }
+    }
 
+
+//     delete
 
      @DisplayName("刪除FavoriteLocation")
      @Test
      void deleteFavoriteLocation(){
          //given
-         String email = "test@test.com";
-         addFavoriteLocation(email,"C1_379000000A_001571");
+         String email = "asdf@asdf.com";
+         Long id = addFavoriteLocation(email, "C1_379000000A_001571");
          addFavoriteLocation(email,"C1_379000000A_001572");
-         List<FavoriteLocation> favoriteLocationList = favoriteRepository.findAll();
-         assertThat(favoriteLocationList.size()).isEqualTo(2);
 
-         FavoriteLocation favoriteLocation = favoriteRepository.findByLocationId("C1_379000000A_001571");
+         DeleteFavoriteLocationRequest request = new DeleteFavoriteLocationRequest(Math.toIntExact(id));
 
          //when
-         favoriteService.deleteFavoriteLocation(Math.toIntExact(favoriteLocation.getId()));
+         favoriteService.deleteFavoriteLocation(request);
 
          //then
          List<FavoriteLocation> favoriteLocationListAfterDeleted = favoriteRepository.findAll();
          assertThat(favoriteLocationListAfterDeleted.size()).isEqualTo(1);
-      }
+         assertThat(favoriteLocationListAfterDeleted.get(0).getLocation().getLocationId()).isEqualTo("C1_379000000A_001572");
+    }
 
 
-    @DisplayName("更新FavoriteLocation的Memo")
+    @DisplayName("When deleting a favorite location that does not exist, return FavoriteLocationNotExistException")
     @Test
-    void updateMemo() {
+    void deleteNotExistFavoriteLocation(){
         //given
-//        1. favoriteLocation 1개 저장
-        String email = "test@test.com";
-        String locationId = "C1_379000000A_001572";
-        Long favoriteLocationId = addFavoriteLocation(email, locationId);
+        DeleteFavoriteLocationRequest request = new DeleteFavoriteLocationRequest(1);
 
-        //2. 저장한 favoriteLocation 의 memo 를 변경
-        UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(Math.toIntExact(favoriteLocationId), "updated memo");
+        //when //then
+        assertThatThrownBy(() -> favoriteService.deleteFavoriteLocation(request))
+                .isInstanceOf(FavoriteLocationNotExistException.class)
+                .hasMessage("즐겨찾기 장소가 존재하지 않습니다.");
+    }
+
+    @DisplayName("decrease location's favorite count when delete FavoriteLocation ")
+    @Test
+    void decreaseFavoriteCount(){
+        //given
+        Long id = addFavoriteLocation("asdf@asdf.com", "C1_379000000A_001571");
+        addFavoriteLocation("yunni@yunni.com","C1_379000000A_001571");
+
+        DeleteFavoriteLocationRequest request = new DeleteFavoriteLocationRequest(Math.toIntExact(id));
+        assertFavoriteCountIs(2,"yunni@yunni.com");
 
         //when
-        favoriteService.updateMemo(updateMemoRequest);
+        favoriteService.deleteFavoriteLocation(request);
 
         //then
-        Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(favoriteLocationId);
-        FavoriteLocation favoriteLocation = optionalFavoriteLocation.get();
+        assertFavoriteCountIs(1,"yunni@yunni.com");
+
+    }
+
+    private void assertFavoriteCountIs(Integer count,String email) {
+        FavoriteLocation favoriteLocation = favoriteRepository.findByLocationIdAndEmail("C1_379000000A_001571",email);
+        assertThat(favoriteLocation.getLocation().getFavoriteCount()).isEqualTo(count);
+    }
+
+    @DisplayName("update memo of FavoriteLocation")
+    @Test
+    void updateMemo() {
+
+        //givenf
+        Long id = addFavoriteLocation("asdf@asdf.com", "C1_379000000A_001572");
+        UpdateMemoRequest request = new UpdateMemoRequest(Math.toIntExact(id), "updated memo");
+
+        //when
+        favoriteService.updateMemo(request);
+
+        //then
+        FavoriteLocation favoriteLocation = favoriteRepository.findById(id).get();
         assertThat(favoriteLocation.getMemo()).isEqualTo("updated memo");
         assertThat(favoriteLocation.getLocation().getName()).isEqualTo("西門町");
+    }
+
+    @DisplayName("When update memo of favorite location that does not exist, return FavoriteLocationNotExistException")
+    @Test
+    void updateMemoWithNotExistFavoriteLocation(){
+        //given
+        UpdateMemoRequest request = new UpdateMemoRequest(1 , "updated memo");
+
+        //when //then
+        assertThatThrownBy(() -> favoriteService.updateMemo(request))
+                .isInstanceOf(FavoriteLocationNotExistException.class)
+                .hasMessage("즐겨찾기 장소가 존재하지 않습니다.");
     }
 }

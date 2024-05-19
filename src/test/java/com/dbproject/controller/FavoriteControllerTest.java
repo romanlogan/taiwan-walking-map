@@ -1,12 +1,9 @@
 package com.dbproject.controller;
 
-import com.dbproject.api.favorite.dto.AddFavoriteLocationRequest;
-import com.dbproject.api.favorite.dto.DeleteFavoriteLocationRequest;
-import com.dbproject.api.favorite.dto.FavoriteLocationList;
+import com.dbproject.api.favorite.dto.*;
 import com.dbproject.api.favorite.repository.FavoriteRepository;
 import com.dbproject.api.favorite.service.FavoriteServiceImpl;
 import com.dbproject.api.member.MemberService;
-import com.dbproject.api.favorite.dto.UpdateMemoRequest;
 import com.dbproject.web.favorite.FavoriteController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
@@ -188,7 +185,9 @@ class FavoriteControllerTest {
         list.add(favoriteListResponse);
 
         Page<FavoriteLocationList> page = new PageImpl<>(list, pageable, 1);
-        Mockito.when(favoriteService.getFavoriteLocationList(pageable, "qwer@qwer.com")).thenReturn(page);
+        FavoriteLocationListResponse response = new FavoriteLocationListResponse(page);
+
+        Mockito.when(favoriteService.getFavoriteLocationList(pageable, "qwer@qwer.com")).thenReturn(response);
 
 
 //      현재 문제는 MockUser를 사용하여 test 진행시 mockUser가 faovriteList가 없는 문제/
@@ -216,7 +215,9 @@ class FavoriteControllerTest {
         list.add(favoriteListResponse);
 
         Page<FavoriteLocationList> page = new PageImpl<>(list, pageable, 1);
-        Mockito.when(favoriteService.getFavoriteLocationList(pageable, "qwer@qwer.com")).thenReturn(page);
+        FavoriteLocationListResponse response = new FavoriteLocationListResponse(page);
+
+        Mockito.when(favoriteService.getFavoriteLocationList(pageable, "qwer@qwer.com")).thenReturn(response);
 
         //when  //then
         mockMvc.perform(MockMvcRequestBuilders

@@ -1,22 +1,21 @@
 package com.dbproject.api.favorite.service;
 
-import com.dbproject.api.favorite.dto.AddFavoriteLocationRequest;
-import com.dbproject.api.favorite.dto.FavoriteLocationList;
+import com.dbproject.api.favorite.dto.*;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.favorite.repository.FavoriteRepository;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.Member;
-import com.dbproject.api.favorite.dto.UpdateMemoRequest;
 import com.dbproject.exception.DuplicateFavoriteLocationException;
 import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.MemberRepository;
+import com.dbproject.exception.FavoriteLocationNotExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -30,43 +29,63 @@ public class FavoriteServiceImpl implements FavoriteService{
 
     public Long addFavoriteList(AddFavoriteLocationRequest addFavoriteLocationRequest, String email) throws DuplicateFavoriteLocationException{
 
-        Member member = memberRepository.findByEmail(email);
-        Location location = locationRepository.findByLocationId(addFavoriteLocationRequest.getLocationId());
-
         checkDuplicateFavoriteLocation(addFavoriteLocationRequest.getLocationId(), email);
 
-        FavoriteLocation favoriteLocation = FavoriteLocation.of(member, location, addFavoriteLocationRequest.getMemo());
-        favoriteRepository.save(favoriteLocation);
-        location.increaseFavoriteCount();
+        FavoriteLocation favoriteLocation = createAndSaveFavoriteLocationFrom(addFavoriteLocationRequest, email);
 
         return favoriteLocation.getId();
     }
 
+    private FavoriteLocation createAndSaveFavoriteLocationFrom(AddFavoriteLocationRequest addFavoriteLocationRequest, String email) {
+
+        Member member = memberRepository.findByEmail(email);
+        Location location = locationRepository.findByLocationId(addFavoriteLocationRequest.getLocationId());
+        return saveFavoriteLocation(location, FavoriteLocation.of(member, location, addFavoriteLocationRequest.getMemo()));
+    }
+
+    private FavoriteLocation saveFavoriteLocation(Location location, FavoriteLocation favoriteLocation) {
+
+        FavoriteLocation savedFavoriteLocation = favoriteRepository.save(favoriteLocation);
+        location.increaseFavoriteCount();       //increase 는 save 한 뒤에 하기,
+        return savedFavoriteLocation;
+    }
+
     private void checkDuplicateFavoriteLocation(String locationId, String email) {
 
-        FavoriteLocation favoriteLocation = favoriteRepository.duplicateFavoriteLocation(locationId, email);
+        FavoriteLocation favoriteLocation = favoriteRepository.findDuplicateFavoriteLocation(locationId, email);
 
         if (favoriteLocation != null) {
             throw new DuplicateFavoriteLocationException("이미 등록된 장소 입니다.");
         }
     }
 
-    public Page<FavoriteLocationList> getFavoriteLocationList(Pageable pageable, String email) {
+    public FavoriteLocationListResponse getFavoriteLocationList(Pageable pageable, String email) {
 
-        return favoriteRepository.getFavoriteLocationListPage(pageable, email);
+        Page<FavoriteLocationList> favoriteLocationPage = favoriteRepository.getFavoriteLocationListPage(pageable, email);
+
+        return new FavoriteLocationListResponse(favoriteLocationPage);
     }
 
-    public void deleteFavoriteLocation(Integer favoriteLocationId){
+    public void deleteFavoriteLocation(DeleteFavoriteLocationRequest request){
 
-        //중복 체크
-        Long id = Long.valueOf(favoriteLocationId);
-        FavoriteLocation favoriteLocation = favoriteRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-
-        //decrease count
-        Location location = favoriteLocation.getLocation();
-        location.decreaseFavoriteCount();
-
+        FavoriteLocation favoriteLocation = findFavoriteLocationBy(request.getFavoriteLocationId());
+        favoriteLocation.decreaseLocationFavoriteCount();
         favoriteRepository.delete(favoriteLocation);
+
+    }
+
+    private FavoriteLocation findFavoriteLocationBy(Integer id) {
+        Optional<FavoriteLocation> optionalFavoriteLocation = favoriteRepository.findById(Long.valueOf(id));
+        checkFavoriteLocationExist(optionalFavoriteLocation);
+
+        return optionalFavoriteLocation.get();
+    }
+
+    private static void checkFavoriteLocationExist(Optional<FavoriteLocation> optionalFavoriteLocation) {
+
+        if (optionalFavoriteLocation.isEmpty()) {
+            throw new FavoriteLocationNotExistException("즐겨찾기 장소가 존재하지 않습니다.");
+        }
     }
 
     public Integer getMaxPage(Integer size) {
@@ -79,8 +98,8 @@ public class FavoriteServiceImpl implements FavoriteService{
 
     public Long updateMemo(UpdateMemoRequest updateMemoRequest) {
 
-        Long id = Long.valueOf(updateMemoRequest.getFavoriteLocationId());
-        FavoriteLocation favoriteLocation = favoriteRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        FavoriteLocation favoriteLocation = findFavoriteLocationBy(updateMemoRequest.getFavoriteLocationId());
+
         favoriteLocation.updateMemo(updateMemoRequest.getMemo());
 
         return favoriteLocation.getId();

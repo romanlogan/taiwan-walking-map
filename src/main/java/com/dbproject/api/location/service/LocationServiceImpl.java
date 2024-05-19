@@ -1,6 +1,5 @@
 package com.dbproject.api.location.service;
 
-import com.dbproject.api.city.CityRepository;
 import com.dbproject.api.comment.Comment;
 import com.dbproject.api.comment.dto.CommentDto;
 import com.dbproject.api.favorite.FavoriteLocation;
@@ -16,7 +15,6 @@ import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.memberImg.MemberImg;
 import com.dbproject.api.member.memberImg.MemberImgRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.loader.custom.RootReturn;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -112,7 +110,7 @@ public class LocationServiceImpl implements LocationService {
     private void checkSavedFavoriteLocation(Location location, LocationDtlResponse locationDtlResponse, String email) {
 
 //        FavoriteLocation favoriteLocation = favoriteRepository.findByLocationId(location.getLocationId());
-        FavoriteLocation favoriteLocation = favoriteRepository.duplicateFavoriteLocation(location.getLocationId(), email);
+        FavoriteLocation favoriteLocation = favoriteRepository.findDuplicateFavoriteLocation(location.getLocationId(), email);
 
         if (favoriteLocation == null) {
             // 기본값이 false 니까 이건 안쓰는게 맞을까 ?

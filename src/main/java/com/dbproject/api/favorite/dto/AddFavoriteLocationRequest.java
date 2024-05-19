@@ -24,9 +24,18 @@ public class AddFavoriteLocationRequest {
     public AddFavoriteLocationRequest() {
     }
 
+    @Builder
     public AddFavoriteLocationRequest(String locationId, String memo) {
         this.locationId = locationId;
         this.memo = memo;
+    }
+
+    public static AddFavoriteLocationRequest create(String locationId, String memo) {
+
+        return AddFavoriteLocationRequest.builder()
+                .locationId(locationId)
+                .memo(memo)
+                .build();
     }
 
 

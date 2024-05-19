@@ -52,4 +52,12 @@ public class FavoriteLocation extends BaseEntity {
     public void updateMemo(String memo) {
         this.memo = memo;
     }
+
+    public void decreaseLocationFavoriteCount() {
+        Location location = this.location;
+        location.decreaseFavoriteCount();
+
+    }
+
+
 }

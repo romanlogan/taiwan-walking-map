@@ -131,7 +131,7 @@ public class FriendServiceImpl implements FriendService{
     private List<FavoriteLocationDto> getFavoriteLocationDtoList(String email) {
         List<FavoriteLocationDto> favoriteLocationDtoList = new ArrayList<>();
 
-        List<FavoriteLocation> favoriteLocationList = favoriteRepository.getFavoriteLocationList(email);
+        List<FavoriteLocation> favoriteLocationList = favoriteRepository.findFavoriteLocationListByEmail(email);
 
         for (FavoriteLocation favoriteLocation : favoriteLocationList) {
             FavoriteLocationDto favoriteLocationDto = FavoriteLocationDto.of(favoriteLocation);

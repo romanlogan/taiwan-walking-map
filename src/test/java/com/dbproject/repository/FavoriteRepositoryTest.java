@@ -115,7 +115,7 @@ class FavoriteRepositoryTest {
 
     @DisplayName("locationId 로 이미 즐겨찾기 리스트에 저장된 장소인지 확인한다")
      @Test
-     void findByLocationId(){
+     void findByLocationIdAndEmail(){
          //given
          Member member = memberRepository.findByEmail("zxcv@zxcv.com");
          String locationId = "C1_379000000A_001572";
@@ -126,7 +126,7 @@ class FavoriteRepositoryTest {
 
 
          //when
-         FavoriteLocation favoriteLocation = favoriteRepository.findByLocationId(locationId);
+         FavoriteLocation favoriteLocation = favoriteRepository.findByLocationIdAndEmail(locationId,"zxcv@zxcv.com");
 
          //then
          assertThat(favoriteLocation.getLocation().getName()).isEqualTo("西門町");
@@ -145,7 +145,7 @@ class FavoriteRepositoryTest {
         favoriteRepository.save(savedFavoriteLocation);
 
         //when
-        List<FavoriteLocation> favoriteLocationList = favoriteRepository.getFavoriteLocationList("zxcv@zxcv.com");
+        List<FavoriteLocation> favoriteLocationList = favoriteRepository.findFavoriteLocationListByEmail("zxcv@zxcv.com");
 
         //then
         assertThat(favoriteLocationList.get(0).getLocation().getName()).isEqualTo("西門町");

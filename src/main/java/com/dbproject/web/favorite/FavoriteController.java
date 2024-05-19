@@ -10,6 +10,7 @@ import com.dbproject.api.favorite.dto.UpdateMemoRequest;
 import com.dbproject.binding.CheckBindingResult;
 import com.dbproject.binding.ErrorDetail;
 import com.dbproject.exception.DuplicateFavoriteLocationException;
+import com.dbproject.exception.FavoriteLocationNotExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -94,8 +95,7 @@ public class FavoriteController {
         Pageable pageable = PageRequest.of(page , size );
         String email = principal.getName();
 
-        Page<FavoriteLocationList> favoriteListResponsePage = favoriteService.getFavoriteLocationList(pageable, email);
-        FavoriteLocationListResponse response = new FavoriteLocationListResponse(favoriteListResponsePage);
+        FavoriteLocationListResponse response = favoriteService.getFavoriteLocationList(pageable, email);
 
         model.addAttribute("locationList", response);
         model.addAttribute("maxPage", 5);
@@ -124,35 +124,19 @@ public class FavoriteController {
                                                  BindingResult bindingResult,
                                                  Principal principal) {
 
-//        if (principal == null) {
-//            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
-//        }
-
-//        if (bindingResult.hasErrors()) {
-//
-//            List<String> messageList = new ArrayList<>();
-//            List<Object> dataList = new ArrayList<>();
-//            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-//            for (FieldError fieldError : fieldErrors) {
-//                dataList.add(fieldError.getRejectedValue());
-//                messageList.add(fieldError.getDefaultMessage());
-//            }
-//
-////          오류 데이터를 다시 보낼 필요가 없으므로 success 로 유도할 필요 없으므로 BAD_REQUEST
-//            return new ResponseEntity(ApiResponse.of(
-//                    HttpStatus.BAD_REQUEST,
-//                    messageList,
-//                    dataList
-//            ),HttpStatus.BAD_REQUEST);
-//        }
-
         if(bindingResult.hasErrors()){
             ResponseEntity responseEntity = CheckBindingResult.induceErrorInAjax(bindingResult);
 
             return responseEntity;
         }
 
-        favoriteService.deleteFavoriteLocation(deleteFavoriteLocationRequest.getFavoriteLocationId());
+
+        try {
+            favoriteService.deleteFavoriteLocation(deleteFavoriteLocationRequest);
+        } catch (FavoriteLocationNotExistException e) {
+            return null;
+        }
+
 
         return new ResponseEntity(ApiResponse.of(
                 HttpStatus.OK,
@@ -171,8 +155,13 @@ public class FavoriteController {
             return responseEntity;
         }
 
+        Long id;
 
-        Long id = favoriteService.updateMemo(updateMemoRequest);
+        try {
+            id = favoriteService.updateMemo(updateMemoRequest);
+        } catch (FavoriteLocationNotExistException e) {
+            return null;
+        }
 
         return new ResponseEntity(ApiResponse.of(
                 HttpStatus.OK,
