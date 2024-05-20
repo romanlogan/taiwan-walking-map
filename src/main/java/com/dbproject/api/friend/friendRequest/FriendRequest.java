@@ -57,7 +57,10 @@ public class FriendRequest extends BaseEntity {
                 .requester(requester)
                 .respondent(respondent)
                 .build();
+    }
 
+    public void changeStatusTo(FriendRequestStatus status) {
+        this.friendRequestStatus = status;
     }
 
 }

@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class DeleteFavoriteLocationRequest {
 
-    @NotNull
+    @NotNull(message = "favoriteLocationId不能null")
     @Min(value = 1, message = "favoriteLocationId不能低於1")
     private Integer favoriteLocationId;
 

@@ -40,9 +40,6 @@ class MemberRepositoryTest {
         memberRepository.save(member);
     }
 
-
-
-
     @DisplayName("이메일을 받아서 회원을 삭제합니다")
     @Test
     void deleteByEmail(){

@@ -133,11 +133,10 @@ public class FriendController {
     public String getFriendList(Principal principal,
                                 Model model) {
 
-        String email = principal.getName();
-        FriendListResponse friendListResponse = friendService.getFriendList(email);
+
+        FriendListResponse friendListResponse = friendService.getFriendList(principal.getName());
 
         model.addAttribute("friendListResponse", friendListResponse);
-
 
         return "/myPage/friendList";
     }

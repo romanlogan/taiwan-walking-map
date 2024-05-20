@@ -95,7 +95,7 @@ class FavoriteControllerTest {
     }
 
 
-    @DisplayName("즐겨찾기 장소를 등록시 location Id는 null 이 될 수 없다")
+    @DisplayName("when add favorite location, location Id can't be null")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void LocationIdCanNotNullWhenAddFavoriteList() throws Exception {
@@ -115,11 +115,11 @@ class FavoriteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList",Matchers.hasItems("locationId值是必要")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(nullValue())));
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId值是必要"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value(nullValue()));
     }
 
-    @DisplayName("儲存FavoriteLocation時locationId值只能20字")
+    @DisplayName("location id only can 20 word, can't shorter than 20, when add FavoriteLocation")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void saveFavoriteLocationWithNotFormattedLocationId() throws Exception {
@@ -141,11 +141,11 @@ class FavoriteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList",Matchers.hasItems("locationId要20個字")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems("abcdeabcdeabcdeabcd")));
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcd"));
     }
 
-    @DisplayName("儲存FavoriteLocation時memo值最多只能255字")
+    @DisplayName("The maximum number of memo characters is 255, when save FavoriteLocation")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void saveFavoriteLocationWithOverSizeMemo() throws Exception {
@@ -167,16 +167,17 @@ class FavoriteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList",Matchers.hasItems("memo值只能最多255字")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid")));
+                .andExpect(jsonPath("$.errorMap.memo.message").value("memo值只能最多255字"))
+                .andExpect(jsonPath("$.errorMap.memo.rejectedValue").value("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid"));
     }
 
 
 
-    @DisplayName("즐겨찾기 장소들을 조회한다")
+    @DisplayName("find favorite location list")
     @Test
     @WithMockUser(username = "qwer@qwer.com", roles = "USER")
     void getFavoriteList() throws Exception {
+
         //given
         Pageable pageable = PageRequest.of(0, 5 );
 
@@ -229,7 +230,7 @@ class FavoriteControllerTest {
 
 
 
-    @DisplayName("즐겨찾기 장소를 삭제한다")
+    @DisplayName("delete favorite location")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void deleteFavoriteLocation() throws Exception {
@@ -272,7 +273,7 @@ class FavoriteControllerTest {
 
 
 
-    @DisplayName("즐겨찾기 장소를 삭제시 favoriteLocationId 는 null 이 될 수 없다")
+    @DisplayName("favoriteLocationId can't be null ,when delete FavoriteLocation")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void favoriteLocationIdCanNotNullWhenDeleteFavoriteLocation() throws Exception {
@@ -290,10 +291,14 @@ class FavoriteControllerTest {
 
                 )
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.message").value("favoriteLocationId不能null"))
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.rejectedValue").value(nullValue()));
     }
 
-    @DisplayName("刪除FavoriteLocation時，favoriteLocationId不能0")
+    @DisplayName("favoriteLocationId can't be 0 ,when delete FavoriteLocation")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void deleteFavoriteLocationWithZeroFavoriteLocationId() throws Exception {
@@ -314,8 +319,8 @@ class FavoriteControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("favoriteLocationId不能低於1")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(0)));
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.message").value("favoriteLocationId不能低於1"))
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.rejectedValue").value(0));
     }
 
     @DisplayName("등록된 즐겨찾기 장소의 메모를 변경한다")
@@ -358,10 +363,10 @@ class FavoriteControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    @DisplayName("즐겨찾기 장소 id 가 null 이면 BadRequest 를 반환")
+    @DisplayName("favorite location id can't be null when update memo")
     @Test
     @WithMockUser(username = "user", roles = "USER")
-    void favoriteLocationIdCanNotBlank2() throws Exception{
+    void favoriteLocationIdCanNotNullWhenUpdateMemo() throws Exception{
         //given
 
         Integer favoriteLocationId = null;
@@ -380,8 +385,8 @@ class FavoriteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("favoriteLocationId值是必要")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(nullValue()))) ;
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.message").value("favoriteLocationId值是必要"))
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.rejectedValue").value(nullValue()));
     }
 
 }
