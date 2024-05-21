@@ -6,6 +6,7 @@ import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.friend.friendRequest.dto.RequestFriendListDto;
 import com.dbproject.api.member.dto.RegisterFormDto;
+import com.dbproject.constant.FriendRequestStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestPropertySource(locations="classpath:application-test.properties")
 class FriendRequestRepositoryCustomImplTest {
 
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -39,61 +39,129 @@ class FriendRequestRepositoryCustomImplTest {
     @BeforeEach
     void createMember() {
 
-        RegisterFormDto registerFormDto1 = new RegisterFormDto();
-        registerFormDto1.setName("손흥민");
-        registerFormDto1.setAddress("서울 강남구");
-        registerFormDto1.setEmail("zxcv@zxcv.com");
-        registerFormDto1.setPassword("1234");
-
-        Member member1 = Member.createMember(registerFormDto1, passwordEncoder);
-        memberRepository.save(member1);
-
-        RegisterFormDto registerFormDto2 = new RegisterFormDto();
-        registerFormDto2.setName("이병민");
-        registerFormDto2.setAddress("강원도 원주시");
-        registerFormDto2.setEmail("qwer@qwer.com");
-        registerFormDto2.setPassword("1234");
-
-        Member member2 = Member.createMember(registerFormDto2, passwordEncoder);
-        memberRepository.save(member2);
-
-        RegisterFormDto registerFormDto3 = new RegisterFormDto();
-        registerFormDto3.setName("장원유");
-        registerFormDto3.setAddress("대만 산총구");
-        registerFormDto3.setEmail("yunni@yunni.com");
-        registerFormDto3.setPassword("1234");
-
-        Member member3 = Member.createMember(registerFormDto3, passwordEncoder);
-        memberRepository.save(member3);
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("이병민", "강원도 원주시", "asdf@asdf.com", "1234"), passwordEncoder));
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("손흥민", "서울 강남구", "zxcv@zxcv.com", "1234"), passwordEncoder));
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("장원유", "대만 산총구", "yunni@yunni.com", "1234"), passwordEncoder));
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("test1", "대만 산총구", "test1@test1.com", "1234"), passwordEncoder));
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("test2", "대만 산총구", "test2@test2.com", "1234"), passwordEncoder));
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("test3", "대만 산총구", "test3@test3.com", "1234"), passwordEncoder));
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("test4", "대만 산총구", "test4@test4.com", "1234"), passwordEncoder));
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("test5", "대만 산총구", "test5@test5.com", "1234"), passwordEncoder));
     }
 
-    @DisplayName("친구 요청 목록 페이지를 가져온다")
+    @DisplayName("receive requests from two users, and retrieving received friend request list page, there are two results.")
     @Test
     void getRequestFriendListPage() {
 
         //given
         Member son = memberRepository.findByEmail("zxcv@zxcv.com");
-        Member lee = memberRepository.findByEmail("qwer@qwer.com");
+        Member lee = memberRepository.findByEmail("asdf@asdf.com");
         Member yunni = memberRepository.findByEmail("yunni@yunni.com");
 
-        FriendRequest friendRequest1 = FriendRequest.createFriendRequest(lee, yunni, "1");
-        FriendRequest friendRequest2 = FriendRequest.createFriendRequest(lee, son, "1");
-        FriendRequest friendRequest3 = FriendRequest.createFriendRequest(yunni, lee, "1");
-        FriendRequest friendRequest4 = FriendRequest.createFriendRequest(son, lee, "1");
-
-        friendRequestRepository.save(friendRequest1);
-        friendRequestRepository.save(friendRequest2);
-        friendRequestRepository.save(friendRequest3);
-        friendRequestRepository.save(friendRequest4);
+        createAndSaveFriendRequest(yunni, lee);
+        createAndSaveFriendRequest(son, lee);
+        createAndSaveFriendRequest(son, yunni);
 
         Pageable pageable = PageRequest.of( 0, 5 );
 
         //when
-        Page<RequestFriendListDto> list = friendRequestRepository.getRequestFriendListPage(pageable, "yunni@yunni.com");
+        Page<RequestFriendListDto> list = friendRequestRepository.getRequestFriendListPage(pageable, "asdf@asdf.com");
+
+        //then
+        assertThat(list.getTotalElements()).isEqualTo(2);
+    }
+
+    private Long createAndSaveFriendRequest(Member requester, Member respondent) {
+        FriendRequest friendRequest1 = FriendRequest.createFriendRequest(requester,respondent,"1");
+        return friendRequestRepository.save(friendRequest1).getId();
+    }
+
+    @DisplayName("receive requests from two users, accept one request, and retrieving received friend request list page, there are one results.")
+    @Test
+    void getRequestFriendListPageWithOneAccepted() {
+
+        //given
+        Member son = memberRepository.findByEmail("zxcv@zxcv.com");
+        Member lee = memberRepository.findByEmail("asdf@asdf.com");
+        Member yunni = memberRepository.findByEmail("yunni@yunni.com");
+        Long id = createAndSaveFriendRequest(yunni, lee);
+        createAndSaveFriendRequest(son, lee);
+
+        acceptFriendRequest(id);
+
+        Pageable pageable = PageRequest.of( 0, 5 );
+
+        //when
+        Page<RequestFriendListDto> list = friendRequestRepository.getRequestFriendListPage(pageable, "asdf@asdf.com");
 
         //then
         assertThat(list.getTotalElements()).isEqualTo(1);
-        assertThat(list.getContent().get(0).getEmail()).isEqualTo("qwer@qwer.com");
-//        assertThat(list.getContent().get(1).getEmail()).isEqualTo("yunni@yunni.com");
     }
+
+    private void acceptFriendRequest(Long id) {
+        FriendRequest friendRequest = friendRequestRepository.findById(id).get();
+        friendRequest.changeStatusTo(FriendRequestStatus.ACCEPTED);
+    }
+
+    @DisplayName("receive requests from two users, reject one request, and retrieving received friend request list page, there are one results.")
+    @Test
+    void getRequestFriendListPageWithOneRejected() {
+
+        //given
+        Member son = memberRepository.findByEmail("zxcv@zxcv.com");
+        Member lee = memberRepository.findByEmail("asdf@asdf.com");
+        Member yunni = memberRepository.findByEmail("yunni@yunni.com");
+        Long id = createAndSaveFriendRequest(yunni, lee);
+        createAndSaveFriendRequest(son, lee);
+
+        rejectFriendRequest(id);
+
+        Pageable pageable = PageRequest.of( 0, 5 );
+
+        //when
+        Page<RequestFriendListDto> list = friendRequestRepository.getRequestFriendListPage(pageable, "asdf@asdf.com");
+
+        //then
+        assertThat(list.getTotalElements()).isEqualTo(1);
+    }
+
+    private void rejectFriendRequest(Long id) {
+        FriendRequest friendRequest = friendRequestRepository.findById(id).get();
+        friendRequest.changeStatusTo(FriendRequestStatus.REJECTED);
+    }
+
+
+    @DisplayName("When retrieving the friend request list page, if there are requests from 7 users and the page size is 5, only 2 request appear on the second page.")
+    @Test
+    void getRequestFriendListSecondPageWithPageSizeIs5() {
+
+        //given
+        Member son = memberRepository.findByEmail("zxcv@zxcv.com");
+        Member lee = memberRepository.findByEmail("asdf@asdf.com");
+        Member yunni = memberRepository.findByEmail("yunni@yunni.com");
+        Member test1 = memberRepository.findByEmail("test1@test1.com");
+        Member test2 = memberRepository.findByEmail("test2@test2.com");
+        Member test3 = memberRepository.findByEmail("test3@test3.com");
+        Member test4 = memberRepository.findByEmail("test4@test4.com");
+        Member test5 = memberRepository.findByEmail("test5@test5.com");
+
+        createAndSaveFriendRequest(yunni, lee);
+        createAndSaveFriendRequest(son, lee);
+        createAndSaveFriendRequest(test1, lee);
+        createAndSaveFriendRequest(test2, lee);
+        createAndSaveFriendRequest(test3, lee);
+        createAndSaveFriendRequest(test4, lee);
+        createAndSaveFriendRequest(test5, lee);
+
+        Pageable pageable = PageRequest.of( 1, 5 );
+
+        //when
+        Page<RequestFriendListDto> list = friendRequestRepository.getRequestFriendListPage(pageable, "asdf@asdf.com");
+
+        //then
+        assertThat(list.getTotalElements()).isEqualTo(7);
+        assertThat(list.getTotalPages()).isEqualTo(2);
+        assertThat(list.getContent().size()).isEqualTo(2);
+    }
+
 }

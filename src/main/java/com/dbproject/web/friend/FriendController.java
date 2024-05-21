@@ -41,17 +41,12 @@ public class FriendController {
     public ResponseEntity saveFriendRequest(@Valid @RequestBody AddFriendRequest addFriendRequest,
                                             BindingResult bindingResult,
                                             Principal principal) {
-//        if (principal == null) {
-//            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
-//        }
 
-        // 바인딩 에러
         if(bindingResult.hasErrors()){
             ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
             return responseEntity;
         }
 
-//        친구 이메일 존재하는지 ? 없으면 다시 화면으로 돌려주고 없다고 표시
         Long requesterId = friendService.saveFriendRequest(addFriendRequest, principal.getName());
 
         return new ResponseEntity(ApiResponse.of(
@@ -85,13 +80,14 @@ public class FriendController {
             ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
             return responseEntity;
         }
-//        if (principal == null) {
-//            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
-//        }
 
         Long id = friendService.acceptAddFriend(acceptAddFriendRequest);
 
-        return new ResponseEntity(id, HttpStatus.OK);
+        return new ResponseEntity(ApiResponse.of(
+                HttpStatus.OK,
+                List.of(id),
+                null
+        ),  HttpStatus.OK);
     }
 
 
@@ -99,14 +95,13 @@ public class FriendController {
     public ResponseEntity rejectFriendRequest(@Valid @RequestBody RejectFriendRequest deleteFriendRequest,
                                               Principal principal) {
 
-//        if (principal == null) {
-//            return new ResponseEntity<String>("로그인 후 이용 해주세요.(server)", HttpStatus.UNAUTHORIZED);
-//        }
-
-//        Long id = friendService.acceptAddFriend(deleteFriendRequest);
         friendService.rejectFriendRequest(deleteFriendRequest);
 
-        return new ResponseEntity(1L, HttpStatus.OK);
+        return new ResponseEntity(ApiResponse.of(
+                HttpStatus.OK,
+                List.of(1),
+                null
+        ),  HttpStatus.OK);
     }
 
 //    @GetMapping(value = {"/friendList","/friendList/{page}"})
@@ -134,9 +129,9 @@ public class FriendController {
                                 Model model) {
 
 
-        FriendListResponse friendListResponse = friendService.getFriendList(principal.getName());
+        FriendListResponse response = friendService.getFriendList(principal.getName());
 
-        model.addAttribute("friendListResponse", friendListResponse);
+        model.addAttribute("friendListResponse", response);
 
         return "/myPage/friendList";
     }

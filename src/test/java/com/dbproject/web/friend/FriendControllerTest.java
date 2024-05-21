@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -52,18 +53,14 @@ class FriendControllerTest {
     @MockBean
     private FriendServiceImpl friendService;
 
-    @DisplayName("친구 요청을 저장합니다.")
+    @DisplayName("save friend request")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void saveFriendRequest() throws Exception{
         //given
-        String email = "aaa@aaa.com";
-        String memo = "memo 1";
+        AddFriendRequest addFriendRequest = createAddFriendRequest("aaa@aaa.com", "memo 1");
 
-        AddFriendRequest addFriendRequest = new AddFriendRequest(email, memo);
-
-        //when
-        //then
+        //when //then
         mockMvc.perform(MockMvcRequestBuilders.post("/myPage/addFriendRequest")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(addFriendRequest))
@@ -73,18 +70,17 @@ class FriendControllerTest {
                 .andExpect(status().isOk());
      }
 
+    private static AddFriendRequest createAddFriendRequest(String friendEmail, String memo) {
+        return AddFriendRequest.create(friendEmail, memo);
+    }
 
-    @DisplayName("비 로그인 유저가 친구 요청을 저장시 401 UnAuthorization 을 반환합니다")
+    @DisplayName("When a non-logged-in member saves a friend request, return 401 Authorization,")
     @Test
     void saveFriendRequestWithoutLogin() throws Exception{
         //given
-        String email = "aaa@aaa.com";
-        String memo = "memo 1";
+        AddFriendRequest addFriendRequest = createAddFriendRequest("aaa@aaa.com", "memo 1");
 
-        AddFriendRequest addFriendRequest = new AddFriendRequest(email, memo);
-
-        //when
-        //then
+        //when //then
         mockMvc.perform(MockMvcRequestBuilders.post("/myPage/addFriendRequest")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(addFriendRequest))
@@ -94,18 +90,14 @@ class FriendControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    @DisplayName("친구 요청을 저장시 email 은 Null 이 될 수 없습니다 ")
+    @DisplayName("When saving a friend request, email cannot be null.")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void canNotSaveFriendRequestWithNullEmail() throws Exception{
         //given
-        String email = null;
-        String memo = "memo 1";
+        AddFriendRequest addFriendRequest = createAddFriendRequest(null, "memo 1");
 
-        AddFriendRequest addFriendRequest = new AddFriendRequest(email, memo);
-
-        //when
-        //then
+        //when //then
         mockMvc.perform(MockMvcRequestBuilders.post("/myPage/addFriendRequest")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(addFriendRequest))
@@ -115,19 +107,16 @@ class FriendControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("friendEmail值是必要")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(Matchers.nullValue())));
+                .andExpect(jsonPath("$.errorMap.friendEmail.message").value("friendEmail value is required"))
+                .andExpect(jsonPath("$.errorMap.friendEmail.rejectedValue").value(nullValue()));
     }
 
-    @DisplayName("친구 요청을 저장시 email 은 ' ' 이 될 수 없습니다 ")
+    @DisplayName("When saving a friend request, email cannot be blank")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void canNotSaveFriendRequestWithBlankEmail() throws Exception{
         //given
-        String email = " ";
-        String memo = "memo 1";
-
-        AddFriendRequest addFriendRequest = new AddFriendRequest(email, memo);
+        AddFriendRequest addFriendRequest = createAddFriendRequest(" ", "memo 1");
 
         //when
         //then
@@ -140,22 +129,18 @@ class FriendControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("friendEmail值是必要")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems(" ")));
+                .andExpect(jsonPath("$.errorMap.friendEmail.message").value("please enter email format"))
+                .andExpect(jsonPath("$.errorMap.friendEmail.rejectedValue").value(" "));
     }
 
-    @DisplayName("친구 요청을 저장시 email 은 이메일 형식이어야 합니다 ")
+    @DisplayName("When saving a friend request, the email must be in email format.")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void canNotSaveFriendRequestWithoutEmailForm() throws Exception{
         //given
-        String email = "asdasdf";
-        String memo = "memo 1";
+        AddFriendRequest addFriendRequest = createAddFriendRequest("asdasdf", "memo 1");
 
-        AddFriendRequest addFriendRequest = new AddFriendRequest(email, memo);
-
-        //when
-        //then
+        //when //then
         mockMvc.perform(MockMvcRequestBuilders.post("/myPage/addFriendRequest")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(addFriendRequest))
@@ -165,19 +150,17 @@ class FriendControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("請輸入email的形式")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems("asdasdf")));
+                .andExpect(jsonPath("$.errorMap.friendEmail.message").value("please enter email format"))
+                .andExpect(jsonPath("$.errorMap.friendEmail.rejectedValue").value("asdasdf"));
     }
 
-    @DisplayName("친구 요청을 저장시 memo 는 최대 255자 까지만 가능합니다")
+    @DisplayName("When saving a friend request, the memo can only have a maximum of 255 characters")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void canNotSaveFriendRequestWithOverMemoSize() throws Exception{
         //given
-        String email = "asdf@asdf.com";
         String memo = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid";
-
-        AddFriendRequest addFriendRequest = new AddFriendRequest(email, memo);
+        AddFriendRequest addFriendRequest = createAddFriendRequest("asdf@asdf.com", memo);
 
         //when
         //then
@@ -190,8 +173,8 @@ class FriendControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.messageList", Matchers.hasItems("memo只能最多255字")))
-                .andExpect(jsonPath("$.dataList", Matchers.hasItems("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid")));
+                .andExpect(jsonPath("$.errorMap.memo.message").value("memo can only have a maximum of 255 characters"))
+                .andExpect(jsonPath("$.errorMap.memo.rejectedValue").value("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid"));
     }
 
     Page<RequestFriendListDto> getRequestFriendPage(Pageable pageable) {

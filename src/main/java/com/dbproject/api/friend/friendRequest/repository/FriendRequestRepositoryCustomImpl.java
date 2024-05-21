@@ -3,6 +3,7 @@ package com.dbproject.api.friend.friendRequest.repository;
 
 import com.dbproject.api.friend.friendRequest.QFriendRequest;
 import com.dbproject.api.friend.friendRequest.dto.RequestFriendListDto;
+import com.dbproject.constant.FriendRequestStatus;
 import com.dbproject.entity.QMember;
 import com.dbproject.web.friend.QRequestFriendListDto;
 import com.querydsl.core.types.dsl.Wildcard;
@@ -43,7 +44,8 @@ public class FriendRequestRepositoryCustomImpl implements FriendRequestRepositor
                 )
                 .from(friendRequest)
 //                .join(friendRequest.respondent, member)
-                .where(friendRequest.respondent.email.eq(email))
+                .where(friendRequest.respondent.email.eq(email),
+                        friendRequest.friendRequestStatus.eq(FriendRequestStatus.WAITING))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(friendRequest.id.desc())
@@ -53,7 +55,8 @@ public class FriendRequestRepositoryCustomImpl implements FriendRequestRepositor
                 .select(Wildcard.count)
                 .from(friendRequest)
 //                .join(friendRequest.respondent, member)
-                .where(friendRequest.respondent.email.eq(email))
+                .where(friendRequest.respondent.email.eq(email),
+                        friendRequest.friendRequestStatus.eq(FriendRequestStatus.WAITING))
                 .fetchOne();
 
         return new PageImpl<>(content, pageable, total);
