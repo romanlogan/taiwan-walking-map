@@ -23,7 +23,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LocationController {
 
-
     @Value("${google.maps.api.key}")
     private String googleMapsApiKey;
 

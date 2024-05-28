@@ -18,7 +18,7 @@ public class InvitePlanDtlResponse {
         this.invitePlanDto = invitePlanDto;
     }
 
-    public static InvitePlanDtlResponse createResponse(InvitePlanDto invitePlanDto) {
+    public static InvitePlanDtlResponse create(InvitePlanDto invitePlanDto) {
 
         return InvitePlanDtlResponse.builder()
                 .invitePlanDto(invitePlanDto)

@@ -19,17 +19,17 @@ import java.util.List;
 public class InvitePlanRequest {
 
     // NotBlank 를 써야할까 ?
-    @NotBlank(message = "name值是必要")     //null "" " " "  "
-    @Length(min = 1, max = 50, message = "name值是必要1到50個字")  // "     " 가 입력되면 NotBlank 에서 처리되어 name值是必要 메시지가 출력된다
+    @NotBlank(message = "name value is required")     //null "" " " "  "
+    @Length(min = 1, max = 50, message = "name value is required to be 1 to 50 characters")  // "     " 가 입력되면 NotBlank 에서 처리되어 name值是必要 메시지가 출력된다
     private String name;
 
-    @NotNull(message = "planPeriod值是必要")
+    @NotNull(message = "planPeriod value is required")
     private PlanPeriod planPeriod;
 
-    @Length(max = 1000, message = "supply值只能最多1000個字")  //여기서 Blank 체크 까지 해주는듯
+    @Length(max = 1000, message = "supply value can only be up to 1000 words")  //여기서 Blank 체크 까지 해주는듯
     private String supply;
 
-    @NotNull(message = "departDate值是必要")
+    @NotNull(message = "departDate value is required")
 //    @JsonFormat(pattern = "YYYY-MM-DD")           //jsonFormat 쓰고 3월 20로 보내니 body 에 3월 60일로 전송 ?
     private LocalDate departDate;
 

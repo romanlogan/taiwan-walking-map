@@ -44,7 +44,6 @@ public class ExploreController {
         if (cityName == "") {
             return "/error/errorPage";
 //            return new ResponseEntity(HTTP.BAD_REQUEST);
-
         }
 
         CityDto cityDto = exploreService.getLocationDtl(cityName);

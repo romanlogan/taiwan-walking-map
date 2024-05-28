@@ -12,4 +12,11 @@ public class SentInvitePlanListResponse {
 
     List<InvitePlanDto> invitePlanDtoList = new ArrayList<>();
 
+    public SentInvitePlanListResponse() {
+    }
+
+    public SentInvitePlanListResponse(List<InvitePlanDto> invitePlanDtoList) {
+        this.invitePlanDtoList = invitePlanDtoList;
+    }
 }
+

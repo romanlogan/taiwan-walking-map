@@ -51,12 +51,7 @@ class CommentControllerTest {
     void saveComment() throws Exception {
 
         //given
-        Integer rate = 5;
-        String content = "댓글1 입니다.";
-        String email = "zxcv@zxcv.com";
-        String locationId = "C1_379000000A_001572";
-
-        CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content,rate);
+        CreateCommentRequest createCommentRequest = new CreateCommentRequest("C1_379000000A_001572", "댓글1 입니다.", 5);
 
         //when  //then
         mockMvc.perform(MockMvcRequestBuilders.post("/comment/createComment")
@@ -69,17 +64,12 @@ class CommentControllerTest {
      }
 
 
-    @DisplayName("未登入的使用者儲存comment時，return 401 UnAuthorization Error")
+    @DisplayName("When a non-logged-in member access to save comment, return 401 unAuthorization,")
     @Test
     void saveCommentWithoutLogin() throws Exception {
 
         //given
-        Integer rate = 5;
-        String content = "댓글1 입니다.";
-        String email = "zxcv@zxcv.com";
-        String locationId = "C1_379000000A_001572";
-
-        CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content,rate);
+        CreateCommentRequest createCommentRequest = new CreateCommentRequest("C1_379000000A_001572", "댓글1 입니다.", 5);
 
         //when
         //then
@@ -93,19 +83,13 @@ class CommentControllerTest {
 
     }
 
-
-    @DisplayName("save comment時locationId值是必要")
+    @DisplayName("When saving comment, locationId value can't be null")
     @Test
     @WithMockUser(username = "user", roles = "USER")
-    void saveCommentWithBlankLocationId() throws Exception {
+    void saveCommentWithNullLocationId() throws Exception {
 
         //given
-        Integer rate = 5;
-        String content = "content1";
-        String email = "zxcv@zxcv.com";
-        String locationId = " ";
-
-        CreateCommentRequest createCommentRequest = new CreateCommentRequest(locationId, content, rate);
+        CreateCommentRequest createCommentRequest = new CreateCommentRequest(null, "content1", 5);
 
         //when  //then
         mockMvc.perform(MockMvcRequestBuilders.post("/comment/createComment")
@@ -117,11 +101,35 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"));
-//                .andExpect(jsonPath("$.dataList").value(" "));
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId value is required"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value(nullValue()));
     }
 
-    @DisplayName("save comment時如果Request裡locationId只有19個字，就return Bad_Request Error")
+    @DisplayName("When saving comment, locationId value can't be blank")
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    void saveCommentWithBlankLocationId() throws Exception {
+
+        //given
+        String email = "zxcv@zxcv.com";
+
+        CreateCommentRequest createCommentRequest = new CreateCommentRequest(" ", "content1", 5);
+
+        //when  //then
+        mockMvc.perform(MockMvcRequestBuilders.post("/comment/createComment")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(createCommentRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId requires 20 characters"))
+                .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value(" "));
+    }
+
+    @DisplayName("When saving comment, if the locationId in Request is only 19 words, return Bad_Request")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void saveCommentWithNotFormattedLocationId() throws Exception {
@@ -144,12 +152,12 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId requires 20 characters"))
                 .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcd"));
     }
 
 
-    @DisplayName("save comment時如果Request裡locationId超過20個字，就return Bad_Request Error")
+    @DisplayName("When saving comment, if the locationId in Request exceeds 20 words, return Bad_Request")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void saveCommentWithOverNumberOfCharactersLocationId() throws Exception {
@@ -172,13 +180,13 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId requires 20 characters"))
                 .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcdea"));
 
     }
 
 
-    @DisplayName("save comment時content值是必要")
+    @DisplayName("When saving comment, content value can't be blank")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void saveCommentWithBlankContent() throws Exception {
@@ -201,12 +209,12 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.content.message").value("content值是必要"))
+                .andExpect(jsonPath("$.errorMap.content.message").value("content value is required"))
                 .andExpect(jsonPath("$.errorMap.content.rejectedValue").value(" "));
     }
 
 
-    @DisplayName("save comment時content只能最多255字")
+    @DisplayName("When saving comment, content value can only be up to 255 words")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void saveCommentWithOverContentSize() throws Exception {
@@ -230,11 +238,11 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.content.message").value("content只能最多255字"))
+                .andExpect(jsonPath("$.errorMap.content.message").value("content value can only be up to 255 words"))
                 .andExpect(jsonPath("$.errorMap.content.rejectedValue").value("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid"));
     }
 
-    @DisplayName("save comment時Rate值是必要")
+    @DisplayName("When saving comment, rate value can't be null")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void saveCommentWithNullRate() throws Exception {
@@ -257,12 +265,12 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.rate.message").value("rate值是必要"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate value is required"))
                 .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(nullValue()));
 
     }
 
-    @DisplayName("save comment時如果rate超過5，就return Bad_Request Error")
+    @DisplayName("When saving comment, rate value can't exceeds 5 points")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void saveCommentWithOverRate() throws Exception {
@@ -285,12 +293,12 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate can only have values from 1 to 5 points"))
                 .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(6));
     }
 
 
-    @DisplayName("save comment時如果rate值是0，就return Bad_Request Error")
+    @DisplayName("When saving comment, rate value can't be 0")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void saveCommentWithZeroPointRate() throws Exception {
@@ -313,11 +321,11 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate can only have values from 1 to 5 points"))
                 .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(0));
     }
 
-    @DisplayName("save comment時如果rate值是負數，就return Bad_Request Error")
+    @DisplayName("When saving comment, rate value can't be negative")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void saveCommentWithNegativePointRate() throws Exception {
@@ -340,13 +348,13 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate can only have values from 1 to 5 points"))
                 .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(-1));
     }
 
 
 
-    @DisplayName("save comment時locationId值和content是必要")
+    @DisplayName("When saving comment, locationId value and content value can't be blank")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void saveCommentWithBlankLocationIdAndBlankContent() throws Exception {
@@ -369,19 +377,10 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId requires 20 characters"))
                 .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value(" "))
-                .andExpect(jsonPath("$.errorMap.content.message").value("content值是必要"))
+                .andExpect(jsonPath("$.errorMap.content.message").value("content value is required"))
                 .andExpect(jsonPath("$.errorMap.content.rejectedValue").value(" "));
-
-////                .andExpect(jsonPath("$.messageList").value(List.of("locationId要20個字","content值是必要")))
-////                .andExpect(jsonPath("$.messageList[0]").value("content值是必要")) //순서가 랜덤
-//                .andExpect(jsonPath("$.messageList").isArray()) //순서가 랜덤
-//                .andExpect(jsonPath("$.messageList", Matchers.hasSize(2))) //순서가 랜덤
-//                .andExpect(jsonPath("$.messageList", Matchers.hasItems("locationId要20個字"))) //순서가 랜덤
-//                .andExpect(jsonPath("$.messageList", Matchers.hasItems("content值是必要")))
-//                .andExpect(jsonPath("$.dataList", Matchers.hasItems(" "))) ;//순서가 랜덤
-////                .andExpect(jsonPath("$.dataList").value(List.of(" ", " ")));
     }
 
 
@@ -409,9 +408,9 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId requires 20 characters"))
                 .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcd"))
-                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate can only have values from 1 to 5 points"))
                 .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(6));
     }
 
@@ -438,11 +437,11 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId requires 20 characters"))
                 .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcd"))
-                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate can only have values from 1 to 5 points"))
                 .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(6))
-                .andExpect(jsonPath("$.errorMap.content.message").value("content只能最多255字"))
+                .andExpect(jsonPath("$.errorMap.content.message").value("content value can only be up to 255 words"))
                 .andExpect(jsonPath("$.errorMap.content.rejectedValue").value("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid"));
     }
 
@@ -522,7 +521,7 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId requires 20 characters"))
                 .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value(" "));
 
     }
@@ -550,7 +549,7 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId requires 20 characters"))
                 .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcd"));
 
     }
@@ -579,7 +578,7 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId requires 20 characters"))
                 .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcdea"));
     }
 
@@ -607,7 +606,7 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.content.message").value("content值是必要"))
+                .andExpect(jsonPath("$.errorMap.content.message").value("content value is required"))
                 .andExpect(jsonPath("$.errorMap.content.rejectedValue").value(" "));
     }
 
@@ -636,7 +635,7 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.content.message").value("content只能最多255字"))
+                .andExpect(jsonPath("$.errorMap.content.message").value("content value can only be up to 255 words"))
                 .andExpect(jsonPath("$.errorMap.content.rejectedValue").value("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid"));
     }
 
@@ -663,7 +662,7 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.rate.message").value("rate值是必要"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate value is required"))
                 .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(nullValue()));
     }
 
@@ -690,7 +689,7 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate can only have values from 1 to 5 points"))
                 .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(6));
     }
 
@@ -718,7 +717,7 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate can only have values from 1 to 5 points"))
                 .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(0));
 
     }
@@ -746,7 +745,7 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate can only have values from 1 to 5 points"))
                 .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(-1));
     }
 
@@ -775,9 +774,9 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId requires 20 characters"))
                 .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value(" "))
-                .andExpect(jsonPath("$.errorMap.content.message").value("content值是必要"))
+                .andExpect(jsonPath("$.errorMap.content.message").value("content value is required"))
                 .andExpect(jsonPath("$.errorMap.content.rejectedValue").value(" "));
 
     }
@@ -807,9 +806,9 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId requires 20 characters"))
                 .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcd"))
-                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate can only have values from 1 to 5 points"))
                 .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(6));
     }
 
@@ -836,11 +835,11 @@ class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId requires 20 characters"))
                 .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcd"))
-                .andExpect(jsonPath("$.errorMap.rate.message").value("rate只能從1點到五點的值"))
+                .andExpect(jsonPath("$.errorMap.rate.message").value("rate can only have values from 1 to 5 points"))
                 .andExpect(jsonPath("$.errorMap.rate.rejectedValue").value(6))
-                .andExpect(jsonPath("$.errorMap.content.message").value("content只能最多255字"))
+                .andExpect(jsonPath("$.errorMap.content.message").value("content value can only be up to 255 words"))
                 .andExpect(jsonPath("$.errorMap.content.rejectedValue").value("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid"));
 
     }

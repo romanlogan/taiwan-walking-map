@@ -136,7 +136,7 @@ class FavoriteServiceImplTest {
         FavoriteLocationListResponse response = favoriteService.getFavoriteLocationList(pageable, email);
 
         //then
-        Page<FavoriteLocationList> favoriteLocationPage = response.getFavoriteListResponsePage();
+        Page<FavoriteLocationDto> favoriteLocationPage = response.getFavoriteListResponsePage();
         assertThat(favoriteLocationPage.getTotalElements()).isEqualTo(6);
         assertThat(favoriteLocationPage.getTotalPages()).isEqualTo(2);
         assertThat(favoriteLocationPage.getContent().size()).isEqualTo(5);
@@ -164,7 +164,7 @@ class FavoriteServiceImplTest {
 
         //when
         FavoriteLocationListResponse response = favoriteService.getFavoriteLocationList(pageable, email);
-        Page<FavoriteLocationList> favoriteLocationPage = response.getFavoriteListResponsePage();
+        Page<FavoriteLocationDto> favoriteLocationPage = response.getFavoriteListResponsePage();
 
         //then
         assertThat(favoriteLocationPage.getTotalElements()).isEqualTo(6);

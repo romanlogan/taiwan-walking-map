@@ -3,7 +3,6 @@ package com.dbproject.web.favorite;
 import com.dbproject.api.ApiResponse;
 import com.dbproject.api.favorite.dto.AddFavoriteLocationRequest;
 import com.dbproject.api.favorite.dto.DeleteFavoriteLocationRequest;
-import com.dbproject.api.favorite.dto.FavoriteLocationList;
 import com.dbproject.api.favorite.dto.FavoriteLocationListResponse;
 import com.dbproject.api.favorite.service.FavoriteService;
 import com.dbproject.api.favorite.dto.UpdateMemoRequest;
@@ -13,7 +12,6 @@ import com.dbproject.exception.DuplicateFavoriteLocationException;
 import com.dbproject.exception.FavoriteLocationNotExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -82,9 +80,9 @@ public class FavoriteController {
     }
 
     @GetMapping({"/favoriteList","/favoriteList/{page}"})
-    public String getFavoriteList(@PathVariable("page") Optional<Integer> optionalPage,
-                                  Principal principal,
-                                  Model model) {
+    public String getFavoriteLocationList(@PathVariable("page") Optional<Integer> optionalPage,
+                                          Principal principal,
+                                          Model model) {
         //초과된 page 가 파라미터로 들어오면? 예 page = 1000000000000
         //최대 페이지를 계산 하여 마지막 페이지를 보여준다
         Integer size = 5;

@@ -9,7 +9,6 @@ import com.dbproject.api.invitePlan.invitePlanMember.dto.InvitePlanMemberRequest
 import com.dbproject.api.invitePlan.invitePlanMember.repository.InvitePlanMemberRepository;
 import com.dbproject.api.invitePlan.repository.InvitePlanRepository;
 import com.dbproject.api.location.Location;
-import com.dbproject.api.location.dto.LocationDto;
 import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
@@ -99,7 +98,6 @@ public class InvitePlanServiceImpl implements InvitePlanService {
             //            route 를 저장해서 id 가 있는 route 를 넘기기
             Route savedRoute = routeRepository.save(Route.createRoute(routeRequest));
 
-
             savedRoute.setRouteLocationList(getRouteLocationList(routeRequest,savedRoute));
             routeList.add(savedRoute);
         }
@@ -158,19 +156,39 @@ public class InvitePlanServiceImpl implements InvitePlanService {
 
         for (InvitePlanMember member : members) {
 
-            InvitePlan invitePlan = member.getInvitePlan();
-            InvitePlanDto invitePlanDto = createInvitePlanDtoFrom(invitePlan);
+            InvitePlanDto invitePlanDto = createInvitePlanDtoFrom(member.getInvitePlan());
             invitePlanDtos.add(invitePlanDto);
         }
     }
 
     private InvitePlanDto createInvitePlanDtoFrom(InvitePlan invitePlan) {
-        InvitePlanDto invitePlanDto = InvitePlanDto.from(invitePlan);
-        invitePlanDto.setInvitePlanMemberDtoList(getInvitePlanMemberDtoList(invitePlan));
-        invitePlanDto.setRouteDtoList(getRouteDtoList(invitePlan));
-        return invitePlanDto;
+
+        return InvitePlanDto.of(invitePlan, getInvitePlanMemberDtoListFrom(invitePlan), getRouteDtoListFrom(invitePlan));
     }
 
+    private static List<InvitePlanMemberDto> getInvitePlanMemberDtoListFrom(InvitePlan invitePlan) {
+        List<InvitePlanMemberDto> invitePlanMemberDtoList = new ArrayList<>();
+
+        for (InvitePlanMember invitePlanMember : invitePlan.getMembers()) {
+
+            invitePlanMemberDtoList.add(InvitePlanMemberDto.from(invitePlanMember));
+        }
+        return invitePlanMemberDtoList;
+    }
+
+
+    private List<RouteDto> getRouteDtoListFrom(InvitePlan invitePlan) {
+
+        List<RouteDto> routeDtoList = new ArrayList<>();
+
+        for (Route route : invitePlan.getRoutes()) {
+
+            RouteDto routeDto = RouteDto.from(route);
+            routeDtoList.add(routeDto);
+        }
+
+        return routeDtoList;
+    }
 
     @Override
     public Long accept(AcceptInvitedPlanRequest request, String email) {
@@ -284,7 +302,7 @@ public class InvitePlanServiceImpl implements InvitePlanService {
         invitePlanDto.setInvitePlanMemberDtoListBy(invitePlanMemberList);
         invitePlanDto.setRouteDtoList(RouteDto.createRouteDtosFrom(optionalInvitePlan.get().getRoutes()));
 
-        return InvitePlanDtlResponse.createResponse(invitePlanDto);
+        return InvitePlanDtlResponse.create(invitePlanDto);
     }
 
     private static void checkIsExistFor(Optional<InvitePlan> optionalInvitePlan) {
@@ -293,42 +311,5 @@ public class InvitePlanServiceImpl implements InvitePlanService {
         }
     }
 
-
-    private List<RouteDto> getRouteDtoList(InvitePlan invitePlan) {
-
-        List<RouteDto> routeDtoList = new ArrayList<>();
-        for (Route route : invitePlan.getRoutes()) {
-
-            RouteDto routeDto = RouteDto.createRouteDto(route);
-            routeDto.setLocationDtos(getLocationDtoList(route));
-
-            routeDtoList.add(routeDto);
-        }
-
-        return routeDtoList;
-    }
-
-    private static List<LocationDto> getLocationDtoList(Route route) {
-        List<LocationDto> locationDtoList = new ArrayList<>();
-        List<RouteLocation> routeLocationList = route.getRouteLocationList();
-
-        for (RouteLocation routeLocation : routeLocationList) {
-
-            LocationDto locationDto = LocationDto.from(routeLocation.getLocation());
-            locationDtoList.add(locationDto);
-        }
-        return locationDtoList;
-    }
-
-    private static List<InvitePlanMemberDto> getInvitePlanMemberDtoList(InvitePlan invitePlan) {
-        List<InvitePlanMemberDto> invitePlanMemberDtoList = new ArrayList<>();
-        List<InvitePlanMember> invitePlanMemberList = invitePlan.getMembers();
-        for (InvitePlanMember planMember : invitePlanMemberList) {
-
-            InvitePlanMemberDto invitePlanMemberDto = InvitePlanMemberDto.of(planMember.getMember());
-            invitePlanMemberDtoList.add(invitePlanMemberDto);
-        }
-        return invitePlanMemberDtoList;
-    }
 
 }

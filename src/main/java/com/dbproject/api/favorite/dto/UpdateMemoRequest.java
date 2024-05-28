@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -12,7 +13,8 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class UpdateMemoRequest {
 
-    @NotNull(message = "favoriteLocationId值是必要")
+    @NotNull(message = "favoriteLocationId value is required")
+    @Min(value = 1, message = "favoriteLocationId can't be lower than 1")
     private Integer favoriteLocationId;
 
     private String memo;

@@ -368,7 +368,7 @@
                 <input type="hidden" th:value="${i}">
 
                 <div class="checkableLocationBox" th:each="favoriteLocation, status: ${friendListResponse.getFavoriteLocationList()}">
-                    <input id="locationChecker" class="locationCheckBox" type="checkbox" th:value="${favoriteLocation.id}">
+                    <input id="locationChecker" class="locationCheckBox" type="checkbox" th:value="${favoriteLocation.getFavoriteLocationId}">
                     <!--                          체크박스-->
                     <div th:if="${#strings.isEmpty(favoriteLocation.picture1)}">
                         <img class = "locationBoxImg" src="/img/noImg.jpg">

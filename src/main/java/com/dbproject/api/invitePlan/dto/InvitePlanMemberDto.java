@@ -52,6 +52,6 @@ public class InvitePlanMemberDto {
                 .invitePlanStatus(invitePlanMember.getStatus())
                 .supply(invitePlanMember.getSupply())
                 .build();
-
     }
+
 }

@@ -14,8 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class FriendListResponse {
 
-    private List<FriendDto> friendDtoList;
-
+    private List<FriendDto> friendDtoList = new ArrayList<>();
     private List<FavoriteLocationDto> favoriteLocationList = new ArrayList<>();
 
     @Builder
@@ -24,7 +23,7 @@ public class FriendListResponse {
         this.favoriteLocationList = favoriteLocationList;
     }
 
-    public static FriendListResponse createFriendListResponse(List<FriendDto> friendDtoList, List<FavoriteLocationDto> favoriteLocationList) {
+    public static FriendListResponse create(List<FriendDto> friendDtoList, List<FavoriteLocationDto> favoriteLocationList) {
 
         return FriendListResponse.builder()
                 .friendDtoList(friendDtoList)

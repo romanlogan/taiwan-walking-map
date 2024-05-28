@@ -17,7 +17,6 @@ public class RouteDto {
     private Long id;
     private Integer day;
     private RouteStatus routeStatus;
-
     private List<LocationDto> locationDtos = new ArrayList<>();
 
     @Builder
@@ -28,25 +27,27 @@ public class RouteDto {
         this.locationDtos = locationList;
     }
 
-    public static RouteDto createRouteDto(Route route) {
-
-        List<LocationDto> locationDtos = new ArrayList<>();
-
-        List<RouteLocation> routeLocations = route.getRouteLocationList();
-        for (RouteLocation routeLocation : routeLocations) {
-            Location location = routeLocation.getLocation();
-            LocationDto locationDto = LocationDto.from(location);
-
-            locationDtos.add(locationDto);
-        }
+    public static RouteDto from(Route route) {
 
 
         return RouteDto.builder()
                 .id(route.getId())
                 .day(route.getDay())
                 .routeStatus(route.getRouteStatus())
-                .locationList(locationDtos)
+                .locationList(getLocationDtos(route))
                 .build();
+    }
+
+    private static List<LocationDto> getLocationDtos(Route route) {
+
+        List<LocationDto> locationDtos = new ArrayList<>();
+
+        for (RouteLocation routeLocation : route.getRouteLocationList()) {
+
+            LocationDto locationDto = LocationDto.from(routeLocation.getLocation());
+            locationDtos.add(locationDto);
+        }
+        return locationDtos;
     }
 
     public static List<RouteDto> createRouteDtosFrom(List<Route> routeList) {
@@ -54,7 +55,7 @@ public class RouteDto {
         List<RouteDto> routeDtos = new ArrayList<>();
 
         for (Route route : routeList) {
-            routeDtos.add(createRouteDto(route));
+            routeDtos.add(from(route));
         }
 
         return routeDtos;

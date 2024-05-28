@@ -12,8 +12,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class AcceptAddFriendRequest {
 
-//    Integer 로 바꾸면 자동으로 형변환을 해주는거였나?
-    @NotNull(message = "friendRequestId值是必要")
+    @NotNull(message = "friendRequestId value is required")
     private Long friendRequestId;
 
     public AcceptAddFriendRequest(Long friendRequestId) {

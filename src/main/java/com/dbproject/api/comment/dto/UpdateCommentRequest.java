@@ -13,16 +13,16 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class UpdateCommentRequest {
 
-    @NotNull(message = "locationId值是必要")
-    @Length(min = 20, max = 20, message = "locationId要20個字")
+    @NotNull(message = "locationId value is required")
+    @Length(min = 20, max = 20, message = "locationId requires 20 characters")
     private String locationId;
 
-    @NotBlank(message = "content值是必要")
-    @Length(max = 255, message = "content只能最多255字")
+    @NotBlank(message = "content value is required")
+    @Length(max = 255, message = "content value can only be up to 255 words")
     private String content;
 
-    @NotNull(message = "rate值是必要")
-    @Range(min = 1, max = 5, message = "rate只能從1點到五點的值")
+    @NotNull(message = "rate value is required")
+    @Range(min = 1, max = 5, message = "rate can only have values from 1 to 5 points")
     private Integer rate;
 
     public UpdateCommentRequest() {

@@ -10,9 +10,9 @@ import org.springframework.data.domain.Page;
 @NoArgsConstructor
 public class FavoriteLocationListResponse {
 
-    Page<FavoriteLocationList> favoriteListResponsePage;
+    Page<FavoriteLocationDto> favoriteListResponsePage;
 
-    public FavoriteLocationListResponse(Page<FavoriteLocationList> favoriteListResponsePage) {
+    public FavoriteLocationListResponse(Page<FavoriteLocationDto> favoriteListResponsePage) {
         this.favoriteListResponsePage = favoriteListResponsePage;
     }
 }

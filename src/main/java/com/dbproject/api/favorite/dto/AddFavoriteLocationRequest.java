@@ -13,12 +13,12 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class AddFavoriteLocationRequest {
 
-    @NotNull(message = "locationId值是必要")
-    @Length(min = 20, max = 20, message = "locationId要20個字")
+    @NotNull(message = "locationId value is required")
+    @Length(min = 20, max = 20, message = "locationId requires only 20 characters")
     private String locationId;
 
 
-    @Length(max = 255, message = "memo值只能最多255字")
+    @Length(max = 255, message = "The memo value can be up to 255 characters long.")
     private String memo;
 
     public AddFavoriteLocationRequest() {

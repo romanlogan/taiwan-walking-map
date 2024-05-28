@@ -49,10 +49,9 @@ public class InvitePlanController {
     public String getPlanForm(Principal principal,
                               Model model) {
 
-        String email = principal.getName();
-        FriendListResponse friendListResponse = friendService.getFriendList(email);
+        FriendListResponse response = friendService.getFriendList(principal.getName());
 
-        model.addAttribute("friendListResponse", friendListResponse);
+        model.addAttribute("friendListResponse", response);
 
         return "plan/planForm";
     }
@@ -78,8 +77,7 @@ public class InvitePlanController {
     @GetMapping("/invitedList")
     public String getInvitedList(Principal principal, Model model) {
 
-        String email = principal.getName();
-        InvitedPlanListResponse response = invitePlanService.getInvitedList(email);
+        InvitedPlanListResponse response = invitePlanService.getInvitedList(principal.getName());
 
         model.addAttribute("response", response);
 
@@ -87,10 +85,15 @@ public class InvitePlanController {
     }
 
     @PostMapping("/accept")
-    public ResponseEntity<ApiResponse> acceptInvitedPlan(@RequestBody AcceptInvitedPlanRequest request,
+    public ResponseEntity<ApiResponse> acceptInvitedPlan(@Valid @RequestBody AcceptInvitedPlanRequest request,
+                                                         BindingResult bindingResult,
                                                          Principal principal) {
-        String email = principal.getName();
-        Long id = invitePlanService.accept(request, email);
+
+        if(bindingResult.hasErrors()){
+            return CheckBindingResult.induceErrorInAjax(bindingResult);
+        }
+
+        Long id = invitePlanService.accept(request, principal.getName());
 
         return new ResponseEntity(ApiResponse.of(
                 HttpStatus.OK,
@@ -100,7 +103,7 @@ public class InvitePlanController {
     }
 
     @PostMapping("/reject")
-    public ResponseEntity<ApiResponse> rejectInvitedPlan(@RequestBody RejectInvitePlanRequest request,
+    public ResponseEntity<ApiResponse> rejectInvitedPlan(@Valid @RequestBody RejectInvitePlanRequest request,
                                                          Principal principal) {
         String email = principal.getName();
         Long id = invitePlanService.reject(request, email);
@@ -138,8 +141,7 @@ public class InvitePlanController {
     @GetMapping("/sentInviteList")
     public String getSentInviteList(Principal principal, Model model) {
 
-        String email = principal.getName();
-        SentInvitePlanListResponse response = invitePlanService.getSentInviteList(email);
+        SentInvitePlanListResponse response = invitePlanService.getSentInviteList(principal.getName());
 
         model.addAttribute("response", response);
 

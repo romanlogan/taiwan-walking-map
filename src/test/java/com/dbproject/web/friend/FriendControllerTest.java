@@ -1,7 +1,10 @@
 package com.dbproject.web.friend;
 
+import com.dbproject.api.favorite.dto.FavoriteLocationDto;
 import com.dbproject.api.friend.dto.AcceptAddFriendRequest;
 import com.dbproject.api.friend.dto.AddFriendRequest;
+import com.dbproject.api.friend.dto.FriendDto;
+import com.dbproject.api.friend.dto.FriendListResponse;
 import com.dbproject.api.friend.service.FriendServiceImpl;
 import com.dbproject.api.friend.friendRequest.dto.RejectFriendRequest;
 import com.dbproject.api.friend.friendRequest.dto.RequestFriendListDto;
@@ -27,6 +30,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -74,7 +78,7 @@ class FriendControllerTest {
         return AddFriendRequest.create(friendEmail, memo);
     }
 
-    @DisplayName("When a non-logged-in member saves a friend request, return 401 Authorization,")
+    @DisplayName("When a non-logged-in member saves a friend request, return 401 unAuthorization,")
     @Test
     void saveFriendRequestWithoutLogin() throws Exception{
         //given
@@ -185,8 +189,8 @@ class FriendControllerTest {
 
         return new PageImpl<>(list, pageable, 1);
     }
-
-    @DisplayName("받은 친구 요청 페이지를 조회합니다.")
+                                                              
+    @DisplayName("get member's received friend request page")
     @Test
     @WithMockUser(username = "qwer@qwer.com", roles = "USER")
     void getRequestFriendList() throws Exception{
@@ -202,7 +206,18 @@ class FriendControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("친구 요청을 수락합니다")
+
+    @DisplayName("When Non-logged-in members access to get request friend ist, return 401 unAuthorized")
+    @Test
+    void getRequestFriendListWithoutLogin() throws Exception{
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/myPage/requestFriendList"))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+
+    @DisplayName("accept friend request")
     @Test
     @WithMockUser(username = "qwer@qwer.com", roles = "USER")
     void acceptAddFriendRequest() throws Exception{
@@ -219,7 +234,7 @@ class FriendControllerTest {
                 .andExpect(status().isOk());
      }
 
-    @DisplayName("비 로그인 유저는 친구 요청 수락에 접근 할 수 없습니다.")
+    @DisplayName("When Non-logged-in members access to accept friend requests, return 401 unAuthorized")
     @Test
     void acceptAddFriendRequestWithoutLogin() throws Exception{
         //given
@@ -236,25 +251,25 @@ class FriendControllerTest {
     }
 
 
-    @DisplayName("친구 요청을 수락시 friendRequestId 는 null 이 될 수 없습니다.")
+    @DisplayName("When accepting a friend request, friendRequestId can't be null.")
     @Test
     @WithMockUser(username = "qwer@qwer.com", roles = "USER")
     void acceptAddFriendRequestCanNotWithNullFriendRequestId() throws Exception{
         //given
-
         AcceptAddFriendRequest acceptAddFriendRequest = new AcceptAddFriendRequest(null);
 
-        //when
-        //then
+        //when //then
         mockMvc.perform(MockMvcRequestBuilders.post("/myPage/acceptAddFriend")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(acceptAddFriendRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errorMap.friendRequestId.message").value("friendRequestId value is required"))
+                .andExpect(jsonPath("$.errorMap.friendRequestId.rejectedValue").value(nullValue()));
     }
 
-    @DisplayName("친구 요청을 거절합니다.")
+    @DisplayName("reject friend request")
     @Test
     @WithMockUser(username = "qwer@qwer.com", roles = "USER")
     void rejectFriendRequest() throws Exception{
@@ -271,7 +286,7 @@ class FriendControllerTest {
                 .andExpect(status().isOk());
      }
 
-    @DisplayName("비로그인 유저는 친구 요청을 거절에 접근 할 수 없습니다")
+    @DisplayName("When Non-logged-in members access to reject friend requests, return 401 unAuthorized")
     @Test
     void rejectFriendRequestWithoutLogin() throws Exception{
         //given
@@ -287,10 +302,10 @@ class FriendControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    @DisplayName("친구 요청을 거절시 deleteFriendRequest 는 null 이 될 수 없습니다")
+    @DisplayName("When reject a friend request, friendRequestId can't be null.")
     @Test
     @WithMockUser(username = "qwer@qwer.com", roles = "USER")
-    void rejectFriendRequestCanNotNullDeleteFriendRequest() throws Exception{
+    void friendRequestIdCanNotNullInRejectFriendRequest() throws Exception{
         //given
         RejectFriendRequest deleteFriendRequest = new RejectFriendRequest(null);
 
@@ -301,7 +316,39 @@ class FriendControllerTest {
                         .content(objectMapper.writeValueAsString(deleteFriendRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMap.friendRequestId.message").value("friendRequestId value is required"))
+                .andExpect(jsonPath("$.errorMap.friendRequestId.rejectedValue").value(nullValue()));
+    }
+
+    @DisplayName("get member's friend list")
+    @Test
+    @WithMockUser(username = "qwer@qwer.com", roles = "USER")
+    void getFriendList() throws Exception{
+
+        Mockito.when(friendService.getFriendList("qwer@qwer.com")).thenReturn(getFriendListResponse());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/myPage/friendList"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    private static FriendListResponse getFriendListResponse() {
+        List<FriendDto> friendDtoList = new ArrayList<>();
+        List<FavoriteLocationDto> favoriteLocationList = new ArrayList<>();
+        return FriendListResponse.create(friendDtoList, favoriteLocationList);
+    }
+
+    @DisplayName("When Non-logged-in members access to reject friend requests, return 401 unAuthorized")
+    @Test
+//    @WithMockUser(username = "qwer@qwer.com", roles = "USER")
+    void getFriendListWithoutLogin() throws Exception{
+
+        Mockito.when(friendService.getFriendList("qwer@qwer.com")).thenReturn(getFriendListResponse());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/myPage/friendList"))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
     }
 
 

@@ -134,14 +134,10 @@ public class FriendServiceImpl implements FriendService{
 
     public FriendListResponse getFriendList(String email) {
 
-        // 즐겨찾기 리스트를 같이 가져와야 하는데
-        //        검색 쿼리를 두번 날릴까
-        //        애초에 페이징쿼리 날릴떄는 즐겨찾기 리스트를 가져올수 없다
-
         List<FriendDto> friendDtoList = getFriendDtoList(email);
         List<FavoriteLocationDto> favoriteLocationDtoList = getFavoriteLocationDtoList(email);
 
-        return FriendListResponse.createFriendListResponse(friendDtoList, favoriteLocationDtoList);
+        return FriendListResponse.create(friendDtoList, favoriteLocationDtoList);
     }
 
     private List<FriendDto> getFriendDtoList(String email) {

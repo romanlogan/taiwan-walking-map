@@ -1,6 +1,8 @@
 package com.dbproject.api.favorite.repository;
 
+import com.dbproject.api.favorite.dto.FavoriteLocationDto;
 import com.dbproject.api.favorite.dto.FavoriteLocationList;
+import com.dbproject.api.favorite.dto.QFavoriteLocationDto;
 import com.dbproject.dto.QFavoriteListResponse;
 import com.dbproject.entity.QFavoriteLocation;
 import com.dbproject.entity.QLocation;
@@ -25,7 +27,7 @@ public class FavoriteRepositoryCustomImpl implements FavoriteRepositoryCustom {
     }
 
     @Override
-    public Page<FavoriteLocationList> getFavoriteLocationListPage(Pageable pageable, String email){
+    public Page<FavoriteLocationDto>  getFavoriteLocationListPage(Pageable pageable, String email){
 
         QLocation location = QLocation.location;
         QFavoriteLocation favoriteLocation = QFavoriteLocation.favoriteLocation;
@@ -34,20 +36,19 @@ public class FavoriteRepositoryCustomImpl implements FavoriteRepositoryCustom {
         //select * from FavoriteLocation
 //        join Location on FavoriteLocation.location_id = Location.location_id
 //        join Member on FavoriteLocation.member_id = Member.member_id
-        List<FavoriteLocationList> content = queryFactory
+        List<FavoriteLocationDto> content = queryFactory
                 .select(
-                    new QFavoriteListResponse(
-                            location.locationId,
-                            location.name,
-                            location.region,
-                            location.openTime,
-                            location.locationPicture.picture1,
-                            location.longitude,
-                            location.latitude,
-                            location.ticketInfo,
-                            favoriteLocation.memo,
-                            favoriteLocation.id
-                    )
+                        new QFavoriteLocationDto(
+                                favoriteLocation.id,
+                                favoriteLocation.memo,
+                                location.locationId,
+                                location.name,
+                                location.address,
+                                location.region,
+                                location.locationPicture.picture1,
+                                location.longitude,
+                                location.latitude
+                        )
                 )
                 .from(favoriteLocation)
                 .join(favoriteLocation.location , location)

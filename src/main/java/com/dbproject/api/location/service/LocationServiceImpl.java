@@ -14,6 +14,7 @@ import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.memberImg.MemberImg;
 import com.dbproject.api.member.memberImg.MemberImgRepository;
+import com.dbproject.exception.LocationNotExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +43,9 @@ public class LocationServiceImpl implements LocationService {
     public LocationDtlResponse getLocationDtl(String locationId) {
 
         Location location = locationRepository.findByLocationId(locationId);
+
+        checkLocationExists(location);
+
         LocationDtlResponse locationDtlResponse = LocationDtlResponse.of(location);
 
         getCommentList(locationId, locationDtlResponse);
@@ -50,10 +54,19 @@ public class LocationServiceImpl implements LocationService {
         return locationDtlResponse;
     }
 
+    private static void checkLocationExists(Location location) {
+        if (location == null) {
+            throw new LocationNotExistException("Location 이 존재하지 않습니다.");
+        }
+    }
+
     // ----------------로그인 유저가 장소 디테일을 볼때-----------------
     public LocationDtlResponse getLocationDtlWithAuthUser(String locationId, String email) {
 
         Location location = locationRepository.findByLocationId(locationId);
+
+        checkLocationExists(location);
+
         LocationDtlResponse locationDtlResponse = LocationDtlResponse.of(location);
 
         //로그인 유저는 이 장소가 favorite 에 등록 되어 있는지 확인

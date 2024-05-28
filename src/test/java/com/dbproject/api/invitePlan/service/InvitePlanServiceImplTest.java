@@ -45,7 +45,6 @@ import static org.hamcrest.Matchers.nullValue;
 @TestPropertySource(locations = "classpath:application-test.properties")
 class InvitePlanServiceImplTest {
 
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 

@@ -104,33 +104,11 @@ public class FriendController {
         ),  HttpStatus.OK);
     }
 
-//    @GetMapping(value = {"/friendList","/friendList/{page}"})
-//    public String getFriendList(@PathVariable("page") Optional<Integer> page,
-//                                Principal principal,
-//                                Model model) {
-//
-//
-//        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
-//        String email = principal.getName();
-//        FriendListResponse friendListResponse = friendService.getFriendList(pageable, email);
-//
-//
-////        model.addAttribute("favoriteList", friendPage);
-////        model.addAttribute("friendList", friendPage);
-//        model.addAttribute("friendListResponse", friendListResponse);
-//        model.addAttribute("maxPage", 5);
-//
-//
-//        return "/myPage/friendList";
-//    }
-
     @GetMapping("/friendList")
     public String getFriendList(Principal principal,
                                 Model model) {
 
-
         FriendListResponse response = friendService.getFriendList(principal.getName());
-
         model.addAttribute("friendListResponse", response);
 
         return "/myPage/friendList";

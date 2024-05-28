@@ -6,7 +6,6 @@ import com.dbproject.api.favorite.service.FavoriteServiceImpl;
 import com.dbproject.api.member.MemberService;
 import com.dbproject.web.favorite.FavoriteController;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -37,51 +36,38 @@ class FavoriteControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockBean
     private MemberService memberService;
-
     @MockBean
     private FavoriteServiceImpl favoriteService;
-
     @MockBean
     private FavoriteRepository favoriteRepository;
 
 
-    @DisplayName("즐겨찾기 장소를 등록한다")
+    @DisplayName("add Favorite Location in member's favoriteLocationList")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void addFavoriteList() throws Exception {
-
         //given
-        String locationId = "C1_379000000A_001572";
-        String memo = "메모 1 입니다.";
-
-        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(locationId, memo);
+        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest("C1_379000000A_001572", "메모 1 입니다.");
 
         //when  //then
         mockMvc.perform(MockMvcRequestBuilders.post("/favorite/addFavoriteList")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(addFavoriteLocationRequest))
                         .contentType(MediaType.APPLICATION_JSON)
-
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("비 로그인 유저가 즐겨찾기 장소를 등록시 Unauthorized 를 반환한다")
+    @DisplayName("When Non-logged-in members access to add favorite location, return 401 unAuthorized")
     @Test
     void addFavoriteListWithoutLogin() throws Exception {
-
         //given
-        String locationId = "C1_379000000A_001572";
-        String memo = "메모 1 입니다.";
-
-        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(locationId, memo);
+        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest("C1_379000000A_001572", "메모 1 입니다.");
 
         //when  //then
         mockMvc.perform(MockMvcRequestBuilders.post("/favorite/addFavoriteList")
@@ -99,11 +85,8 @@ class FavoriteControllerTest {
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void LocationIdCanNotNullWhenAddFavoriteList() throws Exception {
-
         //given
-        String memo = "메모 1 입니다.";
-
-        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(null, memo);
+        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(null, "메모 1 입니다.");
 
         //when  //then
         mockMvc.perform(MockMvcRequestBuilders.post("/favorite/addFavoriteList")
@@ -115,7 +98,7 @@ class FavoriteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId值是必要"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId value is required"))
                 .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value(nullValue()));
     }
 
@@ -141,7 +124,7 @@ class FavoriteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId要20個字"))
+                .andExpect(jsonPath("$.errorMap.locationId.message").value("locationId requires only 20 characters"))
                 .andExpect(jsonPath("$.errorMap.locationId.rejectedValue").value("abcdeabcdeabcdeabcd"));
     }
 
@@ -151,11 +134,10 @@ class FavoriteControllerTest {
     void saveFavoriteLocationWithOverSizeMemo() throws Exception {
 
         //given
-        String locationId = "C1_379000000A_001572";
-//        256 字
+        //        256 字
         String memo = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid";
 
-        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest(locationId, memo);
+        AddFavoriteLocationRequest addFavoriteLocationRequest = new AddFavoriteLocationRequest("C1_379000000A_001572", memo);
 
         //when  //then
         mockMvc.perform(MockMvcRequestBuilders.post("/favorite/addFavoriteList")
@@ -167,26 +149,20 @@ class FavoriteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.memo.message").value("memo值只能最多255字"))
+                .andExpect(jsonPath("$.errorMap.memo.message").value("The memo value can be up to 255 characters long."))
                 .andExpect(jsonPath("$.errorMap.memo.rejectedValue").value("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt dui ut ornare. Ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing. Massa tincid"));
     }
 
 
 
-    @DisplayName("find favorite location list")
+    @DisplayName("get member's favorite location list")
     @Test
     @WithMockUser(username = "qwer@qwer.com", roles = "USER")
-    void getFavoriteList() throws Exception {
+    void getFavoriteLocationList() throws Exception {
 
         //given
         Pageable pageable = PageRequest.of(0, 5 );
-
-        FavoriteLocationList favoriteListResponse = new FavoriteLocationList("C1_379000000A_001572", "西門町");
-        List<FavoriteLocationList> list = new ArrayList<>();
-        list.add(favoriteListResponse);
-
-        Page<FavoriteLocationList> page = new PageImpl<>(list, pageable, 1);
-        FavoriteLocationListResponse response = new FavoriteLocationListResponse(page);
+        FavoriteLocationListResponse response = getFavoriteLocationListResponse(pageable);
 
         Mockito.when(favoriteService.getFavoriteLocationList(pageable, "qwer@qwer.com")).thenReturn(response);
 
@@ -194,8 +170,8 @@ class FavoriteControllerTest {
 //      현재 문제는 MockUser를 사용하여 test 진행시 mockUser가 faovriteList가 없는 문제/
 //        QueryProjection 의 테스트 방법이 따로 있나?
 //        결과가 계속 null 이 들어가서 html 에서 에러 발생
-
 //        stubbing 으로 객체를 stub 객체를 반환하여서 해결해야함
+
         //when  //then
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/favorite/favoriteList/0")
@@ -204,19 +180,25 @@ class FavoriteControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("如果未登入使用者查詢FavoriteLocationList時，return 401 UnAuthorization Error")
+    private static FavoriteLocationListResponse getFavoriteLocationListResponse(Pageable pageable) {
+
+        List<FavoriteLocationDto> favoriteLocationDtos = new ArrayList<>();
+
+        FavoriteLocationDto favoriteLocationDto = new FavoriteLocationDto(1L,"hi","C1_379000000A_001572", "西門町",null,null,null,null,null);
+
+        favoriteLocationDtos.add(favoriteLocationDto);
+        Page<FavoriteLocationDto> page = new PageImpl<>(favoriteLocationDtos, pageable, 1);
+        return new FavoriteLocationListResponse(page);
+    }
+
+
+    @DisplayName("When Non-logged-in members access to get favorite location list, return 401 unAuthorized")
     @Test
 //    @WithMockUser(username = "qwer@qwer.com", roles = "USER")
     void getFavoriteListWithNoLoginUser() throws Exception {
         //given
         Pageable pageable = PageRequest.of(0, 5 );
-
-        FavoriteLocationList favoriteListResponse = new FavoriteLocationList("C1_379000000A_001572", "西門町");
-        List<FavoriteLocationList> list = new ArrayList<>();
-        list.add(favoriteListResponse);
-
-        Page<FavoriteLocationList> page = new PageImpl<>(list, pageable, 1);
-        FavoriteLocationListResponse response = new FavoriteLocationListResponse(page);
+        FavoriteLocationListResponse response = getFavoriteLocationListResponse(pageable);
 
         Mockito.when(favoriteService.getFavoriteLocationList(pageable, "qwer@qwer.com")).thenReturn(response);
 
@@ -227,8 +209,6 @@ class FavoriteControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
     }
-
-
 
     @DisplayName("delete favorite location")
     @Test
@@ -251,7 +231,7 @@ class FavoriteControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("비 로그인 유저가 즐겨찾기 장소를 삭제시  Unauthorized 를 반환한다 ")
+    @DisplayName("When Non-logged-in members access to delete favorite location, return 401 unAuthorized")
     @Test
     void deleteFavoriteLocationWithoutLogin() throws Exception {
 
@@ -265,7 +245,6 @@ class FavoriteControllerTest {
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(deleteFavoriteLocationRequest))
                         .contentType(MediaType.APPLICATION_JSON)
-
                 )
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
@@ -273,7 +252,7 @@ class FavoriteControllerTest {
 
 
 
-    @DisplayName("favoriteLocationId can't be null ,when delete FavoriteLocation")
+    @DisplayName("When delete FavoriteLocation, favoriteLocationId can't be null")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void favoriteLocationIdCanNotNullWhenDeleteFavoriteLocation() throws Exception {
@@ -294,11 +273,11 @@ class FavoriteControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.favoriteLocationId.message").value("favoriteLocationId不能null"))
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.message").value("favoriteLocationId value is required"))
                 .andExpect(jsonPath("$.errorMap.favoriteLocationId.rejectedValue").value(nullValue()));
     }
 
-    @DisplayName("favoriteLocationId can't be 0 ,when delete FavoriteLocation")
+    @DisplayName("When delete FavoriteLocation, favoriteLocationId can't be 0")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void deleteFavoriteLocationWithZeroFavoriteLocationId() throws Exception {
@@ -319,15 +298,40 @@ class FavoriteControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.favoriteLocationId.message").value("favoriteLocationId不能低於1"))
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.message").value("favoriteLocationId can't be lower than 1"))
                 .andExpect(jsonPath("$.errorMap.favoriteLocationId.rejectedValue").value(0));
     }
 
-    @DisplayName("등록된 즐겨찾기 장소의 메모를 변경한다")
+    @DisplayName("When delete FavoriteLocation, favoriteLocationId can't be negative")
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    void deleteFavoriteLocationWithNegativeFavoriteLocationId() throws Exception {
+
+        //given
+        Integer favoriteLocationId = -1;
+
+        DeleteFavoriteLocationRequest deleteFavoriteLocationRequest = new DeleteFavoriteLocationRequest(favoriteLocationId);
+
+        //when  //then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/favorite/deleteFavorite")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(deleteFavoriteLocationRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.message").value("favoriteLocationId can't be lower than 1"))
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.rejectedValue").value(-1));
+    }
+
+
+    @DisplayName("update the memo of a saved favoriteLocation")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void updateMemo() throws Exception {
-
         //given
         UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(1, "memo1");
 
@@ -342,18 +346,13 @@ class FavoriteControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("비 로그인 유저가 메모 수정에 접근시 UNAUTHORIZED 를 반환")
+    @DisplayName("When Non-logged-in members access to update memo of favorite location, return 401 unAuthorized")
     @Test
     void updateMemoWithoutLogin() throws Exception{
         //given
+        UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(1, "memo 1");
 
-        Integer favoriteLocationId = 1;
-        String memo = "memo 1";
-
-        UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(favoriteLocationId, memo);
-
-        //when
-        //then
+        //when //then
         mockMvc.perform(MockMvcRequestBuilders.put("/favorite/updateMemo")
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(updateMemoRequest))
@@ -363,16 +362,12 @@ class FavoriteControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    @DisplayName("favorite location id can't be null when update memo")
+    @DisplayName("When update memo, favorite location id can't be null")
     @Test
     @WithMockUser(username = "user", roles = "USER")
     void favoriteLocationIdCanNotNullWhenUpdateMemo() throws Exception{
         //given
-
-        Integer favoriteLocationId = null;
-        String memo = "memo 1";
-
-        UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(favoriteLocationId, memo);
+        UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(null, "memo 1");
 
         //when
         //then
@@ -385,8 +380,53 @@ class FavoriteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.favoriteLocationId.message").value("favoriteLocationId值是必要"))
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.message").value("favoriteLocationId value is required"))
                 .andExpect(jsonPath("$.errorMap.favoriteLocationId.rejectedValue").value(nullValue()));
     }
+
+    @DisplayName("When update memo of FavoriteLocation, favoriteLocationId can't be 0")
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    void updateMemoOfFavoriteLocationWithZeroFavoriteLocationId() throws Exception {
+
+        //given
+        UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(0, "memo 1");
+
+        //when  //then
+        mockMvc.perform(MockMvcRequestBuilders.put("/favorite/updateMemo")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(updateMemoRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.message").value("favoriteLocationId can't be lower than 1"))
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.rejectedValue").value(0));
+    }
+
+    @DisplayName("When update memo of FavoriteLocation, favoriteLocationId can't be negative")
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    void updateMemoOfFavoriteLocationWithNegativeFavoriteLocationId() throws Exception {
+        //given
+        UpdateMemoRequest updateMemoRequest = new UpdateMemoRequest(-1, "memo 1");
+
+        //when  //then
+        mockMvc.perform(MockMvcRequestBuilders.put("/favorite/updateMemo")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(updateMemoRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.message").value("favoriteLocationId can't be lower than 1"))
+                .andExpect(jsonPath("$.errorMap.favoriteLocationId.rejectedValue").value(-1));
+    }
+
 
 }

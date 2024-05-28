@@ -5,10 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Setter
 public class AcceptInvitedPlanRequest {
 
+    @NotNull(message = "invitedPlanId value is required")
     Integer invitedPlanId;
 
     public AcceptInvitedPlanRequest() {

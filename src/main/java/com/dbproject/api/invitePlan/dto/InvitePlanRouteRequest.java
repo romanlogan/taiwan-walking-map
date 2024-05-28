@@ -1,6 +1,7 @@
 package com.dbproject.api.invitePlan.dto;
 
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,5 +23,19 @@ public class InvitePlanRouteRequest {
 
     public InvitePlanRouteRequest(Integer day) {
         this.day = day;
+    }
+
+    @Builder
+    public InvitePlanRouteRequest(Integer day, List<InvitePlanLocationRequest> locationRequestList) {
+        this.day = day;
+        this.locationRequestList = locationRequestList;
+    }
+
+    public static InvitePlanRouteRequest create(Integer day, List<InvitePlanLocationRequest> locationRequestList) {
+
+        return InvitePlanRouteRequest.builder()
+                .day(day)
+                .locationRequestList(locationRequestList)
+                .build();
     }
 }

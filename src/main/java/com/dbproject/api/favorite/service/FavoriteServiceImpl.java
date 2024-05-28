@@ -61,7 +61,7 @@ public class FavoriteServiceImpl implements FavoriteService{
 
     public FavoriteLocationListResponse getFavoriteLocationList(Pageable pageable, String email) {
 
-        Page<FavoriteLocationList> favoriteLocationPage = favoriteRepository.getFavoriteLocationListPage(pageable, email);
+        Page<FavoriteLocationDto> favoriteLocationPage = favoriteRepository.getFavoriteLocationListPage(pageable, email);
 
         return new FavoriteLocationListResponse(favoriteLocationPage);
     }

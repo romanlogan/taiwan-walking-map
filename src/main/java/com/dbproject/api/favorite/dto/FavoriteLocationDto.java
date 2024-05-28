@@ -2,6 +2,7 @@ package com.dbproject.api.favorite.dto;
 
 
 import com.dbproject.api.favorite.FavoriteLocation;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FavoriteLocationDto {
 
-    private Long id;
+    private Long favoriteLocationId;
     private String memo;
 
     private String locationId;
@@ -23,9 +24,10 @@ public class FavoriteLocationDto {
     private String longitude;
     private String latitude;
 
+    @QueryProjection
     @Builder
     public FavoriteLocationDto(Long id, String memo, String locationId, String name, String address, String region, String picture1, String longitude, String latitude) {
-        this.id = id;
+        this.favoriteLocationId = id;
         this.memo = memo;
         this.locationId = locationId;
         this.name = name;

@@ -32,9 +32,8 @@ public class InvitePlanDto {
     public InvitePlanDto() {
     }
 
-
     @Builder
-    public InvitePlanDto(Long id,String name, PlanPeriod period, String supply, LocalDate departDate, LocalDate arriveDate,String requesterEmail, String requesterName) {
+    public InvitePlanDto(Long id, String name, PlanPeriod period, String supply, LocalDate departDate, LocalDate arriveDate, String requesterEmail, String requesterName, List<InvitePlanMemberDto> invitePlanMemberDtoList, List<RouteDto> routeDtoList) {
         this.id = id;
         this.name = name;
         this.period = period;
@@ -43,6 +42,8 @@ public class InvitePlanDto {
         this.arriveDate = arriveDate;
         this.requesterEmail = requesterEmail;
         this.requesterName = requesterName;
+        this.invitePlanMemberDtoList = invitePlanMemberDtoList;
+        this.routeDtoList = routeDtoList;
     }
 
     public static InvitePlanDto from(InvitePlan invitePlan) {
@@ -59,6 +60,22 @@ public class InvitePlanDto {
                 .build();
     }
 
+    public static InvitePlanDto of(InvitePlan invitePlan, List<InvitePlanMemberDto> invitePlanMemberDtoList, List<RouteDto> routeDtoList) {
+
+        return InvitePlanDto.builder()
+                .id(invitePlan.getId())
+                .name(invitePlan.getName())
+                .period(invitePlan.getPeriod())
+                .supply(invitePlan.getSupply())
+                .departDate(invitePlan.getDepartDate())
+                .arriveDate(invitePlan.getArriveDate())
+                .requesterEmail(invitePlan.getRequester().getEmail())
+                .requesterName(invitePlan.getRequester().getName())
+                .invitePlanMemberDtoList(invitePlanMemberDtoList)
+                .routeDtoList(routeDtoList)
+                .build();
+    }
+
     public void setInvitePlanMemberDtoListBy(List<InvitePlanMember> invitePlanMemberList) {
 
         List<InvitePlanMemberDto> invitePlanMemberDtoList = new ArrayList<>();
@@ -70,7 +87,5 @@ public class InvitePlanDto {
         }
 
         this.invitePlanMemberDtoList = invitePlanMemberDtoList;
-
     }
-
 }
