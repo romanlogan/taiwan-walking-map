@@ -3,7 +3,7 @@ package com.dbproject.repository;
 import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.quickSearch.dto.FastSearchDto;
 import com.dbproject.api.quickSearch.dto.QuickSearchLocationDto;
-import com.dbproject.api.location.dto.RecLocationListRequest;
+import com.dbproject.api.location.dto.RecommendLocationListRequest;
 import com.dbproject.api.location.dto.RecommendLocationDto;
 import com.dbproject.api.location.Location;
 import org.junit.jupiter.api.DisplayName;
@@ -107,26 +107,6 @@ class LocationRepositoryTest {
         assertThat(location.getLocationPicture().getPicture1()).isNotNull();
     }
 
-    @DisplayName("추천 도시 이름과 pageable 로 추천 도시의 추천 장소 리스트를 페이징하여 돌려준다")
-    @Test
-    void getLocationPageByCity(){
-
-        //given
-        //0번째 페이지
-        Pageable pageable = PageRequest.of(0, 5);
-        String city = "臺北市";
-        RecLocationListRequest request = new RecLocationListRequest(city);
-
-        //when
-        Page<RecommendLocationDto> locationListPage = locationRepository.getLocationPageByCity(request, pageable);
-        List<RecommendLocationDto> pageContent = locationListPage.getContent();
-
-        //then
-        assertThat(locationListPage.getTotalPages()).isEqualTo(90);
-        assertThat(locationListPage.getTotalElements()).isEqualTo(449);
-        assertThat(pageContent).hasSize(5);
-    }
-
     @DisplayName("검색어와 도시 이름으로 장소 리스트를 가져옵니다 (LIMIT 10)")
     @Test
     void findBySearchQueryAndSearchCity(){
@@ -147,25 +127,53 @@ class LocationRepositoryTest {
         assertThat(locationList.get(9).getName()).isEqualTo("北投社三層崎公園");
         assertThat(locationList.get(9).getRegion()).isEqualTo("臺北市");
         assertThat(locationList.get(9).getLocationId()).isEqualTo("C1_379000000A_002197");
-     }
+    }
 
-     @DisplayName("도시 이름으로 중복 제거된 Town 이름 리스트를 가져옵니다")
-     @Test
-     void findTownListByRegion(){
+    @DisplayName("도시 이름으로 중복 제거된 Town 이름 리스트를 가져옵니다")
+    @Test
+    void findTownListByRegion(){
 
-         //given
-         String searchCity = "臺北市";
+        //given
+        String searchCity = "臺北市";
 
-         //when
-         List<String> townList = locationRepository.findTownListByRegion(searchCity);
+        //when
+        List<String> townList = locationRepository.findTownListByRegion(searchCity);
 
-         //then
-         assertThat(townList).hasSize(12);
-         assertThat(townList.get(0)).isEqualTo("中山區");
-         assertThat(townList.get(1)).isEqualTo("中正區");
-         assertThat(townList.get(2)).isEqualTo("信義區");
+        //then
+        assertThat(townList).hasSize(12);
+        assertThat(townList.get(0)).isEqualTo("中山區");
+        assertThat(townList.get(1)).isEqualTo("中正區");
+        assertThat(townList.get(2)).isEqualTo("信義區");
+    }
 
+    @DisplayName("도시 이름과 Town 이름으로 location 리스트를 가져옵니다")
+    @Test
+    void findByTownLikeAndRegion(){
 
-      }
+        //given
+        String searchCity = "臺北市";
+        String town = "中山區";
+
+        //when
+        List<Location> locations = locationRepository.findByTownLikeAndRegion(town, searchCity);
+
+        //then
+        assertThat(locations).hasSize(57);
+    }
+
+    @DisplayName("도시 이름과 Town 이름으로 location 리스트를 가져올떄 town 이름이 '' 이면 해당 도시의 모든 결과를 가져옵니다")
+    @Test
+    void findByTownLikeAndRegionWithEmptyStringTown(){
+
+        //given
+        String searchCity = "臺北市";
+        String town = "";
+
+        //when
+        List<Location> locations = locationRepository.findByTownLikeAndRegion(town, searchCity);
+
+        //then
+        assertThat(locations).hasSize(449);
+    }
 
 }

@@ -11,6 +11,12 @@
     <script th:inline="javascript">
 
         $(document).ready(function() {
+            var errorMessage = [[${errorMessage}]];
+
+            if(errorMessage != null){
+                alert(errorMessage);
+            }
+
 
             var townNameList = [[${response.getTownList()}]];
 
@@ -68,8 +74,6 @@
         }
 
         function page(page) {
-
-
 
             var searchArrival = $("#cityTypeArriveCity").val();
             var searchQuery = $("#savedQuickSearchQuery").val();
@@ -226,67 +230,76 @@
 
     <div class="left-half">
 
-        <form role="form" method="get" th:object="${locationList}">
-            <div class="InvitedHangOutBox" th:each="location, status: ${response.locationDtoPage.getContent()}">
-                <a th:href="'/location/' +${location.locationId}" class="text-dark">
+        <div th:if="${response.locationDtoPage.getContent().size() == 0}">
+            <h1>검색 결과가 존재하지 않습니다.</h1>
+        </div>
+        <div th:unless="${response.locationDtoPage.getContent().size() == 0}">
+            <form role="form" method="get" th:object="${locationList}">
+                <div class="InvitedHangOutBox" th:each="location, status: ${response.locationDtoPage.getContent()}">
+                    <a th:href="'/location/' +${location.locationId}" class="text-dark">
 
-                    <div th:if="${#strings.isEmpty(location.getPicture1())}">
-                        <img class = "locationBoxImg" src="/img/noImg.jpg">
-                    </div>
-                    <div th:unless="${#strings.isEmpty(location.getPicture1())}">
-                        <img class = "locationBoxImg" th:src="${location.getPicture1()}">
-                    </div>
-
-                    <div class="locationTextBox">
-                        <p class="locationText">[[${location.name}]]</p>
-
-                        <div th:if="${location.address != null}">
-                            <p class="locationText"> address : [[${location.address}]]</p>
+                        <div th:if="${#strings.isEmpty(location.getPicture1())}">
+                            <img class = "locationBoxImg" src="/img/noImg.jpg">
+                        </div>
+                        <div th:unless="${#strings.isEmpty(location.getPicture1())}">
+                            <img class = "locationBoxImg" th:src="${location.getPicture1()}">
                         </div>
 
-                        <div th:if="${location.openTime != null}">
-                            <p class="locationText"> open time : [[${location.openTime}]]</p>
+                        <div class="locationTextBox">
+                            <p class="locationText">[[${location.name}]]</p>
+
+                            <div th:if="${location.address != null}">
+                                <p class="locationText"> address : [[${location.address}]]</p>
+                            </div>
+
+                            <div th:if="${location.openTime != null}">
+                                <p class="locationText"> open time : [[${location.openTime}]]</p>
+                            </div>
+
+                            <div th:if="${location.ticketInfo != null}">
+                                <p class="locationText"> Fee Info : [[${location.ticketInfo}]]</p>
+                            </div>
+
+                            <div th:if="${location.website != null}">
+                                <p class="locationText"> Website Url : [[${location.website}]]</p>
+                            </div>
+
+                            <div th:if="${location.tel != null}">
+                                <p class="locationText"> Tel : [[${location.tel}]]</p>
+                            </div>
                         </div>
+                    </a>
 
-                        <div th:if="${location.ticketInfo != null}">
-                            <p class="locationText"> Fee Info : [[${location.ticketInfo}]]</p>
-                        </div>
-
-                        <div th:if="${location.website != null}">
-                            <p class="locationText"> Website Url : [[${location.website}]]</p>
-                        </div>
-
-                        <div th:if="${location.tel != null}">
-                            <p class="locationText"> Tel : [[${location.tel}]]</p>
-                        </div>
-                    </div>
-                </a>
-
-                <div class="clear"></div>
-            </div>
+                    <div class="clear"></div>
+                </div>
 
 
-            <div th:with="start=${(response.locationDtoPage.number/maxPage)*maxPage + 1}, end=(${(response.locationDtoPage.totalPages == 0) ? 1 : (start + (maxPage - 1) < response.locationDtoPage.totalPages ? start + (maxPage - 1) : response.locationDtoPage.totalPages)})" >
-                <ul class="pagination justify-content-center">
+                <div th:with="start=${(response.locationDtoPage.number/maxPage)*maxPage + 1}, end=(${(response.locationDtoPage.totalPages == 0) ? 1 : (start + (maxPage - 1) < response.locationDtoPage.totalPages ? start + (maxPage - 1) : response.locationDtoPage.totalPages)})" >
+                    <ul class="pagination justify-content-center">
 
-                    <li class="page-item" th:classappend="${response.locationDtoPage.first}?'disabled'">
-                        <a th:onclick="'javascript:page(' + ${response.locationDtoPage.number - 1} + ')'" aria-label='Previous' class="page-link">
-                            <span aria-hidden='true'>Previous</span>
-                        </a>
-                    </li>
+                        <li class="page-item" th:classappend="${response.locationDtoPage.first}?'disabled'">
+                            <a th:onclick="'javascript:page(' + ${response.locationDtoPage.number - 1} + ')'" aria-label='Previous' class="page-link">
+                                <span aria-hidden='true'>Previous</span>
+                            </a>
+                        </li>
 
-                    <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${response.locationDtoPage.number eq page-1}?'active':''">
-                        <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
-                    </li>
+                        <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${response.locationDtoPage.number eq page-1}?'active':''">
+                            <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
+                        </li>
 
-                    <li class="page-item" th:classappend="${response.locationDtoPage.last}?'disabled'">
-                        <a th:onclick="'javascript:page(' + ${response.locationDtoPage.number + 1} + ')'" aria-label='Next' class="page-link">
-                            <span aria-hidden='true'>Next</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </form>
+                        <li class="page-item" th:classappend="${response.locationDtoPage.last}?'disabled'">
+                            <a th:onclick="'javascript:page(' + ${response.locationDtoPage.number + 1} + ')'" aria-label='Next' class="page-link">
+                                <span aria-hidden='true'>Next</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+
+        </div>
+
+
+
     </div>
 
     <div class="right-half">

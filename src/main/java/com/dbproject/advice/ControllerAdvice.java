@@ -18,16 +18,12 @@ import java.util.Map;
 @RestControllerAdvice
 public class ControllerAdvice {
 
-//    공통으로 처리
+//    @Valid 가 붙었지만 bindresult 로 잡지 않은 에러 공통 처리
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
     public ApiResponse<Object> bindException(BindException e) {
 
         System.out.println("------------------- Controller Advice ----------------------");
-
-//        다중 에러시 메시지 와 데이터 처리
-//        List<String> messageList = new ArrayList<>();
-//        List<Object> dataList = new ArrayList<>();
 
         Map<String, ErrorDetail> errorMap = new HashMap<>();
 
@@ -36,8 +32,6 @@ public class ControllerAdvice {
             System.out.println("field name : " + fieldError.getField() + ", value = " + fieldError.getRejectedValue());
             ErrorDetail errorDetail = new ErrorDetail(fieldError.getRejectedValue(), fieldError.getDefaultMessage());
             errorMap.put(fieldError.getField(), errorDetail);
-//            dataList.add(fieldError.getRejectedValue());
-//            messageList.add(fieldError.getDefaultMessage());
         }
 
 

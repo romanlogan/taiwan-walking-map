@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class RejectFriendRequest {
 
-    @NotNull
+    @NotNull(message = "friendRequestId value is required")
     private Long friendRequestId;
 
 

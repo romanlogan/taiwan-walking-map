@@ -5,7 +5,7 @@ import com.dbproject.api.location.QLocation;
 import com.dbproject.api.location.QRecLocationListResponse;
 import com.dbproject.api.location.dto.LocationDto;
 import com.dbproject.api.location.dto.QLocationDto;
-import com.dbproject.api.location.dto.RecLocationListRequest;
+import com.dbproject.api.location.dto.RecommendLocationListRequest;
 import com.dbproject.api.location.dto.RecommendLocationDto;
 import com.dbproject.api.quickSearch.dto.QQuickSearchLocationDto;
 import com.dbproject.api.quickSearch.dto.QuickSearchFormRequest;
@@ -33,7 +33,7 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
     }
 
     @Override
-    public Page<RecommendLocationDto> getLocationPageByCity(RecLocationListRequest request, Pageable pageable){
+    public Page<RecommendLocationDto> getLocationPageByCity(RecommendLocationListRequest request, Pageable pageable){
 
         QLocation location = QLocation.location;
 
@@ -74,11 +74,11 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
         return new PageImpl<>(content, pageable, total);
     }
 
-    private static BooleanExpression searchByRegion(RecLocationListRequest request) {
+    private static BooleanExpression searchByRegion(RecommendLocationListRequest request) {
         return QLocation.location.region.eq(request.getSearchArrival());
     }
 
-    private static BooleanExpression searchByTown(RecLocationListRequest request) {
+    private static BooleanExpression searchByTown(RecommendLocationListRequest request) {
         return QLocation.location.town.like("%"+ request.getSearchTown()+"%");
 
 //        return QLocation.location.name.like("%" + searchQuery + "%");
@@ -143,8 +143,6 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
 
         return new PageImpl<>(content, pageable, total);
     }
-
-
 
     @Override
     public List<QuickSearchLocationDto> getLocationListByCond(QuickSearchFormRequest quickSearchFormRequest,

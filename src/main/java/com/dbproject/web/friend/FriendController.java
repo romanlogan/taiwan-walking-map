@@ -10,6 +10,8 @@ import com.dbproject.api.friend.friendRequest.dto.RejectFriendRequest;
 import com.dbproject.api.friend.friendRequest.dto.RequestFriendListDto;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.binding.CheckBindingResult;
+import com.dbproject.exception.DuplicateFriendRequestException;
+import com.dbproject.exception.MemberNotExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,11 +45,19 @@ public class FriendController {
                                             Principal principal) {
 
         if(bindingResult.hasErrors()){
-            ResponseEntity responseEntity = CheckBindingResult.induceSuccessInAjax(bindingResult);
-            return responseEntity;
+            return CheckBindingResult.induceSuccessInAjax(bindingResult);
         }
 
-        Long requesterId = friendService.saveFriendRequest(addFriendRequest, principal.getName());
+        Long requesterId = null;
+
+        try {
+            requesterId = friendService.saveFriendRequest(addFriendRequest, principal.getName());
+        } catch (MemberNotExistException e) {
+
+
+        } catch (DuplicateFriendRequestException e) {
+
+        }
 
         return new ResponseEntity(ApiResponse.of(
                 HttpStatus.OK,

@@ -18,11 +18,6 @@ public interface LocationRepository extends JpaRepository<Location, String>, Loc
 
     Location findByLocationId(String LocationId);
 
-//    Optional<Location> findById(@Param("id") String id);
-
-//    @Query("select l from Location l "+
-//            "where l.AttractionName = :AttractionName")
-
     Location findByName(String name);
 
 
@@ -38,9 +33,9 @@ public interface LocationRepository extends JpaRepository<Location, String>, Loc
             " order by l.town asc")
     List<String> findTownListByRegion(@Param("region") String region);
 
-//    @Query("select l from Location l" +
-//            " where l.region = :region" +
-//            " and l.favoriteCount")
-//    List<Location> findRecommendLocationListTop10(String region);
+    @Query("select l from Location l" +
+            " where l.region = :region" +
+            " and l.town like CONCAT('%',:town,'%')")
+    List<Location> findByTownLikeAndRegion(String town, String region);
 
 }

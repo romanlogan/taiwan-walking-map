@@ -2,6 +2,8 @@ package com.dbproject.service;
 
 import com.dbproject.api.friend.Friend;
 import com.dbproject.api.friend.repository.FriendRepository;
+import com.dbproject.api.location.dto.RecommendLocationListRequest;
+import com.dbproject.api.location.dto.RecommendLocationListResponse;
 import com.dbproject.api.location.service.LocationServiceImpl;
 import com.dbproject.api.location.dto.LocationDtlResponse;
 import com.dbproject.api.member.dto.RegisterFormDto;
@@ -13,11 +15,15 @@ import com.dbproject.api.comment.repository.CommentRepository;
 import com.dbproject.api.favorite.repository.FavoriteRepository;
 import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.member.MemberRepository;
+import com.dbproject.exception.RegionSearchConditionNotValidException;
+import com.dbproject.exception.TownSearchConditionNotValidException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -269,5 +275,165 @@ class LocationServiceTest {
 
         friendRepository.save(friend);
         friendRepository.save(friendReversed);
+    }
+
+    @DisplayName("추천 장소 리스트의 첫번째 페이지를 가져온다")
+    @Test
+    void getFirstRecommendLocationListPage(){
+        //given
+        String searchArrival = "臺北市";
+        String searchQuery = "公園";
+        String searchTown = "中山區";
+        RecommendLocationListRequest request = new RecommendLocationListRequest(searchArrival, searchQuery, searchTown);
+        Pageable pageable = PageRequest.of(0, 5 );
+
+        //when
+        RecommendLocationListResponse response = locationService.getRecommendLocationList(request, pageable);
+
+        //then
+        assertThat(response.getLocationDtoPage().getContent()).hasSize(5);
+        assertThat(response.getLocationDtoPage().getContent().get(0).getName()).isEqualTo("松錦公園");
+        assertThat(response.getLocationDtoPage().getContent().get(1).getName()).isEqualTo("花博公園_花之隧道");
+        assertThat(response.getLocationDtoPage().getContent().get(2).getName()).isEqualTo("圓山自然景觀公園");
+        assertThat(response.getLocationDtoPage().getContent().get(3).getName()).isEqualTo("林森_康樂公園");
+        assertThat(response.getLocationDtoPage().getContent().get(4).getName()).isEqualTo("美堤河濱公園");
+    }
+
+    @DisplayName("추천 장소 리스트의 두번째 페이지를 가져온다")
+    @Test
+    void getSecondRecommendLocationListPage(){
+        //given
+        String searchArrival = "臺北市";
+        String searchQuery = "公園";
+        String searchTown = "中山區";
+        RecommendLocationListRequest request = new RecommendLocationListRequest(searchArrival, searchQuery, searchTown);
+        Pageable pageable = PageRequest.of(1, 5 );
+
+        //when
+        RecommendLocationListResponse response = locationService.getRecommendLocationList(request, pageable);
+
+        //then
+        assertThat(response.getLocationDtoPage().getContent()).hasSize(5);
+        assertThat(response.getLocationDtoPage().getContent().get(0).getName()).isEqualTo("捷運中山站街區_心中山線形公園");
+        assertThat(response.getLocationDtoPage().getContent().get(1).getName()).isEqualTo("遼寧公園");
+        assertThat(response.getLocationDtoPage().getContent().get(2).getName()).isEqualTo("榮星花園公園");
+        assertThat(response.getLocationDtoPage().getContent().get(3).getName()).isEqualTo("花博公園");
+        assertThat(response.getLocationDtoPage().getContent().get(4).getName()).isEqualTo("迎風河濱公園");
+    }
+
+    @DisplayName("추천 장소 리스트의 세번째 페이지를 가져올때 장소는 2곳이다 ")
+    @Test
+    void getThirdRecommendLocationListPage(){
+        //given
+        String searchArrival = "臺北市";
+        String searchQuery = "公園";
+        String searchTown = "中山區";
+        RecommendLocationListRequest request = new RecommendLocationListRequest(searchArrival, searchQuery, searchTown);
+        Pageable pageable = PageRequest.of(2, 5 );
+
+        //when
+        RecommendLocationListResponse response = locationService.getRecommendLocationList(request, pageable);
+
+        //then
+        assertThat(response.getLocationDtoPage().getContent()).hasSize(2);
+        assertThat(response.getLocationDtoPage().getContent().get(0).getName()).isEqualTo("大佳河濱公園");
+        assertThat(response.getLocationDtoPage().getContent().get(1).getName()).isEqualTo("新生公園_玫瑰園");
+    }
+
+    @DisplayName("추천 장소 리스트 페이지를 가져올때 검색 조건을 같이 가져옵니다 ")
+    @Test
+    void getRecommendLocationListPageWithSearchRequestCondition(){
+        //given
+        String searchArrival = "臺北市";
+        String searchQuery = "公園";
+        String searchTown = "中山區";
+        RecommendLocationListRequest request = new RecommendLocationListRequest(searchArrival, searchQuery, searchTown);
+        Pageable pageable = PageRequest.of(0, 5 );
+
+        //when
+        RecommendLocationListResponse response = locationService.getRecommendLocationList(request, pageable);
+
+        //then
+        assertThat(response.getSearchConditionDto().getArriveCity()).isEqualTo(searchArrival);
+        assertThat(response.getSearchConditionDto().getSearchQuery()).isEqualTo(searchQuery);
+        assertThat(response.getSearchConditionDto().getSearchTown()).isEqualTo(searchTown);
+    }
+
+    
+    @DisplayName("추천 장소 리스트 페이지를 가져올때 distinct 한 town 정보들을 같이 가져옵니다.")
+    @Test
+    void getRecommendLocationListPageWithDistinctTownList(){
+        //given
+        String searchArrival = "臺北市";
+        String searchQuery = "公園";
+        String searchTown = "中山區";
+        RecommendLocationListRequest request = new RecommendLocationListRequest(searchArrival, searchQuery, searchTown);
+        Pageable pageable = PageRequest.of(0, 5 );
+
+        //when
+        RecommendLocationListResponse response = locationService.getRecommendLocationList(request, pageable);
+
+        //then
+        assertThat(response.getTownList().size()).isEqualTo(12);
+        assertThat(response.getTownList().contains("大同區")).isEqualTo(true);
+        assertThat(response.getTownList().contains("北投區")).isEqualTo(true);
+        assertThat(response.getTownList().contains("中山區")).isEqualTo(true);
+        assertThat(response.getTownList().contains("文山區")).isEqualTo(true);
+        assertThat(response.getTownList().contains("士林區")).isEqualTo(true);
+        assertThat(response.getTownList().contains("中正區")).isEqualTo(true);
+        assertThat(response.getTownList().contains("大安區")).isEqualTo(true);
+        assertThat(response.getTownList().contains("松山區")).isEqualTo(true);
+        assertThat(response.getTownList().contains("信義區")).isEqualTo(true);
+        assertThat(response.getTownList().contains("南港區")).isEqualTo(true);
+        assertThat(response.getTownList().contains("內湖區")).isEqualTo(true);
+        assertThat(response.getTownList().contains("萬華區")).isEqualTo(true);
+    }
+
+    @DisplayName("추천 장소 리스트를 가져올때 Region 검색어가 올바르지 않으면 , throw RegionSearchConditionNotValidException ")
+    @Test
+    void checkRegionSearchConditionIsValid(){
+        //given
+        String searchArrival = "asdf";
+        String searchQuery = "公園";
+        String searchTown = "中山區";
+        RecommendLocationListRequest request = new RecommendLocationListRequest(searchArrival, searchQuery, searchTown);
+        Pageable pageable = PageRequest.of(0, 5 );
+
+        //when //then
+        assertThatThrownBy(() -> locationService.getRecommendLocationList(request, pageable))
+                .isInstanceOf(RegionSearchConditionNotValidException.class)
+                .hasMessage("Region 검색어가 올바르지 않습니다.");
+    }
+
+    @DisplayName("추천 장소 리스트를 가져올때 town 검색어가 올바르지 않으면 , throw TownSearchConditionNotValidException ")
+    @Test
+    void checkTownSearchConditionIsValid(){
+        //given
+        String searchArrival = "臺北市";
+        String searchQuery = "公園";
+        String searchTown = "asdf";
+        RecommendLocationListRequest request = new RecommendLocationListRequest(searchArrival, searchQuery, searchTown);
+        Pageable pageable = PageRequest.of(0, 5 );
+
+        //when //then
+        assertThatThrownBy(() -> locationService.getRecommendLocationList(request, pageable))
+                .isInstanceOf(TownSearchConditionNotValidException.class)
+                .hasMessage("Town 검색어가 올바르지 않습니다.");
+    }
+
+    @DisplayName("추천 장소 리스트를 가져올때 Region 검색어와 Town 검색어가 올바르지 않으면 , throw RegionSearchConditionNotValidException ")
+    @Test
+    void checkRegionAndTownSearchConditionIsValid(){
+        //given
+        String searchArrival = "asdf";
+        String searchQuery = "公園";
+        String searchTown = "asdf";
+        RecommendLocationListRequest request = new RecommendLocationListRequest(searchArrival, searchQuery, searchTown);
+        Pageable pageable = PageRequest.of(0, 5 );
+
+        //when //then
+        assertThatThrownBy(() -> locationService.getRecommendLocationList(request, pageable))
+                .isInstanceOf(RegionSearchConditionNotValidException.class)
+                .hasMessage("Region 검색어가 올바르지 않습니다.");
     }
 }

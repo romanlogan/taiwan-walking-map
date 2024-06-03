@@ -771,36 +771,41 @@
           <p class="savedCommentRegTime">[[${comment.regTime}]]</p>
 <!--          점수 출력하기 (추가 필요)-->
         </div>
-<!--        비 로그인 유저가 들어왔을때ㅑ 에러 발생 -->
-        <div th:if="${#strings.equals(comment.email, #authentication.principal.username)}">
-          <button type="button" data-toggle="modal" data-target="#updateCommentModal">댓글 수정</button>
-          <button id="deleteCommentBtn" th:value="${comment.id}" onclick="deleteComment(this.value)" >댓글 삭제</button>
+<!--        현재 로그인 상태라면 -->
+<!--        댓글의 email 과  현재 로그인 email 이 같으면 -->
+        <div th:if="${#strings.isEmpty(loggedInUserId)}">
+        </div>
+        <div th:unless="${#strings.isEmpty(loggedInUserId)}">
+          <div th:if="${#strings.equals(comment.email, loggedInUserId)}">
+            <button type="button" data-toggle="modal" data-target="#updateCommentModal">댓글 수정</button>
+            <button id="deleteCommentBtn" th:value="${comment.id}" onclick="deleteComment(this.value)" >댓글 삭제</button>
 
-          <div class="modal fade" id="updateCommentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h4 class="modal-title" id="updateCommentModalLabel">댓글 수정</h4>
-                </div>
-                <div class="modal-body">
-                  <!-- 모달 창 내의 데이터 입력 폼 -->
-                  <div class="form-group">
-
-                    <label for="commentContent"></label>
-                    <textarea type="text" id="updateCommentContent" name="updateCommentContent"></textarea>
-
-                    <select id="updateCommentRate" name="updateCommentRate">
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                    </select>
-
+            <div class="modal fade" id="updateCommentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title" id="updateCommentModalLabel">댓글 수정</h4>
                   </div>
-                </div>
-                <div class="modal-footer">
-                  <button id="updateCommentBtn" type="button">댓글 수정</button>
+                  <div class="modal-body">
+                    <!-- 모달 창 내의 데이터 입력 폼 -->
+                    <div class="form-group">
+
+                      <label for="commentContent"></label>
+                      <textarea type="text" id="updateCommentContent" name="updateCommentContent"></textarea>
+
+                      <select id="updateCommentRate" name="updateCommentRate">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                      </select>
+
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button id="updateCommentBtn" type="button">댓글 수정</button>
+                  </div>
                 </div>
               </div>
             </div>

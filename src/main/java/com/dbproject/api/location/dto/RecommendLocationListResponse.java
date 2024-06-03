@@ -1,5 +1,6 @@
 package com.dbproject.api.location.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Page;
@@ -12,15 +13,27 @@ public class RecommendLocationListResponse {
 
 
     private Page<RecommendLocationDto> locationDtoPage;
-    private SearchConditionDto searchConditionDto;
+    private SearchRequestConditionDto searchConditionDto;
     private List<String> townList;
 
     public RecommendLocationListResponse() {
     }
 
-    public RecommendLocationListResponse(Page<RecommendLocationDto> locationDtoPage, SearchConditionDto searchConditionDto, List<String> townList) {
+
+    @Builder
+    public RecommendLocationListResponse(Page<RecommendLocationDto> locationDtoPage, SearchRequestConditionDto searchConditionDto, List<String> townList) {
         this.locationDtoPage = locationDtoPage;
         this.searchConditionDto = searchConditionDto;
         this.townList = townList;
     }
+
+    public static RecommendLocationListResponse create(Page<RecommendLocationDto> locationDtoPage, SearchRequestConditionDto searchConditionDto, List<String> townList) {
+
+        return RecommendLocationListResponse.builder()
+                .locationDtoPage(locationDtoPage)
+                .searchConditionDto(searchConditionDto)
+                .townList(townList)
+                .build();
+    }
+
 }

@@ -11,6 +11,12 @@
     <script th:inline="javascript">
         $(document).ready(function () {
 
+            var errorMessage = [[${errorMessage}]];
+
+            if(errorMessage != null){
+                alert(errorMessage);
+            }
+
             const navbar = document.getElementById('navbar');
 
             // 스크롤 이벤트 리스너 등록

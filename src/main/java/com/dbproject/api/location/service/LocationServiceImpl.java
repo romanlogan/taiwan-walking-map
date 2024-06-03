@@ -15,6 +15,8 @@ import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.memberImg.MemberImg;
 import com.dbproject.api.member.memberImg.MemberImgRepository;
 import com.dbproject.exception.LocationNotExistException;
+import com.dbproject.exception.RegionSearchConditionNotValidException;
+import com.dbproject.exception.TownSearchConditionNotValidException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,9 +66,7 @@ public class LocationServiceImpl implements LocationService {
     public LocationDtlResponse getLocationDtlWithAuthUser(String locationId, String email) {
 
         Location location = locationRepository.findByLocationId(locationId);
-
         checkLocationExists(location);
-
         LocationDtlResponse locationDtlResponse = LocationDtlResponse.of(location);
 
         //로그인 유저는 이 장소가 favorite 에 등록 되어 있는지 확인
@@ -131,16 +131,41 @@ public class LocationServiceImpl implements LocationService {
         } else {
             locationDtlResponse.setSaved();
         }
-
     }
 
-    public RecommendLocationListResponse getRecommendLocationListResponse(RecLocationListRequest request, Pageable pageable) {
+    public RecommendLocationListResponse getRecommendLocationList(RecommendLocationListRequest request, Pageable pageable) {
 
+        checkRegionSearchConditionIsValid(request);
+        checkTownSearchConditionIsValid(request);
 
         Page<RecommendLocationDto> locationList = locationRepository.getLocationPageByCity(request, pageable);
-        SearchConditionDto searchConditionDto = new SearchConditionDto(request.getSearchArrival(), request.getSearchQuery(), request.getSearchTown());
-        List<String> townList = locationRepository.findTownListByRegion(request.getSearchArrival());
+        SearchRequestConditionDto searchConditionDto = SearchRequestConditionDto.create(request.getSearchArrival(), request.getSearchQuery(), request.getSearchTown());
+        List<String> townList = getTownListFrom(request.getSearchArrival());
 
-        return new RecommendLocationListResponse(locationList, searchConditionDto,townList);
+        return RecommendLocationListResponse.create(locationList, searchConditionDto,townList);
+    }
+
+    @Override
+    public List<String> getTownListFrom(String region) {
+
+        return locationRepository.findTownListByRegion(region);
+    }
+
+    private void checkRegionSearchConditionIsValid(RecommendLocationListRequest request) {
+        List<Location> locationList = locationRepository.findByRegion(
+                request.getSearchArrival());
+
+        if (locationList.isEmpty()) {
+            throw new RegionSearchConditionNotValidException("Region 검색어가 올바르지 않습니다.");
+        }
+    }
+
+    private void checkTownSearchConditionIsValid(RecommendLocationListRequest request) {
+        List<Location> townList = locationRepository.findByTownLikeAndRegion(
+                request.getSearchTown(), request.getSearchArrival());
+
+        if (townList.isEmpty()) {
+            throw new TownSearchConditionNotValidException("Town 검색어가 올바르지 않습니다.");
+        }
     }
 }

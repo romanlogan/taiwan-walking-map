@@ -133,30 +133,31 @@ class FriendControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.friendEmail.message").value("please enter email format"))
+                .andExpect(jsonPath("$.errorMap.friendEmail.message").value("friendEmail value is required"))
                 .andExpect(jsonPath("$.errorMap.friendEmail.rejectedValue").value(" "));
     }
 
-    @DisplayName("When saving a friend request, the email must be in email format.")
-    @Test
-    @WithMockUser(username = "user", roles = "USER")
-    void canNotSaveFriendRequestWithoutEmailForm() throws Exception{
-        //given
-        AddFriendRequest addFriendRequest = createAddFriendRequest("asdasdf", "memo 1");
-
-        //when //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/myPage/addFriendRequest")
-                        .with(csrf())
-                        .content(objectMapper.writeValueAsString(addFriendRequest))
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.errorMap.friendEmail.message").value("please enter email format"))
-                .andExpect(jsonPath("$.errorMap.friendEmail.rejectedValue").value("asdasdf"));
-    }
+//    이메일 검증을 나중에 아이디로 변경할 것
+//    @DisplayName("When saving a friend request, the email must be in email format.")
+//    @Test
+//    @WithMockUser(username = "user", roles = "USER")
+//    void canNotSaveFriendRequestWithoutEmailForm() throws Exception{
+//        //given
+//        AddFriendRequest addFriendRequest = createAddFriendRequest("asdasdf", "memo 1");
+//
+//        //when //then
+//        mockMvc.perform(MockMvcRequestBuilders.post("/myPage/addFriendRequest")
+//                        .with(csrf())
+//                        .content(objectMapper.writeValueAsString(addFriendRequest))
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                )
+//                .andDo(print())
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.code").value("400"))
+//                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+//                .andExpect(jsonPath("$.errorMap.friendEmail.message").value("friendEmail value is required"))
+//                .andExpect(jsonPath("$.errorMap.friendEmail.rejectedValue").value("asdasdf"));
+//    }
 
     @DisplayName("When saving a friend request, the memo can only have a maximum of 255 characters")
     @Test
