@@ -88,7 +88,7 @@
         });
       });
 
-      $("#createCommentBtn").on("click", function () {
+      $("#addCommentBtn").on("click", function () {
 
         //토큰 안적으면 403 포비던 뜸
         var token = $("meta[name='_csrf']").attr("content");
@@ -552,6 +552,38 @@
       color: #bd2130;
     }
 
+    .btnBox{
+      position: relative;
+    }
+
+    #addedFavoriteBtn{
+      position: absolute;
+      top: 1.5rem;
+      left: 49rem;
+    }
+    #addFavoriteBtn{
+      position: absolute;
+      top: 1.5rem;
+      left: 49rem;
+    }
+    #invitePlanBtn{
+
+      position: absolute;
+      top: 2rem;
+      left: 54rem;
+    }
+
+
+    #createCommentBtn{
+
+      position: absolute;
+      top: 2rem;
+      left: 60rem;
+    }
+
+    .commentBox{
+      margin-top: 1000px;
+    }
 
 
 
@@ -623,17 +655,17 @@
     </div>
 
 
-
-
-    <!--  즐겨찾기  -->
-    <div th:if="${locationDtlResponse.isSaved()}">
-      <button id="addedFavoriteBtn"><i class="fa-thin fa-star" style="color: #ffdd00;"></i>이미 저장된 장소입니다.</button>
+    <div class="btnBox">
+      <!--  즐겨찾기  -->
+      <div th:if="${locationDtlResponse.isSaved()}">
+        <button id="addedFavoriteBtn"><i class="fa-thin fa-star" style="color: #ffdd00;"></i>이미 저장된 장소입니다.</button>
+      </div>
+      <div th:unless="${locationDtlResponse.isSaved()}">
+        <button type="button" id="addFavoriteBtn" class=" btn-primary" data-toggle="modal" data-target="#addFavoriteModal"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>
+      </div>
+      <button type="button" id="invitePlanBtn" class="invitePlanBtn btn-primary" data-toggle="modal" data-target="#hangOutModal">약속 잡기</button>
+      <button type="button" id="createCommentBtn" data-toggle="modal" data-target="#commentModal">댓글 작성</button>
     </div>
-    <div th:unless="${locationDtlResponse.isSaved()}">
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addFavoriteModal"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>
-    </div>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hangOutModal">약속 잡기</button>
-    <button type="button" data-toggle="modal" data-target="#commentModal">댓글 작성</button>
     <!-- 모달 창 -->
     <div class="modal fade" id="addFavoriteModal" tabindex="-1" role="dialog" aria-labelledby="addFavoriteModalLabel">
       <div class="modal-dialog">
@@ -741,11 +773,10 @@
                     <option value="4">4</option>
                     <option value="5">5</option>
                   </select>
-
             </div>
           </div>
           <div class="modal-footer">
-            <button id="createCommentBtn" type="button">댓글 저장</button>
+            <button id="addCommentBtn" type="button">댓글 저장</button>
           </div>
         </div>
       </div>
@@ -760,7 +791,7 @@
 <!--      </div>-->
 <!--    </div>-->
 
-    <div class="comment-left-half">
+    <div class="commentBox">
       <th:block th:each="comment, status: ${locationDtlResponse.getCommentDtoList()}">
         <div>
           <div class="savedCommentMemberBox">
