@@ -1,0 +1,208 @@
+
+.container{
+    margin-top: 30px;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+}
+
+.content{
+    margin-left: 0;
+    margin-right: 0;
+}
+
+
+.left-half {
+    float: left;
+    width: 79%;
+    height: 450px;
+    margin-right: 10px;
+}
+
+.right-half {
+    float: right;
+    width: 20%;
+    border-radius: 0px 10px 10px 0px;
+    overflow: hidden;
+}
+
+#imgBox{
+    width: 100%;
+    height: 70vh;
+    overflow: hidden;
+    position: relative;
+
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*align-items: center;*/
+}
+
+#cityImg{
+    /*position:absolute;*/
+    height: 70vh;
+    width: 100%;
+    /*left: 0;*/
+    /*top: 0;*/
+    /* 투명도 */
+    /*background-color: rgba(0,0,0,0.3);*/
+    object-fit: cover;
+}
+
+#flexBox{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+}
+
+#cityNameBox{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#cityName{
+    color:white;
+    font-size: 7vw;
+}
+
+#map {
+    /*width: 300px;*/
+    /*height: 300px;*/
+    /*position: absolute;*/
+    /*top: 100px;*/
+    /*left: 1000px;*/
+    /*border-radius: 30px;*/
+}
+
+.owl-carousel {
+    width: 90rem;
+    height: 500px;
+    margin-top: 1rem;
+    /*margin-left: 4rem;*/
+    /* margin-right: 30px;   */
+    /* width: ;
+      height: 10rem; */
+    /* margin: 0 auto; */
+}
+
+.locationContainer{
+    width: 100%;
+}
+
+.owl-item{
+
+}
+
+.card{
+    /*margin-left: 1rem;*/
+    /*margin-right: 1rem;*/
+    width: 300px;
+    border-radius: 10px 10px 10px 10px;
+    /*overflow: hidden;*/
+}
+
+#locMoreInfo{
+    width: 40%;
+    margin-left : 21rem;
+    margin-top: 30px;
+    margin-bottom: 100px;
+}
+
+
+
+
+/*route 는 일단 */
+
+#gotoRouteDetail{
+
+    margin : 10px;
+    background-color: deepskyblue; /* Green */
+    border-radius: 10px 10px 10px 10px;
+    border: none;
+
+    color: white;
+    padding: 5px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    float: right;
+}
+
+#routeContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.routeCard{
+    margin-left: 20px;
+    margin-right: 20px;
+    display : inline-block;
+    border : 1px solid #000000;
+    border-radius: 10px 10px 10px 10px;
+}
+
+.routeCardLocBox{
+
+    margin-bottom: 20px;
+    margin-top: 20px;
+
+}
+
+.routeCardImg{
+    float: left;
+    width: 100px;
+    height: 100px;
+}
+
+.routeCardTextBox{
+    margin-left: 10px;
+    float: right;
+
+    width: 350px; /* 텍스트를 표시할 요소의 너비를 지정합니다. */
+    height: 100px;
+    white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 합니다. */
+    overflow: hidden; /* 넘치는 부분은 숨김 처리합니다. */
+    text-overflow: ellipsis; /* 넘치는 텍스트에 '...'을 추가하여 표시합니다. */
+}
+
+.clear{
+    clear: both;
+}
+
+.routeCardDesc{
+    text-overflow: ellipsis;
+}
+
+.recommandCard-body{
+    height: 200px;
+    padding: 10px;
+    overflow: hidden;
+}
+
+
+#route{
+    margin-bottom: 100px;
+}
+
+.routeCardHeader{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.arrowBox {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+
+}

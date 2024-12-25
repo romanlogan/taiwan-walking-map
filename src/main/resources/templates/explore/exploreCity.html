@@ -56,249 +56,11 @@
 
 
 <th:block layout:fragment="css">
-    <style>
-
-        .container{
-            margin-top: 30px;
-            margin-left: 0;
-            margin-right: 0;
-            width: 100%;
-        }
-
-        .content{
-            margin-left: 0;
-            margin-right: 0;
-        }
-
-
-        .left-half {
-            float: left;
-            width: 79%;
-            height: 450px;
-            margin-right: 10px;
-        }
-
-        .right-half {
-            float: right;
-            width: 20%;
-            border-radius: 0px 10px 10px 0px;
-            overflow: hidden;
-        }
-
-        #imgBox{
-            /*padding-bottom: 100px;*/
-            width: 100%; /* 부모 요소 너비의 100%를 차지하도록 설정 */
-            height: 600px; /* 부모 요소 높이의 100%를 차지하도록 설정 */
-            overflow: hidden; /* 내부 컨텐츠가 넘치는 경우 숨김 처리 */
-            /* 부모 요소의 position을 상대적(relative)로 설정하여 하위 요소들을 위치시킴 */
-            position: relative;
-
-            /*display: flex;*/
-            /*justify-content: center;*/
-            /*align-items: center;*/
-        }
-
-        #cityImg{
-            /*position:absolute;*/
-            height: 500px;
-            width: 100%;
-            /*left: 0;*/
-            /*top: 0;*/
-            /* 투명도 */
-            /*background-color: rgba(0,0,0,0.3);*/
-            object-fit: cover;
-        }
-
-        #flexBox{
-            display: flex;
-            justify-content: center;
-        }
-
-        #cityNameBox{
-            top: 350px;
-            position: absolute;
-            width: 300px;
-            height: 150px;
-            background-color: rgba(0,0,0,0.7);;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            /*z-index: -1;*/
-        }
-
-        #cityName{
-
-            color:white;
-            font-size: 5rem;
-        }
-        #map {
-            width: 300px;
-            height: 300px;
-            position: absolute;
-            top: 100px;
-            left: 1000px;
-            border-radius: 30px;
-        }
-
-
-        #cityDetail{
-            margin-top: 30px;
-            margin-bottom: 30px;
-            display: block;
-            width:100%;
-            clear:both;
-        }
-
-        .owl-carousel {
-            width: 90rem;
-            height: 500px;
-            margin-top: 1rem;
-            /*margin-left: 4rem;*/
-            /* margin-right: 30px;   */
-            /* width: ;
-              height: 10rem; */
-            /* margin: 0 auto; */
-        }
-
-        .locationContainer{
-            width: 100%;
-        }
-
-        .owl-item{
-
-        }
-
-        .card{
-            /*margin-left: 1rem;*/
-            /*margin-right: 1rem;*/
-            width: 300px;
-            border-radius: 10px 10px 10px 10px;
-            /*overflow: hidden;*/
-        }
-
-        #locMoreInfo{
-            width: 40%;
-            margin-left : 21rem;
-            margin-top: 30px;
-            margin-bottom: 100px;
-        }
-
-        #gotoRouteDetail{
-
-            margin : 10px;
-            background-color: deepskyblue; /* Green */
-            border-radius: 10px 10px 10px 10px;
-            border: none;
-
-            color: white;
-            padding: 5px 15px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            float: right;
-        }
-
-        #routeContainer {
-            display: flex;
-            justify-content: center;
-        }
-
-        .routeCard{
-            margin-left: 20px;
-            margin-right: 20px;
-            display : inline-block;
-            border : 1px solid #000000;
-            border-radius: 10px 10px 10px 10px;
-        }
-
-        .routeCardLocBox{
-
-            margin-bottom: 20px;
-            margin-top: 20px;
-
-        }
-
-        .routeCardImg{
-            float: left;
-            width: 100px;
-            height: 100px;
-        }
-
-        .routeCardTextBox{
-            margin-left: 10px;
-            float: right;
-
-            width: 350px; /* 텍스트를 표시할 요소의 너비를 지정합니다. */
-            height: 100px;
-            white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 합니다. */
-            overflow: hidden; /* 넘치는 부분은 숨김 처리합니다. */
-            text-overflow: ellipsis; /* 넘치는 텍스트에 '...'을 추가하여 표시합니다. */
-        }
-
-        .clear{
-            clear: both;
-        }
-
-        .routeCardDesc{
-            text-overflow: ellipsis;
-        }
-
-        .recommandCard-body{
-            height: 200px;
-            padding: 10px;
-            overflow: hidden;
-        }
-
-
-        #route{
-            margin-bottom: 100px;
-        }
-
-        .routeCardHeader{
-            margin-top: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: center;
-            align-content: center;
-        }
-
-        .arrowBox {
-            margin-top: 30px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: center;
-            align-content: center;
-
-        }
-    </style>
-
+    <link rel="stylesheet" href="/css/exploreCity/exploreCity.css"/>
 </th:block>
 
 <div layout:fragment="content">
 
-<!--    <nav id="navbar" class="navbar navbar-expand-sm">-->
-<!--        <a class="navbar-brand" href="/">Home</a>-->
-<!--    -->
-<!--        <div>-->
-<!--            <a class="nav-link" href="/mapSearch">search by map</a>-->
-<!--            <div class="dropdown">-->
-<!--                <button class="dropbtn">City</button>-->
-<!--                <div class="dropdown-content">-->
-<!--                    <a href="/exploreCity?searchArrival=臺北市">臺北市</a>-->
-<!--                    <a href="/exploreCity?searchArrival=新北市">新北市</a>-->
-<!--                    <a href="/exploreCity?searchArrival=臺中市">臺中市</a>-->
-<!--                    <a href="/exploreCity?searchArrival=臺南市">臺南市</a>-->
-<!--                    <a href="/exploreCity?searchArrival=高雄市">臺東縣</a>-->
-<!--                    <a href="/exploreCity?searchArrival=花蓮縣">高雄市</a>-->
-<!--                    <a href="/exploreCity?searchArrival=臺東縣">花蓮縣</a>-->
-<!--                    <a href="/exploreCity?searchArrival=桃園市">桃園市</a>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </nav>-->
-<!--    -->
         <div id="imgBox">
             <div id="flexBox">
                 <div id="cityNameBox">
@@ -311,16 +73,8 @@
                     <img id="cityImg" th:src="${img.imgUrl}">
                 </th:block>
             </div>
-            <div id="map"></div>
+<!--            <div id="map"></div>-->
         </div>
-
-
-<!--        <div id="cityDetail">-->
-
-<!--        </div>-->
-
-
-
 
         <div class="container">
             <input id="cityNameValue" type="hidden" th:value="${cityDto.getCityName()}">
@@ -336,7 +90,7 @@
                         <div class="item">
                         <div class="card">
                           <a th:href="'/location/' +${location.locationId}" class="text-dark">
-                            <img th:src="${location.picture1}" class="card-img-top" height="200">
+                            <img th:src="${location.picture1}" class="card-img-top" >
                             <div class="recommandCard-body">
                               <h4 class="card-text">[[${location.name}]]</h4>
                                 <div th:if="${location.address != null}">
@@ -363,72 +117,6 @@
             </div>
 
 
-            <div id="route">
-                <div id="routeContainer">
-                                <th:block th:each="route, status: ${cityDto.getRouteDtoList()}">
-                                    <div class="routeCard">
-                                        <div class="routeCardHeader" >
-    <!--                                        <a th:href="'/route/' +${route.routeNum}" class="text-dark">-->
-    <!--                                            추천 노선 [[${route.routeNum}]]-->
-    <!--                                        </a>-->
-                                                <h3> recommended route </h3>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="routeCardLocBox">
-                                                <img class = "routeCardImg card-img-top" th:src="${route.getStartPointImgUrl()}">
-                                                <div class="routeCardTextBox">
-                                                    <p class="routeCardText">[[${route.getStartPointName}]]</p>
-                                                    <p class="routeCardDesc">[[${route.getStartPointDescribe}]]</p>
-                                                </div>
-                                            </div>
-                                            <div class="clear"></div>
-                                            <div class="arrowBox">
-                                                <i class="fa-solid fa-arrow-down fa-2xl"></i>
-                                            </div>
-
-                                            <div class="routeCardLocBox">
-                                                <img class = "routeCardImg card-img-top" th:src="${route.getWayPoint1ImgUrl()}">
-                                                <div class="routeCardTextBox">
-                                                    <p class="routeCardText">[[${route.getWayPoint1Name}]]</p>
-                                                    <p class="routeCardDesc">[[${route.getWayPoint1Describe}]]</p>
-                                                </div>
-                                            </div>
-                                            <div class="clear"></div>
-                                            <div class="arrowBox">
-                                                <i class="fa-solid fa-arrow-down fa-2xl"></i>
-                                            </div>
-
-                                            <div class="routeCardLocBox">
-                                                <img class = "routeCardImg card-img-top" th:src="${route.getWayPoint2ImgUrl()}">
-                                                <div class="routeCardTextBox">
-                                                    <p class="routeCardText">[[${route.getWayPoint2Name}]]</p>
-                                                    <p class="routeCardDesc">[[${route.getWayPoint2Describe}]]</p>
-                                                </div>
-                                            </div>
-                                            <div class="clear"></div>
-
-                                            <div class="arrowBox">
-                                                <i class="fa-solid fa-arrow-down fa-2xl"></i>
-                                            </div>
-
-                                            <div class="routeCardLocBox">
-                                                <img class = "routeCardImg card-img-top" th:src="${route.getArrivePointImgUrl()}">
-                                                <div class="routeCardTextBox">
-                                                    <p class="routeCardText">[[${route.getArrivePointName}]]</p>
-                                                    <p class="routeCardDesc">[[${route.getArrivePointDescribe}]]</p>
-                                                </div>
-                                            </div>
-                                            <div class="clear"></div>
-                                        </div>
-
-                                        <a th:href="'/route/' +${route.routeNum}" class="text-dark">
-                                            <button id="gotoRouteDetail">go to detail</button>
-                                        </a>
-                                    </div>
-                                </th:block>
-                </div>
-            </div>
-        </div>
-
+    </div>
 </div>
 </html>
