@@ -13,54 +13,25 @@
     <link rel="stylesheet" href="/css/main/cityCard.css"/>
     <link rel="stylesheet" href="/css/main/coolText.css"/>
     <link rel="stylesheet" href="/css/main/main.css"/>
+    <link rel="stylesheet" href="/css/main/top.css"/>
 </th:block>
 
 <div layout:fragment="content">
 
 <section id="top">
+    <div id="leftImgCut"></div>
+    <div id="rightImgCut"></div>
 
-    <div class="left-half">
-        <div id="coolContainer">
-            <p class="cool">
-                <span data-text="Hello,">hello !</span>
-                <span data-text="Hello,">Let's</span>
-    <!--                <span data-text="Hello,">Explore</span>-->
-                <span data-text="I'm">Explore</span>
-                <span data-text="the">Taiwan</span>
-<!--                <span data-text="text.">text.</span>-->
-            </p>
+    <div id="topBg">
+        <div id="topTitleBox">
+            <h1 id="topTitle">taiwan 出企玩</h1>
         </div>
     </div>
 
-    <div class="right-half">
-        <div id="carouselBox">
-            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="2000">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img class="d-block w-100 topCityImgBox" src="/img/taibei.jpg" alt="First slide">
-                    </div>
-                    <div class="carousel-item">
-                        <img class="d-block w-100 topCityImgBox" src="/img/xinbei.jpg" alt="Second slide">
-                    </div>
-                    <div class="carousel-item">
-                        <img class="d-block w-100 topCityImgBox" src="/img/hualian.jpg" alt="Third slide">
-                    </div>
-                </div>
-                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="clear"></div>
+
 </section>
 
-<section id="second">
+<section id="searchContainer">
 
     <p id="fastSearchTitle">你今天想去哪裡</p>
 
@@ -78,8 +49,8 @@
 
         <input id="fastSearchInput" placeholder="查查看想去的地方" type="search" name="search">
 
-        <button id="quickSearchInputBtn" class="search-btn" type="submit">
-            <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #d9d9d9;"></i>
+        <button id="quickSearchSendBtn" class="search-btn" type="submit" onclick="fastSearchByInput()">
+            <i class="fa-solid fa-magnifying-glass fa-xl" style="color: white;"></i>
         </button>
     </div>
 
@@ -93,19 +64,18 @@
         <button type="button" id ="playGroundBtn" class="fastSearchBtn" value="playGround"><p class="fastSearchBtnText"># 樂園</p></button>
     </div>
 
-<!--    <div id="fastSearchBtns">-->
-<!--        <button type="button" id ="museumBtn" class="fastSearchBtn" value="museum"><i class="fa-solid fa-building-columns fa-2xl" style="color: #528bff"></i><p class="fastSearchBtnText">博物館</p></button>-->
-<!--        <button type="button" id ="artMuseumBtn" class="fastSearchBtn" value="artMuseum"><i class="fa-solid fa-palette fa-2xl" style="color: #ff5757"></i><p class="fastSearchBtnText">美術館</p></button>-->
-<!--        <button type="button" id ="parkBtn" class="fastSearchBtn" value="park"><i class="fa-solid fa-tree fa-2xl" style="color: #00c230"></i><p class="fastSearchBtnText">公園</p></button>-->
-<!--        <button type="button" id ="marketBtn" class="fastSearchBtn" value="market"><i class="fa-solid fa-store fa-2xl" style="color: #ffa200"></i><p class="fastSearchBtnText">市場</p></button>-->
-<!--        <button type="button" id ="templeBtn" class="fastSearchBtn" value="temple"><i class="fa-solid fa-gopuram fa-2xl" style="color: #00c230"></i><p class="fastSearchBtnText">宮廟</p></button>-->
-<!--        <button type="button" id ="nightMarketBtn" class="fastSearchBtn" value="nightMarket"><i class="fa-solid fa-moon fa-2xl" style="color: #ffa200"></i><p class="fastSearchBtnText">夜市</p></button>-->
-<!--        <button type="button" id ="playGroundBtn" class="fastSearchBtn" value="playGround"><i class="fa-solid fa-parachute-box fa-2xl" style="color: #ff5757"></i><p class="fastSearchBtnText">樂園</p></button>-->
-<!--    </div>-->
-    <!--    <a class="fastSearchBy" href="/museum"><i class="fa-solid fa-building-columns fa-2xl" style="color: #828282;">美術館</i></a>-->
 </section>
 
-<section id="third">
+<section id="cardContainer">
+
+    <div id="card-title-container">
+        <div id="card-title-box">
+            <p id="card-title">recommend city</p>
+        </div>
+
+        <div class="cardContainer-divider"></div>
+    </div>
+
     <div class="cards">
         <div id="taibeiCard" class = "card">
             <img class="cardPic" src="/img/taibei1.jpg" alt="">
@@ -175,24 +145,6 @@
             </div>
         </div>
     </div>
-
-
 </section>
-
-
-
-<!--<section id="tripCard">-->
-<!--    <div class="overlay">-->
-<!--        <div id="tripCardInfo">-->
-<!--            <h1 class="mb-3 mb-3">青年旅遊卡</h1>-->
-<!--            <p class="lead">-->
-<!--                本資料集為教育部青年發展署針對15-30歲青年發行免費申辦的青年旅遊卡，持卡青年可享景點門票、住宿、交通、小吃購物、中文學習等優惠。為利青年申辦青年旅遊卡，結合交通部觀光局旅客服務中心、青年志工中心、華語文中心及部分縣市政府、民間團體等計119個服務據點，提供青年旅遊諮詢服務網絡及申辦青年旅遊卡。-->
-<!--            </p>-->
-<!--            <button type="button" class="btn btn-primary searchTripCard">申請旅遊卡</button>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</section>-->
-
-<button type="button" class="btn btn-primary w-100 searchByMap">在地圖上搜尋</button>
 
 </div>
