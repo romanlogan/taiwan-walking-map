@@ -58,6 +58,7 @@ public class QuickSearchController {
         return "/quickSearch/quickSearchPage";
     }
 
+//    main 에서 버튼 누르면 작동
 //    이거는 리스트 페이지 처음 들어왔을때 (정렬이나 다른 조건 없음 )
     @GetMapping("/quickSearchList")
     public String exploreQuickSearchList(FastSearchDto fastSearchDto,
@@ -75,6 +76,38 @@ public class QuickSearchController {
         return "/quickSearch/quickSearchList";
     }
 
+    @GetMapping("/quickSearchConditionList")
+    public String exploreQuickSearchListByCondition(QuickSearchFormRequest quickSearchFormRequest,
+                                                    Model model) {
+
+        Pageable pageable = PageRequest.of(quickSearchFormRequest.getPage() , 10);
+
+        QuickSearchListResponse quickSearchListResponse = quickSearchService.getQuickSearchListByCond(quickSearchFormRequest, pageable);
+
+        model.addAttribute("quickSearchListResponse", quickSearchListResponse);
+        model.addAttribute("request", quickSearchFormRequest);
+        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
+
+        return "/quickSearch/quickSearchConditionList";
+    }
+
+
+    @GetMapping("/quickSearch/newList")
+    public ResponseEntity<QuickSearchListResponse> getListByCondition(QuickSearchFormRequest quickSearchFormRequest,
+                                                                      Model model) {
+
+        Pageable pageable = PageRequest.of(quickSearchFormRequest.getPage(), 10);
+
+        QuickSearchListResponse quickSearchListResponse = quickSearchService.getQuickSearchListByCond(quickSearchFormRequest, pageable);
+
+        model.addAttribute("quickSearchListResponse", quickSearchListResponse);
+        model.addAttribute("fastSearchDto", quickSearchFormRequest);
+        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
+
+        return new ResponseEntity<>(quickSearchListResponse, HttpStatus.OK);
+    }
+
+
     @GetMapping("/quickSearch/getTownList")
     public ResponseEntity getTownList(@RequestParam("cityName") String cityName) {
 
@@ -83,20 +116,7 @@ public class QuickSearchController {
         return new ResponseEntity(townList, HttpStatus.OK);
     }
 
-    @GetMapping("/quickSearch/newList")
-    public ResponseEntity<QuickSearchListResponse> getListByCondition(QuickSearchFormRequest quickSearchFormRequest,
-                                             Model model) {
 
-        Pageable pageable = PageRequest.of(0, 10);
-        QuickSearchListResponse quickSearchListResponse = quickSearchService.getQuickSearchListByCond(quickSearchFormRequest, pageable);
-
-
-        model.addAttribute("quickSearchListResponse", quickSearchListResponse);
-        model.addAttribute("fastSearchDto", quickSearchFormRequest);
-        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
-
-        return new ResponseEntity<>(quickSearchListResponse, HttpStatus.OK);
-    }
 
 
 

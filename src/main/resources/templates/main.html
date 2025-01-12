@@ -4,8 +4,8 @@
       layout:decorate="~{layouts/layout1}">
 
 <th:block layout:fragment="script">
-    <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${googleMapsApiKey} + '&callback=initMap'" async defer></script>
-    <script th:inline="javascript" src="/js/main.js"></script>
+<!--    <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${googleMapsApiKey} + '&callback=initMap'" async defer></script>-->
+
 </th:block>
 
 <th:block layout:fragment="css">
@@ -24,7 +24,7 @@
 
     <div id="topBg">
         <div id="topTitleBox">
-            <h1 id="topTitle">taiwan 出企玩</h1>
+<!--            <h1 id="topTitle">台灣散策地圖</h1>-->
         </div>
     </div>
 
@@ -147,4 +147,5 @@
     </div>
 </section>
 
+    <script th:inline="javascript" src="/js/main.js"></script>
 </div>

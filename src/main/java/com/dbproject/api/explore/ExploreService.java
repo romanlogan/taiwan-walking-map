@@ -50,8 +50,8 @@ public class ExploreService {
     public CityDto getLocationDtl(String cityName) {
 
         CityDto cityDto = new CityDto();
-        setCityBasicInfo(cityName, cityDto);
-        setCityImgList(cityName, cityDto);
+
+        setCityInfo(cityName, cityDto);
         setRecommendLocationList(cityName, cityDto);       // 즐겨찾기가 많은 4곳으로 변경하기
 
         // route 추가
@@ -60,17 +60,13 @@ public class ExploreService {
         return cityDto;
     }
 
-    private void setCityBasicInfo(String cityName, CityDto cityDto) {
+    private void setCityInfo(String cityName, CityDto cityDto) {
 
         City city = cityRepository.findBypostalAddressCity(cityName);
         cityDto.setCityInfo(city);
-    }
-
-    private void setCityImgList(String cityName, CityDto cityDto) {
 
         List<CityImg> cityImgList = cityImgRepository.findByPostalAddressCity(cityName);
         cityDto.setCityImgList(cityImgList);
-
     }
 
     public RouteLocationDto findRouteLocation(String routeLocationNm) {

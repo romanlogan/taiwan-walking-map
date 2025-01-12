@@ -40,10 +40,9 @@ public class ExploreController {
             Model model) {
 
         //requestParameter 가 1개일때는 어떻게 spring-validation 을 적용하지 ?
-
         if (cityName == "") {
+
             return "/error/errorPage";
-//            return new ResponseEntity(HTTP.BAD_REQUEST);
         }
 
         CityDto cityDto = exploreService.getLocationDtl(cityName);

@@ -6,6 +6,8 @@ $(document).ready(function () {
     //     alert(errorMessage);
     // }
 
+    console.log("started");
+
     const navbar = document.getElementById('navbar');
 
     // 스크롤 이벤트 리스너 등록
@@ -77,14 +79,15 @@ $(document).ready(function () {
         var searchQuery = "博物館"
         var searchCity = document.getElementById('fastSearchCity').value;
 
-        location.href = "/quickSearchList?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+        // location.href = "/quickSearchList?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+        location.href = "/quickSearchConditionList?searchQuery=" + searchQuery + "&searchCity=" + searchCity + "&searchTown=&orderType=name&openTimeCond=&feeCond=&picCond=&page=0";
     });
 
     $("#artMuseumBtn").on("click",function (){
         var searchQuery = "美術館"
         var searchCity = document.getElementById('fastSearchCity').value;
 
-        location.href = "/quickSearchList?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+        location.href = "/quickSearchConditionList?searchQuery=" + searchQuery + "&searchCity=" + searchCity + "&searchTown=&orderType=name&openTimeCond=&feeCond=&picCond=&page=0";
 
     });
 
@@ -92,7 +95,7 @@ $(document).ready(function () {
         var searchQuery = "公園"
         var searchCity = document.getElementById('fastSearchCity').value;
 
-        location.href = "/quickSearchList?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+        location.href = "/quickSearchConditionList?searchQuery=" + searchQuery + "&searchCity=" + searchCity + "&searchTown=&orderType=name&openTimeCond=&feeCond=&picCond=&page=0";
 
     });
 
@@ -100,7 +103,7 @@ $(document).ready(function () {
         var searchQuery = "市場"
         var searchCity = document.getElementById('fastSearchCity').value;
 
-        location.href = "/quickSearchList?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+        location.href = "/quickSearchConditionList?searchQuery=" + searchQuery + "&searchCity=" + searchCity + "&searchTown=&orderType=name&openTimeCond=&feeCond=&picCond=&page=0";
 
     });
 
@@ -108,7 +111,7 @@ $(document).ready(function () {
         var searchQuery = "宮"
         var searchCity = document.getElementById('fastSearchCity').value;
 
-        location.href = "/quickSearchList?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+        location.href = "/quickSearchConditionList?searchQuery=" + searchQuery + "&searchCity=" + searchCity + "&searchTown=&orderType=name&openTimeCond=&feeCond=&picCond=&page=0";
 
     });
 
@@ -116,7 +119,7 @@ $(document).ready(function () {
         var searchQuery = "夜市"
         var searchCity = document.getElementById('fastSearchCity').value;
 
-        location.href = "/quickSearchList?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+        location.href = "/quickSearchConditionList?searchQuery=" + searchQuery + "&searchCity=" + searchCity + "&searchTown=&orderType=name&openTimeCond=&feeCond=&picCond=&page=0";
 
     });
 
@@ -124,7 +127,7 @@ $(document).ready(function () {
         var searchQuery = "樂園"
         var searchCity = document.getElementById('fastSearchCity').value;
 
-        location.href = "/quickSearchList?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+        location.href = "/quickSearchConditionList?searchQuery=" + searchQuery + "&searchCity=" + searchCity + "&searchTown=&orderType=name&openTimeCond=&feeCond=&picCond=&page=0";
 
     });
 
@@ -163,6 +166,6 @@ function fastSearchByInput() {
     var searchQuery = document.getElementById('fastSearchInput').value;
     var searchCity = document.getElementById('fastSearchCity').value;
 
-    location.href = "/quickSearchList?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
-
+    // location.href = "/quickSearchList?searchQuery=" + searchQuery + "&searchCity=" + searchCity;
+    location.href = "/quickSearchConditionList?searchQuery=" + searchQuery + "&searchCity=" + searchCity + "&searchTown=&orderType=name&openTimeCond=&feeCond=&picCond=&page=0";
 }

@@ -7,13 +7,190 @@
 <th:block layout:fragment="script">
 
     <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${googleMapsApiKey} + '&callback=initMap'" async defer></script>
-    <script th:inline="javascript" src="/js/quickSearchList.js"></script>
 
     <script th:inline="javascript">
 
         var map;
+        var lastAdded = 0;
+        const loadThreshold = 300; // 새로운 데이터를 로드할 최소 스크롤 간격
+        let isLoading = false; // 현재 요청 상태를 추적
 
         $(document).ready(function() {
+
+            window.addEventListener('scroll', function() {
+
+                const scrollTop = window.scrollY;
+                const scrollHeight = document.body.scrollHeight;
+                const clientHeight = window.innerHeight;
+
+                // 스크롤이 하단 300px 이내일 때 데이터 로드
+                if (scrollTop + clientHeight >= scrollHeight - loadThreshold && !isLoading) {
+                    isLoading = true; // 요청 중 상태로 변경
+
+                    lastAdded = scrollTop;
+
+                    console.log("스크롤 조건 충족: 데이터 로드 시작");
+
+                    const currentUrl = window.location.href;
+                    const queryParams = decodeQueryString(currentUrl);
+
+                    let searchQuery = queryParams.searchQuery;
+                    let searchCity = queryParams.searchCity;
+                    let searchTown =queryParams.searchTown;
+
+                    let orderType = "name";
+
+                    let openTimeCond = queryParams.openTimeCond;
+                    let feeCond = queryParams.feeCond;
+                    let picCond = queryParams.picCond;
+
+
+
+
+                    const currentPage = document.getElementById('currentPage');
+                    currentPage.value = Number(currentPage.value) + 1;
+
+                    let page = currentPage.value;
+                    console.log("currentPage.value : " + currentPage.value);
+
+
+
+                    $.ajax({
+                        url: "/quickSearch/newList?searchQuery=" + searchQuery +
+                            "&searchCity=" + searchCity + "&searchTown=" + searchTown + "&orderType=" + orderType +
+                            "&openTimeCond=" + openTimeCond + "&feeCond=" + feeCond + "&picCond=" + picCond +
+                            "&page=" + page,
+                        type: "GET",
+                        dataType: "json",
+                        success: function (data, status) {
+                            console.log("success")
+
+                            console.log("quickSearchLocationDtoList : " + data.quickSearchLocationDtoList);     // 검색 결과에 따라 개수가 변경 되기는
+                            console.log("quickSearchLocationDtoList[0] : " + data.quickSearchLocationDtoList[0]);     // 검색 결과에 따라 개수가 변경 되기는
+                            // console.log("quickSearchLocationDtoList[0].name : " + data.quickSearchLocationDtoList[0].name);     //r검색 결과에 따라 개수가 변경 되기는
+
+
+                            //검색시 town 이름이 유지가 안됨 , 계속 마지막에 페이지가 리로드 되는 문제
+                            // 그렇다면 리로드 되게 하지말고 quickSearchListResponse 를 반납하
+                            const locationList = document.getElementById('changeLocationBox');
+
+                            const showedLocationList = document.querySelectorAll('.InvitedHangOutBox');
+
+                            //삭제 로직 제거하면 그 밑으로 바로 추가 되려나 ?
+                            // for (var i = 0; i < showedLocationList.length; i++) {
+                            //
+                            //     showedLocationList[i].parentNode.removeChild(showedLocationList[i]);
+                            // }
+
+                            for (var i = 0; i < data.quickSearchLocationDtoList.length; i++) {
+                                // selectTown.append('<option selected value="' + town + '">' + town + '</option>');
+                                const listItem = document.createElement('div');
+                                listItem.className = "InvitedHangOutBox";
+
+                                console.log("data.quickSearchLocationDtoList[i].address : " + data.quickSearchLocationDtoList[i].address);
+
+
+                                const locationData = data.quickSearchLocationDtoList[i];
+                                listItem.innerHTML = `
+                                    <a href="/location/${locationData.locationId}" class="text-dark">
+                                        <img class="locationBoxImg" src="${locationData.picture1}">
+                                        <div class="locationTextBox">
+                                            <p class="locationText">${locationData.name}</p>
+
+                                            ${locationData.address ? `<p class="locationText">Address: ${locationData.address}</p>` : ''}
+                                            ${locationData.openTime ? `<p class="locationText">Open Time: ${locationData.openTime}</p>` : ''}
+                                            ${locationData.ticketInfo ? `<p class="locationText">Fee Info: ${locationData.ticketInfo}</p>` : ''}
+                                            ${locationData.website ? `<p class="locationText">Website URL: ${locationData.website}</p>` : ''}
+                                            ${locationData.tel ? `<p class="locationText">Tel: ${locationData.tel}</p>` : ''}
+                                        </div>
+                                    </a>
+                                `;
+                                //th:if 를 해결하려면 ?
+                                // listItem.innerHTML = `
+                                //     <a href="/location/${data.quickSearchLocationDtoList[i].locationId}" class="text-dark">
+                                //         <img class = "locationBoxImg" src="${data.quickSearchLocationDtoList[i].picture1}">
+                                //         <div class="locationTextBox">
+                                //             <p class="locationText"> ${data.quickSearchLocationDtoList[i].name}</p>
+                                //
+                                //             <div th:if="${data.quickSearchLocationDtoList[i].address != null}">
+                                //                 <p class="locationText"> address : ${data.quickSearchLocationDtoList[i].address}</p>
+                                //             </div>
+                                //
+                                //             <div th:if="${data.quickSearchLocationDtoList[i].openTime != null}">
+                                //                 <p class="locationText"> open time : ${data.quickSearchLocationDtoList[i].openTime}</p>
+                                //             </div>
+                                //
+                                //             <div th:if="${data.quickSearchLocationDtoList[i].ticketInfo != null}">
+                                //                 <p class="locationText"> Fee Info : ${data.quickSearchLocationDtoList[i].ticketInfo}</p>
+                                //             </div>
+                                //
+                                //             <div th:if="${data.quickSearchLocationDtoList[i].website != null}">
+                                //                 <p class="locationText"> Website Url : ${data.quickSearchLocationDtoList[i].website}</p>
+                                //             </div>
+                                //
+                                //             <div th:if="${data.quickSearchLocationDtoList[i].tel != null}">
+                                //                 <p class="locationText"> Tel : ${data.quickSearchLocationDtoList[i].tel}</p>
+                                //             </div>
+                                //         </div>
+                                //     </a>`;
+
+                                locationList.appendChild(listItem);
+                            }
+
+
+                            const searchedInfoBox = document.getElementById('searchedInfoBox');
+                            searchedInfoBox.innerHTML = `
+                                <input id="searchedQuery" type="hidden" value="${searchQuery}">
+                                <input id="searchedCity" type="hidden" value="${searchCity}">
+                                <input id="searchedTown" type="hidden" value="${searchTown}">
+                                <input id="searchedopenTimeCond" type="hidden" value="${openTimeCond}">
+                                <input id="searchedfeeCond" type="hidden" value="${feeCond}">
+                                <input id="searchedpicCond" type="hidden" value="${picCond}">
+                            `;
+
+
+                            // var selectedTown = [[${quickSearchListResponse.getSelectedTown()}]];
+                            // var townNameList = [[${townList}]];
+                            // var selectTown = $("#quickSearchTown");
+                            // selectTown.empty();
+                            //
+                            // $.each(data, function(index, town) {
+                            //
+                            //     console.log("town : " + town + "selectedTown : " + selectedTown )
+                            //
+                            //     if(selectedTown === town){
+                            //         selectTown.append('<option selected value="' + town + '">' + town + '</option>');
+                            //     }else {
+                            //         selectTown.append('<option value="' + town + '">' + town + '</option>');
+                            //     }
+                            // });
+                            //
+                            // selectTown.append('<option value="noSelected">선택안함</option>');
+                            // console.log('change success');
+
+                            isLoading = false; // 요청 완료 상태로 변경
+                        },
+                        cache: false,
+                        error: function (jqXHR, status, error, request) {
+
+                            isLoading = false; // 요청 완료 상태로 변경
+
+                            console.log(jqXHR.status + "\n" + jqXHR.responseText + "\n" + error)
+
+                            if (jqXHR.status == '401') {
+                                alert('로그인 후 이용해주세요');
+                                location.href = '/members/login';
+                            } else {
+                                alert(jqXHR.status + "\n" + jqXHR.responseText + "\n" + error);
+                                // alert(jqXHR.responseText);
+                            }
+                        }
+                    });
+
+                } else {
+
+                }
+            });
 
             window.onload = function initMap() {
                 console.log("initMap 호출됨");
@@ -30,8 +207,9 @@
 
             findCityList();
             findTownList();
+            savePreviousSearchCondition();
 
-
+            // 검색 조건의 city 가 변할때 city 의 town 을 다시 가져온다
             $("#quickSearchCity").change(function() {
 
                 console.log('has change');
@@ -80,6 +258,8 @@
                 });
             });
 
+
+            //검색
             $("#searchBtn").on("click", function () {
 
                 let searchQuery = document.getElementById('quickSearchQuery').value;
@@ -118,13 +298,76 @@
                     picCond = "";
                 }
 
-                location.href = "/quickSearchConditionList?searchQuery=" + searchQuery + "&searchCity=" + searchCity + "&searchTown=" + searchTown + "&orderType=" + orderType + "&openTimeCond=" + openTimeCond + "&feeCond=" + feeCond + "&picCond=" + picCond;
+                let page = 0;
+
+                location.href = "/quickSearchConditionList?searchQuery=" + searchQuery +
+                    "&searchCity=" + searchCity + "&searchTown=" + searchTown + "&orderType=" + orderType +
+                    "&openTimeCond=" + openTimeCond + "&feeCond=" + feeCond + "&picCond=" + picCond +
+                    "&page=" + page;
+
 
             });
         });
 
+        // URLSearchParams로 쿼리 파라미터 처리
+        function decodeQueryString(url) {
+            const urlObj = new URL(url);
+            const queryParams = new URLSearchParams(urlObj.search);
+            const decodedParams = {};
+
+            queryParams.forEach((value, key) => {
+                decodedParams[key] = decodeURIComponent(value);
+            });
+
+            return decodedParams;
+        }
+
+
         // function quickSearch(orderCondition){
 
+        function savePreviousSearchCondition(){
+
+            const searchTown = [[${request.searchTown}]];
+            console.log("searchTown : " + searchTown);
+
+            // <select> 요소를 가져옵니다.
+            const selectElement = document.getElementById("quickSearchTown");
+
+            // 모든 <option> 요소를 순회합니다.
+            const options = selectElement.options;
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].value === searchTown) {
+                    // 조건에 맞는 옵션을 활성화(선택)합니다.
+                    selectElement.selectedIndex = i;
+                    break;
+                }
+            }
+
+            const savedOpenTimeCond = [[${request.openTimeCond}]];       //"" or true
+            const openTimeCond = document.getElementById("openTimeCond");
+            console.log("typeof savedOpenTimeCond : " + typeof savedOpenTimeCond);
+
+            if(Boolean(savedOpenTimeCond) === true){
+                openTimeCond.checked = true;
+            }
+
+            const savedFeeCond = [[${request.feeCond}]];       //"" or true
+            const feeCond = document.getElementById("feeCond");
+            console.log("typeof savedFeeCond : " + typeof savedFeeCond);
+
+            if(Boolean(savedFeeCond) === true){
+                feeCond.checked = true;
+            }
+
+            const savedPicCond = [[${request.picCond}]];       //"" or true
+            const picCond = document.getElementById("picCond");
+            console.log("typeof savedPicCond : " + typeof savedPicCond);
+
+            if(Boolean(savedPicCond) === true){
+                picCond.checked = true;
+            }
+
+        }
 
         function findCityList() {
 
@@ -157,6 +400,8 @@
 
                 selectTown.append('<option value="' + town + '">' + town + '</option>');
             });
+
+
 
             //마지막에 선택안함 하나 더 추가
             selectTown.append('<option value="noSelected">선택안함</option>');
@@ -303,34 +548,12 @@
 
 <div layout:fragment="content">
 
-<!--<nav id="navbar" class="navbar navbar-expand-sm">-->
-<!--    <a class="navbar-brand" href="/static">Home</a>-->
-
-<!--    <div>-->
-<!--        <a class="nav-link" href="/exploreByDest">serach by map</a>-->
-<!--        <div class="dropdown">-->
-<!--            <button class="dropbtn">City</button>-->
-<!--            <div class="dropdown-content">-->
-<!--                <a href="/exploreCity?searchArrival=臺北市">臺北市</a>-->
-<!--                <a href="/exploreCity?searchArrival=新北市">新北市</a>-->
-<!--                <a href="/exploreCity?searchArrival=臺中市">臺中市</a>-->
-<!--                <a href="/exploreCity?searchArrival=臺南市">臺南市</a>-->
-<!--                <a href="/exploreCity?searchArrival=高雄市">臺東縣</a>-->
-<!--                <a href="/exploreCity?searchArrival=花蓮縣">高雄市</a>-->
-<!--                <a href="/exploreCity?searchArrival=臺東縣">花蓮縣</a>-->
-<!--                <a href="/exploreCity?searchArrival=桃園市">桃園市</a>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</nav>-->
-
-
-
-
 <div id="left-half" class="left-half">
 <!--    <input id="fastSearchInput" placeholder="查查看想去的地方" type="search" name="search">-->
-    <input type="hidden" id="SearchCity" th:value="${fastSearchDto.getSearchCity()}"/>
-    <input type="hidden" id="SearchQuery" th:value="${fastSearchDto.getSearchQuery()}" />
+    <input type="hidden" id="SearchCity" th:value="${request.getSearchCity()}"/>
+    <input type="hidden" id="SearchQuery" th:value="${request.getSearchQuery()}"/>
+    <input type="hidden" id="SearchTown" th:value="${request.getSearchTown()}"/>
+    <input type="hidden" id="currentPage" value="0"/>
 
 
     <div id="fastSearchForm">
@@ -350,7 +573,7 @@
             </div>
         </div>
 
-        <input id="quickSearchQuery" th:value="${fastSearchDto.getSearchQuery()}" type="search" name="search" />
+        <input id="quickSearchQuery" th:value="${request.getSearchQuery()}" type="search" name="search" />
         <button id="searchBtn" class="search-btn" type="submit">
             <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #d9d9d9;"></i>
         </button>

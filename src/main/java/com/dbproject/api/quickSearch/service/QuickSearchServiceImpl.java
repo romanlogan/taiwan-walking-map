@@ -7,6 +7,7 @@ import com.dbproject.api.location.Location;
 import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.quickSearch.dto.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -58,11 +59,20 @@ public class QuickSearchServiceImpl implements QuickSearchService{
 
         QuickSearchListResponse quickSearchListResponse = new QuickSearchListResponse();
 
-        quickSearchListResponse.setSelectedTown(quickSearchFormRequest.getSearchTown());
-        findLocationListByCond(quickSearchListResponse, quickSearchFormRequest, pageable);
+        findTownList(quickSearchListResponse, quickSearchFormRequest.getSearchCity());
+
+        if(quickSearchFormRequest.getSearchTown() == ""){
+
+            quickSearchFormRequest.setSearchTown(quickSearchListResponse.getTownNameList().get(0));
+        }
+
         findCityDtl(quickSearchListResponse, quickSearchFormRequest.getSearchCity());
         findCityList(quickSearchListResponse);
-        findTownList(quickSearchListResponse, quickSearchFormRequest.getSearchCity());
+
+        quickSearchListResponse.setSelectedTown(quickSearchFormRequest.getSearchTown());
+
+        findLocationListByCond(quickSearchListResponse, quickSearchFormRequest, pageable);
+
 
         return quickSearchListResponse;
 

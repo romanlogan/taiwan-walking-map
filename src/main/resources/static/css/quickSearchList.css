@@ -1,0 +1,186 @@
+select{
+    margin-right:10px;
+}
+
+.left-half {
+    float: left;
+    width: 50%;
+}
+
+/* 오른쪽 절반 스타일 */
+.right-half {
+    float: right;
+    width: 50%;
+}
+
+.InvitedHangOutBox{
+    margin: 20px;
+    padding: 10px;
+    width: 680px;
+    height: 110px;
+    background-color: #fff; /* 배경색 지정 */
+    border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 그림자 효과 추가 */
+}
+
+.locationBoxImg{
+    float : left;
+    width : 90px;
+    height : 90px;
+}
+
+.locationTextBox{
+    float: right;
+    width: 550px; /* 텍스트를 표시할 요소의 너비를 지정합니다. */
+    height: 90px;
+    white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 합니다. */
+    overflow: hidden; /* 넘치는 부분은 숨김 처리합니다. */
+    text-overflow: ellipsis; /* 넘치는 텍스트에 '...'을 추가하여 표시합니다. */
+
+}
+
+.locationText {
+    margin-bottom: 0;
+
+}
+
+
+.clear{
+    both: clear;
+}
+
+
+#fastSearchForm{
+    /*display: flex;*/
+    /*justify-content: center; !* 가로 방향으로 가운데 정렬 *!*/
+    /*align-items: center; !* 세로 방향으로 가운데 정렬 *!*/
+    margin-top: 15px;
+    margin-bottom: 100px;
+    margin-left: 1.5rem;
+    margin-right: 15px;
+    padding-left: 1vw;
+    width: 47vw;
+    height: 30vh;
+
+    border: none;
+    border-radius: 10px;
+    /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+
+#fastSearchCity{
+    margin-left: 30px;
+    width: 70px;
+    height: 40px;
+}
+
+
+
+
+#quickSearchQuery {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    width: 250px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: none;
+    border-radius: 10px;
+    /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+#searchBtn{
+    background-color: white;
+    border: 1px solid lightgray ;
+    border-radius: 50%;
+
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+#map{
+    /*margin-top: 1rem;*/
+    margin-left: 2.5rem;
+    margin-right: 1.5rem;
+    width: 90%;
+    height: 50vh;
+}
+
+#orderTypeBox{
+
+}
+
+.orderFilterBtn{
+    height: 50px;
+    width: 120px;
+    /* background-color: #011126; */
+    background-color: white;
+    color: #011126;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+#changeLocationBox{
+    /*height: 700px;*/
+    /*overflow: scroll;*/
+}
+
+
+.form-group{
+
+    height: 6vh;
+    /*width: 5rem;*/
+    display: inline-block;
+    background-color: #07364A; /* 배경색 */
+    gap: 10px; /* label과 select 사이 간격 */
+    border-radius: 5px; /* 모서리 둥글게 */
+}
+
+.form-group-flex{
+    display: flex;
+    justify-content: center;
+    align-items: center; /* 세로로 중앙 정렬 */
+}
+
+.cityTownLabel{
+    margin-top: 0.3rem;
+    background-color: #07364A; /* 배경색 */
+    color: white; /* 글자 색 */
+    padding: 5px 10px; /* 여백 */
+    border-radius: 5px; /* 모서리 둥글게 */
+    cursor: pointer; /* 클릭 가능한 커서 표시 */
+}
+
+.cityTownSelect{
+    border: 2px solid #07364A; /* 테두리 색상 */
+    border-radius: 5px; /* 모서리 둥글게 */
+    padding: 5px; /* 내부 여백 */
+}
+
+#optionConditionTitle{
+    /*margin-top: 0.3rem;*/
+    background-color: #07364A; /* 배경색 */
+    color: white; /* 글자 색 */
+    padding: 5px 10px; /* 여백 */
+    border-radius: 5px 0 0 5px; /* 모서리 둥글게 */
+    cursor: pointer; /* 클릭 가능한 커서 표시 */
+    height: 3vh;
+}
+
+#optionConditionBox{
+    /*border: 2px solid #07364A;*/
+    height: 3vh;
+}
+
+.condition{
+    margin-left: 1rem;
+}
