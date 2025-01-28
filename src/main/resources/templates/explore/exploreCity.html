@@ -69,9 +69,7 @@
             </div>
 
             <div class="overlay">
-                <th:block th:each="img, status: ${cityDto.getCityImgList()}">
-                    <img id="cityImg" th:src="${img.imgUrl}">
-                </th:block>
+                <img id="cityImg" th:src="${cityDto.getImgUrl()}">
             </div>
 <!--            <div id="map"></div>-->
         </div>

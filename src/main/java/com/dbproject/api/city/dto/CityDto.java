@@ -1,4 +1,4 @@
-package com.dbproject.api.explore;
+package com.dbproject.api.city.dto;
 
 
 import com.dbproject.api.city.City;
@@ -21,7 +21,7 @@ public class CityDto {
     private String cityDetail;
     private BigDecimal positionLat;
     private BigDecimal positionLon;
-    private List<CityImg> cityImgList = new ArrayList<>();
+    private String imgUrl;
     private List<LocationDto> locationDtoList = new ArrayList<>();
     private List<RouteDto> routeDtoList = new ArrayList<>();
 
@@ -29,29 +29,18 @@ public class CityDto {
     public CityDto() {
     }
 
-    public CityDto(String cityName, String cityDetail, List<LocationDto> locationList, List<CityImg> cityImgList) {
+    public CityDto(String cityName, String cityDetail, List<LocationDto> locationList) {
         this.cityName = cityName;
         this.cityDetail = cityDetail;
         this.locationDtoList = locationList;
-        this.cityImgList = cityImgList;
     }
-
-    @Override
-    public String toString() {
-        return "CityDto{" +
-                "cityName='" + cityName + '\'' +
-                ", cityDetail='" + cityDetail + '\'' +
-                ", cityImgList=" + cityImgList +
-                ", locationList=" + locationDtoList +
-                ", routeDtoList=" + routeDtoList +
-                '}';
-    }
-
 
     public void setCityInfo(City city){
-        this.cityName = city.getPostalAddressCity();
+        this.cityName = city.getRegion();
         this.cityDetail = city.getCityDetail();
         this.positionLat = city.getPositionLat();
         this.positionLon = city.getPositionLon();
+        this.imgUrl = city.getCityImg().getImgUrl();
+
     }
 }

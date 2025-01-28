@@ -1,17 +1,11 @@
 package com.dbproject.api.mbtTest.service;
 
-import com.dbproject.api.city.City;
-import com.dbproject.api.explore.CityDto;
-import com.dbproject.api.mbtTest.MBTCityDto;
 import com.dbproject.api.mbtTest.MBTCityDtoCamel;
 import com.dbproject.api.mbtTest.repository.MBTMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional

@@ -4,5 +4,5 @@ import com.dbproject.api.city.City;
 
 public interface MBTRepoInt {
 
-    City findBypostalAddressCity(String postalAddressCity);
+    City findByRegion(String postalAddressCity);
 }

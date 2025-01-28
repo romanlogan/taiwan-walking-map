@@ -85,25 +85,31 @@
                             for (var i = 0; i < data.quickSearchLocationDtoList.length; i++) {
                                 // selectTown.append('<option selected value="' + town + '">' + town + '</option>');
                                 const listItem = document.createElement('div');
-                                listItem.className = "InvitedHangOutBox";
+                                listItem.className = "card-container";
 
                                 console.log("data.quickSearchLocationDtoList[i].address : " + data.quickSearchLocationDtoList[i].address);
 
 
-                                const locationData = data.quickSearchLocationDtoList[i];
+                                const location = data.quickSearchLocationDtoList[i];
                                 listItem.innerHTML = `
-                                    <a href="/location/${locationData.locationId}" class="text-dark">
-                                        <img class="locationBoxImg" src="${locationData.picture1}">
-                                        <div class="locationTextBox">
-                                            <p class="locationText">${locationData.name}</p>
+                                    <div class="InvitedHangOutBox">
+                                        <div class="card card-item">
+                                            <a href="/location/ +${location.locationId}" class="text-dark">
+                                                <img src="${location.picture1}" class="card-img-top center-img" >
+                                                <div class="recommandCard-body">
 
-                                            ${locationData.address ? `<p class="locationText">Address: ${locationData.address}</p>` : ''}
-                                            ${locationData.openTime ? `<p class="locationText">Open Time: ${locationData.openTime}</p>` : ''}
-                                            ${locationData.ticketInfo ? `<p class="locationText">Fee Info: ${locationData.ticketInfo}</p>` : ''}
-                                            ${locationData.website ? `<p class="locationText">Website URL: ${locationData.website}</p>` : ''}
-                                            ${locationData.tel ? `<p class="locationText">Tel: ${locationData.tel}</p>` : ''}
+                                                    <h4 class="card-text">${location.name}</h4>
+
+                                                    ${location.address ? `<p class="locationText">Address: ${location.address}</p>` : ''}
+                                                    ${location.openTime ? `<p class="locationText">Open Time: ${location.openTime}</p>` : ''}
+                                                    ${location.ticketInfo ? `<p class="locationText">Fee Info: ${location.ticketInfo}</p>` : ''}
+                                                    ${location.website ? `<p class="locationText">Website URL: ${location.website}</p>` : ''}
+                                                    ${location.tel ? `<p class="locationText">Tel: ${location.tel}</p>` : ''}
+
+                                                </div>
+                                            </a>
                                         </div>
-                                    </a>
+                                    </div>
                                 `;
                                 //th:if 를 해결하려면 ?
                                 // listItem.innerHTML = `
@@ -548,43 +554,45 @@
 
 <div layout:fragment="content">
 
-<div id="left-half" class="left-half">
+<!--<div id="left-half" class="left-half">-->
 <!--    <input id="fastSearchInput" placeholder="查查看想去的地方" type="search" name="search">-->
     <input type="hidden" id="SearchCity" th:value="${request.getSearchCity()}"/>
     <input type="hidden" id="SearchQuery" th:value="${request.getSearchQuery()}"/>
     <input type="hidden" id="SearchTown" th:value="${request.getSearchTown()}"/>
     <input type="hidden" id="currentPage" value="0"/>
 
-
+<div id="fast-search-box">
     <div id="fastSearchForm">
 
-        <div class="form-group">
-            <div class="form-group-flex">
-                <label class="cityTownLabel" for="quickSearchCity">City:</label>
-                <select id="quickSearchCity" class="cityTownSelect" name="quickSearchCity"></select>
+        <div>
+            <div class="form-group">
+                <div class="form-group-flex">
+                    <label class="cityTownLabel" for="quickSearchCity">City:</label>
+                    <select id="quickSearchCity" class="cityTownSelect" name="quickSearchCity"></select>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <div class="form-group-flex">
-                <label class="cityTownLabel" for="quickSearchTown">Town:</label>
-<!--                만약 검색후 온 페이지라면 이 select 를 자바스크립트로 -->
-                <select id="quickSearchTown" class="cityTownSelect" name="quickSearchTown"></select>
+            <div class="form-group">
+                <div class="form-group-flex">
+                    <label class="cityTownLabel" for="quickSearchTown">Town:</label>
+    <!--                만약 검색후 온 페이지라면 이 select 를 자바스크립트로 -->
+                    <select id="quickSearchTown" class="cityTownSelect" name="quickSearchTown"></select>
+                </div>
             </div>
+
+            <input id="quickSearchQuery" th:value="${request.getSearchQuery()}" type="search" name="search" />
+            <button id="searchBtn" class="search-btn" type="submit">
+                <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #d9d9d9;"></i>
+            </button>
+
+    <!--        <select id="orderType" name="orderType">-->
+    <!--            <option value="name">이름순</option>   -->
+    <!--            <option value="comment">댓글순</option>-->
+    <!--            <option value="favorite">즐겨찾기 개수순</option>-->
+    <!--            <option value="recommend">추천순</option>-->
+    <!--        </select>-->
+            <br>
         </div>
-
-        <input id="quickSearchQuery" th:value="${request.getSearchQuery()}" type="search" name="search" />
-        <button id="searchBtn" class="search-btn" type="submit">
-            <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #d9d9d9;"></i>
-        </button>
-
-<!--        <select id="orderType" name="orderType">-->
-<!--            <option value="name">이름순</option>   -->
-<!--            <option value="comment">댓글순</option>-->
-<!--            <option value="favorite">즐겨찾기 개수순</option>-->
-<!--            <option value="recommend">추천순</option>-->
-<!--        </select>-->
-        <br>
 
         <div id="searchOptionBox">
 
@@ -606,67 +614,72 @@
                 </span>
             </div>
         </div>
-    </div>
 
-    <div id="mapBox">
-<!--        마우스가 올려져 있는 장소만 지도에 표시 해주기 -->
-        <div id="map"></div>
+<!--        <div id="orderTypeBox">-->
+<!--            &lt;!&ndash;        <select id="orderType" name="orderType">&ndash;&gt;-->
+<!--            &lt;!&ndash;            <option value="name">이름순</option>&ndash;&gt;-->
+<!--            &lt;!&ndash;            <option value="comment">댓글순</option>&ndash;&gt;-->
+<!--            &lt;!&ndash;            <option value="favorite">즐겨찾기 개수순</option>&ndash;&gt;-->
+<!--            &lt;!&ndash;            <option value="recommend">추천순</option>&ndash;&gt;-->
+<!--            &lt;!&ndash;        </select>&ndash;&gt;-->
+<!--            <button id="orderByName" class="orderFilterBtn" onclick="orderFilter('name')">이름순</button>-->
+<!--            <button id="orderByComment" class="orderFilterBtn" onclick="orderFilter('comment')">댓글순</button>-->
+<!--            <button id="orderByFavorite" class="orderFilterBtn" onclick="orderFilter('favorite')">즐겨찾기개수순</button>-->
+<!--        </div>-->
     </div>
 </div>
 
+<!--    <div id="mapBox">-->
+<!--&lt;!&ndash;        마우스가 올려져 있는 장소만 지도에 표시 해주기 &ndash;&gt;-->
+<!--        <div id="map"></div>-->
+<!--    </div>-->
+<!--</div>-->
 
 
-<div id="right-half" class="right-half">
+
     <div id="searchedInfoBox"></div>
-<!--    <input type="hidden" id="SearchCity" th:value="${fastSearchDto.getSearchCity()}"/>-->
-    <div id="orderTypeBox">
-<!--        <select id="orderType" name="orderType">-->
-<!--            <option value="name">이름순</option>-->
-<!--            <option value="comment">댓글순</option>-->
-<!--            <option value="favorite">즐겨찾기 개수순</option>-->
-<!--            <option value="recommend">추천순</option>-->
-<!--        </select>-->
-        <button id="orderByName" class="orderFilterBtn" onclick="orderFilter('name')">이름순</button>
-        <button id="orderByComment" class="orderFilterBtn" onclick="orderFilter('comment')">댓글순</button>
-        <button id="orderByFavorite" class="orderFilterBtn" onclick="orderFilter('favorite')">즐겨찾기개수순</button>
-    </div>
 
-    <div id="changeLocationBox">
-        <div th:each="location, status: ${quickSearchListResponse.getQuickSearchLocationDtoList()}">
-            <div class="InvitedHangOutBox">
-                <a th:href="'/location/' +${location.locationId}" class="text-dark">
-                    <img class = "locationBoxImg" th:src="${location.picture1}">
-                    <div class="locationTextBox">
-                        <p class="locationText">[[${location.name}]]</p>
 
-                        <div th:if="${location.address != null}">
-                            <p class="locationText"> address : [[${location.address}]]</p>
-                        </div>
+    <div id="location-container">
+        <div id="changeLocationBox">
+            <div class="card-container" th:each="location, status: ${quickSearchListResponse.getQuickSearchLocationDtoList()}">
+                <div class="InvitedHangOutBox">
+                    <div class="card card-item">
+                        <a th:href="'/location/' +${location.locationId}" class="text-dark">
+                            <img th:src="${location.picture1}" class="card-img-top center-img" >
+                            <div class="recommandCard-body">
 
-                        <div th:if="${location.openTime != null}">
-                            <p class="locationText"> open time : [[${location.openTime}]]</p>
-                        </div>
+                                <h4 class="card-text">[[${location.name}]]</h4>
 
-                        <div th:if="${location.ticketInfo != null}">
-                            <p class="locationText"> Fee Info : [[${location.ticketInfo}]]</p>
-                        </div>
+                                <div th:if="${location.address != null}">
+                                    <p class="locationText"> address : [[${location.address}]]</p>
+                                </div>
 
-                        <div th:if="${location.website != null}">
-                            <p class="locationText"> Website Url : [[${location.website}]]</p>
-                        </div>
+                                <div th:if="${location.openTime != null}">
+                                    <p class="locationText"> open time : [[${location.openTime}]]</p>
+                                </div>
 
-                        <div th:if="${location.tel != null}">
-                            <p class="locationText"> Tel : [[${location.tel}]]</p>
-                        </div>
+                                <div th:if="${location.ticketInfo != null}">
+                                    <p class="locationText"> Fee Info : [[${location.ticketInfo}]]</p>
+                                </div>
+
+                                <div th:if="${location.website != null}">
+                                    <p class="locationText"> Website Url : [[${location.website}]]</p>
+                                </div>
+
+                                <div th:if="${location.tel != null}">
+                                    <p class="locationText"> Tel : [[${location.tel}]]</p>
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                </a>
+                </div>
             </div>
-            <div class="clear"></div>
         </div>
     </div>
-</div>
 
-<div class="clear"></div>
+
+
 
 </div>
 </html>

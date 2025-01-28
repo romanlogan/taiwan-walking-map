@@ -17,6 +17,6 @@ public class CityService {
 
         City city = cityRepository.findById("高雄市").orElseThrow(EntityNotFoundException::new);
 
-        System.out.println(city.getPostalAddressCity() + " " + city.getCityDetail());
+        System.out.println(city.getRegion() + " " + city.getCityDetail());
     }
 }

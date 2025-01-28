@@ -27,7 +27,7 @@ public class QuickSearchCityDto {
 
     public static QuickSearchCityDto of(City city) {
         return QuickSearchCityDto.builder()
-                .postalAddressCity(city.getPostalAddressCity())
+                .postalAddressCity(city.getRegion())
                 .positionLat(city.getPositionLat())
                 .positionLon(city.getPositionLon())
                 .build();

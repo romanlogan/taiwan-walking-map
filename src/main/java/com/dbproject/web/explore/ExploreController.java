@@ -1,7 +1,7 @@
 package com.dbproject.web.explore;
 
-import com.dbproject.api.explore.CityDto;
-import com.dbproject.api.explore.ExploreService;
+import com.dbproject.api.city.dto.CityDto;
+import com.dbproject.api.explore.ExploreServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -15,7 +15,7 @@ public class ExploreController {
     @Value("${google.maps.api.key}")
     private String googleMapsApiKey;
 
-    private final ExploreService exploreService;
+    private final ExploreServiceImpl exploreService;
 
 //    @GetMapping("/exploreCity")
 //    public @ResponseBody ResponseEntity exploreCity(

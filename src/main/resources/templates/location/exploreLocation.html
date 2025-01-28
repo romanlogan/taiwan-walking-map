@@ -353,241 +353,7 @@
 </th:block>
 
 <th:block layout:fragment="css">
-  <style>
-    #container{
-
-    }
-
-    #cityNameBox{
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #cityName{
-      font-size: 2.5rem;
-    }
-
-    #locationName{
-      margin-top: 30px;
-      margin-bottom: 30px;
-    }
-
-    #mainBox{
-      position: relative;
-    }
-
-    #imgBox{
-      top: 1rem;
-      left: 14rem;
-      position: absolute;
-      width: 500px;
-      height: 450px;
-      overflow: hidden;
-      z-index: 1;
-      box-shadow: rgba(0, 0, 0, 0.7) 0px 5px 15px;
-    }
-
-
-    .locationImg{
-      width: 500px;
-      height: 500px;
-      object-fit: cover;
-      /*border-radius: 10px;*/
-    }
-
-    #descBox{
-      padding-left: 100px;
-      top: 5rem;
-      left: 40rem;
-      position: absolute;
-      height: 500px;
-      width: 700px;
-      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-      overflow: auto;
-      background-color: white;
-    }
-    #map{
-      position: absolute;
-      top: 23rem;
-      left: 5rem;
-
-      width: 500px;
-      height: 500px;
-
-    }
-
-
-    .left-half {
-      float: left;
-      width: 40%;
-    }
-
-    .right-half {
-      float: right;
-      width: 60%;
-    }
-
-    .comment-left-half {
-      float: left;
-      width: 60%;
-    }
-
-    .comment-right-half {
-      float: right;
-      width: 40%;
-    }
-
-    .clear{
-      clear: both;
-    }
-
-    #introduce{
-
-      display: inline;
-    }
-
-    #addFavoriteBtn{
-      margin: 10px;
-      background-color:white;
-      border: solid 1px #ffdd00;
-      display: inline-block;
-    }
-
-    #addedFavoriteBtn{
-      margin: 10px;
-      background-color:white;
-      border: solid 1px #ffdd00;
-      display: inline-block;
-    }
-
-
-
-
-    .savedCommentMemberBox{
-      margin-top: 2rem;
-    }
-
-    .savedCommentMemberImg{
-      width : 3rem;
-      height: 3rem;
-      display: inline;
-      border-radius: 50%;
-    }
-
-    .savedCommentMemberName {
-      margin-left: 10px;
-      display: inline;
-      font-weight: bold;
-
-    }
-
-    .savedCommentContent{
-      margin-top: 10px;
-      font-size: 15px;
-    }
-
-    .savedCommentRegTime {
-      font-size: 13px;
-      color: grey;
-    }
-
-    .divider{
-      width: 100%;
-      height: 1px;
-      background-color: grey;
-    }
-
-
-    .inviteModal-left-half {
-      float: left;
-      width: 40%;
-    }
-
-    .inviteModal-right-half {
-      float: right;
-      width: 60%;
-    }
-
-
-    .checkableFriendBox{
-
-      margin: 20px;
-      padding: 10px;
-      width: 340px;
-      height: 110px;
-      background-color: #fff; /* 배경색 지정 */
-      border-radius: 8px; /* 테두리를 둥글게 만듭니다. */
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 그림자 효과 추가 */
-    }
-
-    #friendChecker{
-      display: inline;
-    }
-
-    .friendBoxImg{
-      float : left;
-      width : 90px;
-      height : 90px;
-    }
-
-    .friendTextBox{
-      float: right;
-      width: 150px; /* 텍스트를 표시할 요소의 너비를 지정합니다. */
-      height: 90px;
-      white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 합니다. */
-      overflow: hidden; /* 넘치는 부분은 숨김 처리합니다. */
-      text-overflow: ellipsis; /* 넘치는 텍스트에 '...'을 추가하여 표시합니다. */
-
-    }
-
-    .friendText {
-      margin-bottom: 0;
-
-    }
-
-    .fieldError {
-      color: #bd2130;
-    }
-
-    .btnBox{
-      position: relative;
-    }
-
-    #addedFavoriteBtn{
-      position: absolute;
-      top: 1.5rem;
-      left: 49rem;
-    }
-    #addFavoriteBtn{
-      position: absolute;
-      top: 1.5rem;
-      left: 49rem;
-    }
-    #invitePlanBtn{
-
-      position: absolute;
-      top: 2rem;
-      left: 54rem;
-    }
-
-
-    #createCommentBtn{
-
-      position: absolute;
-      top: 2rem;
-      left: 60rem;
-    }
-
-    .commentBox{
-      margin-top: 1000px;
-    }
-
-
-
-  </style>
+  <link rel="stylesheet" href="/css/exploreLocation.css"/>
 </th:block>
 
 <div layout:fragment="content">
@@ -595,260 +361,277 @@
   <input id="locationId" type="hidden" th:value="${locationDtlResponse.id}">
 
   <section id="container">
-
-    <div id="cityNameBox">
-      <h1 id="cityName">[[${locationDtlResponse.region}]]</h1>
+    <div class="left-half">
+      <div id="city-vertical-line">
+      </div>
+      <div id="city-name-box">
+          <h1 id="cityName">[[${locationDtlResponse.region}]]</h1>
+      </div>
     </div>
 
-    <div id="mainBox">
-      <div id="imgBox">
-        <div th:if="${#strings.isEmpty(locationDtlResponse.picture1)}">
-          <img class = "locationImg" src="/img/noImg.jpg">
-        </div>
-        <div th:unless="${#strings.isEmpty(locationDtlResponse.picture1)}">
-          <img class = "locationImg" th:src="${locationDtlResponse.picture1}">
-        </div>
-      </div>
+    <div class="right-half">
+      <div id="mainBox">
 
-      <div id="descBox">
+          <h1 id="locationName">[[${locationDtlResponse.name}]]</h1>
 
-        <h1 id="locationName">[[${locationDtlResponse.name}]]</h1>
-
-        <h4 id="introduce">說明</h4>
-
-        <p>[[${locationDtlResponse.tolDescribe}]]</p>
-
-        <div th:if="${locationDtlResponse.address != null}">
-          <p class="locationText"> address : [[${locationDtlResponse.address}]]</p>
-        </div>
-
-        <div th:if="${locationDtlResponse.openTime != null}">
-          <p class="locationText"> open time : [[${locationDtlResponse.openTime}]]</p>
-        </div>
-
-        <div th:if="${locationDtlResponse.ticketInfo != null}">
-          <p class="locationText"> Fee Info : [[${locationDtlResponse.ticketInfo}]]</p>
-        </div>
-
-        <div th:if="${locationDtlResponse.website != null}">
-          <p class="locationText"> Website Url : [[${locationDtlResponse.website}]]</p>
-        </div>
-
-        <div th:if="${locationDtlResponse.tel != null}">
-          <p class="locationText"> Tel : [[${locationDtlResponse.tel}]]</p>
-        </div>
-
-        <div th:if="${locationDtlResponse.remarks != null}">
-          <p class="locationText"> remark : [[${locationDtlResponse.remarks}]]</p>
-        </div>
-
-        <div th:if="${locationDtlResponse.travellingInfo != null}">
-          <p class="locationText"> traffic_Info : [[${locationDtlResponse.travellingInfo}]]</p>
-        </div>
-
-        <div th:if="${locationDtlResponse.parkingInfo != null}">
-          <p class="locationText"> parking_info : [[${locationDtlResponse.parkingInfo}]]</p>
-        </div>
-      </div>
-
-      <div id="map"></div>
-    </div>
-
-
-    <div class="btnBox">
-      <!--  즐겨찾기  -->
-      <div th:if="${locationDtlResponse.isSaved()}">
-        <button id="addedFavoriteBtn"><i class="fa-thin fa-star" style="color: #ffdd00;"></i>이미 저장된 장소입니다.</button>
-      </div>
-      <div th:unless="${locationDtlResponse.isSaved()}">
-        <button type="button" id="addFavoriteBtn" class=" btn-primary" data-toggle="modal" data-target="#addFavoriteModal"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>
-      </div>
-      <button type="button" id="invitePlanBtn" class="invitePlanBtn btn-primary" data-toggle="modal" data-target="#hangOutModal">약속 잡기</button>
-      <button type="button" id="createCommentBtn" data-toggle="modal" data-target="#commentModal">댓글 작성</button>
-    </div>
-    <!-- 모달 창 -->
-    <div class="modal fade" id="addFavoriteModal" tabindex="-1" role="dialog" aria-labelledby="addFavoriteModalLabel">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" id="addFavoriteModalLabel">즐겨찾기 추가</h4>
-          </div>
-          <div class="modal-body">
-            <!-- 모달 창 내의 데이터 입력 폼 -->
-            <div class="form-group">
-              <label for="memo">메모</label>
-              <textarea type="text" name="memo" id="memo" placeholder="메모 내용을 입력해주세요."></textarea>
-              <p id="memoError" class="fieldError"></p>
-              <br>
+          <div id="imgBox">
+            <div th:if="${#strings.isEmpty(locationDtlResponse.picture1)}">
+              <img class = "locationImg" src="/img/noImg.jpg">
+            </div>
+            <div th:unless="${#strings.isEmpty(locationDtlResponse.picture1)}">
+              <img class = "locationImg" th:src="${locationDtlResponse.picture1}">
             </div>
           </div>
-          <div class="modal-footer">
-            <button id="addFavoriteBtn" type="button" >추가</button>
-          </div>
-        </div>
-      </div>
-    </div>
 
 
-<!--  약속 잡기 -->
-    <!-- 모달 창 -->
-    <div class="modal fade" id="hangOutModal" tabindex="-1" role="dialog" aria-labelledby="hangOutModalLabel">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" id="hangOutModalLabel">약속 잡기</h4>
-          </div>
-          <div class="modal-body">
-            <!-- 모달 창 내의 데이터 입력 폼 -->
-            <div class="form-group">
+          <div id="descBox">
 
-              <div class="inviteModal-left-half">
-<!--            친구 목록     -->
-                <div class="checkableFriendBox" th:each="friend, status: ${locationDtlResponse.getFriendDtoList()}">
 
-                  <input id="friendChecker" type="checkbox" th:value="${friend.friendEmail}">
+            <div id="desc" class="desc-content">
+              <h4 id="introduce-title">說明</h4>
 
-                  <div th:if="${#strings.isEmpty(friend.friendImgUrl)}">
-                    <img class = "friendBoxImg" src="/img/noImg.jpg">
-                  </div>
-                  <div th:unless="${#strings.isEmpty(friend.friendImgUrl)}">
-                    <img class = "friendBoxImg" th:src="${friend.friendImgUrl}">
-                  </div>
-                  <div class="friendTextBox">
-                    <p class="friendText">[[${friend.friendName}]]</p>
-                    <p class="friendText">[[${friend.friendEmail}]]</p>
-                  </div>
-<!--                  <div class="friendBox">-->
-<!--                    <div class="friendImgBox">-->
-<!--                      &lt;!&ndash;            <button id="friendImgBtn" th:value="${friend.id}" onclick="showLocationDetail(this.value)">&ndash;&gt;-->
-<!--                      <button id="friendImgBtn">-->
-<!--                        <div th:if="${#strings.isEmpty(friend.getFriendImgUrl())}">-->
-<!--                          <img class = "friendImg" src="/img/noImg.jpg">-->
-<!--                        </div>-->
-<!--                        <div th:unless="${#strings.isEmpty(friend.getFriendImgUrl())}">-->
-<!--                          <img class = "friendImg" th:src="${friend.getFriendImgUrl()}">-->
-<!--                        </div>-->
-<!--                      </button>-->
-<!--                    </div>-->
+              <p>[[${locationDtlResponse.tolDescribe}]]</p>
 
-<!--                    <div class="friendNameBox">-->
-<!--                      <div th:text="${friend.friendName}" class="fs24 font-weight-bold updatable"></div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-                </div>
+              <div th:if="${locationDtlResponse.address != null}">
+                <p class="locationText"> address : [[${locationDtlResponse.address}]]</p>
               </div>
 
-              <div class="inviteModal-right-half">
-                <label for="message">메시지</label>
-                <textarea type="text" name="message" id="message" placeholder="메시지 내용을 입력해주세요."></textarea>
-                <input type="datetime-local" id="departDateTime" placeholder="출발 날짜">
+              <div th:if="${locationDtlResponse.openTime != null}">
+                <p class="locationText"> open time : [[${locationDtlResponse.openTime}]]</p>
+              </div>
+
+              <div th:if="${locationDtlResponse.ticketInfo != null}">
+                <p class="locationText"> Fee Info : [[${locationDtlResponse.ticketInfo}]]</p>
+              </div>
+
+              <div th:if="${locationDtlResponse.website != null}">
+                <p class="locationText"> Website Url : [[${locationDtlResponse.website}]]</p>
+              </div>
+
+              <div th:if="${locationDtlResponse.tel != null}">
+                <p class="locationText"> Tel : [[${locationDtlResponse.tel}]]</p>
+              </div>
+
+              <div th:if="${locationDtlResponse.remarks != null}">
+                <p class="locationText"> remark : [[${locationDtlResponse.remarks}]]</p>
+              </div>
+
+              <div th:if="${locationDtlResponse.travellingInfo != null}">
+                <p class="locationText"> traffic_Info : [[${locationDtlResponse.travellingInfo}]]</p>
+              </div>
+
+              <div th:if="${locationDtlResponse.parkingInfo != null}">
+                <p class="locationText"> parking_info : [[${locationDtlResponse.parkingInfo}]]</p>
               </div>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button id="inviteBtn" type="button">요청 보내기</button>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title" id="commentModalLabel">댓글 추가</h4>
-          </div>
-          <div class="modal-body">
-            <!-- 모달 창 내의 데이터 입력 폼 -->
-            <div class="form-group">
+            <div id="btn-box" class=" desc-content">
+              <!--  즐겨찾기  -->
+              <div th:if="${locationDtlResponse.isSaved()}">
+                <button id="addedFavoriteBtn"><i class="fa-thin fa-star" style="color: #ffdd00;"></i></button>
+              </div>
 
-              <label for="commentContent"></label>
-              <textarea type="text" id="commentContent" name="commentContent"></textarea>
-              <p id="commentError" class="fieldError"></p>
+<!--              <div th:unless="${locationDtlResponse.isSaved()}">-->
+<!--                <button type="button" id="addFavoriteBtn" class=" btn-primary" data-toggle="modal" data-target="#addFavoriteModal"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>-->
+<!--              </div>-->
 
-                  <select id="commentRate" name="commentRate">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </select>
+              <button type="button" id="invitePlanBtn" class="invitePlanBtn btn-primary" data-toggle="modal" data-target="#hangOutModal">약속 잡기</button>
+              <button type="button" id="createCommentBtn" data-toggle="modal" data-target="#commentModal">댓글 작성</button>
             </div>
+
+
+            <div id="map" class="desc-content"></div>
           </div>
-          <div class="modal-footer">
-            <button id="addCommentBtn" type="button">댓글 저장</button>
-          </div>
-        </div>
-      </div>
-    </div>
 
 
 
-<!--    <div class="form-group">-->
-<!--      <div class="custom-file img-div">-->
-<!--        <input type="file" name="photoFile" class="custom-file-input">-->
-<!--        <label class="custom-file-label" text="댓글이미지"></label>-->
-<!--      </div>-->
-<!--    </div>-->
+    <!--    <div class="form-group">-->
+    <!--      <div class="custom-file img-div">-->
+    <!--        <input type="file" name="photoFile" class="custom-file-input">-->
+    <!--        <label class="custom-file-label" text="댓글이미지"></label>-->
+    <!--      </div>-->
+    <!--    </div>-->
 
-    <div class="commentBox">
-      <th:block th:each="comment, status: ${locationDtlResponse.getCommentDtoList()}">
-        <div>
-          <div class="savedCommentMemberBox">
-            <img class="savedCommentMemberImg" th:src="${comment.getImgUrl()}">
-            <p class="savedCommentMemberName">[[${comment.name}]]</p>
-          </div>
-          <p class="savedCommentContent">[[${comment.content}]]</p>
-          <p class="savedCommentRegTime">[[${comment.regTime}]]</p>
-<!--          점수 출력하기 (추가 필요)-->
-        </div>
-<!--        현재 로그인 상태라면 -->
-<!--        댓글의 email 과  현재 로그인 email 이 같으면 -->
-        <div th:if="${#strings.isEmpty(loggedInUserId)}">
-        </div>
-        <div th:unless="${#strings.isEmpty(loggedInUserId)}">
-          <div th:if="${#strings.equals(comment.email, loggedInUserId)}">
-            <button type="button" data-toggle="modal" data-target="#updateCommentModal">댓글 수정</button>
-            <button id="deleteCommentBtn" th:value="${comment.id}" onclick="deleteComment(this.value)" >댓글 삭제</button>
+        <div class="commentBox">
+          <th:block th:each="comment, status: ${locationDtlResponse.getCommentDtoList()}">
+            <div>
+              <div class="savedCommentMemberBox">
+                <img class="savedCommentMemberImg" th:src="${comment.getImgUrl()}">
+                <p class="savedCommentMemberName">[[${comment.name}]]</p>
+              </div>
+              <p class="savedCommentContent">[[${comment.content}]]</p>
+              <p class="savedCommentRegTime">[[${comment.regTime}]]</p>
+    <!--          점수 출력하기 (추가 필요)-->
+            </div>
+    <!--        현재 로그인 상태라면 -->
+    <!--        댓글의 email 과  현재 로그인 email 이 같으면 -->
+            <div th:if="${#strings.isEmpty(loggedInUserId)}">
+            </div>
+            <div th:unless="${#strings.isEmpty(loggedInUserId)}">
+              <div th:if="${#strings.equals(comment.email, loggedInUserId)}">
+                <button type="button" data-toggle="modal" data-target="#updateCommentModal">댓글 수정</button>
+                <button id="deleteCommentBtn" th:value="${comment.id}" onclick="deleteComment(this.value)" >댓글 삭제</button>
 
-            <div class="modal fade" id="updateCommentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h4 class="modal-title" id="updateCommentModalLabel">댓글 수정</h4>
-                  </div>
-                  <div class="modal-body">
-                    <!-- 모달 창 내의 데이터 입력 폼 -->
-                    <div class="form-group">
+                <div class="modal fade" id="updateCommentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="updateCommentModalLabel">댓글 수정</h4>
+                      </div>
+                      <div class="modal-body">
+                        <!-- 모달 창 내의 데이터 입력 폼 -->
+                        <div class="form-group">
 
-                      <label for="commentContent"></label>
-                      <textarea type="text" id="updateCommentContent" name="updateCommentContent"></textarea>
+                          <label for="commentContent"></label>
+                          <textarea type="text" id="updateCommentContent" name="updateCommentContent"></textarea>
 
-                      <select id="updateCommentRate" name="updateCommentRate">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                      </select>
+                          <select id="updateCommentRate" name="updateCommentRate">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                          </select>
 
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button id="updateCommentBtn" type="button">댓글 수정</button>
+                      </div>
                     </div>
                   </div>
-                  <div class="modal-footer">
-                    <button id="updateCommentBtn" type="button">댓글 수정</button>
-                  </div>
                 </div>
               </div>
             </div>
+
+            <div class="divider"></div>
+      <!--      내가 쓴 글만 댓글 삭제 와 댓글 내용 변경이 보이게 -->
+          </th:block>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+
+  <!-- 모달 창 -->
+  <div class="modal fade" id="addFavoriteModal" tabindex="-1" role="dialog" aria-labelledby="addFavoriteModalLabel">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="addFavoriteModalLabel">즐겨찾기 추가</h4>
+        </div>
+        <div class="modal-body">
+          <!-- 모달 창 내의 데이터 입력 폼 -->
+          <div class="form-group">
+            <label for="memo">메모</label>
+            <textarea type="text" name="memo" id="memo" placeholder="메모 내용을 입력해주세요."></textarea>
+            <p id="memoError" class="fieldError"></p>
+            <br>
           </div>
         </div>
-
-        <div class="divider"></div>
-  <!--      내가 쓴 글만 댓글 삭제 와 댓글 내용 변경이 보이게 -->
-      </th:block>
-
+        <div class="modal-footer">
+          <button id="addFavoriteBtn" type="button" >추가</button>
+        </div>
+      </div>
     </div>
+  </div>
 
-  </section>
+
+  <!--  약속 잡기 -->
+  <!-- 모달 창 -->
+  <div class="modal fade" id="hangOutModal" tabindex="-1" role="dialog" aria-labelledby="hangOutModalLabel">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="hangOutModalLabel">약속 잡기</h4>
+        </div>
+        <div class="modal-body">
+          <!-- 모달 창 내의 데이터 입력 폼 -->
+          <div class="form-group">
+
+            <div class="inviteModal-left-half">
+              <!--            친구 목록     -->
+              <div class="checkableFriendBox" th:each="friend, status: ${locationDtlResponse.getFriendDtoList()}">
+
+                <input id="friendChecker" type="checkbox" th:value="${friend.friendEmail}">
+
+                <div th:if="${#strings.isEmpty(friend.friendImgUrl)}">
+                  <img class = "friendBoxImg" src="/img/noImg.jpg">
+                </div>
+                <div th:unless="${#strings.isEmpty(friend.friendImgUrl)}">
+                  <img class = "friendBoxImg" th:src="${friend.friendImgUrl}">
+                </div>
+                <div class="friendTextBox">
+                  <p class="friendText">[[${friend.friendName}]]</p>
+                  <p class="friendText">[[${friend.friendEmail}]]</p>
+                </div>
+                <!--                  <div class="friendBox">-->
+                <!--                    <div class="friendImgBox">-->
+                <!--                      &lt;!&ndash;            <button id="friendImgBtn" th:value="${friend.id}" onclick="showLocationDetail(this.value)">&ndash;&gt;-->
+                <!--                      <button id="friendImgBtn">-->
+                <!--                        <div th:if="${#strings.isEmpty(friend.getFriendImgUrl())}">-->
+                <!--                          <img class = "friendImg" src="/img/noImg.jpg">-->
+                <!--                        </div>-->
+                <!--                        <div th:unless="${#strings.isEmpty(friend.getFriendImgUrl())}">-->
+                <!--                          <img class = "friendImg" th:src="${friend.getFriendImgUrl()}">-->
+                <!--                        </div>-->
+                <!--                      </button>-->
+                <!--                    </div>-->
+
+                <!--                    <div class="friendNameBox">-->
+                <!--                      <div th:text="${friend.friendName}" class="fs24 font-weight-bold updatable"></div>-->
+                <!--                    </div>-->
+                <!--                  </div>-->
+              </div>
+            </div>
+
+            <div class="inviteModal-right-half">
+              <label for="message">메시지</label>
+              <textarea type="text" name="message" id="message" placeholder="메시지 내용을 입력해주세요."></textarea>
+              <input type="datetime-local" id="departDateTime" placeholder="출발 날짜">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="inviteBtn" type="button">요청 보내기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="commentModalLabel">댓글 추가</h4>
+        </div>
+        <div class="modal-body">
+          <!-- 모달 창 내의 데이터 입력 폼 -->
+          <div class="form-group">
+
+            <label for="commentContent"></label>
+            <textarea type="text" id="commentContent" name="commentContent"></textarea>
+            <p id="commentError" class="fieldError"></p>
+
+            <select id="commentRate" name="commentRate">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="addCommentBtn" type="button">댓글 저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 </html>

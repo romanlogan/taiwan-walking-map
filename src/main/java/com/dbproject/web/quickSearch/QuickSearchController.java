@@ -1,10 +1,9 @@
 package com.dbproject.web.quickSearch;
 
-import com.dbproject.api.explore.ExploreService;
+import com.dbproject.api.explore.ExploreServiceImpl;
 import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.quickSearch.dto.*;
 import com.dbproject.api.quickSearch.service.QuickSearchService;
-import com.dbproject.api.quickSearch.service.QuickSearchServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -26,7 +25,7 @@ public class QuickSearchController {
     @Value("${google.maps.api.key}")
     private String googleMapsApiKey;
 
-    private final ExploreService exploreService;
+    private final ExploreServiceImpl exploreService;
 
     private final QuickSearchService quickSearchService;
 

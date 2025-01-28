@@ -7,7 +7,6 @@ import com.dbproject.api.location.Location;
 import com.dbproject.api.location.repository.LocationRepository;
 import com.dbproject.api.quickSearch.dto.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -120,7 +119,7 @@ public class QuickSearchServiceImpl implements QuickSearchService{
         List<String> cityNameList = new ArrayList<>();
 
         for (City city : cityList) {
-            cityNameList.add(city.getPostalAddressCity());
+            cityNameList.add(city.getRegion());
         }
 
         quickSearchResponse.setCityNameList(cityNameList);
@@ -129,7 +128,7 @@ public class QuickSearchServiceImpl implements QuickSearchService{
 
     private void findCityDtl(QuickSearchResponse quickSearchResponse, String searchCity) {
 
-        City city = cityRepository.findBypostalAddressCity(searchCity);
+        City city = cityRepository.findByRegion(searchCity);
         QuickSearchCityDto quickSearchCityDto = QuickSearchCityDto.of(city);
 
         quickSearchResponse.setCity(quickSearchCityDto);

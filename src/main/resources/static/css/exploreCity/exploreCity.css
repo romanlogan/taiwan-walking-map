@@ -58,7 +58,7 @@
     background-color: transparent;
 }
 
-#cityNameBox{
+#location-name-box{
     position: absolute;
     display: flex;
     justify-content: center;

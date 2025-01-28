@@ -10,8 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 
 @SpringBootTest
 @Transactional
@@ -26,7 +24,7 @@ class MBTServiceJPAImplTest {
     void test(){
         //given
         String cityName = "臺北市";
-        City city = mbtRepository.findBypostalAddressCity(cityName);
+        City city = mbtRepository.findByRegion(cityName);
         MBTCityDtoCamel cityDto = new MBTCityDtoCamel(city.getPostalAddressCity(), city.getCityDetail(), city.getPositionLat(), city.getPositionLon());
         cityDto.printDetail();
      }

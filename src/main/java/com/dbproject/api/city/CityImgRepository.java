@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CityImgRepository extends JpaRepository<CityImg, Integer> {
 
-    List<CityImg> findByPostalAddressCity(String postalAddressCity);
+    List<CityImg> findByRegion(String region);
 }

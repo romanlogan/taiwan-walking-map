@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface MBTMapper extends MBTRepoInt {
 
-    City findBypostalAddressCity(String postalAddressCity);
+    City findByRegion(String postalAddressCity);
 
     // 메소드명은 Mapper.xml 에 작성될 쿼리문의 ID
     MBTCityDtoCamel selectCity(@Param("postalAddressCity") String postalAddressCity);

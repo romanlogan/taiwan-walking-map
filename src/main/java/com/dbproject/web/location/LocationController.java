@@ -1,7 +1,7 @@
 package com.dbproject.web.location;
 
 
-import com.dbproject.api.explore.ExploreService;
+import com.dbproject.api.explore.ExploreServiceImpl;
 import com.dbproject.api.location.dto.*;
 import com.dbproject.api.location.service.LocationService;
 import com.dbproject.exception.LocationNotExistException;
@@ -9,11 +9,9 @@ import com.dbproject.exception.RegionSearchConditionNotValidException;
 import com.dbproject.exception.TownSearchConditionNotValidException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +32,7 @@ public class LocationController {
 
     private final LocationService locationService;
 
-    private final ExploreService exploreService;
+    private final ExploreServiceImpl exploreService;
 
     @GetMapping("/location/{attractionId}")
     public String locationDtl(@PathVariable("attractionId") String attractionId,
