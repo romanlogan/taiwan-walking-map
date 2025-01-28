@@ -79,36 +79,36 @@ class FriendRepositoryCustomImplTest {
     }
 
 
-    @DisplayName("친구 목록을 페이징하여 가져온다")
-    @Test
-    void getFriendListPage() {
-
-        //given
-        Member son = memberRepository.findByEmail("zxcv@zxcv.com");
-        Member lee = memberRepository.findByEmail("qwer@qwer.com");
-        Member yunni = memberRepository.findByEmail("yunni@yunni.com");
-
-        createRequestAndAccept(lee, son);
-        createRequestAndAccept(lee, yunni);
-
-
-        Pageable pageable = PageRequest.of( 0, 5 );
-
-        //when
-        Page<FriendDto> friendListResponsePage = friendRepository.getFriendListPage(pageable, "qwer@qwer.com");
-
-        //then
-        assertThat(friendListResponsePage.getTotalElements()).isEqualTo(2);
-        assertThat(friendListResponsePage.getContent().get(0).getFriendName()).isEqualTo("손흥민");
-        assertThat(friendListResponsePage.getContent().get(0).getFriendEmail()).isEqualTo("zxcv@zxcv.com");
-        assertThat(friendListResponsePage.getContent().get(0).getFriendAddress()).isEqualTo("서울 강남구");
-        assertThat(friendListResponsePage.getContent().get(1).getFriendName()).isEqualTo("장원유");
-        assertThat(friendListResponsePage.getContent().get(1).getFriendEmail()).isEqualTo("yunni@yunni.com");
-        assertThat(friendListResponsePage.getContent().get(1).getFriendAddress()).isEqualTo("대만 산총구");
-
-
-
-    }
+//    @DisplayName("친구 목록을 페이징하여 가져온다")
+//    @Test
+//    void getFriendListPage() {
+//
+//        //given
+//        Member son = memberRepository.findByEmail("zxcv@zxcv.com");
+//        Member lee = memberRepository.findByEmail("qwer@qwer.com");
+//        Member yunni = memberRepository.findByEmail("yunni@yunni.com");
+//
+//        createRequestAndAccept(lee, son);
+//        createRequestAndAccept(lee, yunni);
+//
+//
+//        Pageable pageable = PageRequest.of( 0, 5 );
+//
+//        //when
+//        Page<FriendDto> friendListResponsePage = friendRepository.getFriendListPage(pageable, "qwer@qwer.com");
+//
+//        //then
+//        assertThat(friendListResponsePage.getTotalElements()).isEqualTo(2);
+//        assertThat(friendListResponsePage.getContent().get(0).getFriendName()).isEqualTo("손흥민");
+//        assertThat(friendListResponsePage.getContent().get(0).getFriendEmail()).isEqualTo("zxcv@zxcv.com");
+//        assertThat(friendListResponsePage.getContent().get(0).getFriendAddress()).isEqualTo("서울 강남구");
+//        assertThat(friendListResponsePage.getContent().get(1).getFriendName()).isEqualTo("장원유");
+//        assertThat(friendListResponsePage.getContent().get(1).getFriendEmail()).isEqualTo("yunni@yunni.com");
+//        assertThat(friendListResponsePage.getContent().get(1).getFriendAddress()).isEqualTo("대만 산총구");
+//
+//
+//
+//    }
 
     private void createRequestAndAccept(Member requester , Member respondent) {
         FriendRequest friendRequest = FriendRequest.createFriendRequest(requester, respondent, "1");

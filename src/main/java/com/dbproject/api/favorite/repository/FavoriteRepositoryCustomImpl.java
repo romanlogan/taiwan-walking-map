@@ -1,12 +1,15 @@
 package com.dbproject.api.favorite.repository;
 
+import com.dbproject.api.favorite.QFavoriteLocation;
 import com.dbproject.api.favorite.dto.FavoriteLocationDto;
 import com.dbproject.api.favorite.dto.FavoriteLocationList;
 import com.dbproject.api.favorite.dto.QFavoriteLocationDto;
-import com.dbproject.dto.QFavoriteListResponse;
-import com.dbproject.entity.QFavoriteLocation;
-import com.dbproject.entity.QLocation;
-import com.dbproject.entity.QMember;
+//import com.dbproject.dto.QFavoriteListResponse;
+//import com.dbproject.entity.QFavoriteLocation;
+//import com.dbproject.entity.QLocation;
+//import com.dbproject.entity.QMember;
+import com.dbproject.api.location.QLocation;
+import com.dbproject.api.member.QMember;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;

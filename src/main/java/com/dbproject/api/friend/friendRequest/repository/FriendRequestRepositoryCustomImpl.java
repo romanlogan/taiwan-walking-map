@@ -2,10 +2,12 @@ package com.dbproject.api.friend.friendRequest.repository;
 
 
 import com.dbproject.api.friend.friendRequest.QFriendRequest;
+import com.dbproject.api.friend.friendRequest.dto.QRequestFriendListDto;
 import com.dbproject.api.friend.friendRequest.dto.RequestFriendListDto;
+import com.dbproject.api.member.QMember;
 import com.dbproject.constant.FriendRequestStatus;
-import com.dbproject.entity.QMember;
-import com.dbproject.web.friend.QRequestFriendListDto;
+//import com.dbproject.entity.QMember;
+//import com.dbproject.web.friend.QRequestFriendListDto;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;

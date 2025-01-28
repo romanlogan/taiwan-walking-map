@@ -2,11 +2,8 @@ package com.dbproject.api.location.repository;
 
 import com.dbproject.api.location.Location;
 import com.dbproject.api.location.QLocation;
-import com.dbproject.api.location.QRecLocationListResponse;
-import com.dbproject.api.location.dto.LocationDto;
-import com.dbproject.api.location.dto.QLocationDto;
-import com.dbproject.api.location.dto.RecommendLocationListRequest;
-import com.dbproject.api.location.dto.RecommendLocationDto;
+//import com.dbproject.api.location.QRecLocationListResponse;
+import com.dbproject.api.location.dto.*;
 import com.dbproject.api.quickSearch.dto.QQuickSearchLocationDto;
 import com.dbproject.api.quickSearch.dto.QuickSearchFormRequest;
 //import com.dbproject.entity.QLocation;
@@ -32,6 +29,7 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
+    //    Q cannot find symbol 로 일단 주석 처리
     @Override
     public Page<RecommendLocationDto> getLocationPageByCity(RecommendLocationListRequest request, Pageable pageable){
 
@@ -40,7 +38,7 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
 
         List<RecommendLocationDto> content = queryFactory
                 .select(
-                        new QRecLocationListResponse(
+                        new QRecommendLocationDto(
                                 location.locationId,
                                 location.locationPicture.picture1,
                                 location.name,

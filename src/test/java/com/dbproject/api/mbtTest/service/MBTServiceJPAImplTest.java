@@ -25,8 +25,8 @@ class MBTServiceJPAImplTest {
         //given
         String cityName = "臺北市";
         City city = mbtRepository.findByRegion(cityName);
-        MBTCityDtoCamel cityDto = new MBTCityDtoCamel(city.getPostalAddressCity(), city.getCityDetail(), city.getPositionLat(), city.getPositionLon());
-        cityDto.printDetail();
+//        MBTCityDtoCamel cityDto = new MBTCityDtoCamel(city.getPostalAddressCity(), city.getCityDetail(), city.getPositionLat(), city.getPositionLon());
+//        cityDto.printDetail();
      }
 
 }

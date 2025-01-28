@@ -80,7 +80,7 @@ class QuickSearchServiceTest {
         String openTimeCond = "true";
         String feeCond = "";
         String picCond = "";
-        QuickSearchFormRequest quickSearchFormRequest = new QuickSearchFormRequest(searchQuery, searchCity, searchTown, orderType, openTimeCond, feeCond, picCond);
+        QuickSearchFormRequest quickSearchFormRequest = new QuickSearchFormRequest(searchQuery, searchCity, searchTown, orderType, openTimeCond, feeCond, picCond,1);
         Pageable pageable = PageRequest.of(0, 10);
 
         //when

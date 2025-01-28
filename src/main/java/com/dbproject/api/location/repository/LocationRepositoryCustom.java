@@ -18,7 +18,7 @@ public interface LocationRepositoryCustom {
 
     Page<QuickSearchLocationDto> getLocationPageBySearch(FastSearchDto fastSearchDto, Pageable pageable);
 
-    public Page<Location> getLocationPageByBtn(FastSearchDto fastSearchDto, Pageable pageable);
+    Page<Location> getLocationPageByBtn(FastSearchDto fastSearchDto, Pageable pageable);
 
     List<QuickSearchLocationDto> getLocationListByCond(QuickSearchFormRequest quickSearchFormRequest,
                                                        Pageable pageable);

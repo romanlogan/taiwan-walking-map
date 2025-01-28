@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface FriendRepositoryCustom {
 
-    public Page<FriendDto> getFriendListPage(Pageable pageable, String email);
+//    public Page<FriendDto> getFriendListPage(Pageable pageable, String email);
 }
