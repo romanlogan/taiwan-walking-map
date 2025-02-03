@@ -108,6 +108,4 @@ class LocationRepositoryCustomImplTest {
         assertThat(locationListPage.getTotalElements()).isEqualTo(57);
         assertThat(locationListPage.getContent()).hasSize(5);
     }
-
-
 }

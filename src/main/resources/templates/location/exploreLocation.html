@@ -385,9 +385,21 @@
 
 
           <div id="descBox">
-
-
             <div id="desc" class="desc-content">
+
+<!--              <div id="btn-box" class="desc-content">-->
+<!--                &lt;!&ndash;  즐겨찾기  &ndash;&gt;-->
+<!--                              <div th:if="${locationDtlResponse.isSaved()}">-->
+<!--                                <button id="addedFavoriteBtn"><i class="fa-solid fa-check" style="color: #ffdd00;"></i></button>-->
+<!--                              </div>-->
+<!--                              <div th:unless="${locationDtlResponse.isSaved()}">-->
+<!--                                <button type="button" id="addFavoriteBtn" class="btn-primary" data-toggle="modal" data-target="#addFavoriteModal"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>-->
+<!--                              </div>-->
+
+<!--                              <button type="button" id="invitePlanBtn" class="invitePlanBtn btn-primary" data-toggle="modal" data-target="#hangOutModal">약속 잡기</button>-->
+<!--                <button type="button" id="createCommentBtn" data-toggle="modal" data-target="#commentModal">댓글 작성</button>-->
+<!--              </div>-->
+
               <h4 id="introduce-title">說明</h4>
 
               <p>[[${locationDtlResponse.tolDescribe}]]</p>
@@ -425,21 +437,6 @@
               </div>
             </div>
 
-            <div id="btn-box" class=" desc-content">
-              <!--  즐겨찾기  -->
-              <div th:if="${locationDtlResponse.isSaved()}">
-                <button id="addedFavoriteBtn"><i class="fa-thin fa-star" style="color: #ffdd00;"></i></button>
-              </div>
-
-<!--              <div th:unless="${locationDtlResponse.isSaved()}">-->
-<!--                <button type="button" id="addFavoriteBtn" class=" btn-primary" data-toggle="modal" data-target="#addFavoriteModal"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>-->
-<!--              </div>-->
-
-              <button type="button" id="invitePlanBtn" class="invitePlanBtn btn-primary" data-toggle="modal" data-target="#hangOutModal">약속 잡기</button>
-              <button type="button" id="createCommentBtn" data-toggle="modal" data-target="#commentModal">댓글 작성</button>
-            </div>
-
-
             <div id="map" class="desc-content"></div>
           </div>
 
@@ -452,66 +449,67 @@
     <!--      </div>-->
     <!--    </div>-->
 
-        <div class="commentBox">
-          <th:block th:each="comment, status: ${locationDtlResponse.getCommentDtoList()}">
-            <div>
-              <div class="savedCommentMemberBox">
-                <img class="savedCommentMemberImg" th:src="${comment.getImgUrl()}">
-                <p class="savedCommentMemberName">[[${comment.name}]]</p>
-              </div>
-              <p class="savedCommentContent">[[${comment.content}]]</p>
-              <p class="savedCommentRegTime">[[${comment.regTime}]]</p>
-    <!--          점수 출력하기 (추가 필요)-->
-            </div>
-    <!--        현재 로그인 상태라면 -->
-    <!--        댓글의 email 과  현재 로그인 email 이 같으면 -->
-            <div th:if="${#strings.isEmpty(loggedInUserId)}">
-            </div>
-            <div th:unless="${#strings.isEmpty(loggedInUserId)}">
-              <div th:if="${#strings.equals(comment.email, loggedInUserId)}">
-                <button type="button" data-toggle="modal" data-target="#updateCommentModal">댓글 수정</button>
-                <button id="deleteCommentBtn" th:value="${comment.id}" onclick="deleteComment(this.value)" >댓글 삭제</button>
 
-                <div class="modal fade" id="updateCommentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h4 class="modal-title" id="updateCommentModalLabel">댓글 수정</h4>
-                      </div>
-                      <div class="modal-body">
-                        <!-- 모달 창 내의 데이터 입력 폼 -->
-                        <div class="form-group">
-
-                          <label for="commentContent"></label>
-                          <textarea type="text" id="updateCommentContent" name="updateCommentContent"></textarea>
-
-                          <select id="updateCommentRate" name="updateCommentRate">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                          </select>
-
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <button id="updateCommentBtn" type="button">댓글 수정</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="divider"></div>
-      <!--      내가 쓴 글만 댓글 삭제 와 댓글 내용 변경이 보이게 -->
-          </th:block>
-        </div>
       </div>
     </div>
   </section>
 
+  <div class="commentBox">
+    <th:block th:each="comment, status: ${locationDtlResponse.getCommentDtoList()}">
+      <div>
+        <div class="savedCommentMemberBox">
+          <img class="savedCommentMemberImg" th:src="${comment.getImgUrl()}">
+          <p class="savedCommentMemberName">[[${comment.name}]]</p>
+        </div>
+        <p class="savedCommentContent">[[${comment.content}]]</p>
+        <p class="savedCommentRegTime">[[${comment.regTime}]]</p>
+        <!--          점수 출력하기 (추가 필요)-->
+      </div>
+      <!--        현재 로그인 상태라면 -->
+      <!--        댓글의 email 과  현재 로그인 email 이 같으면 -->
+      <div th:if="${#strings.isEmpty(loggedInUserId)}">
+      </div>
+      <div th:unless="${#strings.isEmpty(loggedInUserId)}">
+        <div th:if="${#strings.equals(comment.email, loggedInUserId)}">
+          <button type="button" data-toggle="modal" data-target="#updateCommentModal">댓글 수정</button>
+          <button id="deleteCommentBtn" th:value="${comment.id}" onclick="deleteComment(this.value)" >댓글 삭제</button>
+
+          <div class="modal fade" id="updateCommentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="updateCommentModalLabel">댓글 수정</h4>
+                </div>
+                <div class="modal-body">
+                  <!-- 모달 창 내의 데이터 입력 폼 -->
+                  <div class="form-group">
+
+                    <label for="commentContent"></label>
+                    <textarea type="text" id="updateCommentContent" name="updateCommentContent"></textarea>
+
+                    <select id="updateCommentRate" name="updateCommentRate">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button id="updateCommentBtn" type="button">댓글 수정</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <!--      내가 쓴 글만 댓글 삭제 와 댓글 내용 변경이 보이게 -->
+    </th:block>
+  </div>
 
 
 
