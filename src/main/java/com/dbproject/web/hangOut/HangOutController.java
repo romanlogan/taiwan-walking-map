@@ -55,7 +55,7 @@ public class HangOutController {
         InvitedHangOutResponse invitedHangOutResponse = hangOutService.getInvitedHangOutList(principal.getName(), inviteHangOutId);
 
         model.addAttribute("invitedHangOutResponse", invitedHangOutResponse);
-        return "/myPage/inviteHangOutList";
+        return "myPage/inviteHangOutList";
     }
 
     @PostMapping("/acceptInvitedHangOut")

@@ -54,14 +54,14 @@ public class LocationController {
         } catch (LocationNotExistException e) {
             e.printStackTrace();
             model.addAttribute("errorMessage", e.getMessage());
-            return "/main";
+            return "main";
         }
 
         model.addAttribute("loggedInUserId", loggedInUserId);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
         model.addAttribute("locationDtlResponse", response);
 
-        return "/location/exploreLocation";
+        return "location/exploreLocation";
     }
 
     @GetMapping(value = {"/recommendLocationList","/recommendLocationList/{page}"})
@@ -79,20 +79,20 @@ public class LocationController {
 
             setResponseAndModel(request, model, pageable, response, e);
 
-            return "/location/recommendLocationList";
+            return "location/recommendLocationList";
 
         } catch (RegionSearchConditionNotValidException e){
 
             request.setSearchArrival("臺北市");
             setResponseAndModel(request, model, pageable, response, e);
 
-            return "/location/recommendLocationList";
+            return "location/recommendLocationList";
 
         }
 
         addBasicAttributeInModel(model, response);
 
-        return "/location/recommendLocationList";
+        return "location/recommendLocationList";
     }
 
     private void setResponseAndModel(RecommendLocationListRequest request, Model model, Pageable pageable, RecommendLocationListResponse response, RuntimeException e) {

@@ -42,7 +42,7 @@ public class ExploreController {
         //requestParameter 가 1개일때는 어떻게 spring-validation 을 적용하지 ?
         if (cityName == "") {
 
-            return "/error/errorPage";
+            return "error/errorPage";
         }
 
         CityDto cityDto = exploreService.getLocationDtl(cityName);
@@ -50,7 +50,7 @@ public class ExploreController {
         model.addAttribute("cityDto", cityDto);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
-        return "/explore/exploreCity";
+        return "explore/exploreCity";
     }
 
 }

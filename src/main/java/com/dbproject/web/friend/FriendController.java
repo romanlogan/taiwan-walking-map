@@ -78,7 +78,7 @@ public class FriendController {
         model.addAttribute("requestFriendList", requestFriendListDtos);
         model.addAttribute("maxPage", 5);
 
-        return "/myPage/requestFriendList";
+        return "myPage/requestFriendList";
     }
 
 
@@ -121,6 +121,6 @@ public class FriendController {
         FriendListResponse response = friendService.getFriendList(principal.getName());
         model.addAttribute("friendListResponse", response);
 
-        return "/myPage/friendList";
+        return "myPage/friendList";
     }
 }

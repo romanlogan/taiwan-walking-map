@@ -23,6 +23,6 @@ public class TripCardController {
         List<TripCard> tripCardList = tripCardService.getTripCardAddress(tripCardCity);
         model.addAttribute("tripCardList", tripCardList);
 
-        return "/explore/exploreTripCard";
+        return "explore/exploreTripCard";
     }
 }

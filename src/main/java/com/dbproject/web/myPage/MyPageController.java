@@ -34,7 +34,7 @@ public class MyPageController {
 
         model.addAttribute("user", myProfileDto);
 
-        return "/myPage/myProfile";
+        return "myPage/myProfile";
     }
 
     @PutMapping("/update")

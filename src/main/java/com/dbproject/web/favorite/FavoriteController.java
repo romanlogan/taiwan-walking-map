@@ -99,7 +99,7 @@ public class FavoriteController {
         model.addAttribute("maxPage", 5);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
-        return "/favorite/favoriteList";
+        return "favorite/favoriteList";
     }
 
     private Integer calculatePage(Optional<Integer> optionalPage, Integer size) {

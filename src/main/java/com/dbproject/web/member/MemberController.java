@@ -32,7 +32,7 @@ public class MemberController {
     public String provideMemberForm(Model model) {
 
         model.addAttribute("registerFormDto", new RegisterFormDto());
-        return "/member/registerForm";
+        return "member/registerForm";
     }
 
     @PostMapping("/registration")
@@ -42,7 +42,7 @@ public class MemberController {
 
         if (bindingResult.hasErrors()) {
             log.info("error={} ", bindingResult);
-            return "/member/registerForm";
+            return "member/registerForm";
         }
 
         System.out.println(registerFormDto.toString());
@@ -55,13 +55,13 @@ public class MemberController {
     @GetMapping(value = "/login")
     public String loginMember() {
 
-        return "/member/loginForm";
+        return "member/loginForm";
     }
 
     @GetMapping("/login/error")
     public String loginError(Model model) {
         model.addAttribute("loginErrorMsg", "아이디 또는 비밀번호를 확인해주세요");
-        return "/member/loginForm";
+        return "member/loginForm";
     }
 
 

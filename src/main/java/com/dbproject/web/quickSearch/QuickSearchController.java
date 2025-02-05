@@ -54,7 +54,7 @@ public class QuickSearchController {
         model.addAttribute("fastSearchDto", fastSearchDto);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
-        return "/quickSearch/quickSearchPage";
+        return "quickSearch/quickSearchPage";
     }
 
 //    main 에서 버튼 누르면 작동
@@ -72,7 +72,7 @@ public class QuickSearchController {
         model.addAttribute("fastSearchDto", fastSearchDto);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
-        return "/quickSearch/quickSearchList";
+        return "quickSearch/quickSearchList";
     }
 
     @GetMapping("/quickSearchConditionList")
@@ -87,7 +87,7 @@ public class QuickSearchController {
         model.addAttribute("request", quickSearchFormRequest);
         model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 
-        return "/quickSearch/quickSearchConditionList";
+        return "quickSearch/quickSearchConditionList";
     }
 
 
