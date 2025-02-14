@@ -39,8 +39,9 @@ public class LocationController {
                            Principal principal,
                            Model model) {
 
-        LocationDtlResponse response ;
+        LocationDtlResponse response;
         String loggedInUserId;
+
         try {
             if (principal == null) {
                 //로그인 하지 않은 유저

@@ -1,6 +1,5 @@
 package com.dbproject.api.location.service;
 
-import com.dbproject.api.comment.Comment;
 import com.dbproject.api.comment.dto.CommentDto;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.comment.repository.CommentRepository;
@@ -44,16 +43,19 @@ public class LocationServiceImpl implements LocationService {
     // ----------------비 로그인 유저가 장소 디테일을 볼때-----------------
     public LocationDtlResponse getLocationDtl(String locationId) {
 
-        Location location = locationRepository.findByLocationId(locationId);
+//      locaion query
+        Location location = getLocationById(locationId);
+        LocationDtlResponse locationDtlResponse = LocationDtlResponse.create(location);
 
-        checkLocationExists(location);
-
-        LocationDtlResponse locationDtlResponse = LocationDtlResponse.of(location);
-
-        getCommentList(locationId, locationDtlResponse);
-
+        setCommentList(locationId, locationDtlResponse);
 
         return locationDtlResponse;
+    }
+
+    private Location getLocationById(String locationId) {
+        Location location = locationRepository.findByLocationId(locationId);
+        checkLocationExists(location);
+        return location;
     }
 
     private static void checkLocationExists(Location location) {
@@ -67,13 +69,13 @@ public class LocationServiceImpl implements LocationService {
 
         Location location = locationRepository.findByLocationId(locationId);
         checkLocationExists(location);
-        LocationDtlResponse locationDtlResponse = LocationDtlResponse.of(location);
+        LocationDtlResponse locationDtlResponse = LocationDtlResponse.create(location);
+
+        // 댓글 가져오기
+        setCommentList(locationId, locationDtlResponse);
 
         //로그인 유저는 이 장소가 favorite 에 등록 되어 있는지 확인
         checkSavedFavoriteLocation(location, locationDtlResponse, email);
-
-        // 댓글 가져오기
-        getCommentList(locationId, locationDtlResponse);
 
         // 로그인 한 유저의 친구 목록을 가져오기 , getCommentList 로직에서 member 관련 로직이랑 조금 겹치는 부분이 존재
         getFriendList(email, locationDtlResponse);
@@ -94,42 +96,28 @@ public class LocationServiceImpl implements LocationService {
         locationDtlResponse.setFriendDtoList(friendDtoList);
     }
 
-    private void getCommentList(String locationId, LocationDtlResponse locationDtlResponse) {
+    private void setCommentList(String locationId, LocationDtlResponse locationDtlResponse) {
 
-        List<Comment> commentList = commentRepository.findByLocationId(locationId);
+        List<CommentDto> commentDtoList = commentRepository.findByLocationIdWithJoin(locationId);
 
-        List<CommentDto> commentDtoList = new ArrayList<>();
-        for (Comment comment : commentList) {
-
-//            여기 로직을 commentDTo 안으로 넣어야함 (FriendDto 참고 )
-            String email = comment.getMember().getEmail();
-            Optional<MemberImg> optionalMemberImg = memberImgRepository.findByMemberEmail(email);
-            String imgUrl;
-            if (optionalMemberImg.isPresent()) {
-                MemberImg memberImg = optionalMemberImg.get();
-                imgUrl = memberImg.getImgUrl();
-            } else {
-                imgUrl = "/img/noImg.jpg";
+        for (CommentDto comment : commentDtoList) {
+            if (comment.getImgUrl() == null) {
+                comment.setImgUrl("/img/noImg.jpg");
             }
-
-            CommentDto commentDto = CommentDto.from(comment, imgUrl);
-            commentDtoList.add(commentDto);
         }
 
         locationDtlResponse.setCommentDtoList(commentDtoList);
-//        locationDtlResponse.setCommentList(commentList);
     }
 
     private void checkSavedFavoriteLocation(Location location, LocationDtlResponse locationDtlResponse, String email) {
 
-//        FavoriteLocation favoriteLocation = favoriteRepository.findByLocationId(location.getLocationId());
         FavoriteLocation favoriteLocation = favoriteRepository.findDuplicateFavoriteLocation(location.getLocationId(), email);
 
         if (favoriteLocation == null) {
             // 기본값이 false 니까 이건 안쓰는게 맞을까 ?
-            locationDtlResponse.setNotSaved();
+            locationDtlResponse.setNotSaved();  //저장되지 않았음
         } else {
-            locationDtlResponse.setSaved();
+            locationDtlResponse.setSaved();     //이미 저장한 적이 있는 즐겨찾기
         }
     }
 

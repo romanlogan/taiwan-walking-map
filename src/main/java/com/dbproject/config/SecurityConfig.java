@@ -45,6 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
 
+//        http.csrf().disable();
+
         http.formLogin()
                 .loginPage("/members/login")
                 .defaultSuccessUrl("/")

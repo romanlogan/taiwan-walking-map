@@ -1,8 +1,6 @@
 package com.dbproject.api.comment.dto;
 
 
-import com.dbproject.api.comment.Comment;
-import com.google.common.annotations.Beta;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,16 +32,16 @@ public class CommentDto {
     }
 
 
-    public static CommentDto from(Comment comment,String imgUrl) {
-
-        return CommentDto.builder()
-                .id(comment.getId())
-                .content(comment.getContent())
-                .email(comment.getMember().getEmail())
-                .name(comment.getMember().getName())
-                .regTime(comment.getRegTime())
-                .imgUrl(imgUrl)
-                .build();
-    }
+//    public static CommentDto from(CommentDto comment, String imgUrl) {
+//
+//        return CommentDto.builder()
+//                .id(comment.getId())
+//                .content(comment.getContent())
+//                .email(comment.getMember().getEmail())
+//                .name(comment.getMember().getName())
+//                .regTime(comment.getRegTime())
+//                .imgUrl(imgUrl)
+//                .build();
+//    }
 
 }

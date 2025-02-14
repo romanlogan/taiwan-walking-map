@@ -34,11 +34,11 @@
 <!--          </div>-->
 <!--        </span>-->
 
-<!--        <span class="btn-box" sec:authorize="isAnonymous()">-->
-<!--          <a class="navItem" href="/members/login">-->
-<!--            登入-->
-<!--          </a>-->
-<!--        </span>-->
+        <span class="btn-box" sec:authorize="isAnonymous()">
+          <a class="navItem" href="/members/login">
+            登入
+          </a>
+        </span>
         <span class="btn-box" sec:authorize="isAuthenticated()">
           <a class="navItem" href="/members/logout">
             登出

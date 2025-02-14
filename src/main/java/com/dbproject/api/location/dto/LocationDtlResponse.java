@@ -68,7 +68,7 @@ public class LocationDtlResponse {
         this.latitude = latitude;
     }
 
-    public static LocationDtlResponse of(Location location) {
+    public static LocationDtlResponse create(Location location) {
 
         return LocationDtlResponse.builder()
                 .id(location.getLocationId())
