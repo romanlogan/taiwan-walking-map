@@ -72,7 +72,7 @@ class LocationServiceTest {
         String locationId = "C1_379000000A_001572";
 
         //when
-        LocationDtlResponse response = locationService.getLocationDtl(locationId);
+        LocationDtlResponse response = locationService.getLocationDtl(locationId, null);
 
         //then
         assertThat(response.getName()).isEqualTo("西門町");
@@ -85,7 +85,7 @@ class LocationServiceTest {
         String locationId = "C1_379000000A_999999";
 
         //when//then
-        assertThatThrownBy(() -> locationService.getLocationDtl(locationId))
+        assertThatThrownBy(() -> locationService.getLocationDtl(locationId, null))
                 .isInstanceOf(com.dbproject.exception.LocationNotExistException.class)
                 .hasMessage("Location 이 존재하지 않습니다.");
     }
@@ -98,7 +98,7 @@ class LocationServiceTest {
         addComment(locationId);
 
         //when
-        LocationDtlResponse response = locationService.getLocationDtl(locationId);
+        LocationDtlResponse response = locationService.getLocationDtl(locationId, null);
 
 
         //then
@@ -117,7 +117,7 @@ class LocationServiceTest {
         String locationId = "C1_379000000A_001572";
 
         //when
-        LocationDtlResponse response = locationService.getLocationDtl(locationId);
+        LocationDtlResponse response = locationService.getLocationDtl(locationId,null);
 
         //then
         assertThat(response.getName()).isEqualTo("西門町");
@@ -143,10 +143,9 @@ class LocationServiceTest {
         createFavoriteLocation("C1_379000000A_001572");
 
         //when
-        LocationDtlResponse locationDtlResponse = locationService.getLocationDtlWithAuthUser("C1_379000000A_001572", "zxcv@zxcv.com");
-
+        LocationDtlResponse response = locationService.getLocationDtl("C1_379000000A_001572","zxcv@zxcv.com");
         //then
-        assertThat(locationDtlResponse.isSaved()).isEqualTo(true);
+        assertThat(response.isSaved()).isEqualTo(true);
     }
 
     private void createFavoriteLocation(String locationId) {
@@ -166,10 +165,10 @@ class LocationServiceTest {
         //given
 
         //when
-        LocationDtlResponse locationDtlResponse = locationService.getLocationDtlWithAuthUser("C1_379000000A_001572","zxcv@zxcv.com");
+        LocationDtlResponse response = locationService.getLocationDtl("C1_379000000A_001572","zxcv@zxcv.com");
 
         //then
-        assertThat(locationDtlResponse.isSaved()).isEqualTo(false);
+        assertThat(response.isSaved()).isEqualTo(false);
     }
 
     @DisplayName("로그인 유저가 장소 디테일 정보를 요청시 그 장소 디테일 정보를 가져온다")
@@ -182,10 +181,10 @@ class LocationServiceTest {
         addComment(locationId);
 
         //when
-        LocationDtlResponse locationDtlResponse = locationService.getLocationDtlWithAuthUser(locationId,email);
+        LocationDtlResponse response = locationService.getLocationDtl(locationId,email);
 
         //then
-        assertThat(locationDtlResponse.getName()).isEqualTo("西門町");
+        assertThat(response.getName()).isEqualTo("西門町");
     }
 
     @DisplayName("로그인 유저가 장소 디테일 정보를 요청시 요청 locationId 에 맞는 장소가 존재하지 않으면 , will throw LocationNotExistException")
@@ -196,7 +195,7 @@ class LocationServiceTest {
         String email = "zxcv@zxcv.com";
 
         //when//then
-        assertThatThrownBy(() -> locationService.getLocationDtlWithAuthUser(locationId,email))
+        assertThatThrownBy(() -> locationService.getLocationDtl(locationId,email))
                 .isInstanceOf(com.dbproject.exception.LocationNotExistException.class)
                 .hasMessage("Location 이 존재하지 않습니다.");
     }
@@ -212,8 +211,7 @@ class LocationServiceTest {
         addComment(locationId);
 
         //when
-        LocationDtlResponse locationDtlResponse = locationService.getLocationDtlWithAuthUser(locationId,email);
-
+        LocationDtlResponse locationDtlResponse = locationService.getLocationDtl(locationId,email);
         //then
         assertThat(locationDtlResponse.getName()).isEqualTo("西門町");
         assertThat(locationDtlResponse.getCommentDtoList()).hasSize(1);
@@ -233,7 +231,7 @@ class LocationServiceTest {
         createFriend("yunni@yunni.com", "zxcv@zxcv.com");
 
         //when
-        LocationDtlResponse locationDtlResponse = locationService.getLocationDtlWithAuthUser(locationId,email);
+        LocationDtlResponse locationDtlResponse = locationService.getLocationDtl(locationId,email);
 
         //then
         assertThat(locationDtlResponse.getName()).isEqualTo("西門町");
@@ -254,7 +252,7 @@ class LocationServiceTest {
         createFriend("yunni@yunni.com", "zxcv@zxcv.com");
 
         //when
-        LocationDtlResponse locationDtlResponse = locationService.getLocationDtlWithAuthUser(locationId,email);
+        LocationDtlResponse locationDtlResponse = locationService.getLocationDtl(locationId,email);
 
         //then
         assertThat(locationDtlResponse.getName()).isEqualTo("西門町");

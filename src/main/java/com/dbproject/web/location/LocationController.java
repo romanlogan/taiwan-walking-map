@@ -41,17 +41,21 @@ public class LocationController {
 
         LocationDtlResponse response;
         String loggedInUserId;
+        String name = null;
+
+        if (principal == null) {
+            //로그인 하지 않은 유저
+            loggedInUserId = null;
+        } else {
+            //로그인 한 유저
+            loggedInUserId = principal.getName();
+            name = principal.getName();
+        }
+
 
         try {
-            if (principal == null) {
-                //로그인 하지 않은 유저
-                response = locationService.getLocationDtl(attractionId);
-                loggedInUserId = null;
-            } else {
-                //로그인 한 유저
-                response = locationService.getLocationDtlWithAuthUser(attractionId, principal.getName());
-                loggedInUserId = principal.getName();
-            }
+            response = locationService.getLocationDtl(attractionId, name);
+
         } catch (LocationNotExistException e) {
             e.printStackTrace();
             model.addAttribute("errorMessage", e.getMessage());
