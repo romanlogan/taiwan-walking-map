@@ -1,16 +1,15 @@
 package com.dbproject.web.comment;
 
 import com.dbproject.api.ApiResponse;
+import com.dbproject.api.comment.dto.*;
 import com.dbproject.api.comment.service.CommentService;
-import com.dbproject.api.comment.dto.CreateCommentRequest;
-import com.dbproject.api.comment.dto.DeleteCommentRequest;
-import com.dbproject.api.comment.dto.UpdateCommentRequest;
 import com.dbproject.binding.CheckBindingResult;
 import com.dbproject.exception.CommentNotExistException;
 import com.dbproject.exception.DuplicateCreateCommentException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -100,5 +99,26 @@ public class CommentController {
                 null,
                 null
         ), HttpStatus.OK);
+    }
+
+    @GetMapping("/getNextCommentList")
+    public ResponseEntity<GetNextCommentListResponse> getNextCommentList(GetNextCommentListRequest request,
+                                                                         Principal principal,
+                                                                         Model model) {
+
+        String loggedInUserId;
+
+        if (principal == null) {
+            //로그인 하지 않은 유저
+            loggedInUserId = null;
+        } else {
+            //로그인 한 유저
+            loggedInUserId = principal.getName();
+        }
+
+        GetNextCommentListResponse response = commentService.getNextCommentList(request);
+
+        model.addAttribute("loggedInUserId", loggedInUserId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

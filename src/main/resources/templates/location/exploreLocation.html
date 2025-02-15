@@ -15,6 +15,11 @@
 
   <script th:inline="javascript">
 
+    var lastAdded = 0;
+    const loadThreshold = 300; // 새로운 데이터를 로드할 최소 스크롤 간격
+    let isLoading = false; // 현재 요청 상태를 추적\
+    let loggedInUserId;
+
     $(document).on('click', "input[type='checkbox']", function(){
       if(this.checked) {
         const checkboxes = $("input[type='checkbox']");
@@ -28,6 +33,137 @@
     });
 
     $(document).ready(function () {
+
+      loggedInUserId = [[${loggedInUserId}]];
+
+      window.addEventListener('scroll', function() {
+
+
+
+        const scrollTop = window.scrollY;
+        const scrollHeight = document.body.scrollHeight;
+        const clientHeight = window.innerHeight;
+
+        // 스크롤이 하단 300px 이내일 때 데이터 로드
+        if (scrollTop + clientHeight >= scrollHeight - loadThreshold && !isLoading) {
+          isLoading = true; // 요청 중 상태로 변경
+
+          lastAdded = scrollTop;
+
+          console.log("스크롤 조건 충족: 데이터 로드 시작");
+
+          const currentUrl = window.location.href;
+          const parts = currentUrl.split("location/");
+          const locationId = parts.length > 1 ? parts[1].split("/")[0] : null;
+
+
+
+          const currentPage = document.getElementById('currentPage');
+          currentPage.value = Number(currentPage.value) + 1;
+
+          let page = currentPage.value;
+          console.log("currentPage.value : " + currentPage.value);
+
+
+
+          $.ajax({
+            url: "/comment/getNextCommentList?locationId=" + locationId + "&page=" + page,
+            type: "GET",
+            dataType: "json",
+            success: function (data, status) {
+              console.log("success")
+
+              console.log("quickSearchLocationDtoList : " + data.commentDtoList);     // 검색 결과에 따라 개수가 변경 되기는
+              console.log("quickSearchLocationDtoList[0] : " + data.commentDtoList[0]);     // 검색 결과에 따라 개수가 변경 되기는
+
+              const commentBox = document.getElementById('commentBox');
+
+              for (var i = 0; i < data.commentDtoList.length; i++) {
+
+                const listItem = document.createElement('div');
+                const comment = data.commentDtoList[i];
+                listItem.innerHTML = `
+                                      <div>
+                                        <div class="savedCommentMemberBox">
+                                          <img class="savedCommentMemberImg" th:src="${comment.imgUrl}">
+                                          <p class="savedCommentMemberName">${comment.name}</p>
+                                        </div>
+                                        <p class="savedCommentContent">${comment.content}</p>
+                                        <p class="savedCommentRegTime">${comment.regTime}</p>
+                                        <!--          점수 출력하기 (추가 필요)-->
+                                      </div>
+                                      <!--        현재 로그인 상태라면 -->
+                                      <!--        댓글의 email 과  현재 로그인 email 이 같으면 -->
+
+                                      ${loggedInUserId ? `
+                                          ${comment.email === loggedInUserId ? `
+                                          <button type="button" data-toggle="modal" data-target="#updateCommentModal">댓글 수정</button>
+                                          <button id="deleteCommentBtn" th:value="${comment.id}" onclick="deleteComment(this.value)" >댓글 삭제</button>
+
+                                          <div class="modal fade" id="updateCommentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel">
+                                            <div class="modal-dialog">
+                                              <div class="modal-content">
+                                                <div class="modal-header">
+                                                  <h4 class="modal-title" id="updateCommentModalLabel">댓글 수정</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                  <!-- 모달 창 내의 데이터 입력 폼 -->
+                                                  <div class="form-group">
+
+                                                    <label for="commentContent"></label>
+                                                    <textarea type="text" id="updateCommentContent" name="updateCommentContent"></textarea>
+
+                                                    <select id="updateCommentRate" name="updateCommentRate">
+                                                      <option value="1">1</option>
+                                                      <option value="2">2</option>
+                                                      <option value="3">3</option>
+                                                      <option value="4">4</option>
+                                                      <option value="5">5</option>
+                                                    </select>
+
+                                                  </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button id="updateCommentBtn" type="button">댓글 수정</button>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>` : ''}
+
+                                        </div>` : ''}
+
+                                      <div class="divider"></div>
+                                `;
+
+                commentBox.appendChild(listItem);
+              }
+
+
+              isLoading = false; // 요청 완료 상태로 변경
+            },
+            cache: false,
+            error: function (jqXHR, status, error, request) {
+
+              isLoading = false; // 요청 완료 상태로 변경
+
+              console.log(jqXHR.status + "\n" + jqXHR.responseText + "\n" + error)
+
+              if (jqXHR.status == '401') {
+                alert('로그인 후 이용해주세요');
+                location.href = '/members/login';
+              } else {
+                alert(jqXHR.status + "\n" + jqXHR.responseText + "\n" + error);
+                // alert(jqXHR.responseText);
+              }
+            }
+          });
+
+        } else {
+
+        }
+      });
+
+
 
       $("#moreInfo").on("click",function (){
         goToExplore(0)
@@ -359,6 +495,7 @@
 <div layout:fragment="content">
 
   <input id="locationId" type="hidden" th:value="${locationDtlResponse.id}">
+  <input type="hidden" id="currentPage" value="0"/>
 
   <section id="container">
     <div class="left-half">
@@ -454,7 +591,7 @@
     </div>
   </section>
 
-  <div class="commentBox">
+  <div id="commentBox">
     <th:block th:each="comment, status: ${locationDtlResponse.getCommentDtoList()}">
       <div>
         <div class="savedCommentMemberBox">
@@ -510,10 +647,6 @@
       <!--      내가 쓴 글만 댓글 삭제 와 댓글 내용 변경이 보이게 -->
     </th:block>
   </div>
-
-
-
-
 
   <!-- 모달 창 -->
   <div class="modal fade" id="addFavoriteModal" tabindex="-1" role="dialog" aria-labelledby="addFavoriteModalLabel">

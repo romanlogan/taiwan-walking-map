@@ -2,11 +2,13 @@ package com.dbproject.controller;
 
 import com.dbproject.api.comment.dto.CreateCommentRequest;
 import com.dbproject.api.comment.dto.DeleteCommentRequest;
+import com.dbproject.api.comment.dto.GetNextCommentListRequest;
 import com.dbproject.api.comment.dto.UpdateCommentRequest;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.comment.service.CommentServiceImpl;
 import com.dbproject.api.member.MemberService;
 import com.dbproject.web.comment.CommentController;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -905,6 +907,24 @@ class CommentControllerTest {
                 )
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
+    }
+
+
+    @DisplayName("")
+    @Test
+    void getNextCommentList() throws Exception {
+
+        GetNextCommentListRequest request = new GetNextCommentListRequest("C1_379000000A_001572",1);
+
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/comment/getNextCommentList")
+                        .param("locationId","C1_379000000A_001572")
+                        .param("page","1")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+
     }
 }
 

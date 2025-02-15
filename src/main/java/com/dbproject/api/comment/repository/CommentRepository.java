@@ -2,6 +2,7 @@ package com.dbproject.api.comment.repository;
 
 import com.dbproject.api.comment.Comment;
 import com.dbproject.api.comment.dto.CommentDto;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,7 +25,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long>{
             " left outer join MemberImg mi on mi.member.email = c.member.email"+
             " where c.location.locationId = :locationId" +
             " order by c.regTime desc")
-    List<CommentDto> findByLocationIdWithJoin(@Param("locationId") String locationId);
+    List<CommentDto> findByLocationIdWithJoin(@Param("locationId") String locationId, Pageable pageable);
 
 
     @Query("select c from Comment c" +

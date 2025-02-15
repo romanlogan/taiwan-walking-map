@@ -11,7 +11,6 @@ import java.util.List;
 public interface LocationService {
 
      LocationDtlResponse getLocationDtl(String locationId, String name);
-     LocationDtlResponse getLocationDtlWithAuthUser(String locationId,String email);
      RecommendLocationListResponse getRecommendLocationList(RecommendLocationListRequest request, Pageable pageable);
      List<String> getTownListFrom(String region);
 

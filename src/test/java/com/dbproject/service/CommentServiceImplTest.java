@@ -1,9 +1,7 @@
 package com.dbproject.service;
 
-import com.dbproject.api.comment.dto.DeleteCommentRequest;
+import com.dbproject.api.comment.dto.*;
 import com.dbproject.api.comment.service.CommentServiceImpl;
-import com.dbproject.api.comment.dto.CreateCommentRequest;
-import com.dbproject.api.comment.dto.UpdateCommentRequest;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.member.dto.RegisterFormDto;
 import com.dbproject.api.comment.Comment;
@@ -51,6 +49,10 @@ class CommentServiceImplTest {
         memberRepository.save(Member.createMember(RegisterFormDto.createForTest("이병민", "강원도 원주시", "asdf@asdf.com", "1234"), passwordEncoder));
         memberRepository.save(Member.createMember(RegisterFormDto.createForTest("손흥민", "서울 강남구", "zxcv@zxcv.com", "1234"), passwordEncoder));
         memberRepository.save(Member.createMember(RegisterFormDto.createForTest("장원유", "대만 산총구", "yunni@yunni.com", "1234"), passwordEncoder));
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("lee", "대만 산총구", "lee@lee.com", "1234"), passwordEncoder));
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("zhang", "대만 산총구", "qwer@qwer.com", "1234"), passwordEncoder));
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("son", "대만 산총구", "son@son.com", "1234"), passwordEncoder));
+        memberRepository.save(Member.createMember(RegisterFormDto.createForTest("kim", "대만 산총구", "kim@kim.com", "1234"), passwordEncoder));
     }
 
 
@@ -251,5 +253,35 @@ class CommentServiceImplTest {
         assertThatThrownBy(() -> commentService.deleteComment(request))
                 .isInstanceOf(com.dbproject.exception.CommentNotExistException.class)
                 .hasMessage("댓글이 존재하지 않습니다.");
+    }
+
+
+    @DisplayName("get second page from getNextCommentList")
+    @Test
+    void getNextCommentList() {
+
+        //given
+        saveCommentForPaging();
+        GetNextCommentListRequest request = new GetNextCommentListRequest("C1_379000000A_001572", 1);
+
+        //when
+        GetNextCommentListResponse response = commentService.getNextCommentList(request);
+
+        //then
+        assertThat(response.getCommentDtoList()).hasSize(2);
+    }
+
+    private void saveCommentForPaging() {
+
+        Location location = locationRepository.findByLocationId("C1_379000000A_001572");
+
+        List<Member> members = memberRepository.findAll();
+
+        for (Member member : members) {
+            commentRepository.save(Comment.create("good",
+                    member,
+                    location,
+                    5));
+        }
     }
 }

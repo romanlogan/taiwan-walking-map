@@ -1,9 +1,7 @@
 package com.dbproject.api.comment.service;
 
 import com.dbproject.api.comment.Comment;
-import com.dbproject.api.comment.dto.CreateCommentRequest;
-import com.dbproject.api.comment.dto.DeleteCommentRequest;
-import com.dbproject.api.comment.dto.UpdateCommentRequest;
+import com.dbproject.api.comment.dto.*;
 import com.dbproject.api.comment.repository.CommentRepository;
 import com.dbproject.api.location.Location;
 import com.dbproject.api.location.repository.LocationRepository;
@@ -11,9 +9,12 @@ import com.dbproject.api.member.MemberRepository;
 import com.dbproject.exception.CommentNotExistException;
 import com.dbproject.exception.DuplicateCreateCommentException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,9 +25,6 @@ public class CommentServiceImpl implements CommentService{
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final LocationRepository locationRepository;
-
-
-
     public Long createComment(CreateCommentRequest request, String email) {
 
         checkDuplicateCreateComment(request,email);
@@ -98,5 +96,20 @@ public class CommentServiceImpl implements CommentService{
         }
 
         return comment;
+    }
+
+    public GetNextCommentListResponse getNextCommentList(GetNextCommentListRequest request){
+
+        Pageable pageable = PageRequest.of(request.getPage(), 5);
+
+        List<CommentDto> commentDtoList = commentRepository.findByLocationIdWithJoin(request.getLocationId(), pageable);
+
+        for (CommentDto comment : commentDtoList) {
+            if (comment.getImgUrl() == null) {
+                comment.setImgUrl("/img/noImg.jpg");
+            }
+        }
+
+        return new GetNextCommentListResponse(commentDtoList);
     }
 }

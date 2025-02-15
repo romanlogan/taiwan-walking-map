@@ -18,6 +18,7 @@ import com.dbproject.exception.RegionSearchConditionNotValidException;
 import com.dbproject.exception.TownSearchConditionNotValidException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,23 +40,21 @@ public class LocationServiceImpl implements LocationService {
     private final MemberRepository memberRepository;
     private final FriendRepository friendRepository;
 
-
-
-    // ----------------비 로그인 유저가 장소 디테일을 볼때-----------------
     public LocationDtlResponse getLocationDtl(String locationId, String name) {
+
+        Pageable pageable = PageRequest.of(0, 5);
 
 //      locaion query
         Location location = getLocationById(locationId);
         checkLocationExists(location);
         LocationDtlResponse locationDtlResponse = LocationDtlResponse.create(location);
 
-        setCommentList(locationId, locationDtlResponse);
+        setCommentList(locationId, locationDtlResponse,pageable);
 
 //        로그인 유저
         if (name != null) {
             //로그인 유저는 이 장소가 favorite 에 등록 되어 있는지 확인
             checkSavedFavoriteLocation(location, locationDtlResponse, name);
-
             // 로그인 한 유저의 친구 목록을 가져오기 , getCommentList 로직에서 member 관련 로직이랑 조금 겹치는 부분이 존재
             getFriendList(name, locationDtlResponse);
         }
@@ -75,25 +74,6 @@ public class LocationServiceImpl implements LocationService {
         }
     }
 
-    // ----------------로그인 유저가 장소 디테일을 볼때-----------------
-    public LocationDtlResponse getLocationDtlWithAuthUser(String locationId, String email) {
-
-        Location location = locationRepository.findByLocationId(locationId);
-        checkLocationExists(location);
-        LocationDtlResponse locationDtlResponse = LocationDtlResponse.create(location);
-
-        // 댓글 가져오기
-        setCommentList(locationId, locationDtlResponse);
-
-        //로그인 유저는 이 장소가 favorite 에 등록 되어 있는지 확인
-        checkSavedFavoriteLocation(location, locationDtlResponse, email);
-
-        // 로그인 한 유저의 친구 목록을 가져오기 , getCommentList 로직에서 member 관련 로직이랑 조금 겹치는 부분이 존재
-        getFriendList(email, locationDtlResponse);
-
-        return locationDtlResponse;
-    }
-
     private void getFriendList(String email, LocationDtlResponse locationDtlResponse) {
         List<Friend> friendList = friendRepository.getFriendList(email);
 
@@ -107,9 +87,9 @@ public class LocationServiceImpl implements LocationService {
         locationDtlResponse.setFriendDtoList(friendDtoList);
     }
 
-    private void setCommentList(String locationId, LocationDtlResponse locationDtlResponse) {
+    private void setCommentList(String locationId, LocationDtlResponse locationDtlResponse,Pageable pageable) {
 
-        List<CommentDto> commentDtoList = commentRepository.findByLocationIdWithJoin(locationId);
+        List<CommentDto> commentDtoList = commentRepository.findByLocationIdWithJoin(locationId, pageable);
 
         for (CommentDto comment : commentDtoList) {
             if (comment.getImgUrl() == null) {

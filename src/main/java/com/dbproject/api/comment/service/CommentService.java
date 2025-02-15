@@ -1,8 +1,6 @@
 package com.dbproject.api.comment.service;
 
-import com.dbproject.api.comment.dto.CreateCommentRequest;
-import com.dbproject.api.comment.dto.DeleteCommentRequest;
-import com.dbproject.api.comment.dto.UpdateCommentRequest;
+import com.dbproject.api.comment.dto.*;
 
 public interface CommentService {
 
@@ -10,4 +8,5 @@ public interface CommentService {
     Long updateComment(UpdateCommentRequest updateCommentRequest, String email);
     void deleteComment(DeleteCommentRequest deleteCommentRequest);
     void checkDuplicateCreateComment(CreateCommentRequest createCommentRequest, String email);
+    GetNextCommentListResponse getNextCommentList(GetNextCommentListRequest request);
 }
