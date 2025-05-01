@@ -55,8 +55,8 @@ public class LocationServiceImpl implements LocationService {
         if (name != null) {
             //로그인 유저는 이 장소가 favorite 에 등록 되어 있는지 확인
             checkSavedFavoriteLocation(location, locationDtlResponse, name);
-            // 로그인 한 유저의 친구 목록을 가져오기 , getCommentList 로직에서 member 관련 로직이랑 조금 겹치는 부분이 존재
-            getFriendList(name, locationDtlResponse);
+            // 로그인 한 유저의 친구 목록을 가져오기
+//            getFriendList(name, locationDtlResponse);
         }
 
         return locationDtlResponse;

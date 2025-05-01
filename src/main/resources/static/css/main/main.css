@@ -26,11 +26,11 @@ h2 {
     text-transform: uppercase;
 }
 
-#navbar{
-    width: 100%;
-    position : fixed;
-    z-index: 1;
-}
+/*#navbar{*/
+/*    width: 100%;*/
+/*    position : fixed;*/
+/*    z-index: 1;*/
+/*}*/
 
 #carouselBox{
 

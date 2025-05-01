@@ -3,6 +3,7 @@
     background-color: #07364A;
     color:white;
     z-index: 10000;
+    position: relative;
 }
 
 #navbar.scrolled{

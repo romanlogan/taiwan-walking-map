@@ -524,18 +524,6 @@
           <div id="descBox">
             <div id="desc" class="desc-content">
 
-              <div id="btn-box" class="desc-content">
-                <!--  즐겨찾기  -->
-                              <div th:if="${locationDtlResponse.isSaved()}">
-                                <button id="addedFavoriteBtn"><i class="fa-solid fa-check" style="color: #ffdd00;"></i></button>
-                              </div>
-                              <div th:unless="${locationDtlResponse.isSaved()}">
-                                <button type="button" id="addFavoriteBtn" class="btn-primary" data-toggle="modal" data-target="#addFavoriteModal"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>
-                              </div>
-
-                              <button type="button" id="invitePlanBtn" class="invitePlanBtn btn-primary" data-toggle="modal" data-target="#hangOutModal">약속 잡기</button>
-                <button type="button" id="createCommentBtn" data-toggle="modal" data-target="#commentModal">댓글 작성</button>
-<!--              </div>-->
 
               <h4 id="introduce-title">說明</h4>
 
@@ -590,6 +578,18 @@
       </div>
     </div>
   </section>
+  <div id="btn-box" class="desc-content">
+    <!--  즐겨찾기  -->
+    <div th:if="${locationDtlResponse.isSaved()}">
+      <button id="addedFavoriteBtn"><i class="fa-solid fa-check" style="color: #ffdd00;"></i></button>
+    </div>
+    <div th:unless="${locationDtlResponse.isSaved()}">
+      <button type="button" id="addFavoriteBtn" class="btn-primary" data-toggle="modal" data-target="#addFavoriteModal"><i class="fa-solid fa-star" style="color: #ffdd00;"></i></button>
+    </div>
+
+<!--    <button type="button" id="invitePlanBtn" class="invitePlanBtn btn-primary" data-toggle="modal" data-target="#hangOutModal">약속 잡기</button>-->
+    <button type="button" id="createCommentBtn" data-toggle="modal" data-target="#commentModal">댓글 작성</button>
+  </div>
 
   <div id="commentBox">
     <th:block th:each="comment, status: ${locationDtlResponse.getCommentDtoList()}">
