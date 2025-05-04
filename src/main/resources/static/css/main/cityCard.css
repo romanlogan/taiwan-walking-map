@@ -40,7 +40,7 @@
     /*margin-right: 250px;*/
     width: 50%;
     height: 5px;
-    background-color: rgba(95, 56, 39);
+    background-color: #07364A;
     z-index: 5;
 }
 
@@ -58,7 +58,7 @@
     width: 13rem;
     height: 13rem;
     /*border-radius: 10px;*/
-    border-radius: 50px 50px 0 0;
+    border-radius: 50px 50px 50px 50px;
     overflow: hidden;
     cursor: pointer;
     color: white;
