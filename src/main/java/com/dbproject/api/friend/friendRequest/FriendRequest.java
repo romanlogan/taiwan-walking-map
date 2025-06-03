@@ -25,15 +25,12 @@ public class FriendRequest extends BaseEntity {
     @Column(name = "status")
     private FriendRequestStatus friendRequestStatus;
 
-    //어떻게 매핑은 email 로 되지만 Member 객체 타입인거지 ?
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requester_email",
-            referencedColumnName = "member_email")
+    @JoinColumn(name = "requester_email", referencedColumnName = "member_email")
     private Member requester;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "respondent_email",
-            referencedColumnName = "member_email")
+    @JoinColumn(name = "respondent_email", referencedColumnName = "member_email")
     private Member respondent;
 
 
@@ -59,7 +56,7 @@ public class FriendRequest extends BaseEntity {
                 .build();
     }
 
-    public void changeStatusTo(FriendRequestStatus status) {
+    public void changeStatus(FriendRequestStatus status) {
         this.friendRequestStatus = status;
     }
 

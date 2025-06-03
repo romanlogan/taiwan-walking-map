@@ -15,7 +15,6 @@ import java.util.List;
 
 public class FriendRepositoryCustomImpl implements FriendRepositoryCustom {
 
-
     private JPAQueryFactory queryFactory;
 
     public  FriendRepositoryCustomImpl(EntityManager entityManager) {
@@ -23,8 +22,6 @@ public class FriendRepositoryCustomImpl implements FriendRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
-
-//    Q cannot find symbol 로 일단 주석 처리
 //    @Override
 //    public Page<FriendDto> getFriendListPage(Pageable pageable, String email) {
 //

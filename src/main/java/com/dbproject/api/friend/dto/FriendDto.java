@@ -36,12 +36,10 @@ public class FriendDto {
 
     public static FriendDto from(Friend friend, Optional<MemberImg> friendImg) {
 
-        String imgUrl;
+        String imgUrl = "";
 
         if (friendImg.isPresent()) {
             imgUrl = friendImg.get().getImgUrl();
-        }else{
-            imgUrl = "";
         }
 
         return FriendDto.builder()

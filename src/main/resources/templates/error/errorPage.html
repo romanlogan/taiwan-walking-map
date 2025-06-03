@@ -1,10 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Invalid request</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff3f3;
+            color: #b30000;
+            text-align: center;
+            padding: 50px;
+        }
+        .error-box {
+            background: #ffe6e6;
+            padding: 30px;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0 0 10px #ffcccc;
+        }
+        a {
+            color: #b30000;
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-  <h1>문제가 발생하였습니다.</h1>
+<div class="error-box">
+    <h1>🚫 Invalid request.</h1>
+    <p><a href="/">Back to Home</a></p>
+</div>
 </body>
 </html>

@@ -20,26 +20,15 @@ public class Friend extends BaseEntity {
     @Column(name = "friend_id")
     private Long id;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "friend_email",
-//            referencedColumnName = "member_email")
-//    private Member friend;
-
-//    어떻게 매핑은 email 로 되지만 Member 객체 타입인거지 ?
-
-//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "my_email",
             referencedColumnName = "member_email")
     private Member me;
 
-//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "friend_email",
             referencedColumnName = "member_email")
     private Member newFriend;
-
-
 
     public Friend() {
     }

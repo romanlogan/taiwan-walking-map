@@ -26,7 +26,6 @@ public class RegisterFormDto {
     @NotBlank(message = "名字 - 必要")
     private String name;
 
-
     @NotBlank(message = "密碼 - 必要")
     @Length(min=8, max=16, message = "密碼必須 8字以上, 16字一下")
     private String password;
@@ -34,20 +33,17 @@ public class RegisterFormDto {
     @NotEmpty(message = "地址 - 必要")
     private String address;
 
-//    private String nickName;
-
     @NotBlank(message = "電話號碼 - 必要")
     private String phoneNumber;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "電話號碼 - 必要")
+    @NotNull(message = "生日 - 必要")
     private LocalDate dateOfBirth;
 
-    @Range(min = 0, max = 2 ,message = "形式錯誤（性別）")
-    @NotNull(message = "電話號碼 - 必要")
-    private Integer gender;
+    @NotBlank(message = "性別 - 必要")
+    private String gender;
 
-    @NotNull(message = "電話號碼 - 必要")
+    @NotNull(message = "廣告 - 必要")
     private Boolean acceptReceiveAdvertising;
 
     @Override
@@ -68,7 +64,7 @@ public class RegisterFormDto {
     }
 
     @Builder
-    public RegisterFormDto(String email, String name, String password, String address, String phoneNumber, LocalDate dateOfBirth, Integer gender, Boolean acceptReceiveAdvertising) {
+    public RegisterFormDto(String email, String name, String password, String address, String phoneNumber, LocalDate dateOfBirth, String gender, Boolean acceptReceiveAdvertising) {
         this.email = email;
         this.name = name;
         this.password = password;

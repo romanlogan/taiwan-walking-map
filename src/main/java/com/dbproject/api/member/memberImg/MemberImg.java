@@ -19,9 +19,9 @@ public class MemberImg extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String imgName;     //이미지 파일명
-    private String oriImgName;      //원본 이미지 파일명
-    private String imgUrl;      //이미지 조회 경로
+    private String imgName;     //Image file name
+    private String oriImgName;      //Original image file name
+    private String imgUrl;      //Image lookup path
 
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name="member_email")

@@ -39,17 +39,10 @@ public class MemberService implements UserDetailsService {
     private final HangOutRepository hangOutRepository;
     private final InviteHangOutRepository inviteHangOutRepository;
 
-
-
-
     public void saveMember(RegisterFormDto registerFormDto, PasswordEncoder passwordEncoder) {
 
-        Member member;
         checkDuplicateMember(registerFormDto);
-
-        member = Member.createMember(registerFormDto, passwordEncoder);
-
-        memberRepository.save(member);
+        memberRepository.save(Member.createMember(registerFormDto, passwordEncoder));
     }
 
     private void checkDuplicateMember(RegisterFormDto registerFormDto) {
@@ -57,16 +50,15 @@ public class MemberService implements UserDetailsService {
         Member member = memberRepository.findByEmail(registerFormDto.getEmail());
 
         if (member != null) {
-            throw new DuplicateMemberException("동일한 아이디가 존재 합니다.");
-//            throw new IllegalArgumentException("동일한 아이디가 존재 합니다.");
+            throw new DuplicateMemberException("An identical ID already exists.");
         }
     }
 
-    public MyProfileDto findMe(String name) {
+    @Transactional(readOnly = true)
+    public MyProfileDto getMyProfile(String name) {
 
         Member member = memberRepository.findByEmail(name);
         Optional<MemberImg> memberImg = memberImgRepository.findByMemberEmail(name);
-
         return MyProfileDto.from(member,memberImg);
     }
 
@@ -86,27 +78,23 @@ public class MemberService implements UserDetailsService {
                 .build();
     }
 
-//    @Transactional
     public void updateProfile(String email, UpdateProfileRequest updateProfileDto) {
 
         Member member = memberRepository.findByEmail(email);
 
         if (updateProfileDto.getAddress().equals(member.getAddress())) {
-            throw new DuplicateUpdateMemberAddressException("이전 주소와 같습니다.");
+            throw new DuplicateUpdateMemberAddressException("Same as previous address.");
         } else if (updateProfileDto.getName().equals(member.getName())) {
-            throw new DuplicateUpdateMemberNameException("이전 이름과 같습니다.");
+            throw new DuplicateUpdateMemberNameException("Same as previous name.");
         }
 
         member.setName(updateProfileDto.getName());
         member.setAddress(updateProfileDto.getAddress());
-
     }
 
-    public Long deleteMember(String email) {
+    public void deleteMember(String email) {
 
-//        에러 코드 바뀐거 확인 완료 -> member 와 연관된 다른 데이터도 삭제 필요
         commentRepository.deleteByMemberEmail(email);
-//    양방향이 아닌 관계는 수동으로 삭제 해야 하는 건가 ?
         favoriteRepository.deleteByMemberEmail(email);
         friendRepository.deleteByEmail(email);
         friendRequestRepository.deleteByEmail(email);
@@ -116,12 +104,7 @@ public class MemberService implements UserDetailsService {
 
         Member member = memberRepository.findByEmail(email);
         memberRepository.deleteByEmail(email);
-
-        return 1L;
     }
-
-
-
 }
 
 

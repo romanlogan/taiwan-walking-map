@@ -43,11 +43,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long>{
             " order by c.regTime desc")
     List<Comment> findByMemberEmail(@Param("email") String email);
 
-    /**
-     * Whenever you are trying to modify a record in db, you have to mark it as @Modifying, which instruct Spring that it can modify existing records.
-     *
-     * The modifying queries can only use void or int/Integer as return type, otherwise it will throw an exception.
-     */
     @Modifying
     @Query("delete from Comment c" +
             " where c.member.email = :email")

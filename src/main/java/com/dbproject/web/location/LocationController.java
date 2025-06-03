@@ -40,7 +40,7 @@ public class LocationController {
                            Model model) {
 
         LocationDtlResponse response;
-        String loggedInUserId;
+        String loggedInUserId;              // ㅇㅕ기를 모델에 담아서 프론트로 보내서 현재 로그인 한 유저와 같으면
         String name = null;
 
         if (principal == null) {
@@ -54,6 +54,7 @@ public class LocationController {
 
 
         try {
+
             response = locationService.getLocationDtl(attractionId, name);
 
         } catch (LocationNotExistException e) {
@@ -83,16 +84,13 @@ public class LocationController {
         } catch (TownSearchConditionNotValidException e) {
 
             setResponseAndModel(request, model, pageable, response, e);
-
             return "location/recommendLocationList";
 
         } catch (RegionSearchConditionNotValidException e){
 
             request.setSearchArrival("臺北市");
             setResponseAndModel(request, model, pageable, response, e);
-
             return "location/recommendLocationList";
-
         }
 
         addBasicAttributeInModel(model, response);

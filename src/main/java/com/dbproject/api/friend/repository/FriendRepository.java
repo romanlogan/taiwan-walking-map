@@ -13,7 +13,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long>,
         QuerydslPredicateExecutor<Friend>,
         FriendRepositoryCustom {
 
-
     @Query("select f from Friend f"+
             " where f.me.email = :email"+
             " order by f.newFriend.name asc")
@@ -26,6 +25,4 @@ public interface FriendRepository extends JpaRepository<Friend, Long>,
             " or f.newFriend.email = :email")
     void deleteByEmail(@Param("email") String email);
 
-
-    //친구 삭제
 }

@@ -15,7 +15,6 @@ import javax.validation.constraints.NotNull;
 public class AddFriendRequest {
 
     @NotBlank(message = "friendEmail value is required")
-//    @Email(message = "please enter email format")
     private String friendEmail;
 
     @Length(max = 255, message = "memo can only have a maximum of 255 characters")

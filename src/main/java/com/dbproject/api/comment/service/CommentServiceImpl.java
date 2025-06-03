@@ -25,6 +25,7 @@ public class CommentServiceImpl implements CommentService{
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final LocationRepository locationRepository;
+
     public Long createComment(CreateCommentRequest request, String email) {
 
         checkDuplicateCreateComment(request,email);
@@ -48,7 +49,7 @@ public class CommentServiceImpl implements CommentService{
         Optional<Comment> optionalComment = commentRepository.findDuplicateComment(createCommentRequest.getLocationId(), email);
 
         if (optionalComment.isPresent()) {
-            throw new DuplicateCreateCommentException("이미 댓글을 생성했습니다.");
+            throw new DuplicateCreateCommentException("A comment has already been posted.");
         }
     }
 
@@ -68,7 +69,7 @@ public class CommentServiceImpl implements CommentService{
     private static void checkCommentExist(Comment savedComment) {
 
         if (savedComment == null) {
-            throw new CommentNotExistException("댓글이 존재하지 않습니다.");
+            throw new CommentNotExistException("This comment does not exist.");
         }
     }
 
@@ -91,19 +92,23 @@ public class CommentServiceImpl implements CommentService{
     private Optional<Comment> getCommentFrom(Integer commentId) {
 
         Optional<Comment> comment = commentRepository.findById(Long.valueOf(commentId));
+
         if (comment.isEmpty()) {
-            throw new CommentNotExistException("댓글이 존재하지 않습니다.");
+            throw new CommentNotExistException("This comment does not exist.");
         }
 
         return comment;
     }
 
+//    get next comment page
     public GetNextCommentListResponse getNextCommentList(GetNextCommentListRequest request){
 
         Pageable pageable = PageRequest.of(request.getPage(), 5);
 
+//        get comment list with member and member_img
         List<CommentDto> commentDtoList = commentRepository.findByLocationIdWithJoin(request.getLocationId(), pageable);
 
+//        if member_img does not exist, set default img (Saving member photos is not mandatory)
         for (CommentDto comment : commentDtoList) {
             if (comment.getImgUrl() == null) {
                 comment.setImgUrl("/img/noImg.jpg");

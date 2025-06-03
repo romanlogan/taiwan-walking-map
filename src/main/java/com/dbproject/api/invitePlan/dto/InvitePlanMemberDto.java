@@ -15,10 +15,8 @@ public class InvitePlanMemberDto {
     private String email;
     private String name;
     private String nickName;
-    private Integer gender;
-
+    private String gender;
     private InvitePlanStatus invitePlanStatus;
-
     private String supply;      //누가 가져가야할지 정해진 준비
 
 
@@ -33,7 +31,7 @@ public class InvitePlanMemberDto {
     }
 
     @Builder
-    public InvitePlanMemberDto(String email, String name, String nickName, Integer gender, InvitePlanStatus invitePlanStatus, String supply) {
+    public InvitePlanMemberDto(String email, String name, String nickName, String gender, InvitePlanStatus invitePlanStatus, String supply) {
         this.email = email;
         this.name = name;
         this.nickName = nickName;

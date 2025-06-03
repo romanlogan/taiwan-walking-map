@@ -13,8 +13,6 @@ import java.util.List;
 public interface FavoriteRepository extends JpaRepository<FavoriteLocation, Long>,
                                             QuerydslPredicateExecutor<FavoriteLocation>,
                                              FavoriteRepositoryCustom {
-
-
     @Query("select fl from FavoriteLocation fl" +
             " where fl.location.locationId = :locationId" +
             " and fl.member.email = :email")
@@ -41,7 +39,8 @@ public interface FavoriteRepository extends JpaRepository<FavoriteLocation, Long
     void deleteByMemberEmail(@Param("email") String email);
 
 
-//    @Query("select count(*) from FavoriteLocation fl")
-    long count();
+    @Query("select count(fl) from FavoriteLocation fl" +
+    " where fl.member.email = :email")
+    long getTotalFavoriteCount(@Param("email") String email);
 
 }

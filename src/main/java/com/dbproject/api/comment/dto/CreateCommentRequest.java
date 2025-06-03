@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 public class CreateCommentRequest {
 
     @NotNull(message = "locationId value is required")
-    @Length(min = 20, max = 20, message = "locationId requires 20 characters")  //여기서 Blank 체크 까지 해주는듯
+    @Length(min = 20, max = 20, message = "locationId requires 20 characters")
     private String locationId;
 
     @NotBlank(message = "content value is required")

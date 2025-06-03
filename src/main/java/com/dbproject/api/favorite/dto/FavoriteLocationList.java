@@ -11,7 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FavoriteLocationList {
 
-    //location 에서 필요한 attr 가져오기
     private Long favoriteLocationId;
     private String locationId;
     private String name;
@@ -21,7 +20,6 @@ public class FavoriteLocationList {
 
     private String memo;
 
-    //나중에 쿼리로 검색 할 수 있게
     private String ticketInfo;
     private String region;
     private String openTime;

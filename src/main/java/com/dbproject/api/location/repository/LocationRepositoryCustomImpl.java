@@ -29,7 +29,6 @@ public class LocationRepositoryCustomImpl implements LocationRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    //    Q cannot find symbol 로 일단 주석 처리
     @Override
     public Page<RecommendLocationDto> getLocationPageByCity(RecommendLocationListRequest request, Pageable pageable){
 

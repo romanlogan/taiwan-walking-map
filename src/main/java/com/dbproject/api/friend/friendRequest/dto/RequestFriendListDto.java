@@ -17,7 +17,6 @@ public class RequestFriendListDto {
 
     private FriendRequestStatus friendRequestStatus;
 
-
     public RequestFriendListDto() {
 
     }

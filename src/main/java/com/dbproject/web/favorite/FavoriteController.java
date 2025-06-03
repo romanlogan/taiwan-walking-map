@@ -38,9 +38,8 @@ public class FavoriteController {
 
     private final FavoriteService favoriteService;
 
-    @PostMapping("/addFavoriteList")
+    @PostMapping
     public ResponseEntity addFavoriteList(
-//            requestBody 안쓰면 파라미터 못받아오니 조심하기
             @Valid @RequestBody AddFavoriteLocationRequest addFavoriteLocationRequest,
             BindingResult bindingResult,
             Principal principal) {
@@ -57,17 +56,14 @@ public class FavoriteController {
             favoriteId = favoriteService.addFavoriteList(addFavoriteLocationRequest, email);
         } catch (DuplicateFavoriteLocationException e) {
 
-
             Map<String, ErrorDetail> errorMap = new HashMap<>();
             ErrorDetail errorDetail = new ErrorDetail(null,e.getMessage());
             errorMap.put("DuplicateFavoriteLocationException", errorDetail);
 
-//            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
             return new ResponseEntity(ApiResponse.of(
                     HttpStatus.BAD_REQUEST,
                     null,
                     errorMap
-//                    List.of(e.getMessage())
             ), HttpStatus.BAD_REQUEST);
         }
 
@@ -80,18 +76,18 @@ public class FavoriteController {
     }
 
     @GetMapping({"/favoriteList","/favoriteList/{page}"})
-    public String getFavoriteLocationList(@PathVariable("page") Optional<Integer> optionalPage,
+    public String getFavoriteLocationList(@PathVariable("page") Optional<Integer> enteredPageParameter,
                                           Principal principal,
                                           Model model) {
-        //초과된 page 가 파라미터로 들어오면? 예 page = 1000000000000
-        //최대 페이지를 계산 하여 마지막 페이지를 보여준다
-        Integer size = 5;
-        Integer page = null;
-        page = calculatePage(optionalPage, size);
 
-//        Pageable pageable = PageRequest.of(optionalPage.isPresent() ? optionalPage.get() : 0, 5 );
-        Pageable pageable = PageRequest.of(page , size );
+        //If the excess page is entered as a parameter (for example page = 100000)
+        //Calculate the maximum page and show the last page
         String email = principal.getName();
+        Integer pageSize = 5;
+        Integer page = null;
+        page = calculatePage(enteredPageParameter, pageSize, email);
+
+        Pageable pageable = PageRequest.of(page , pageSize);
 
         FavoriteLocationListResponse response = favoriteService.getFavoriteLocationList(pageable, email);
 
@@ -102,14 +98,17 @@ public class FavoriteController {
         return "favorite/favoriteList";
     }
 
-    private Integer calculatePage(Optional<Integer> optionalPage, Integer size) {
+//
+    private Integer calculatePage(Optional<Integer> enteredPageParameter, Integer pageSize, String email) {
         Integer page;
-        Integer maxPage = favoriteService.getMaxPage(size);
-        if (optionalPage.isPresent()) {
-            if (optionalPage.get() > maxPage) {
+        Integer maxPage = favoriteService.getMaxPage(pageSize, email);      // calculate maximum page of user favorite list
+        if (enteredPageParameter.isPresent()) {
+            if (enteredPageParameter.get() > maxPage) {
+                // if parameter that received from user is bigger than maximum page of user favorite list,
+                // return maximum page of user favorite list
                 page = maxPage;
             }else{
-                page = optionalPage.get();
+                page = enteredPageParameter.get();
             }
         }else {
             page = 0;
@@ -117,24 +116,19 @@ public class FavoriteController {
         return page;
     }
 
-    @DeleteMapping("/deleteFavorite")
+    @DeleteMapping
     public ResponseEntity deleteFavoriteLocation(@Valid @RequestBody DeleteFavoriteLocationRequest deleteFavoriteLocationRequest,
-                                                 BindingResult bindingResult,
-                                                 Principal principal) {
+                                                 BindingResult bindingResult) {
 
         if(bindingResult.hasErrors()){
-            ResponseEntity responseEntity = CheckBindingResult.induceErrorInAjax(bindingResult);
-
-            return responseEntity;
+            return CheckBindingResult.induceErrorInAjax(bindingResult);
         }
-
 
         try {
             favoriteService.deleteFavoriteLocation(deleteFavoriteLocationRequest);
         } catch (FavoriteLocationNotExistException e) {
             return null;
         }
-
 
         return new ResponseEntity(ApiResponse.of(
                 HttpStatus.OK,
@@ -144,9 +138,7 @@ public class FavoriteController {
     }
 
 
-
-
-    @PutMapping("/updateMemo")
+    @PutMapping("/memo")
     public ResponseEntity updateMemo(@Valid @RequestBody UpdateMemoRequest updateMemoRequest,
                                      BindingResult bindingResult,
                                      Principal principal) {

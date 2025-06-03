@@ -52,7 +52,7 @@ class MemberControllerTest {
         registerFormDto.setAddress("서울시 마포구 합정동");
         registerFormDto.setPassword(password);
         registerFormDto.setPhoneNumber("0912345678");
-        registerFormDto.setGender(1);
+        registerFormDto.setGender("1");
         registerFormDto.setDateOfBirth(LocalDate.now());
         registerFormDto.setAcceptReceiveAdvertising(true);
 
@@ -98,7 +98,7 @@ class MemberControllerTest {
         registerFormDto.setAddress("서울시 마포구 합정동");
         registerFormDto.setPassword("12341234");
         registerFormDto.setPhoneNumber("0912345678");
-        registerFormDto.setGender(1);
+        registerFormDto.setGender("1");
         registerFormDto.setDateOfBirth(LocalDate.now());
         registerFormDto.setAcceptReceiveAdvertising(true);
 
@@ -126,7 +126,7 @@ class MemberControllerTest {
         registerFormDto.setAddress("서울시 마포구 합정동");
         registerFormDto.setPassword("12341234");
         registerFormDto.setPhoneNumber("0912345678");
-        registerFormDto.setGender(1);
+        registerFormDto.setGender("1");
         registerFormDto.setDateOfBirth(LocalDate.now());
         registerFormDto.setAcceptReceiveAdvertising(true);
 

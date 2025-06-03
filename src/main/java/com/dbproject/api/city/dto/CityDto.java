@@ -25,7 +25,6 @@ public class CityDto {
     private List<LocationDto> locationDtoList = new ArrayList<>();
     private List<RouteDto> routeDtoList = new ArrayList<>();
 
-
     public CityDto() {
     }
 

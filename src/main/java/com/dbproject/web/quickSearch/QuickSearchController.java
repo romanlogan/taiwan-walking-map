@@ -107,7 +107,7 @@ public class QuickSearchController {
     }
 
 
-    @GetMapping("/quickSearch/getTownList")
+    @GetMapping("/quickSearch/townList")
     public ResponseEntity getTownList(@RequestParam("cityName") String cityName) {
 
         List<String> townList = locationRepository.findTownListByRegion(cityName);

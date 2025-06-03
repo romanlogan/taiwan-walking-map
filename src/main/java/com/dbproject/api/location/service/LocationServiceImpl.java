@@ -1,5 +1,6 @@
 package com.dbproject.api.location.service;
 
+import com.dbproject.api.comment.Comment;
 import com.dbproject.api.comment.dto.CommentDto;
 import com.dbproject.api.favorite.FavoriteLocation;
 import com.dbproject.api.comment.repository.CommentRepository;
@@ -43,23 +44,19 @@ public class LocationServiceImpl implements LocationService {
     public LocationDtlResponse getLocationDtl(String locationId, String name) {
 
         Pageable pageable = PageRequest.of(0, 5);
-
-//      locaion query
         Location location = getLocationById(locationId);
         checkLocationExists(location);
-        LocationDtlResponse locationDtlResponse = LocationDtlResponse.create(location);
+        LocationDtlResponse response = LocationDtlResponse.create(location);
 
-        setCommentList(locationId, locationDtlResponse,pageable);
+        setCommentList(locationId, response, pageable);         //3번의 쿼리를 1번으로 줄임
 
-//        로그인 유저
+//        로그인 한 유저인지 확인
         if (name != null) {
-            //로그인 유저는 이 장소가 favorite 에 등록 되어 있는지 확인
-            checkSavedFavoriteLocation(location, locationDtlResponse, name);
-            // 로그인 한 유저의 친구 목록을 가져오기
-//            getFriendList(name, locationDtlResponse);
+            checkSavedFavoriteLocation(location, response, name);        //로그인 유저는 이 장소가 favorite 에 등록 되어 있는지 확인
+//          getFriendList(name, locationDtlResponse);       // 로그인 한 유저의 친구 목록을 가져오기
         }
 
-        return locationDtlResponse;
+        return response;
     }
 
     private Location getLocationById(String locationId) {
@@ -70,7 +67,7 @@ public class LocationServiceImpl implements LocationService {
 
     private static void checkLocationExists(Location location) {
         if (location == null) {
-            throw new LocationNotExistException("Location 이 존재하지 않습니다.");
+            throw new LocationNotExistException("location not exist");
         }
     }
 
@@ -88,6 +85,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     private void setCommentList(String locationId, LocationDtlResponse locationDtlResponse,Pageable pageable) {
+
 
         List<CommentDto> commentDtoList = commentRepository.findByLocationIdWithJoin(locationId, pageable);
 

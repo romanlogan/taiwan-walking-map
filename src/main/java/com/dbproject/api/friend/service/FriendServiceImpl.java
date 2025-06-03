@@ -54,7 +54,9 @@ public class FriendServiceImpl implements FriendService{
         Member respondent = memberRepository.findByEmail(addFriendRequest.getFriendEmail());
 
         checkRespondentExist(respondent);
-        checkHasBeenRequested(requester, respondent);
+        checkHasBeenRequested(requester, respondent);           // Check that, i have already sent a friend request to this respondent
+
+//        need add situation 2 code (reference test code)
 
         FriendRequest savedRequest = createAndSaveFriendRequest(addFriendRequest, requester, respondent);
         return savedRequest.getId();
@@ -63,21 +65,20 @@ public class FriendServiceImpl implements FriendService{
     private FriendRequest createAndSaveFriendRequest(AddFriendRequest addFriendRequest, Member requester, Member respondent) {
 
         FriendRequest friendRequest = FriendRequest.createFriendRequest(requester, respondent, addFriendRequest.getMemo());
-
         return friendRequestRepository.save(friendRequest);
     }
 
     private static void checkRespondentExist(Member respondent) {
         if (respondent == null) {
-            throw new MemberNotExistException("존재하지 않는 유저 입니다.");
+            throw new MemberNotExistException("user does not exist.");
         }
     }
 
-
     private void checkHasBeenRequested(Member requester, Member respondent) {
+
         FriendRequest savedFriendRequest = friendRequestRepository.findByRequesterAndRespondent(requester, respondent);
         if (savedFriendRequest != null) {
-            throw new DuplicateFriendRequestException("이미 친구 요청한 사용자 입니다.");
+            throw new DuplicateFriendRequestException("This user has already sent a friend request.");
         }
     }
 
@@ -95,7 +96,7 @@ public class FriendServiceImpl implements FriendService{
         Member respondent = friendRequest.getRespondent();
 
         Friend friend = createAndSaveFriend(requester, respondent);
-        createAndSaveFriend(respondent, requester);     //reverse
+        createAndSaveFriend(respondent, requester);     // save reverse friend relation
 
         return friend.getId();
     }
@@ -113,28 +114,29 @@ public class FriendServiceImpl implements FriendService{
         checkFriendRequestExist(optionalFriendRequest);
 
         FriendRequest friendRequest = optionalFriendRequest.get();
-        friendRequest.changeStatusTo(status);
-
+        friendRequest.changeStatus(status);
         return friendRequest;
     }
 
     private static void checkFriendRequestExist(Optional<FriendRequest> optionalFriendRequest) {
         if (optionalFriendRequest.isEmpty()) {
-            throw new FriendRequestNotExistException("존재하지 않는 친구 요청 입니다.");
+            throw new FriendRequestNotExistException("This friend request does not exist");
         }
     }
 
 
     public void rejectFriendRequest(RejectFriendRequest deleteFriendRequest) {
-        //변경 감지가 동작 하나 ? -> yes
 
-//        reject 로 변경하고 삭제X
+//        Change to REJECT status and do not delete
         getChangedStatusFriendRequest(deleteFriendRequest.getFriendRequestId(), FriendRequestStatus.REJECTED);
     }
 
+// get my friend list
     public FriendListResponse getFriendList(String email) {
 
         List<FriendDto> friendDtoList = getFriendDtoList(email);
+
+//        get favorite list for hang up feature (send hang up request to friend)
         List<FavoriteLocationDto> favoriteLocationDtoList = getFavoriteLocationDtoList(email);
 
         return FriendListResponse.create(friendDtoList, favoriteLocationDtoList);
@@ -151,7 +153,8 @@ public class FriendServiceImpl implements FriendService{
     private void createAndAddFriendDtoTo(List<FriendDto> friendDtoList, String email) {
 
         checkIsKnownUser(email);
-        //N+1 성능 장애 예상 지점(친구 1명마다 memberImg table 를 뒤져서 찾는 쿼리)
+
+//       predict to N+1 problem point (query to search memberImg table for each friend)
         List<Friend> friendList = friendRepository.getFriendList(email);
         for (Friend friend : friendList) {
             friendDtoList.add(createFriendDtoFrom(friend));
@@ -161,7 +164,7 @@ public class FriendServiceImpl implements FriendService{
     private void checkIsKnownUser(String email) {
         Member member = memberRepository.findByEmail(email);
         if (member == null) {
-            throw new UnknownUserTryGetFriendListException("존재하지 않는 유저는 친구 목록을 가져올 수 없습니다.");
+            throw new MemberNotExistException("This member does not exist.");
         }
     }
 
@@ -174,19 +177,14 @@ public class FriendServiceImpl implements FriendService{
     private List<FavoriteLocationDto> getFavoriteLocationDtoList(String email) {
 
         List<FavoriteLocationDto> favoriteLocationDtoList = new ArrayList<>();
-        createAndAddFavoriteLocationDtoTo(favoriteLocationDtoList, email);
-
-        return favoriteLocationDtoList;
-    }
-
-    private void createAndAddFavoriteLocationDtoTo(List<FavoriteLocationDto> favoriteLocationDtoList, String email) {
-
         List<FavoriteLocation> favoriteLocationList = favoriteRepository.findFavoriteLocationListByEmail(email);
 
-
+        // need refactoring to get dtos directly
         for (FavoriteLocation favoriteLocation : favoriteLocationList) {
             favoriteLocationDtoList.add(FavoriteLocationDto.of(favoriteLocation));
         }
+
+        return favoriteLocationDtoList;
     }
 
 }

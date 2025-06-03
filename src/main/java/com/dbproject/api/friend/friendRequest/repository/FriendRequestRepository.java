@@ -13,10 +13,6 @@ public interface FriendRequestRepository extends JpaRepository<FriendRequest, Lo
         QuerydslPredicateExecutor<FavoriteLocation>,
         FriendRequestRepositoryCustom {
 
-
-//    checkDuplicate
-//    email 로 찾는게 더 빠를까 ?
-//    쉽게 생각하면 email 로 찾는게 더 빠를것 같긴 한데 내부에서 한번더 쿼리가 나가는건가 ?
     FriendRequest findByRequesterAndRespondent(Member requester,Member respondent);
 
     @Query("select fr from FriendRequest fr" +

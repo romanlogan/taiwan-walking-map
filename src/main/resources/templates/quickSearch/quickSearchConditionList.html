@@ -184,7 +184,7 @@
                             console.log(jqXHR.status + "\n" + jqXHR.responseText + "\n" + error)
 
                             if (jqXHR.status == '401') {
-                                alert('로그인 후 이용해주세요');
+                                alert('請登入後使用');
                                 location.href = '/members/login';
                             } else {
                                 alert(jqXHR.status + "\n" + jqXHR.responseText + "\n" + error);
@@ -223,7 +223,7 @@
 
 
                 $.ajax({
-                    url      : '/quickSearch/getTownList?cityName='+selectedCity,
+                    url      : '/quickSearch/townList?cityName='+selectedCity,
                     type     : "GET",
                     cache   : false,
                     success  : function(result, status, response){
@@ -254,7 +254,7 @@
                         console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
 
                         if(jqXHR.status == '401'){
-                            alert('로그인 후 이용해주세요');
+                            alert('請登入後使用');
                             location.href='/members/login';
                         } else{
                             alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
@@ -532,7 +532,7 @@
                     console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
 
                     if(jqXHR.status == '401'){
-                        alert('로그인 후 이용해주세요');
+                        alert('請登入後使用');
                         location.href='/members/login';
                     } else{
                         alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);

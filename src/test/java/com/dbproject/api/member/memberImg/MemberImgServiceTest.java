@@ -1,6 +1,6 @@
 package com.dbproject.api.member.memberImg;
 
-import com.dbproject.api.File.FileService;
+import com.dbproject.api.File.FileServiceImpl;
 import com.dbproject.api.member.Member;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.dto.RegisterFormDto;
@@ -38,10 +38,10 @@ class MemberImgServiceTest {
     private MemberImgRepository memberImgRepository;
 
     @Autowired
-    private MemberImgService memberImgService;
+    private MemberImgServiceImpl memberImgService;
 
     @MockBean
-    private FileService fileService;
+    private FileServiceImpl fileService;
 
 
     @BeforeEach

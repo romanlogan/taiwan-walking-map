@@ -30,7 +30,6 @@ public class Location {
     // 즐겨찾기 개수
     private Integer favoriteCount;
 
-
     private String zone;
 
     private String tolDescribe;

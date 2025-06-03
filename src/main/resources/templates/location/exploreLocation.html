@@ -67,7 +67,7 @@
 
 
           $.ajax({
-            url: "/comment/getNextCommentList?locationId=" + locationId + "&page=" + page,
+            url: "/comment/nextList?locationId=" + locationId + "&page=" + page,
             type: "GET",
             dataType: "json",
             success: function (data, status) {
@@ -149,7 +149,7 @@
               console.log(jqXHR.status + "\n" + jqXHR.responseText + "\n" + error)
 
               if (jqXHR.status == '401') {
-                alert('로그인 후 이용해주세요');
+                alert('請登入後使用');
                 location.href = '/members/login';
               } else {
                 alert(jqXHR.status + "\n" + jqXHR.responseText + "\n" + error);
@@ -186,7 +186,7 @@
         var param = JSON.stringify(paramData);
 
         $.ajax({
-          url      : "/favorite/addFavoriteList",
+          url      : "/favorite",
           type     : "POST",
           contentType : "application/json",
           data     : param,
@@ -214,7 +214,7 @@
             console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
 
             if(jqXHR.status == '401'){
-              alert('로그인 후 이용해주세요');
+              alert('請登入後使用');
               location.href='/members/login';
             } else{
               alert(jqXHR.status);
@@ -241,7 +241,7 @@
         var param = JSON.stringify(paramData);
 
         $.ajax({
-          url      : "/comment/createComment",
+          url      : "/comment",
           type     : "POST",
           contentType : "application/json",
           data     : param,
@@ -291,7 +291,7 @@
             console.log("jqXHR : "+jqXHR);
 
             if(jqXHR.status == '401'){
-              alert('로그인 후 이용해주세요');
+              alert('請登入後使用');
               location.href='/members/login';
             } else{
               alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
@@ -319,7 +319,7 @@
         var param = JSON.stringify(paramData);
 
         $.ajax({
-          url      : "/comment/updateComment",
+          url      : "/comment",
           type     : "PUT",
           contentType : "application/json",
           data     : param,
@@ -330,7 +330,7 @@
           dataType : "json",
           cache   : false,
           success  : function(result, status){
-            alert("확인되었습니다.");
+            alert("修改已完成");
             location.href='/location/'+locationId;
 
           },
@@ -339,7 +339,7 @@
             console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
 
             if(jqXHR.status == '401'){
-              alert('로그인 후 이용해주세요');
+              alert('請登入後使用');
               location.href='/members/login';
             } else{
               alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);
@@ -423,7 +423,7 @@
       var param = JSON.stringify(paramData);
 
       $.ajax({
-        url      : "/comment/deleteComment",
+        url      : "/comment",
         type     : "DELETE",
         contentType : "application/json",
         data     : param,
@@ -434,7 +434,7 @@
         dataType : "json",
         cache   : false,
         success  : function(result, status){
-          alert("확인되었습니다.");
+          alert("刪除已完成");
           location.href='/location/'+locationId;
 
         },
@@ -443,7 +443,7 @@
           console.log(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error)
 
           if(jqXHR.status == '401'){
-            alert('로그인 후 이용해주세요');
+            alert('請登入後使用');
             location.href='/members/login';
           } else{
             alert(jqXHR.status+"\n"+jqXHR.responseText+"\n"+error);

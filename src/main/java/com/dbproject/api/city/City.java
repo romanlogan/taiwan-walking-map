@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 public class City {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="city_id")
     private Long id;
 
@@ -35,7 +34,5 @@ public class City {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="city_img_id")
     private CityImg cityImg;
-
-
 
 }

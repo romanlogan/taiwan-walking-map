@@ -100,7 +100,7 @@ class FriendRequestRepositoryCustomImplTest {
 
     private void acceptFriendRequest(Long id) {
         FriendRequest friendRequest = friendRequestRepository.findById(id).get();
-        friendRequest.changeStatusTo(FriendRequestStatus.ACCEPTED);
+        friendRequest.changeStatus(FriendRequestStatus.ACCEPTED);
     }
 
     @DisplayName("receive requests from two users, reject one request, and retrieving received friend request list page, there are one results.")
@@ -127,7 +127,7 @@ class FriendRequestRepositoryCustomImplTest {
 
     private void rejectFriendRequest(Long id) {
         FriendRequest friendRequest = friendRequestRepository.findById(id).get();
-        friendRequest.changeStatusTo(FriendRequestStatus.REJECTED);
+        friendRequest.changeStatus(FriendRequestStatus.REJECTED);
     }
 
 

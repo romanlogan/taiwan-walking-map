@@ -1,0 +1,121 @@
+
+CREATE TABLE city(
+  city_id       bigint NOT NULL ,
+  region        varchar(10) NOT NULL
+  ,city_detail  varchar(200)
+  ,position_lat NUMERIC(9,6) NOT NULL
+  ,position_lon NUMERIC(10,6) NOT NULL,
+  city_img_id   INTEGER NOT NULL,
+  PRIMARY KEY (city_id),
+  KEY `city_img_id` (`city_img_id`),
+  CONSTRAINT `city_ibfk_1` FOREIGN KEY (`city_img_id`) REFERENCES `city_img` (`city_img_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE city_img(
+	city_img_id     INTEGER NOT NULL PRIMARY KEY
+    ,region         varchar(10)
+    ,img_url        varchar(255)
+    ,img_name       varchar(50)
+    ,rep_img_yn     varchar(1)
+);
+
+CREATE TABLE favorite_location (
+  `favorite_location_id`    bigint NOT NULL AUTO_INCREMENT,
+  `member_email`            varchar(30) NOT NULL,
+  `location_id`             varchar(20) NOT NULL,
+  `memo`                    varchar(255) DEFAULT NULL,
+  `reg_time`                datetime(6) DEFAULT NULL,
+  `update_time`             datetime(6) DEFAULT NULL,
+  `created_by`              varchar(30) DEFAULT NULL,
+  `modified_by`              varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`favorite_location_id`),
+  KEY `location_id` (`location_id`),
+  KEY `member_email` (`member_email`),
+  CONSTRAINT `favorite_location_ibfk_1` FOREIGN KEY (`location_id`) REFERENCES `location` (`location_id`),
+  CONSTRAINT `favorite_location_ibfk_2` FOREIGN KEY (`member_email`) REFERENCES `member` (`member_email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `member` (
+  `member_email`        varchar(30) NOT NULL,
+  `reg_time`            datetime(6) DEFAULT NULL,
+  `update_time`         datetime(6) DEFAULT NULL,
+  `created_by`          varchar(30) DEFAULT NULL,
+  `modified_by`          varchar(30) DEFAULT NULL,
+  `address`             varchar(255) DEFAULT NULL,
+  `name`                varchar(30) DEFAULT NULL,
+  `password`            varchar(255) DEFAULT NULL,
+  `role`                varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`member_email`)
+) ENGINE=InnoDB
+
+CREATE TABLE `member_img` (
+  `member_img_id`       bigint NOT NULL auto_increment,
+  `reg_time`            datetime(6) DEFAULT NULL,
+  `update_time`         datetime(6) DEFAULT NULL,
+  `created_by`          varchar(255) DEFAULT NULL,
+  `modified_by`          varchar(255) DEFAULT NULL,
+  `img_name`            varchar(255) DEFAULT NULL,
+  `img_url`             varchar(255) DEFAULT NULL,
+  `ori_img_name`        varchar(255) DEFAULT NULL,
+  `member_email`         varchar(30) NOT NULL,
+  PRIMARY KEY (`member_img_id`),
+  KEY `member_email` (`member_email`),
+  CONSTRAINT `member_img_ibfk_1` FOREIGN KEY (`member_email`) REFERENCES `member` (`member_email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE location(
+   location_id     VARCHAR(20) NOT NULL PRIMARY KEY
+  ,name            VARCHAR(36) NOT NULL
+  ,zone            VARCHAR(12)
+  ,tol_describe    VARCHAR(1972) NOT NULL
+  ,description     VARCHAR(400)
+  ,tel             VARCHAR(31)
+  ,address         VARCHAR(58)
+  ,zipcode         VARCHAR(5)
+  ,region          VARCHAR(3)
+  ,town            VARCHAR(4)
+  ,travelling_info VARCHAR(200)
+  ,open_time       VARCHAR(203)
+  ,picture1        VARCHAR(119)
+  ,pic_describe1   VARCHAR(133)
+  ,picture2        VARCHAR(118)
+  ,pic_describe2   VARCHAR(200)
+  ,picture3        VARCHAR(100)
+  ,pic_describe3   VARCHAR(198)
+  ,map             VARCHAR(66)
+  ,gov             VARCHAR(10)
+  ,longitude       VARCHAR(10) NOT NULL
+  ,latitude        VARCHAR(9) NOT NULL
+  ,orgclass        VARCHAR(9)
+  ,class1          VARCHAR(2) NOT NULL
+  ,class2          VARCHAR(2)
+  ,class3          VARCHAR(2)
+  ,level           VARCHAR(1)
+  ,website         VARCHAR(127)
+  ,parking_info    VARCHAR(93)
+  ,parking_info_px VARCHAR(10)
+  ,parking_info_py VARCHAR(9)
+  ,ticket_info     VARCHAR(100)
+  ,remarks         VARCHAR(98)
+  ,keyword         VARCHAR(50)
+  ,change_time     VARCHAR(19)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE `comment` (
+  `comment_id`      bigint NOT NULL AUTO_INCREMENT,
+  `content`         varchar(255) NOT NULL,
+  `rate`            INTEGER NOT NULL,
+  `member_email`    varchar(30) NOT NULL,
+  `location_id`     varchar(20) NOT NULL,
+  `reg_time`        datetime(6) DEFAULT NULL,
+  `update_time`     datetime(6) DEFAULT NULL,
+  `created_by`      varchar(30) DEFAULT NULL,
+  `modified_by`      varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`comment_id`),
+  KEY `location_id` (`location_id`),
+  KEY `member_id` (`member_email`),
+  CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`location_id`) REFERENCES `location` (`location_id`),
+  CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`member_email`) REFERENCES `member` (`member_email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

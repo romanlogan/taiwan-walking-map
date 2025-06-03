@@ -38,11 +38,10 @@ public class MyProfileDto {
 
     public static MyProfileDto from(Member member, Optional<MemberImg> memberImg) {
 
-        String memberImgUrl;
+        //in frontend, set default img
+        String memberImgUrl = "";
         if (memberImg.isPresent()) {
             memberImgUrl = memberImg.get().getImgUrl();
-        }else{
-            memberImgUrl = "";
         }
 
         return MyProfileDto.builder()

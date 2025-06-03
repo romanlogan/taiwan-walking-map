@@ -88,7 +88,7 @@ class FriendServiceImplTest {
         assertThat(friendRequest.getFriendRequestStatus()).isEqualTo(FriendRequestStatus.WAITING);
     }
 
-    @DisplayName("if request friend to unknown member , then throw FriendNotExistException")
+    @DisplayName("if request friend to unknown member , then throw MemberNotExistException")
     @Test
     void saveFriendRequestWithNotExistFriendEmail(){
         //given
@@ -106,6 +106,11 @@ class FriendServiceImplTest {
     @DisplayName("if duplicate friend requests are made , then throw DuplicateFriendRequest ")
     @Test
     void saveFriendRequestWithDuplicateFriendRequest(){
+
+//        situation 1
+//         lee sent to brent a friend request in the past
+//        and lee sent to brent a friend request again
+
         //given
         String respondentEmail = "zxcv@zxcv.com";
         String requesterEmail = "asdf@asdf.com";
@@ -115,8 +120,31 @@ class FriendServiceImplTest {
         //when //then
         assertThatThrownBy(() -> friendService.saveFriendRequest(addFriendRequest, requesterEmail))
                 .isInstanceOf(DuplicateFriendRequestException.class)
-                .hasMessage("이미 친구 요청한 사용자 입니다.");
+                .hasMessage("This user has already sent a friend request.");
     }
+
+    @DisplayName("if duplicate friend requests are made , then throw DuplicateFriendRequest ")
+    @Test
+    void saveFriendRequestWithDuplicateFriendRequest2(){
+
+        //        situation 2
+//         lee sent to brent a friend request in the past (same past)
+//        and brent sent to lee a friend request again
+
+        //given
+        String respondentEmail = "zxcv@zxcv.com";
+        String requesterEmail = "asdf@asdf.com";
+        AddFriendRequest addFriendRequest = new AddFriendRequest(respondentEmail, "memo1");
+        friendService.saveFriendRequest(addFriendRequest, requesterEmail);
+
+        AddFriendRequest anotherAddFriendRequest = new AddFriendRequest("asdf@asdf.com", "memo1");
+
+        //when //then
+        assertThatThrownBy(() -> friendService.saveFriendRequest(anotherAddFriendRequest, "zxcv@zxcv.com"))
+                .isInstanceOf(DuplicateFriendRequestException.class)
+                .hasMessage("This user has already sent a friend request.");
+    }
+
 
     @DisplayName("친구 요청 id 로 친구를 양방향으로 생성하고 친구요청을 수락됨으로 변경한다")
     @Test

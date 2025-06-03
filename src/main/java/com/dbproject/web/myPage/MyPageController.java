@@ -21,17 +21,13 @@ import java.security.Principal;
 public class MyPageController {
 
     private final MemberService memberService;
-
     private final MemberImgService memberImgService;
 
 
     @GetMapping(value = "/profile")
     public String memberProfile(Principal principal, Model model) {
 
-        String email = principal.getName();
-
-        MyProfileDto myProfileDto = memberService.findMe(email);
-
+        MyProfileDto myProfileDto = memberService.getMyProfile(principal.getName());
         model.addAttribute("user", myProfileDto);
 
         return "myPage/myProfile";
@@ -44,7 +40,7 @@ public class MyPageController {
         //update 와 조회 를 분리
         memberService.updateProfile(principal.getName(),updateProfileRequest);
 
-        MyProfileDto myProfileDto = memberService.findMe(principal.getName());
+        MyProfileDto myProfileDto = memberService.getMyProfile(principal.getName());
 
         model.addAttribute("user", myProfileDto);
 
@@ -55,21 +51,16 @@ public class MyPageController {
     public ResponseEntity<Long> deleteMember(Principal principal) {
 
         String email = principal.getName();
-        Long memberId = memberService.deleteMember(email);
+        memberService.deleteMember(email);
 
-        return new ResponseEntity<>(memberId, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/updateMemberImg")
     public String updateMemberImg(@RequestParam("memberImgFile") MultipartFile memberImgFile,
                                           Principal principal) throws Exception{
 
-        System.out.println("------------------------------------");
-        System.out.println("start");
-        System.out.println("------------------------------------");
-
         memberImgService.updateMemberImg(memberImgFile, principal.getName());
-
 
 //        return "redirect:/myPage/profile";
         return "redirect:/";

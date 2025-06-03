@@ -8,9 +8,8 @@ import org.springframework.data.domain.Pageable;
 public interface FavoriteService {
 
     Long addFavoriteList(AddFavoriteLocationRequest addFavoriteLocationRequest, String email) throws DuplicateFavoriteLocationException;
-//    void checkDuplicateFavoriteLocation(String locationId,String email);
     FavoriteLocationListResponse getFavoriteLocationList(Pageable pageable, String email);
     void deleteFavoriteLocation(DeleteFavoriteLocationRequest request);
-    Integer getMaxPage(Integer size);
+    Integer getMaxPage(Integer size, String email);
     Long updateMemo(UpdateMemoRequest updateMemoRequest);
 }

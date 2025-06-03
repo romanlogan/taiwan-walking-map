@@ -16,7 +16,6 @@ public class UpdateProfileRequest {
 
     @NotBlank
     private String address;
-
     public UpdateProfileRequest(String name, String address) {
         this.name = name;
         this.address = address;

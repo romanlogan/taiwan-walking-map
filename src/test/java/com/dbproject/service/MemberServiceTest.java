@@ -57,7 +57,7 @@ class MemberServiceTest {
         registerFormDto.setAddress("서울 강남구");
         registerFormDto.setPhoneNumber("0912345678");
         registerFormDto.setDateOfBirth(LocalDate.parse("1996-12-10"));
-        registerFormDto.setGender(1);
+        registerFormDto.setGender("1");
         registerFormDto.setAcceptReceiveAdvertising(true);
 
 
@@ -96,7 +96,7 @@ class MemberServiceTest {
         registerFormDto.setPassword("1234");
         registerFormDto.setPhoneNumber("0912345678");
         registerFormDto.setDateOfBirth(LocalDate.parse("1996-12-10"));
-        registerFormDto.setGender(1);
+        registerFormDto.setGender("1");
         registerFormDto.setAcceptReceiveAdvertising(true);
 
         //when & then

@@ -37,18 +37,6 @@ public class LocationDtlResponse {
 
     private List<FriendDto> friendDtoList = new ArrayList<>();
 
-//      modelMapper 사용시 null 값을 매핑 불가능 -> 에러 발생
-//      location 에는 null 값들도 들어있기 때문에 modelMapper 는 맞지 않음
-
-//    private static ModelMapper modelMapper;
-//
-//    public static LocationDtlResponse of(Location location) {
-//
-//        return modelMapper.map(location, LocationDtlResponse.class);
-//
-//    }
-
-
     @Builder
     public LocationDtlResponse(String id, String name, String tolDescribe, String address, String region,String openTime, String ticketInfo, String website, String tel, String remarks, String travellingInfo, String parkingInfo, String picture1, String longitude, String latitude) {
         this.id = id;

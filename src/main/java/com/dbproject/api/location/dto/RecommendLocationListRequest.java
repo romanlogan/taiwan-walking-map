@@ -15,12 +15,10 @@ public class RecommendLocationListRequest {
     @NotBlank(message = "Arrival city name is required.")
     private String searchArrival;
 
-    //없으면 모든 검색 결과 반환, 최대 10자 까지
-    @NotNull(message = "searchQuery cannot be null")        //bindException 이 안나옴 ?
+    @NotNull(message = "searchQuery cannot be null")
 //    @Max(value = 10,message = "searchQuery can only be up to 10 characters long.")
     private String searchQuery;
 
-    //없으면 모든 검색 결과 반환, 최대 4자 까지
     @NotNull(message = "searchTown cannot be null")
 //    @Max(value = 4,message = "searchTown can only be up to 4 characters long.")
     private String searchTown;

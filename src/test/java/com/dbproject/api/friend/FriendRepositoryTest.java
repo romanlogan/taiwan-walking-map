@@ -43,7 +43,7 @@ class FriendRepositoryTest {
         registerFormDto1.setPassword("1234");
         registerFormDto1.setPhoneNumber("0912345678");
         registerFormDto1.setDateOfBirth(LocalDate.parse("1996-12-10"));
-        registerFormDto1.setGender(1);
+        registerFormDto1.setGender("1");
         registerFormDto1.setAcceptReceiveAdvertising(true);
 
 
@@ -57,7 +57,7 @@ class FriendRepositoryTest {
         registerFormDto2.setPassword("1234");
         registerFormDto2.setPhoneNumber("0912345678");
         registerFormDto2.setDateOfBirth(LocalDate.parse("1996-12-10"));
-        registerFormDto2.setGender(1);
+        registerFormDto2.setGender("1");
         registerFormDto2.setAcceptReceiveAdvertising(true);
 
         Member member2 = Member.createMember(registerFormDto2, passwordEncoder);
@@ -71,7 +71,7 @@ class FriendRepositoryTest {
         registerFormDto3.setPassword("1234");
         registerFormDto3.setPhoneNumber("0912345678");
         registerFormDto3.setDateOfBirth(LocalDate.parse("1996-12-10"));
-        registerFormDto3.setGender(1);
+        registerFormDto3.setGender("1");
         registerFormDto3.setAcceptReceiveAdvertising(true);
 
         Member member3 = Member.createMember(registerFormDto3, passwordEncoder);

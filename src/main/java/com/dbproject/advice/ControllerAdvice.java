@@ -18,22 +18,20 @@ import java.util.Map;
 @RestControllerAdvice
 public class ControllerAdvice {
 
-//    @Valid 가 붙었지만 bindresult 로 잡지 않은 에러 공통 처리
+//    Common error handling that is marked with @Valid but not caught by bindresult
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
     public ApiResponse<Object> bindException(BindException e) {
-
-        System.out.println("------------------- Controller Advice ----------------------");
 
         Map<String, ErrorDetail> errorMap = new HashMap<>();
 
         List<FieldError> fieldErrors = e.getFieldErrors();
         for (FieldError fieldError : fieldErrors) {
+
             System.out.println("field name : " + fieldError.getField() + ", value = " + fieldError.getRejectedValue());
             ErrorDetail errorDetail = new ErrorDetail(fieldError.getRejectedValue(), fieldError.getDefaultMessage());
             errorMap.put(fieldError.getField(), errorDetail);
         }
-
 
         return ApiResponse.of(
                 HttpStatus.BAD_REQUEST,
@@ -41,13 +39,4 @@ public class ControllerAdvice {
                 errorMap
         );
     }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(DuplicateFriendRequestException.class)
-    public HttpStatus DuplicateFriendRequestException(DuplicateFriendRequestException e) {
-
-        //apiResponse 로 에러 메세지까지 보내야 한다
-        return HttpStatus.BAD_REQUEST;
-    }
-
 }

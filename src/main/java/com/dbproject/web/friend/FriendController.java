@@ -118,7 +118,10 @@ public class FriendController {
     public String getFriendList(Principal principal,
                                 Model model) {
 
+//      need try-catch member not exist exception
         FriendListResponse response = friendService.getFriendList(principal.getName());
+
+
         model.addAttribute("friendListResponse", response);
 
         return "myPage/friendList";

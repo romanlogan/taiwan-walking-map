@@ -26,11 +26,10 @@ public class FavoriteServiceImpl implements FavoriteService{
     private final MemberRepository memberRepository;
     private final LocationRepository locationRepository;
 
-
     public Long addFavoriteList(AddFavoriteLocationRequest addFavoriteLocationRequest, String email) throws DuplicateFavoriteLocationException{
 
+//        Each location can only be saved to favorites once.
         checkDuplicateFavoriteLocation(addFavoriteLocationRequest.getLocationId(), email);
-
         FavoriteLocation favoriteLocation = createAndSaveFavoriteLocationFrom(addFavoriteLocationRequest, email);
 
         return favoriteLocation.getId();
@@ -46,7 +45,7 @@ public class FavoriteServiceImpl implements FavoriteService{
     private FavoriteLocation saveFavoriteLocation(Location location, FavoriteLocation favoriteLocation) {
 
         FavoriteLocation savedFavoriteLocation = favoriteRepository.save(favoriteLocation);
-        location.increaseFavoriteCount();       //increase 는 save 한 뒤에 하기,
+        location.increaseFavoriteCount();
         return savedFavoriteLocation;
     }
 
@@ -55,7 +54,7 @@ public class FavoriteServiceImpl implements FavoriteService{
         FavoriteLocation favoriteLocation = favoriteRepository.findDuplicateFavoriteLocation(locationId, email);
 
         if (favoriteLocation != null) {
-            throw new DuplicateFavoriteLocationException("이미 등록된 장소 입니다.");
+            throw new DuplicateFavoriteLocationException("This location is already registered in favorite list");
         }
     }
 
@@ -84,16 +83,18 @@ public class FavoriteServiceImpl implements FavoriteService{
     private static void checkFavoriteLocationExist(Optional<FavoriteLocation> optionalFavoriteLocation) {
 
         if (optionalFavoriteLocation.isEmpty()) {
-            throw new FavoriteLocationNotExistException("즐겨찾기 장소가 존재하지 않습니다.");
+            throw new FavoriteLocationNotExistException("favorite location does not exist.");
         }
     }
 
-    public Integer getMaxPage(Integer size) {
+//    return max page number
+    public Integer getMaxPage(Integer pageSize, String email) {
 
-        Integer totalCount = Math.toIntExact(favoriteRepository.count());
+//        get total favorite count of user
+        Integer totalCount = Math.toIntExact(favoriteRepository.getTotalFavoriteCount(email));
 
-        //page 는 0부터 시작하므로 +1 안해도 됨
-        return (totalCount / size) ;
+        // calculate maximum page of user's favorite list
+        return (totalCount / pageSize) ;
     }
 
     public Long updateMemo(UpdateMemoRequest updateMemoRequest) {

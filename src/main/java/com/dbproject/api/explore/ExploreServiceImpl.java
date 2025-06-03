@@ -36,9 +36,6 @@ public class ExploreServiceImpl implements ExploreService{
         setCityInfo(cityName, cityDto);
         setRecommendLocationList(cityName, cityDto);
 
-        // route 추가
-        // 여기 하기전에 먼저 invitePlan 을 Plan 으로 바꾸는 부분부터 수정하기
-
         return cityDto;
     }
 
@@ -82,10 +79,7 @@ public class ExploreServiceImpl implements ExploreService{
 //        String pointImgUrl = findRouteLocationUrl(point);
 //        String pointDesc = findRouteLocationDescribe(point);
 //
-//        //여기서 막힘
 //        routeDto.
-//
-//
 //
 ////        String startPointImgUrl = findRouteLocationUrl(startPoint);
 ////        String startPointDesc = findRouteLocationDescribe(startPoint);

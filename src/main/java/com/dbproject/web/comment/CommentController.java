@@ -26,7 +26,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/createComment")
+    @PostMapping
     public ResponseEntity createComment(@Valid @RequestBody CreateCommentRequest createCommentRequest,
                                         BindingResult bindingResult,
                                         Principal principal) {
@@ -53,7 +53,7 @@ public class CommentController {
         ), HttpStatus.OK);
     }
 
-    @PutMapping("/updateComment")
+    @PutMapping
     public ResponseEntity updateComment(@Valid @RequestBody UpdateCommentRequest updateCommentRequest,
                                         BindingResult bindingResult,
                                         Principal principal) {
@@ -77,7 +77,7 @@ public class CommentController {
         ), HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteComment")
+    @DeleteMapping
     public ResponseEntity deleteComment(@Valid @RequestBody DeleteCommentRequest deleteCommentRequest,
                                         BindingResult bindingResult,
                                         Principal principal) {
@@ -101,7 +101,7 @@ public class CommentController {
         ), HttpStatus.OK);
     }
 
-    @GetMapping("/getNextCommentList")
+    @GetMapping("/nextList")
     public ResponseEntity<GetNextCommentListResponse> getNextCommentList(GetNextCommentListRequest request,
                                                                          Principal principal,
                                                                          Model model) {

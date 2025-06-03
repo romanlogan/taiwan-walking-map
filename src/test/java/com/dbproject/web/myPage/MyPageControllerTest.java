@@ -3,7 +3,7 @@ package com.dbproject.web.myPage;
 import com.dbproject.api.member.MemberRepository;
 import com.dbproject.api.member.MemberService;
 import com.dbproject.api.member.memberImg.MemberImgRepository;
-import com.dbproject.api.member.memberImg.MemberImgService;
+import com.dbproject.api.member.memberImg.MemberImgServiceImpl;
 import com.dbproject.api.member.dto.UpdateProfileRequest;
 import com.dbproject.api.hangOut.inviteHangOut.service.InviteHangOutServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +40,7 @@ class MyPageControllerTest {
     private MemberImgRepository memberImgRepository;
 
     @MockBean
-    private MemberImgService memberImgService;
+    private MemberImgServiceImpl memberImgService;
 
     @MockBean
     private InviteHangOutServiceImpl inviteHangOutService;

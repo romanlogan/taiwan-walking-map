@@ -14,7 +14,6 @@ public class RejectFriendRequest {
     @NotNull(message = "friendRequestId value is required")
     private Long friendRequestId;
 
-
     public RejectFriendRequest() {
     }
 
